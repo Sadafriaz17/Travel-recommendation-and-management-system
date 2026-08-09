@@ -1,0 +1,104 @@
+﻿@model TourwebsiteFYP.DB_data_models.Product
+@{
+    ViewBag.Title = "Edit Product";
+}
+
+<div class="col-md-12">
+    <div class="card shadow-sm rounded-4 mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="card-title mb-0">Edit Package</h5>
+        </div>
+
+        <form enctype="multipart/form-data" method="post" action="/AdminArea/ManageProducts/Edit">
+            <input type="hidden" name="ProductId" value="@Model.ProductId" />
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <!-- Package Name -->
+                    <div class="col-md-6">
+                        <label class="form-label">Package Name</label>
+                        <input value="@Model.ProductName" name="ProductName" type="text" class="form-control" required />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-6">
+                        <label class="form-label">Description</label>
+                        <textarea name="Description" class="form-control" required>@Model.Description</textarea>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="col-md-6">
+                        <label class="form-label">Price</label>
+                        <input value="@Model.Price" name="Price" type="number" step="0.01" class="form-control" required />
+                    </div>
+
+                   
+
+                    <!-- Package Date -->
+                    <div class="col-md-6">
+                        <label class="form-label">Package Date</label>
+                        <input value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm")" name="CreatedAt" type="datetime-local" class="form-control" required />
+                    </div>
+
+                    <!-- Package Type -->
+                    <div class="col-md-6">
+                        <label class="form-label">Package Type</label>
+                        <select name="PackageTypeId" class="form-select" required>
+                            <option value="">-- Select Package Type --</option>
+                            @foreach (var item in ViewBag.ProductTypeList)
+                            {
+                                string selectedVal = item.ProductTypeId == Model.ProductTypeId ? "selected" : "";
+                                <option value="@item.ProductTypeId" @selectedVal>@item.TypeName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Images -->
+                    <div class="col-md-6">
+                        <label class="form-label">Image 1</label>
+                        <input type="file" name="img" class="form-control" />
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Url.Content(Model.ImageUrl)" class="img-thumbnail mt-2" style="max-width:150px;" />
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Image 2</label>
+                        <input type="file" name="img2" class="form-control" />
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl2))
+                        {
+                            <img src="@Url.Content(Model.ImageUrl2)" class="img-thumbnail mt-2" style="max-width:150px;" />
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Image 3</label>
+                        <input type="file" name="img3" class="form-control" />
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl3))
+                        {
+                            <img src="@Url.Content(Model.ImageUrl3)" class="img-thumbnail mt-2" style="max-width:150px;" />
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Image 4</label>
+                        <input type="file" name="img4" class="form-control" />
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl4))
+                        {
+                            <img src="@Url.Content(Model.ImageUrl4)" class="img-thumbnail mt-2" style="max-width:150px;" />
+                        }
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Save Changes
+                </button>
+                <a href="/AdminArea/ManageProducts/Index" class="btn btn-danger">
+                    <i class="bi bi-x-circle me-1"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

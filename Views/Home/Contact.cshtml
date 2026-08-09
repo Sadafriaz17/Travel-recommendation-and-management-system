@@ -1,0 +1,1105 @@
+﻿@* =========================================
+    CONTACT PAGE — Views/Contact/Index.cshtml
+    ========================================= *@
+@{
+    ViewBag.Title = "Contact Us";
+    ViewBag.ActivePage = "Contact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <style>
+        /* ── CONTACT HERO ── */
+        #con-hero {
+            padding-top: 72px;
+            min-height: 68vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 70% 50%, #0f0f1e 0%, #06060c 50%, #020205 100%);
+        }
+
+        #con-hero-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+        }
+
+        /* Left-side dark fade so text is always readable */
+        .con-hero-text-shield {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to right,
+                #020205 0%,
+                #020205 30%,
+                rgba(2,2,5,0.75) 50%,
+                rgba(2,2,5,0.1) 70%,
+                transparent 100%
+            );
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .con-hero-glow {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 15% 60%, rgba(77,238,234,0.08), transparent 45%),
+                radial-gradient(ellipse at 75% 40%, rgba(168,85,247,0.06), transparent 50%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .con-hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 4rem 2.5rem 3rem;
+            width: 100%;
+            /* Content only takes left half so Earth shows right */
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+        }
+
+        .con-hero-text {
+            /* Text lives strictly in left column */
+        }
+
+        .con-hero-h1 {
+            font-family: var(--font-head);
+            font-size: clamp(2.8rem, 5.5vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.02;
+            text-shadow: 0 2px 40px rgba(0,0,0,0.8);
+        }
+
+        @@media (max-width: 768px) {
+            .con-hero-content {
+                grid-template-columns: 1fr;
+            }
+            #con-hero {
+                min-height: 55vh;
+                align-items: flex-end;
+            }
+            .con-hero-text-shield {
+                background: linear-gradient(
+                    to top,
+                    #020205 0%,
+                    rgba(2,2,5,0.85) 50%,
+                    rgba(2,2,5,0.3) 100%
+                );
+            }
+        }
+
+        /* ── MAIN LAYOUT ── */
+        #con-main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 5rem 2.5rem 6rem;
+        }
+
+        .con-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        /* ── LEFT PANEL ── */
+        .con-info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: sticky;
+            top: 100px;
+        }
+
+        .con-info-heading {
+            font-family: var(--font-head);
+            font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 0.25rem;
+        }
+
+        .con-info-sub {
+            color: var(--sub);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Contact detail cards */
+        .con-detail-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1.4rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+            transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .con-detail-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 18px;
+                background: radial-gradient(ellipse at 0% 50%, rgba(77,238,234,0.05), transparent 60%);
+                opacity: 0;
+                transition: opacity 0.35s;
+            }
+
+            .con-detail-card:hover {
+                border-color: rgba(77,238,234,0.2);
+                transform: translateX(6px);
+                box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            }
+
+            .con-detail-card:hover::before {
+                opacity: 1;
+            }
+
+            .con-detail-card.purple:hover {
+                border-color: rgba(168,85,247,0.25);
+            }
+
+            .con-detail-card.purple::before {
+                background: radial-gradient(ellipse at 0% 50%, rgba(168,85,247,0.06), transparent 60%);
+            }
+
+            .con-detail-card.blue:hover {
+                border-color: rgba(126,107,255,0.25);
+            }
+
+            .con-detail-card.blue::before {
+                background: radial-gradient(ellipse at 0% 50%, rgba(126,107,255,0.06), transparent 60%);
+            }
+
+        .con-detail-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+            .con-detail-icon.teal {
+                background: rgba(77,238,234,0.1);
+                box-shadow: 0 0 18px rgba(77,238,234,0.12);
+            }
+
+            .con-detail-icon.purple {
+                background: rgba(168,85,247,0.1);
+                box-shadow: 0 0 18px rgba(168,85,247,0.12);
+            }
+
+            .con-detail-icon.blue {
+                background: rgba(126,107,255,0.1);
+                box-shadow: 0 0 18px rgba(126,107,255,0.12);
+            }
+
+        .con-detail-text {
+            position: relative;
+            z-index: 1;
+        }
+
+            .con-detail-text strong {
+                display: block;
+                font-size: 0.78rem;
+                font-family: var(--font-mono);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--sub);
+                margin-bottom: 0.2rem;
+            }
+
+            .con-detail-text span {
+                font-size: 0.92rem;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+        /* Social links row */
+        .con-socials {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .con-social-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+            .con-social-btn:hover {
+                border-color: rgba(77,238,234,0.3);
+                background: rgba(77,238,234,0.07);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            }
+
+        /* Response time badge */
+        .con-response-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(77,238,234,0.06);
+            border: 1px solid rgba(77,238,234,0.15);
+            border-radius: 100px;
+            padding: 0.5rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .con-response-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+            animation: con-pulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes con-pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50%       { opacity: 1;   transform: scale(1.5); }
+        }
+
+        /* ── RIGHT PANEL — FORM ── */
+        .con-form-panel {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .con-form-panel::before {
+                content: '';
+                position: absolute;
+                top: -80px;
+                right: -80px;
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(ellipse, rgba(77,238,234,0.05), transparent 70%);
+                pointer-events: none;
+            }
+
+            .con-form-panel::after {
+                content: '';
+                position: absolute;
+                bottom: -60px;
+                left: -60px;
+                width: 250px;
+                height: 250px;
+                background: radial-gradient(ellipse, rgba(168,85,247,0.05), transparent 70%);
+                pointer-events: none;
+            }
+
+        .con-form-title {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .con-form-sub {
+            font-size: 0.85rem;
+            color: var(--sub);
+            margin-bottom: 2.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Form fields */
+        .con-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .con-field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .con-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .con-label {
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--sub);
+        }
+
+        .con-input,
+        .con-select,
+        .con-textarea {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.8rem 1.1rem;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.3s;
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+            .con-input::placeholder,
+            .con-textarea::placeholder {
+                color: rgba(255,255,255,0.2);
+            }
+
+            .con-input:focus,
+            .con-select:focus,
+            .con-textarea:focus {
+                border-color: rgba(77,238,234,0.4);
+                background: rgba(77,238,234,0.03);
+                box-shadow: 0 0 0 3px rgba(77,238,234,0.07);
+            }
+
+            .con-input:hover,
+            .con-select:hover,
+            .con-textarea:hover {
+                border-color: rgba(255,255,255,0.15);
+            }
+
+        .con-select {
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234deeEA' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+            .con-select option {
+                background: #1a1a2e;
+                color: var(--text);
+            }
+
+        .con-textarea {
+            resize: vertical;
+            min-height: 130px;
+            line-height: 1.6;
+        }
+
+        /* Character counter */
+        .con-field-meta {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -0.2rem;
+        }
+
+        .con-char-count {
+            font-size: 0.68rem;
+            font-family: var(--font-mono);
+            color: var(--sub);
+            transition: color 0.2s;
+        }
+
+            .con-char-count.warn {
+                color: rgba(168,85,247,0.8);
+            }
+
+        /* Topic chips */
+        .con-topic-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .con-chip {
+            padding: 0.35rem 0.9rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--sub);
+            font-size: 0.75rem;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+
+            .con-chip:hover {
+                border-color: rgba(77,238,234,0.3);
+                color: var(--text);
+            }
+
+            .con-chip.selected {
+                background: rgba(77,238,234,0.1);
+                border-color: rgba(77,238,234,0.4);
+                color: var(--accent);
+                box-shadow: 0 0 12px rgba(77,238,234,0.1);
+            }
+
+        /* Submit button */
+        .con-submit-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .con-submit-note {
+            font-size: 0.75rem;
+            color: var(--sub);
+            line-height: 1.5;
+        }
+
+        .con-submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.9rem 2.2rem;
+            border-radius: 100px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #000;
+            font-weight: 700;
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
+            box-shadow: 0 0 24px rgba(77,238,234,0.25);
+            white-space: nowrap;
+        }
+
+            .con-submit-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 32px rgba(77,238,234,0.35);
+            }
+
+            .con-submit-btn:active {
+                transform: translateY(-1px);
+            }
+
+            .con-submit-btn .btn-arrow {
+                transition: transform 0.25s;
+            }
+
+            .con-submit-btn:hover .btn-arrow {
+                transform: translateX(4px);
+            }
+
+        /* Success state */
+        .con-success {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1rem;
+            gap: 1.2rem;
+        }
+
+        .con-success-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(77,238,234,0.1);
+            border: 1px solid rgba(77,238,234,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 30px rgba(77,238,234,0.15);
+            animation: con-success-pop 0.5s cubic-bezier(0.23,1,0.32,1);
+        }
+
+        @@keyframes con-success-pop {
+            from { transform: scale(0.5); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        .con-success-title {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .con-success-sub {
+            color: var(--sub);
+            font-size: 0.88rem;
+            line-height: 1.65;
+            max-width: 340px;
+        }
+
+        /* ── FAQ SECTION ── */
+        #con-faq {
+            margin-top: 5rem;
+            padding-top: 5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .con-faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .con-faq-title {
+            font-family: var(--font-head);
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.75rem;
+        }
+
+        .con-faq-sub {
+            color: var(--sub);
+            font-size: 0.9rem;
+        }
+
+        .con-faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .con-faq-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+            .con-faq-item:hover {
+                border-color: rgba(77,238,234,0.15);
+            }
+
+            .con-faq-item.open {
+                border-color: rgba(77,238,234,0.2);
+            }
+
+        .con-faq-q {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 1.3rem 1.6rem;
+            text-align: left;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            transition: color 0.3s;
+        }
+
+            .con-faq-q:hover {
+                color: var(--accent);
+            }
+
+        .con-faq-item.open .con-faq-q {
+            color: var(--accent);
+        }
+
+        .con-faq-arrow {
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+            color: var(--sub);
+        }
+
+        .con-faq-item.open .con-faq-arrow {
+            transform: rotate(180deg);
+            color: var(--accent);
+        }
+
+        .con-faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.23,1,0.32,1), padding 0.3s;
+            font-size: 0.83rem;
+            color: var(--sub);
+            line-height: 1.7;
+            padding: 0 1.6rem;
+        }
+
+        .con-faq-item.open .con-faq-a {
+            max-height: 200px;
+            padding: 0 1.6rem 1.3rem;
+        }
+
+        /* ── RESPONSIVE ── */
+        @@media (max-width: 1024px) {
+            .con-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .con-info-panel {
+                position: static;
+            }
+
+            .con-faq-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 640px) {
+            .con-field-row {
+                grid-template-columns: 1fr;
+            }
+
+            .con-form-panel {
+                padding: 2rem 1.5rem;
+            }
+
+            .con-submit-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .con-submit-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+}
+
+<!-- HERO -->
+<section id="con-hero">
+    <canvas id="con-hero-canvas"></canvas>
+    <div class="con-hero-text-shield"></div>
+    <div class="con-hero-glow"></div>
+    <div class="con-hero-content">
+        <div class="con-hero-text">
+            <div class="nex-badge" style="margin-bottom:1.25rem;">Get In Touch</div>
+            <h1 class="con-hero-h1">
+                We'd Love to<br />Hear From <span class="text-gradient">You</span>
+            </h1>
+            <p style="color:var(--sub);margin-top:1.1rem;max-width:420px;line-height:1.7;font-size:0.95rem;">
+                Questions, partnerships, or just curious about intelligent travel? Our team is ready to help you plan something extraordinary.
+            </p>
+            <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+                <a href="#con-main" onclick="document.getElementById('con-main').scrollIntoView({behavior:'smooth'});return false;"
+                   style="display:inline-flex;align-items:center;gap:8px;padding:0.8rem 1.8rem;border-radius:100px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-weight:700;font-family:var(--font-body);font-size:0.85rem;text-decoration:none;transition:all 0.3s;box-shadow:0 0 20px rgba(77,238,234,0.2);"
+                   onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+                    Send a Message →
+                </a>
+                <a href="mailto:hello@pearlnex.com"
+                   style="display:inline-flex;align-items:center;gap:8px;padding:0.8rem 1.8rem;border-radius:100px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text);font-family:var(--font-body);font-size:0.85rem;text-decoration:none;transition:all 0.25s;"
+                   onmouseover="this.style.borderColor='rgba(77,238,234,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+                    ✉️ Email Us
+                </a>
+            </div>
+        </div>
+        <!-- Right column is intentionally empty — Earth fills it via canvas -->
+        <div></div>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div id="con-main">
+    <div class="con-layout">
+
+        <!-- LEFT: Info Panel -->
+        <div class="con-info-panel">
+            <div class="con-response-badge">
+                <div class="con-response-dot"></div>
+                Typically replies in &lt; 2 hours
+            </div>
+
+            <h2 class="con-info-heading">
+                Let's Plan Your<br /><span class="text-gradient">Next Adventure</span>
+            </h2>
+            <p class="con-info-sub">
+                Whether you have a specific destination in mind or just a dream, our travel experts and AI tools are here to turn it into reality.
+            </p>
+
+            <a href="mailto:hello@pearlnex.com" class="con-detail-card">
+                <div class="con-detail-icon teal">✉️</div>
+                <div class="con-detail-text">
+                    <strong>Email Us</strong>
+                    <span>hello@pearlnex.com</span>
+                </div>
+            </a>
+
+            <a href="tel:+923001234567" class="con-detail-card purple">
+                <div class="con-detail-icon purple">📞</div>
+                <div class="con-detail-text">
+                    <strong>Call Us</strong>
+                    <span>+92 300 123 4567</span>
+                </div>
+            </a>
+
+            <div class="con-detail-card blue" style="cursor:default;">
+                <div class="con-detail-icon blue">📍</div>
+                <div class="con-detail-text">
+                    <strong>Office</strong>
+                    <span>Lahore, Punjab, Pakistan</span>
+                </div>
+            </div>
+
+            <div class="con-detail-card" style="cursor:default;">
+                <div class="con-detail-icon teal">🕐</div>
+                <div class="con-detail-text">
+                    <strong>Working Hours</strong>
+                    <span>Mon–Sat, 9:00 AM – 8:00 PM PKT</span>
+                </div>
+            </div>
+
+            <div>
+                <p style="font-size:0.72rem;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;color:var(--sub);margin-bottom:0.75rem;">Follow Us</p>
+                <div class="con-socials">
+                    <a href="#" class="con-social-btn" title="Instagram">📸</a>
+                    <a href="#" class="con-social-btn" title="Twitter / X">🐦</a>
+                    <a href="#" class="con-social-btn" title="LinkedIn">💼</a>
+                    <a href="#" class="con-social-btn" title="Facebook">📘</a>
+                    <a href="#" class="con-social-btn" title="YouTube">▶️</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Contact Form -->
+        <div class="con-form-panel">
+            <h3 class="con-form-title">Send Us a Message</h3>
+            <p class="con-form-sub">Fill in the details below and we'll get back to you as soon as possible.</p>
+
+            <!-- Success state (hidden by default) -->
+            <div class="con-success" id="conSuccess">
+                <div class="con-success-icon">✅</div>
+                <div class="con-success-title">Message Sent!</div>
+                <p class="con-success-sub">Thanks for reaching out. Our team will get back to you within 2 hours. Keep an eye on your inbox!</p>
+                <button onclick="resetForm()" style="margin-top:0.5rem;padding:0.6rem 1.5rem;border-radius:100px;border:1px solid var(--border);background:var(--glass);color:var(--text);font-family:var(--font-body);font-size:0.82rem;cursor:pointer;transition:all 0.25s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+                    Send Another →
+                </button>
+            </div>
+
+            <!-- Actual Form -->
+            <form class="con-form" id="conForm" onsubmit="handleSubmit(event)">
+
+                <div class="con-field-row">
+                    <div class="con-field">
+                        <label class="con-label" for="con-fname">First Name</label>
+                        <input class="con-input" id="con-fname" type="text" placeholder="Sadaf" required />
+                    </div>
+                    <div class="con-field">
+                        <label class="con-label" for="con-lname">Last Name</label>
+                        <input class="con-input" id="con-lname" type="text" placeholder="Riaz" required />
+                    </div>
+                </div>
+
+                <div class="con-field-row">
+                    <div class="con-field">
+                        <label class="con-label" for="con-email">Email Address</label>
+                        <input class="con-input" id="con-email" type="email" placeholder="you@example.com" required />
+                    </div>
+                    <div class="con-field">
+                        <label class="con-label" for="con-phone">Phone (Optional)</label>
+                        <input class="con-input" id="con-phone" type="tel" placeholder="+92 300 000 0000" />
+                    </div>
+                </div>
+
+                <div class="con-field">
+                    <label class="con-label" for="con-topic-input">Topic</label>
+                    <input type="hidden" id="con-topic-input" value="" />
+                    <div class="con-topic-chips" id="conChips">
+                        <button type="button" class="con-chip" onclick="selectChip(this, 'General Inquiry')">General Inquiry</button>
+                        <button type="button" class="con-chip" onclick="selectChip(this, 'Package Booking')">Package Booking</button>
+                        <button type="button" class="con-chip" onclick="selectChip(this, 'AI Trip Planner')">AI Trip Planner</button>
+                        <button type="button" class="con-chip" onclick="selectChip(this, 'VR Preview')">VR Preview</button>
+                        <button type="button" class="con-chip" onclick="selectChip(this, 'Vendor Partnership')">Vendor Partnership</button>
+                        <button type="button" class="con-chip" onclick="selectChip(this, 'Support')">Support</button>
+                    </div>
+                </div>
+
+                <div class="con-field">
+                    <label class="con-label" for="con-subject">Subject</label>
+                    <input class="con-input" id="con-subject" type="text" placeholder="How can we help you?" required />
+                </div>
+
+                <div class="con-field">
+                    <label class="con-label" for="con-message">Message</label>
+                    <textarea class="con-textarea" id="con-message" placeholder="Tell us about your travel plans, questions, or anything on your mind..." maxlength="1000" oninput="updateCount(this)" required></textarea>
+                    <div class="con-field-meta">
+                        <span class="con-char-count" id="conCharCount">0 / 1000</span>
+                    </div>
+                </div>
+
+                <div class="con-submit-row">
+                    <p class="con-submit-note">
+                        🔒 Your details are safe with us.<br />We never share personal information.
+                    </p>
+                    <button type="submit" class="con-submit-btn" id="conSubmitBtn">
+                        Send Message
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div id="con-faq">
+        <div class="con-faq-header">
+            <div class="nex-badge" style="display:inline-block;margin-bottom:1rem;">FAQ</div>
+            <h2 class="con-faq-title">Frequently Asked <span class="text-gradient">Questions</span></h2>
+            <p class="con-faq-sub">Quick answers to the things people ask us most.</p>
+        </div>
+
+        <div class="con-faq-grid" id="conFaqGrid">
+            @{
+                var faqs = new[] {
+                    new { q = "How does the AI Trip Planner work?", a = "Our AI analyses your preferences, budget, travel dates, and style to generate a fully personalised itinerary in seconds. It learns from your feedback and continuously improves your recommendations." },
+                    new { q = "Can I preview destinations in VR before booking?", a = "Yes! Our VR Destination Preview lets you explore hotels, beaches, attractions, and cities in immersive 360° virtual reality before you commit to any booking." },
+                    new { q = "Is my payment information secure?", a = "Absolutely. We use industry-standard SSL encryption and PCI-DSS compliant payment processing. Your financial data is never stored on our servers." },
+                    new { q = "What is your cancellation policy?", a = "Cancellation policies vary by package type. Most of our packages offer flexible cancellation up to 72 hours before departure with a full refund. Check individual package terms for details." },
+                    new { q = "Do you offer group or corporate travel packages?", a = "Yes, we specialise in group bookings and corporate travel programmes. Contact us directly for custom quotes and dedicated account management for your organisation." },
+                    new { q = "How quickly will I receive my itinerary?", a = "AI-generated itineraries are ready in under 30 seconds. For custom or complex multi-destination packages, our human travel experts typically respond within 2 hours during business hours." },
+                };
+            }
+            @foreach (var faq in faqs)
+            {
+                <div class="con-faq-item">
+                    <button class="con-faq-q" onclick="toggleFaq(this)">
+                        @faq.q
+                        <span class="con-faq-arrow">▼</span>
+                    </button>
+                    <div class="con-faq-a">@faq.a</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ── 3D EARTH + ORBIT RINGS (identical to Packages page) ──
+        (function () {
+            const canvas = document.getElementById('con-hero-canvas');
+            if (!canvas) return;
+
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020205, 0.0006);
+
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0.3, 4.2);
+
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // ── Textures (same CDN as Packages page) ──
+            const textureLoader = new THREE.TextureLoader();
+            const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+            const earthSpecularMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+            const earthNormalMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+            const cloudMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+
+            // ── Earth group shifted RIGHT so text has clear left side ──
+            const earthGroup = new THREE.Group();
+            earthGroup.position.set(2.0, 0, 0);
+            scene.add(earthGroup);
+
+            const earth = new THREE.Mesh(
+                new THREE.SphereGeometry(1.1, 128, 128),
+                new THREE.MeshPhongMaterial({
+                    map: earthMap,
+                    specularMap: earthSpecularMap,
+                    specular: new THREE.Color('grey'),
+                    shininess: 5,
+                    normalMap: earthNormalMap,
+                    normalScale: new THREE.Vector2(0.8, 0.8)
+                })
+            );
+            earthGroup.add(earth);
+
+            const clouds = new THREE.Mesh(
+                new THREE.SphereGeometry(1.12, 128, 128),
+                new THREE.MeshPhongMaterial({
+                    map: cloudMap,
+                    transparent: true,
+                    opacity: 0.12,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+            earthGroup.add(clouds);
+
+            // Orbit rings
+            const createRing = (radius, color, opacity, segments = 200) => {
+                const points = [];
+                for (let i = 0; i <= segments; i++) {
+                    const angle = (i / segments) * Math.PI * 2;
+                    points.push(new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
+                }
+                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+                return new THREE.LineLoop(geo, mat);
+            };
+            const ring1 = createRing(1.55, 0x4deeEA, 0.3);
+            const ring2 = createRing(1.75, 0xa855f7, 0.25);
+            earthGroup.add(ring1);
+            earthGroup.add(ring2);
+
+            // Stars (global, not parented to earthGroup)
+            const starGeometry = new THREE.BufferGeometry();
+            const starCount = 4000;
+            const starPositions = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) {
+                starPositions[i * 3] = (Math.random() - 0.5) * 2500;
+                starPositions[i * 3 + 1] = (Math.random() - 0.5) * 2500;
+                starPositions[i * 3 + 2] = (Math.random() - 0.5) * 600 - 200;
+            }
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            const stars = new THREE.Points(starGeometry,
+                new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true, opacity: 0.7 })
+            );
+            scene.add(stars);
+
+            // ── Lighting ──
+            scene.add(new THREE.AmbientLight(0x111122));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            dirLight.position.set(5, 3, 5);
+            scene.add(dirLight);
+            scene.add(new THREE.PointLight(0x445566, 0.8, 10, 2));
+            scene.add(new THREE.PointLight(0x4deeEA, 0.4, 5, 2));
+
+            // ── Mouse interaction ──
+            let targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
+            document.getElementById('con-hero').addEventListener('mousemove', (e) => {
+                targetRY = (e.clientX / window.innerWidth - 0.5) * 0.8;
+                targetRX = (e.clientY / window.innerHeight - 0.5) * 0.4;
+            });
+
+            // ── Animation ──
+            let time = 0;
+            (function animate() {
+                requestAnimationFrame(animate);
+                time += 0.004;
+                currentRY += (targetRY - currentRY) * 0.04;
+                currentRX += (targetRX - currentRX) * 0.04;
+
+                earth.rotation.y = currentRY + time * 0.5;
+                earth.rotation.x = currentRX * 0.2;
+                clouds.rotation.y = currentRY + time * 0.6;
+                clouds.rotation.x = currentRX * 0.2;
+
+                ring1.rotation.y += 0.0008;
+                ring1.rotation.x = Math.sin(time * 0.4) * 0.1;
+                ring2.rotation.z += 0.001;
+                ring2.rotation.x = Math.cos(time * 0.3) * 0.1;
+
+                stars.rotation.y += 0.0003;
+                stars.rotation.x += 0.0002;
+
+                renderer.render(scene, camera);
+            })();
+
+            // ── Resize ──
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+
+        // ── FORM INTERACTIONS ──
+        function selectChip(el, value) {
+            document.querySelectorAll('.con-chip').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('con-topic-input').value = value;
+        }
+
+        function updateCount(el) {
+            const count = el.value.length;
+            const counter = document.getElementById('conCharCount');
+            counter.textContent = count + ' / 1000';
+            counter.classList.toggle('warn', count > 800);
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('conSubmitBtn');
+            btn.textContent = 'Sending…';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            // Simulate async send — replace with real $.ajax / fetch to your controller
+            setTimeout(() => {
+                document.getElementById('conForm').style.display = 'none';
+                const success = document.getElementById('conSuccess');
+                success.style.display = 'flex';
+            }, 1200);
+        }
+
+        function resetForm() {
+            document.getElementById('conForm').reset();
+            document.getElementById('conCharCount').textContent = '0 / 1000';
+            document.querySelectorAll('.con-chip').forEach(c => c.classList.remove('selected'));
+            document.getElementById('con-topic-input').value = '';
+            const btn = document.getElementById('conSubmitBtn');
+            btn.innerHTML = 'Send Message <span class="btn-arrow">→</span>';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            document.getElementById('conForm').style.display = 'flex';
+            document.getElementById('conSuccess').style.display = 'none';
+        }
+
+        // ── FAQ ACCORDION ──
+        function toggleFaq(btn) {
+            const item = btn.closest('.con-faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.con-faq-item.open').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+    </script>
+}

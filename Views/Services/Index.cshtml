@@ -1,0 +1,584 @@
+﻿@* =========================================
+    SERVICES PAGE — Views/Services/Index.cshtml
+    ========================================= *@
+@{
+    ViewBag.Title = "Services";
+    ViewBag.ActivePage = "Services";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <style>
+        /* ── SERVICES PAGE ──────────────────── */
+        #srv-hero {
+            padding-top: 72px;
+            min-height: 50vh;
+            display: flex;
+            align-items: flex-end;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 50% 50%, #0f0f1e 0%, #06060c 50%, #020205 100%);
+        }
+
+        #srv-hero-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+        }
+
+        .srv-hero-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(77,238,234,0.06), transparent 55%), radial-gradient(ellipse at 75% 25%, rgba(168,85,247,0.05), transparent 55%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .srv-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 4rem 2.5rem 3rem;
+            width: 100%;
+        }
+
+        .srv-hero-h1 {
+            font-family: var(--font-head);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        /* ── SERVICES GRID ── */
+        #srv-main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 5rem 2.5rem 6rem;
+        }
+
+        .srv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .srv-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+            cursor: none;
+        }
+
+            .srv-card:hover {
+                border-color: rgba(77,238,234,0.2);
+                transform: translateY(-8px);
+                box-shadow: 0 30px 80px rgba(0,0,0,0.4), 0 0 40px rgba(77,238,234,0.06);
+            }
+
+            .srv-card::before {
+                content: '';
+                position: absolute;
+                top: -50px;
+                right: -50px;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(ellipse, rgba(77,238,234,0.06), transparent 70%);
+                transition: opacity 0.4s;
+                opacity: 0;
+            }
+
+            .srv-card:hover::before {
+                opacity: 1;
+            }
+
+            .srv-card.purple-glow::before {
+                background: radial-gradient(ellipse, rgba(168,85,247,0.08), transparent 70%);
+            }
+
+        .srv-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+            .srv-icon.teal {
+                background: rgba(77,238,234,0.1);
+                box-shadow: 0 0 20px rgba(77,238,234,0.1);
+            }
+
+            .srv-icon.purple {
+                background: rgba(168,85,247,0.1);
+                box-shadow: 0 0 20px rgba(168,85,247,0.1);
+            }
+
+            .srv-icon.blue {
+                background: rgba(126,107,255,0.1);
+                box-shadow: 0 0 20px rgba(126,107,255,0.1);
+            }
+
+        .srv-title {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s;
+        }
+
+        .srv-card:hover .srv-title {
+            color: var(--accent);
+        }
+
+        .srv-desc {
+            font-size: 0.875rem;
+            color: var(--sub);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1.75rem;
+        }
+
+        .srv-features {
+            list-style: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .srv-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            border-bottom: 1px solid var(--border);
+        }
+
+            .srv-feature:last-child {
+                border-bottom: none;
+            }
+
+            .srv-feature::before {
+                content: '';
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: var(--accent);
+                flex-shrink: 0;
+                box-shadow: 0 0 6px var(--accent);
+            }
+
+        .srv-card-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 1.75rem;
+            font-size: 0.78rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            letter-spacing: 0.06em;
+            position: relative;
+            z-index: 1;
+            transition: gap 0.25s;
+        }
+
+            .srv-card-cta:hover {
+                gap: 10px;
+            }
+
+        /* ── PROCESS SECTION ── */
+        .process-section {
+            margin-bottom: 5rem;
+        }
+
+        .process-title {
+            font-family: var(--font-head);
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 3rem;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            position: relative;
+        }
+
+            .process-steps::before {
+                content: '';
+                position: absolute;
+                top: 28px;
+                left: 15%;
+                right: 15%;
+                height: 1px;
+                background: linear-gradient(90deg, var(--accent), var(--accent2));
+                opacity: 0.3;
+            }
+
+        .process-step {
+            text-align: center;
+            padding: 0 1.5rem;
+        }
+
+        .process-step-num {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .process-step:hover .process-step-num {
+            border-color: var(--accent);
+            background: rgba(77,238,234,0.08);
+            color: var(--accent);
+            box-shadow: 0 0 20px rgba(77,238,234,0.2);
+        }
+
+        .process-step-title {
+            font-family: var(--font-head);
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .process-step-desc {
+            font-size: 0.78rem;
+            color: var(--sub);
+            line-height: 1.6;
+        }
+
+        /* ── CTA BANNER ── */
+        .srv-cta-banner {
+            background: linear-gradient(135deg, rgba(77,238,234,0.05), rgba(168,85,247,0.05));
+            border: 1px solid rgba(77,238,234,0.12);
+            border-radius: 28px;
+            padding: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .srv-cta-banner::before {
+                content: '';
+                position: absolute;
+                top: -100px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 600px;
+                height: 400px;
+                background: radial-gradient(ellipse, rgba(77,238,234,0.07), transparent 70%);
+                pointer-events: none;
+            }
+
+        .srv-cta-title {
+            font-family: var(--font-head);
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .srv-cta-sub {
+            color: var(--sub);
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .srv-cta-btns {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+
+        /* ── RESPONSIVE ── */
+        @@media (max-width: 1024px) {
+            .srv-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr 1fr;
+            }
+
+                .process-steps::before {
+                    display: none;
+                }
+        }
+
+        @@media (max-width: 640px) {
+            .srv-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .srv-cta-banner {
+                padding: 2.5rem 1.5rem;
+            }
+        }
+    </style>
+}
+
+<!-- HERO SECTION WITH 3D EARTH -->
+<section id="srv-hero">
+    <canvas id="srv-hero-canvas"></canvas>
+    <div class="srv-hero-glow"></div>
+    <div class="srv-hero-content">
+        <div class="nex-badge" style="margin-bottom:1rem;">Our Services</div>
+        <h1 class="srv-hero-h1">
+            Everything You Need<br />to Travel <span class="text-gradient">Smarter</span>
+        </h1>
+        <p style="color:var(--sub);margin-top:1rem;max-width:500px;line-height:1.65;">
+            AI-powered tools, VR experiences, and human expertise — all working together to create extraordinary journeys.
+        </p>
+    </div>
+</section>
+
+<div id="srv-main">
+    <!-- Services Grid -->
+    <div class="srv-grid">
+        @{
+            var services = new[] {
+                new { icon="🤖", iconClass="teal", glowClass="", title="AI Trip Planner", desc="Our AI analyses thousands of data points — your preferences, budget, travel style, and real-time conditions — to generate a perfectly personalized itinerary in seconds.", features=new[]{"Instant itinerary generation","Multi-destination routing","Budget optimization","Real-time availability check","Continuous learning from preferences"}, href="~/Home/Index#ai-generator" },
+                new { icon="🥽", iconClass="purple", glowClass="purple-glow", title="VR Destination Preview", desc="Step inside your destination before you book. Our immersive VR technology lets you explore hotels, beaches, cities, and attractions as if you were actually there.", features=new[]{"360° destination previews","Virtual hotel walkthroughs","Attraction exploration","AI-narrated experiences","Compare multiple destinations"}, href="#" },
+                new { icon="🌍", iconClass="blue", glowClass="", title="Smart Package Builder", desc="Mix and match destinations, activities, and accommodation to create a completely bespoke travel package. Our AI optimizes every combination for value and experience.", features=new[]{"Custom itinerary building","Real-time price comparison","Partner hotel network","Flexible cancellation options","Group booking support"}, href="~/Packages/Index" },
+                new { icon="🏪", iconClass="teal", glowClass="", title="Vendor Marketplace", desc="Connect with verified local guides, transport providers, tour operators, and accommodation partners across 500+ destinations worldwide.", features=new[]{"500+ verified vendors","Real-time availability","Secure payments","Review & rating system","Direct vendor messaging"}, href="#" },
+                new { icon="📊", iconClass="purple", glowClass="purple-glow", title="Travel Intelligence", desc="Get insider knowledge with our AI-powered travel intelligence engine. Real-time crowd predictions, pricing forecasts, weather analysis, and local event data.", features=new[]{"Crowd prediction models","Price trend forecasting","Best-time-to-visit analysis","Local event calendar","Weather pattern insights"}, href="#" },
+                new { icon="🛡️", iconClass="blue", glowClass="", title="24/7 Travel Support", desc="Our hybrid AI + human support team is available around the clock to assist with booking changes, emergencies, local recommendations, and anything else you need.", features=new[]{"24/7 multilingual support","Emergency travel assistance","Booking modification support","Real-time trip monitoring","Dedicated travel concierge"}, href="#" },
+            };
+        }
+        @foreach (var s in services)
+        {
+            <div class="srv-card @s.glowClass" data-reveal>
+                <div class="srv-icon @s.iconClass">@s.icon</div>
+                <h3 class="srv-title">@s.title</h3>
+                <p class="srv-desc">@s.desc</p>
+                <ul class="srv-features">
+                    @foreach (var f in s.features)
+                    {
+                        <li class="srv-feature">@f</li>
+                    }
+                </ul>
+                <a href="@s.href" class="srv-card-cta">
+                    Learn More →
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- How It Works -->
+    <div class="process-section" data-reveal>
+        <div class="nex-badge" style="margin-bottom:1.25rem;">How It Works</div>
+        <h2 class="process-title">From Dream to <span class="text-gradient">Departure</span></h2>
+        <div class="process-steps">
+            @{
+                var steps = new[] {
+                    new { num="01", title="Tell Our AI", desc="Share your destination wishlist, travel dates, budget, and preferences with our intelligent planning assistant." },
+                    new { num="02", title="Preview in VR", desc="Explore AI-recommended destinations and hotels in immersive 360° virtual reality before committing." },
+                    new { num="03", title="Customize", desc="Fine-tune your perfect itinerary — add activities, upgrade accommodation, or adjust timing." },
+                    new { num="04", title="Book & Go", desc="Secure checkout, instant confirmation, and 24/7 support from departure to return." },
+                };
+            }
+            @foreach (var s in steps)
+            {
+                <div class="process-step">
+                    <div class="process-step-num">@s.num</div>
+                    <div class="process-step-title">@s.title</div>
+                    <p class="process-step-desc">@s.desc</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- CTA Banner -->
+    <div class="srv-cta-banner" data-reveal>
+        <h2 class="srv-cta-title">
+            Ready to Experience<br /><span class="text-gradient">Intelligent Travel?</span>
+        </h2>
+        <p class="srv-cta-sub">Join 12,000+ travelers who've discovered a smarter, more immersive way to explore the world.</p>
+        <div class="srv-cta-btns">
+            <a href="~/Signup/Index"
+               style="display:inline-flex;align-items:center;gap:8px;padding:0.95rem 2rem;border-radius:100px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-weight:700;font-family:var(--font-body);text-decoration:none;transition:all 0.35s;box-shadow:0 0 24px rgba(77,238,234,0.25);"
+               onmouseover="this.style.transform='translateY(-3px)'"
+               onmouseout="this.style.transform=''">
+                Start for Free →
+            </a>
+            <a href="~/Destinations/Index"
+               style="display:inline-flex;align-items:center;gap:8px;padding:0.95rem 2rem;border-radius:100px;border:1px solid var(--border);background:var(--glass);color:var(--text);font-family:var(--font-body);text-decoration:none;transition:all 0.25s;"
+               onmouseover="this.style.borderColor='var(--accent)'"
+               onmouseout="this.style.borderColor='var(--border)'">
+                Explore Destinations
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ── 3D EARTH + ORBIT RINGS ──
+        (function () {
+            const canvas = document.getElementById('srv-hero-canvas');
+            if (!canvas) return;
+
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020205, 0.0006);
+
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0.3, 4.2);
+
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Earth
+            const textureLoader = new THREE.TextureLoader();
+            const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+            const earthSpecularMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+            const earthNormalMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+            const cloudMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+
+            const earth = new THREE.Mesh(
+                new THREE.SphereGeometry(1.1, 128, 128),
+                new THREE.MeshPhongMaterial({
+                    map: earthMap,
+                    specularMap: earthSpecularMap,
+                    specular: new THREE.Color('grey'),
+                    shininess: 5,
+                    normalMap: earthNormalMap,
+                    normalScale: new THREE.Vector2(0.8, 0.8)
+                })
+            );
+            scene.add(earth);
+
+            // Clouds
+            const clouds = new THREE.Mesh(
+                new THREE.SphereGeometry(1.12, 128, 128),
+                new THREE.MeshPhongMaterial({
+                    map: cloudMap,
+                    transparent: true,
+                    opacity: 0.12,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+            scene.add(clouds);
+
+            // Stars
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 4000;
+            const starPos = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) {
+                starPos[i * 3] = (Math.random() - 0.5) * 2500;
+                starPos[i * 3 + 1] = (Math.random() - 0.5) * 2500;
+                starPos[i * 3 + 2] = (Math.random() - 0.5) * 600 - 200;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            scene.add(new THREE.Points(
+                starGeo,
+                new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true, opacity: 0.7 })
+            ));
+
+            // Orbit rings
+            const createRing = (radius, color, opacity, segments = 200) => {
+                const points = [];
+                for (let i = 0; i <= segments; i++) {
+                    const a = (i / segments) * Math.PI * 2;
+                    points.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+                }
+                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+                return new THREE.LineLoop(geo, mat);
+            };
+
+            const ring1 = createRing(1.55, 0x4deeEA, 0.3);
+            const ring2 = createRing(1.75, 0xa855f7, 0.25);
+            scene.add(ring1);
+            scene.add(ring2);
+
+            // Lighting
+            scene.add(new THREE.AmbientLight(0x111122));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            dirLight.position.set(5, 3, 5);
+            scene.add(dirLight);
+            scene.add(new THREE.PointLight(0x445566, 0.8, 10, 2));
+            scene.add(new THREE.PointLight(0x4deeEA, 0.4, 5, 2));
+
+            // Mouse interaction
+            let targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
+            document.getElementById('srv-hero').addEventListener('mousemove', (e) => {
+                targetRY = (e.clientX / window.innerWidth - 0.5) * 0.8;
+                targetRX = (e.clientY / window.innerHeight - 0.5) * 0.4;
+            });
+
+            // Animation loop
+            let time = 0;
+            (function animate() {
+                requestAnimationFrame(animate);
+                time += 0.004;
+
+                currentRY += (targetRY - currentRY) * 0.04;
+                currentRX += (targetRX - currentRX) * 0.04;
+
+                earth.rotation.y = currentRY + time * 0.5;
+                earth.rotation.x = currentRX * 0.2;
+                clouds.rotation.y = currentRY + time * 0.6;
+                clouds.rotation.x = currentRX * 0.2;
+
+                ring1.rotation.y += 0.0008;
+                ring1.rotation.x = Math.sin(time * 0.4) * 0.1;
+                ring2.rotation.z += 0.001;
+                ring2.rotation.x = Math.cos(time * 0.3) * 0.1;
+
+                renderer.render(scene, camera);
+            })();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+    </script>
+}

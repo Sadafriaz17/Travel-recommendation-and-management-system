@@ -1,0 +1,133 @@
+﻿
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Package>
+
+@{
+    ViewBag.Title = "Homepagepackage";
+    Layout = null;
+}
+
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Packages</h6>
+            <h1 class="mb-5">Awesome Packages</h1>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            @foreach (var item in Model)
+            {
+                var images = item.PackageImages?.ToList() ?? new List<TourwebsiteFYP.DB_data_models.PackageImage>();
+                var mainImg = images.Skip(1).FirstOrDefault()?.ImageUrl ?? "~/images/no-image.jpg"; // first image
+                var hoverImg = images.Skip(2).FirstOrDefault()?.ImageUrl ?? mainImg; // second image
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="package-item">
+                        <div class="package-image">
+                            <img class="img-fluid main-img"
+                                 src="@Url.Content(mainImg)"
+                                 alt="@item.PackageName" />
+
+                            <img class="img-fluid hover-img"
+                                 src="@Url.Content(hoverImg)"
+                                 alt="@item.PackageName" />
+                        </div>
+
+                        <div class="d-flex border-bottom">
+                            <small class="flex-fill text-center border-end py-2">
+                                <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                                @item.Destination.Name
+                            </small>
+                            <small class="flex-fill text-center border-end py-2">
+                                <i class="fa fa-calendar-alt text-primary me-2"></i>
+                                @item.DurationDays days
+                            </small>
+                            <small class="flex-fill text-center py-2">
+                                <i class="fa fa-user text-primary me-2"></i>
+                                @item.People
+                            </small>
+                        </div>
+
+                        <div class="text-center p-4">
+                            <h3 class="mb-0">$@item.Price</h3>
+                            <div class="mb-3">
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                            </div>
+                            <p>@item.Description</p>
+                            <div class="d-flex justify-content-center mb-2">
+                                <a href="@Url.Action("Details", "Package", new { id = item.PackageId })"
+                                   class="btn btn-sm btn-primary px-3 border-end"
+                                   style="border-radius: 30px 0 0 30px;">Read More</a>
+                                <a href="@Url.Action("Details", "Package", new { id = item.PackageId })"
+                                   class="btn btn-sm btn-primary px-3"
+                                   style="border-radius: 0 30px 30px 0;">Book Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .package-image {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+
+        .package-image img {
+            width: 100%;
+            height: 250px; /* fixed size */
+            object-fit: cover;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .package-image .hover-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .package-image:hover .main-img {
+            opacity: 0;
+        }
+
+        .package-image:hover .hover-img {
+            opacity: 1;
+        }
+    .row.g-4.justify-content-center {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .package-item {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        background: #fff;
+        transition: transform 0.3s;
+    }
+
+        .package-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .package-item .text-center {
+            flex-grow: 1; /* pushes buttons to bottom */
+        }
+        .package-item p {
+            min-height: 60px; /* consistent space */
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+</style>

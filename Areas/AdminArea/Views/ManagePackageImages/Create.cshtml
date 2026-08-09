@@ -1,0 +1,28 @@
+﻿@model TourwebsiteFYP.DB_data_models.PackageImage
+@{
+    ViewBag.Title = "Create Image";
+}
+
+<div class="container mt-4">
+    <h3>Create New Image</h3>
+    <hr />
+    @using (Html.BeginForm("Create", "ManagePackageImages", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="mb-3">
+            <label>Package</label>
+            <select name="PackageId" class="form-control">
+                @foreach (var pkg in ViewBag.Packages)
+                {
+                    <option value="@pkg.PackageId">@pkg.PackageName</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Upload Images</label>
+            <input type="file" name="files" class="form-control" multiple />
+            <small class="text-muted">You can select multiple images</small>
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+    }
+</div>

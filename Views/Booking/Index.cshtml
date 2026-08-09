@@ -1,0 +1,942 @@
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+
+@{
+    ViewBag.Title = "Booking";
+    ViewBag.ActivePage = "Booking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <style>
+        /* ── ROOT VARIABLES (matching package page) ── */
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-surface: rgba(15, 15, 20, 0.85);
+            --glass: rgba(20, 20, 28, 0.7);
+            --glass-hi: rgba(30, 30, 38, 0.85);
+            --border: rgba(70, 70, 90, 0.3);
+            --accent: #4deeEA;
+            --accent2: #a855f7;
+            --purple: #c084fc;
+            --text: #f0f0f4;
+            --sub: #a0a0b0;
+            --font-head: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', 'JetBrains Mono', monospace;
+            --font-body: 'Inter', system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text);
+            font-family: var(--font-body);
+        }
+
+        /* ── HERO SECTION (identical to package page) ── */
+        #booking-hero {
+            padding-top: 72px;
+            min-height: 46vh;
+            display: flex;
+            align-items: flex-end;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-hero-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 60%, rgba(126,107,255,0.06), transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(77,238,234,0.04), transparent 55%);
+        }
+
+        .booking-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 4rem 2.5rem 3rem;
+            width: 100%;
+        }
+
+        .booking-hero-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .booking-hero-label::before {
+                content: '';
+                width: 28px;
+                height: 1px;
+                background: var(--accent);
+                box-shadow: 0 0 6px var(--accent);
+            }
+
+        .booking-hero-h1 {
+            font-family: var(--font-head);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        /* ── PROCESS CARDS SECTION WITH BACKGROUND IMAGES IN CIRCLES ── */
+        .process-section {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 4rem 2.5rem;
+        }
+
+        .section-badge {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+            .section-badge::before,
+            .section-badge::after {
+                content: '';
+                width: 28px;
+                height: 1px;
+                background: var(--accent);
+                box-shadow: 0 0 6px var(--accent);
+            }
+
+        .section-title {
+            font-family: var(--font-head);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .process-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            backdrop-filter: blur(12px);
+            overflow: hidden;
+        }
+
+            .process-card:hover {
+                border-color: rgba(77, 238, 234, 0.3);
+                transform: translateY(-8px);
+                box-shadow: 0 30px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(77, 238, 234, 0.05);
+            }
+
+        /* Process icon with background image */
+        .process-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(77, 238, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+            .process-icon::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-size: cover;
+                background-position: center;
+                transition: transform 0.5s ease;
+            }
+
+            /* Individual background images for each step */
+            .process-icon.step1::before {
+                background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=200&h=200&fit=crop');
+            }
+
+            .process-icon.step2::before {
+                background-image: url('https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=200&h=200&fit=crop');
+            }
+
+            .process-icon.step3::before {
+                background-image: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=200&h=200&fit=crop');
+            }
+
+        .process-card:hover .process-icon::before {
+            transform: scale(1.1);
+        }
+
+        .process-icon i {
+            position: relative;
+            z-index: 1;
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            backdrop-filter: blur(2px);
+        }
+
+        .process-card h5 {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .process-card p {
+            color: var(--sub);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* ── MAIN BOOKING SECTION (glass card with background image) ── */
+        .booking-main-section {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 2.5rem 4rem;
+        }
+
+        .booking-glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            /* Background image for the booking box */
+            .booking-glass-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('https://images.unsplash.com/photo-1530521954074-e64f6810b32d?q=80&w=2000&auto=format');
+                background-size: cover;
+                background-position: center;
+                opacity: 0.08;
+                pointer-events: none;
+                z-index: 0;
+            }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Left info panel */
+        .booking-info-panel {
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+            border-right: 1px solid var(--border);
+            backdrop-filter: blur(4px);
+        }
+
+            .booking-info-panel h6 {
+                font-family: var(--font-mono);
+                font-size: 0.7rem;
+                color: var(--accent);
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                margin-bottom: 1rem;
+            }
+
+            .booking-info-panel h1 {
+                font-family: var(--font-head);
+                font-size: 2.2rem;
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                margin-bottom: 1.5rem;
+            }
+
+            .booking-info-panel p {
+                color: rgba(255,255,240,0.85);
+                line-height: 1.7;
+                margin-bottom: 1.5rem;
+            }
+
+        /* Stats badges */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .stat-number {
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--sub);
+        }
+
+        /* Right form panel */
+        .booking-form-panel {
+            padding: 2.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+            .booking-form-panel h2 {
+                font-family: var(--font-head);
+                font-size: 1.8rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+            }
+
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--sub);
+        }
+
+        .form-control-modern,
+        .form-select-modern {
+            background: rgba(10,10,15,0.85);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+            color: var(--text);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+            .form-control-modern:focus,
+            .form-select-modern:focus {
+                outline: none;
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(77, 238, 234, 0.15);
+            }
+
+        textarea.form-control-modern {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Price summary */
+        .price-summary {
+            background: rgba(77, 238, 234, 0.1);
+            border: 1px solid rgba(77, 238, 234, 0.3);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .price-summary span:first-child {
+                font-family: var(--font-mono);
+                font-size: 0.8rem;
+                color: var(--sub);
+            }
+
+            .price-summary span:last-child {
+                font-family: var(--font-head);
+                font-size: 1.4rem;
+                font-weight: 800;
+                color: var(--accent);
+            }
+
+        /* Submit button */
+        .btn-submit {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 100px;
+            padding: 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(77, 238, 234, 0.3);
+            }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            display: none;
+            margin-top: 0.25rem;
+        }
+
+        /* Booking history section */
+        .history-section {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 2.5rem 5rem;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .history-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: all 0.3s;
+        }
+
+            .history-card:hover {
+                border-color: rgba(77, 238, 234, 0.3);
+                transform: translateY(-4px);
+                box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            }
+
+        .history-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(77, 238, 234, 0.15), rgba(168, 85, 247, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+            .history-icon i {
+                font-size: 1.5rem;
+                color: var(--accent);
+            }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-title {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.7rem;
+            color: var(--sub);
+            margin-bottom: 0.75rem;
+        }
+
+            .history-meta i {
+                margin-right: 0.25rem;
+                color: var(--accent);
+            }
+
+        .badge-modern {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-confirmed {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-cancelled {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .history-price {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+        }
+
+        .empty-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(77, 238, 234, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+            .empty-icon i {
+                font-size: 3rem;
+                color: var(--accent);
+            }
+
+        /* Alert */
+        .alert-modern {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 1rem;
+            color: #4ade80;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-info-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .process-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .history-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .process-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-hero-content {
+                padding: 3rem 1.5rem 2rem;
+            }
+
+            .booking-main-section,
+            .process-section,
+            .history-section {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .process-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+                .process-icon i {
+                    font-size: 1.8rem;
+                }
+        }
+
+        /* Date picker dark mode */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8);
+            cursor: pointer;
+        }
+    </style>
+}
+
+<!-- HERO SECTION (matching package page) -->
+<section id="booking-hero">
+    <div class="booking-hero-glow"></div>
+    <div class="booking-hero-content">
+        <div class="booking-hero-label">Secure Your Journey</div>
+        <h1 class="booking-hero-h1">
+            <span class="text-gradient">Book</span> Your<br />
+            Dream Escape
+        </h1>
+        <p style="color: var(--sub); margin-top: 1rem; max-width: 460px; line-height: 1.65;">
+            Reserve your adventure in seconds. Flexible booking, secure payment, and instant confirmation.
+        </p>
+    </div>
+</section>
+
+<!-- 3 EASY STEPS SECTION (with background images in circles) -->
+<div class="process-section">
+    <div class="section-badge">Simple Process</div>
+    <h2 class="section-title">3 Easy Steps</h2>
+    <div class="process-grid">
+        <div class="process-card">
+            <div class="process-icon step1">
+                <i class="fa fa-globe"></i>
+            </div>
+            <h5>Choose Destination</h5>
+            <p>Browse our curated packages and find your perfect getaway from hundreds of destinations.</p>
+        </div>
+        <div class="process-card">
+            <div class="process-icon step2">
+                <i class="fa fa-credit-card"></i>
+            </div>
+            <h5>Secure Payment</h5>
+            <p>Pay online with confidence using our encrypted payment gateway. Multiple options available.</p>
+        </div>
+        <div class="process-card">
+            <div class="process-icon step3">
+                <i class="fa fa-plane"></i>
+            </div>
+            <h5>Fly & Enjoy</h5>
+            <p>Receive your confirmation, pack your bags, and embark on an unforgettable journey.</p>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN BOOKING SECTION (glass card with background image) -->
+<div class="booking-main-section">
+    <div class="booking-glass-card">
+        <div class="booking-grid">
+            <!-- LEFT: INFO PANEL -->
+            <div class="booking-info-panel">
+                <h6>Why Book With Us</h6>
+                <h1>Online Booking</h1>
+                <p>Plan your dream trip with ease. Choose from our curated travel packages, select your preferred destination, and confirm your booking in just a few steps.</p>
+                <p>Our team is dedicated to making your travel experience smooth and memorable. From the moment you book to the day you return, we've got you covered.</p>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert-modern">
+                        <i class="fa fa-check-circle me-2"></i> @TempData["Success"]
+                    </div>
+                }
+
+                @if (Model != null && Model.Any())
+                {
+                    var total = Model.Count();
+                    var pending = Model.Count(b => b.Status == "Pending");
+                    var confirmed = Model.Count(b => b.Status == "Confirmed");
+                    var completed = Model.Count(b => b.Status == "Completed");
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">@total</div>
+                            <div class="stat-label">Total Trips</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: #fbbf24;">@pending</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: #60a5fa;">@confirmed</div>
+                            <div class="stat-label">Confirmed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: #4ade80;">@completed</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- RIGHT: FORM PANEL -->
+            <div class="booking-form-panel">
+                <h2>Book A Tour</h2>
+
+                @using (Html.BeginForm("Create", "Booking", FormMethod.Post, new { id = "bookingForm", novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("PackageId", "", new { id = "hiddenPackageId" })
+                    @Html.Hidden("TotalAmount", "", new { id = "hiddenTotalAmount" })
+
+                    <div class="booking-form">
+                        @if (ViewBag.Packages != null)
+                        {
+                            <div class="form-group">
+                                <label class="form-label">SELECT PACKAGE</label>
+                                <select class="form-select-modern" id="packageSelect">
+                                    <option value="" disabled selected>Choose a package</option>
+                                    @foreach (var pkg in ViewBag.Packages as IEnumerable<TourwebsiteFYP.DB_data_models.Package>)
+                                    {
+                                        <option value="@pkg.PackageId" data-price="@pkg.Price" data-name="@pkg.PackageName">
+                                            @pkg.PackageName — $@pkg.Price
+                                        </option>
+                                    }
+                                </select>
+                                <span class="error-msg" id="pkg-error"><i class="fa fa-exclamation-circle me-1"></i>Please select a package</span>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label class="form-label">EMAIL ADDRESS</label>
+                            @Html.TextBox("Email", "", new { @class = "form-control-modern", id = "emailInput", placeholder = "your@email.com", type = "email" })
+                            <span class="error-msg" id="email-error"><i class="fa fa-exclamation-circle me-1"></i>Please enter a valid email</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">TRAVEL DATE</label>
+                            @Html.TextBox("BookingDate", "", new { @class = "form-control-modern", id = "BookingDate", placeholder = "Select date", type = "date" })
+                            <span class="error-msg" id="date-error"><i class="fa fa-exclamation-circle me-1"></i>Please select a travel date</span>
+                        </div>
+
+                        @if (ViewBag.Destinations != null)
+                        {
+                            <div class="form-group">
+                                <label class="form-label">DESTINATION</label>
+                                @Html.DropDownList("DestinationId",
+                                         ViewBag.Destinations as SelectList,
+                                         "-- Select Destination --",
+                                         new { @class = "form-select-modern", id = "destinationSelect" })
+                                <span class="error-msg" id="dest-error"><i class="fa fa-exclamation-circle me-1"></i>Please select a destination</span>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label class="form-label">SPECIAL REQUESTS</label>
+                            @Html.TextArea("SpecialRequest", "", new { @class = "form-control-modern", id = "message", placeholder = "Any dietary restrictions, preferences, or notes..." })
+                        </div>
+
+                        <div class="price-summary" id="priceSummary" style="display: none;">
+                            <span id="summaryPkgName">Selected Package</span>
+                            <span id="summaryTotal">$0</span>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <i class="fa fa-paper-plane"></i> Confirm Booking
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BOOKING HISTORY SECTION -->
+@if (Model != null && Model.Any())
+{
+    <div class="history-section">
+        <div class="section-badge">Your Journeys</div>
+        <h2 class="section-title">My Bookings</h2>
+        <div class="history-grid">
+            @foreach (var booking in Model)
+            {
+                var badgeClass = "badge-pending";
+                if (booking.Status == "Confirmed") { badgeClass = "badge-confirmed"; }
+                if (booking.Status == "Completed") { badgeClass = "badge-completed"; }
+                if (booking.Status == "Cancelled") { badgeClass = "badge-cancelled"; }
+
+                <div class="history-card">
+                    <div class="history-icon">
+                        <i class="fa fa-map-marker-alt"></i>
+                    </div>
+                    <div class="history-content">
+                        <div class="history-title">
+                            @(booking.Package != null ? booking.Package.PackageName : "Package #" + booking.PackageId)
+                        </div>
+                        <div class="history-meta">
+                            <span><i class="fa fa-calendar-alt"></i> @(booking.BookingDate.HasValue ? booking.BookingDate.Value.ToString("dd MMM yyyy") : "TBD")</span>
+                            @if (!string.IsNullOrEmpty(booking.Email))
+                            {
+                                <span><i class="fa fa-envelope"></i> @booking.Email</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge-modern @badgeClass">@booking.Status</span>
+                            <span class="history-price">
+                                $@(booking.TotalAmount > 0 ? booking.TotalAmount : (booking.Package?.Price ?? 0))
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (Model != null && !Model.Any())
+{
+    <div class="history-section">
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fa fa-suitcase"></i>
+            </div>
+            <h3 style="margin-bottom: 0.5rem;">No Bookings Yet</h3>
+            <p style="color: var(--sub);">You haven't made any bookings. Fill the form above to get started!</p>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Set min date to today
+        (function () {
+            var dateInput = document.getElementById('BookingDate');
+            if (dateInput) {
+                var today = new Date();
+                var yyyy = today.getFullYear();
+                var mm = String(today.getMonth() + 1).padStart(2, '0');
+                var dd = String(today.getDate()).padStart(2, '0');
+                dateInput.min = yyyy + '-' + mm + '-' + dd;
+            }
+        })();
+
+        // Package selection handler
+        var pkgSelect = document.getElementById('packageSelect');
+        if (pkgSelect) {
+            pkgSelect.addEventListener('change', function () {
+                var opt = this.options[this.selectedIndex];
+                var id = opt.value;
+                var price = opt.getAttribute('data-price');
+                var name = opt.getAttribute('data-name');
+
+                document.getElementById('hiddenPackageId').value = id;
+                document.getElementById('hiddenTotalAmount').value = price;
+
+                var summary = document.getElementById('priceSummary');
+                summary.style.display = 'flex';
+                document.getElementById('summaryPkgName').textContent = name;
+                document.getElementById('summaryTotal').textContent = '$' + price;
+
+                document.getElementById('pkg-error').style.display = 'none';
+            });
+        }
+
+        // Form validation
+        document.getElementById('bookingForm').addEventListener('submit', function (e) {
+            var valid = true;
+
+            var pkgId = document.getElementById('hiddenPackageId').value;
+            if (!pkgId) {
+                document.getElementById('pkg-error').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('pkg-error').style.display = 'none';
+            }
+
+            var email = document.getElementById('emailInput');
+            var emailRx = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            if (!email || !emailRx.test(email.value)) {
+                document.getElementById('email-error').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('email-error').style.display = 'none';
+            }
+
+            var date = document.getElementById('BookingDate');
+            if (!date || !date.value) {
+                document.getElementById('date-error').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('date-error').style.display = 'none';
+            }
+
+            var dest = document.getElementById('destinationSelect');
+            if (dest && !dest.value) {
+                document.getElementById('dest-error').style.display = 'block';
+                valid = false;
+            } else if (dest) {
+                document.getElementById('dest-error').style.display = 'none';
+            }
+
+            if (!valid) {
+                e.preventDefault();
+            } else {
+                var btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Confirming...';
+            }
+        });
+    </script>
+}

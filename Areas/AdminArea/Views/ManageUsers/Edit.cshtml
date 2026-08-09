@@ -1,0 +1,90 @@
+﻿@model TourwebsiteFYP.DB_data_models.User
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<div class="col-md-12">
+    <!--begin::Carousel Image Card-->
+    <div class="card shadow-sm rounded-4 mb-4">
+        <!--begin::Card Header-->
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Add Users</h5>
+        </div>
+        <!--end::Card Header-->
+        <!--begin::Form-->
+        <form enctype="multipart/form-data" method="post" action="/AdminArea/ManageUsers/Edit">
+            <input type="hidden" name="UserId" value="@Model.UserId" />
+            <input type="hidden" name="CreatedAt" value="@Model.CreatedAt" />
+
+            <!--begin::Card Body-->
+            <div class="card-body">
+                <div class="row g-3">
+
+
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <input value="@Model.FullName" name="FullName" type="text" class="form-control" />
+                    </div>
+                   
+
+
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input value="@Model.Email" name="Email" type="email" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"> Address</label>
+                        <input value="@Model.Address" name="Address" type="text" class="form-control" />
+                    </div>
+                  
+                    <div class="col-md-6">
+                        <label class="form-label"> Phone</label>
+                        <input value="@Model.Phone" name="Phone" type="tel" class="form-control" />
+                    </div>
+
+
+
+                    <div class="col-md-6">
+                        <label class="form-label">Password </label>
+                        <input value="@Model.PasswordHash" name="PasswordHash" type="password" class="form-control" />
+                    </div>
+                   
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">User Type</label>
+                            <select name="UserTypeId" class="form-select" required>
+                                <option value="">-- Select User Type --</option>
+                                @foreach (var item in ViewBag.UserTypeList)
+                                {
+                                    string selectedVal = "";
+                                    if (item.UserTypeId == Model.UserTypeId)
+                                    {
+                                        selectedVal = "selected";
+                                    }
+                                    <option @selectedVal value="@item.UserTypeId">@item.TypeName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--end::Card Body-->
+            <!--begin::Card Footer-->
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Edit
+                </button>
+                <a href="/AdminArea/ManageUsers/Index" class="btn btn-danger">
+                    <i class="bi bi-x-circle me-1"></i> Cancel
+                </a>
+            </div>
+            <!--end::Card Footer-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Carousel Image Card-->
+</div>
+
+
+

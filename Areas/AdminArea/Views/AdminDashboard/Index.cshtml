@@ -1,0 +1,753 @@
+﻿@{
+    Layout = "~/Areas/AdminArea/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Dashboard";
+    ViewBag.ActiveMenu = "Dashboard";
+}
+
+@section styles {
+    <style>
+        /* ── Page header ── */
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+            .page-title span {
+                background: var(--accent-grad);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ── Stat cards ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.2s;
+        }
+
+            .stat-card:hover {
+                border-color: var(--border-glow);
+                transform: translateY(-2px);
+            }
+
+            .stat-card::after {
+                content: '';
+                position: absolute;
+                top: -20px;
+                right: -20px;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: var(--c-glow, rgba(0,221,180,0.06));
+                pointer-events: none;
+            }
+
+            .stat-card.c-purple {
+                --c-glow: rgba(124,92,252,0.10);
+            }
+
+            .stat-card.c-teal {
+                --c-glow: rgba(0,184,217,0.10);
+            }
+
+            .stat-card.c-amber {
+                --c-glow: rgba(251,191,36,0.10);
+            }
+
+            .stat-card.c-pink {
+                --c-glow: rgba(236,72,153,0.10);
+            }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(0,221,180,0.08);
+            border: 1px solid rgba(0,221,180,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            color: var(--accent-cyan);
+            margin-bottom: 14px;
+        }
+
+        .stat-card.c-purple .stat-icon {
+            background: rgba(124,92,252,0.10);
+            border-color: rgba(124,92,252,0.2);
+            color: #a78bfa;
+        }
+
+        .stat-card.c-teal .stat-icon {
+            background: rgba(0,184,217,0.10);
+            border-color: rgba(0,184,217,0.2);
+            color: var(--accent-teal);
+        }
+
+        .stat-card.c-amber .stat-icon {
+            background: rgba(251,191,36,0.10);
+            border-color: rgba(251,191,36,0.2);
+            color: #fbbf24;
+        }
+
+        .stat-card.c-pink .stat-icon {
+            background: rgba(236,72,153,0.10);
+            border-color: rgba(236,72,153,0.2);
+            color: #f472b6;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+            .stat-value.grad {
+                background: var(--accent-grad);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+            .stat-change.up {
+                background: rgba(0,221,180,0.10);
+                color: var(--accent-cyan);
+            }
+
+            .stat-change.down {
+                background: rgba(226,68,92,0.10);
+                color: #e2445c;
+            }
+
+        /* ── Panel ── */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color 0.25s;
+            margin-bottom: 20px;
+        }
+
+            .panel:hover {
+                border-color: rgba(0,221,180,0.12);
+            }
+
+        .panel-header {
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+
+        .panel-badge {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: rgba(0,221,180,0.10);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0,221,180,0.20);
+        }
+
+        .panel-body {
+            padding: 22px;
+        }
+
+        /* ── Two-col layout ── */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+        }
+
+        @@media (max-width: 1100px) {
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Chart canvas wrappers ── */
+        .chart-wrap {
+            position: relative;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        /* ── Tables ── */
+        .nv-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .nv-table th {
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                padding: 0 12px 12px;
+                text-align: left;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nv-table td {
+                padding: 11px 12px;
+                font-size: 13px;
+                color: var(--text-secondary);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nv-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .nv-table tr:hover td {
+                background: var(--bg-hover);
+                color: var(--text-primary);
+            }
+
+        .td-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .td-amount {
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .s-confirmed {
+            background: rgba(0,221,180,0.10);
+            color: var(--accent-cyan);
+        }
+
+        .s-pending {
+            background: rgba(245,158,11,0.10);
+            color: #f59e0b;
+        }
+
+        .s-cancelled {
+            background: rgba(226,68,92,0.10);
+            color: #e2445c;
+        }
+
+        .s-instock {
+            background: rgba(0,221,180,0.10);
+            color: var(--accent-cyan);
+        }
+
+        .s-low {
+            background: rgba(251,191,36,0.10);
+            color: #fbbf24;
+        }
+
+        .s-out {
+            background: rgba(226,68,92,0.10);
+            color: #e2445c;
+        }
+
+        /* ── Mini stats in sidebar panel ── */
+        .mini-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .mini-stat {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .mini-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .mini-lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ── Activity feed ── */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+            .activity-item:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+        .a-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .dot-cyan {
+            background: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .dot-purple {
+            background: var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .dot-teal {
+            background: var(--accent-teal);
+            color: var(--accent-teal);
+        }
+
+        .dot-amber {
+            background: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .a-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+            .a-text strong {
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+
+        .a-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ── Two-col table row ── */
+        .table-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @@media (max-width: 900px) {
+            .table-row-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Pie / doughnut charts */
+        .chart-half {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @@media (max-width: 900px) {
+            .chart-half {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<!-- Page header -->
+<div class="page-header">
+    <h1 class="page-title">Travel <span>Intelligence</span> Dashboard</h1>
+    <p class="page-subtitle">Welcome back — here is what is happening with NEXVOY today.</p>
+</div>
+
+<!-- ── Stat Cards ── -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="bi bi-box2-fill"></i></div>
+        <div class="stat-label">Total Packages</div>
+        <div class="stat-value grad">12</div>
+        <span class="stat-change up"><i class="bi bi-arrow-up" style="font-size:10px"></i> +2 this month</span>
+    </div>
+    <div class="stat-card c-purple">
+        <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+        <div class="stat-label">Total Bookings</div>
+        <div class="stat-value">250</div>
+        <span class="stat-change up"><i class="bi bi-arrow-up" style="font-size:10px"></i> +12.4%</span>
+    </div>
+    <div class="stat-card c-teal">
+        <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-label">Total Customers</div>
+        <div class="stat-value">180</div>
+        <span class="stat-change up"><i class="bi bi-arrow-up" style="font-size:10px"></i> +8.1%</span>
+    </div>
+    <div class="stat-card c-amber">
+        <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value">$45K</div>
+        <span class="stat-change up"><i class="bi bi-arrow-up" style="font-size:10px"></i> +5.3%</span>
+    </div>
+    <div class="stat-card c-pink">
+        <div class="stat-icon"><i class="bi bi-geo-alt-fill"></i></div>
+        <div class="stat-label">Destinations</div>
+        <div class="stat-value">48</div>
+        <span class="stat-change down"><i class="bi bi-arrow-down" style="font-size:10px"></i> -1</span>
+    </div>
+</div>
+
+<!-- ── Booking Trends (full width) ── -->
+<div class="panel">
+    <div class="panel-header">
+        <span class="panel-title">Booking &amp; Product Trends (Jan – Dec)</span>
+        <span class="panel-badge">2025</span>
+    </div>
+    <div class="panel-body">
+        <div class="chart-wrap">
+            <canvas id="lineChart" height="90"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ── Pie + Doughnut row ── -->
+<div class="chart-half">
+    <div class="panel" style="margin-bottom:0">
+        <div class="panel-header">
+            <span class="panel-title">Package Distribution</span>
+        </div>
+        <div class="panel-body">
+            <div class="chart-wrap" style="max-height:300px;display:flex;align-items:center;justify-content:center">
+                <canvas id="packagePieChart" style="max-height:260px"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="panel" style="margin-bottom:0">
+        <div class="panel-header">
+            <span class="panel-title">Product Distribution</span>
+        </div>
+        <div class="panel-body">
+            <div class="chart-wrap" style="max-height:300px;display:flex;align-items:center;justify-content:center">
+                <canvas id="productDoughnutChart" style="max-height:260px"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="margin-bottom:20px"></div>
+
+<!-- ── Monthly Revenue (full width) ── -->
+<div class="panel">
+    <div class="panel-header">
+        <span class="panel-title">Monthly Revenue</span>
+        <span class="panel-badge">$USD</span>
+    </div>
+    <div class="panel-body">
+        <div class="chart-wrap">
+            <canvas id="barChart" height="90"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ── Tables row ── -->
+<div class="table-row-2">
+    <!-- Latest Bookings -->
+    <div class="panel" style="margin-bottom:0">
+        <div class="panel-header">
+            <span class="panel-title">Latest Bookings</span>
+            <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })"
+               style="font-size:12px;color:var(--accent-cyan);text-decoration:none">View all →</a>
+        </div>
+        <div class="panel-body" style="padding:0">
+            <table class="nv-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Package</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color:var(--text-muted)">BK001</td>
+                        <td class="td-name">John Doe</td>
+                        <td>Dubai Tour</td>
+                        <td><span class="status-pill s-confirmed">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-muted)">BK002</td>
+                        <td class="td-name">Sara Ali</td>
+                        <td>Turkey Adventure</td>
+                        <td><span class="status-pill s-pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-muted)">BK003</td>
+                        <td class="td-name">Michael Smith</td>
+                        <td>Maldives Trip</td>
+                        <td><span class="status-pill s-cancelled">Cancelled</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Latest Products -->
+    <div class="panel" style="margin-bottom:0">
+        <div class="panel-header">
+            <span class="panel-title">Latest Products</span>
+            <a href="@Url.Action("Index","ManageProducts", new { area = "AdminArea" })"
+               style="font-size:12px;color:var(--accent-cyan);text-decoration:none">View all →</a>
+        </div>
+        <div class="panel-body" style="padding:0">
+            <table class="nv-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color:var(--text-muted)">PR001</td>
+                        <td class="td-name">Travel Bag</td>
+                        <td>Accessories</td>
+                        <td><span class="status-pill s-instock">In Stock</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-muted)">PR002</td>
+                        <td class="td-name">Camera</td>
+                        <td>Electronics</td>
+                        <td><span class="status-pill s-low">Low</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-muted)">PR003</td>
+                        <td class="td-name">Water Bottle</td>
+                        <td>Essentials</td>
+                        <td><span class="status-pill s-out">Out</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            /* shared chart defaults for dark theme */
+            Chart.defaults.color = '#7a9ab5';
+            Chart.defaults.borderColor = 'rgba(0,220,180,0.07)';
+
+            var CYAN = 'rgba(0,221,180,1)';
+            var PURPLE = 'rgba(124,92,252,1)';
+            var TEAL = 'rgba(0,184,217,1)';
+            var AMBER = 'rgba(251,191,36,1)';
+            var PINK = 'rgba(244,114,182,1)';
+
+            function alpha(hex, a) {
+                return hex.replace('1)', a + ')');
+            }
+
+            /* ── Booking & Product Trends Line Chart ── */
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        {
+                            label: 'Bookings',
+                            data: [12, 19, 3, 5, 8, 15, 20, 25, 18, 22, 30, 35],
+                            borderColor: CYAN,
+                            backgroundColor: 'rgba(0,221,180,0.08)',
+                            fill: true, tension: 0.4, pointRadius: 4,
+                            pointBackgroundColor: CYAN, pointBorderColor: '#060c14'
+                        },
+                        {
+                            label: 'Products',
+                            data: [8, 12, 5, 10, 15, 18, 22, 28, 24, 20, 27, 32],
+                            borderColor: PURPLE,
+                            backgroundColor: 'rgba(124,92,252,0.08)',
+                            fill: true, tension: 0.4, pointRadius: 4,
+                            pointBackgroundColor: PURPLE, pointBorderColor: '#060c14'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, padding: 20 } }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(0,220,180,0.05)' } },
+                        y: { grid: { color: 'rgba(0,220,180,0.05)' }, beginAtZero: true }
+                    }
+                }
+            });
+
+            /* ── Package Distribution Pie ── */
+            new Chart(document.getElementById('packagePieChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Adventure', 'Luxury', 'Budget', 'Family'],
+                    datasets: [{
+                        data: [30, 25, 20, 25],
+                        backgroundColor: [
+                            'rgba(0,221,180,0.75)',
+                            'rgba(124,92,252,0.75)',
+                            'rgba(251,191,36,0.75)',
+                            'rgba(0,184,217,0.75)'
+                        ],
+                        borderColor: '#060c14',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } }
+                    }
+                }
+            });
+
+            /* ── Product Distribution Doughnut ── */
+            new Chart(document.getElementById('productDoughnutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Flights', 'Hotels', 'Tours', 'Transport'],
+                    datasets: [{
+                        data: [40, 20, 25, 15],
+                        backgroundColor: [
+                            'rgba(124,92,252,0.75)',
+                            'rgba(244,114,182,0.75)',
+                            'rgba(251,191,36,0.75)',
+                            'rgba(0,184,217,0.75)'
+                        ],
+                        borderColor: '#060c14',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } }
+                    }
+                }
+            });
+
+            /* ── Monthly Revenue Bar ── */
+            new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [500, 700, 800, 600, 900, 1200, 1500, 1400, 1100, 1300, 1600, 1800],
+                        backgroundColor: 'rgba(0,221,180,0.20)',
+                        borderColor: CYAN,
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(0,220,180,0.05)' } },
+                        y: {
+                            grid: { color: 'rgba(0,220,180,0.05)' },
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (v) { return '$' + v; }
+                            }
+                        }
+                    }
+                }
+            });
+        })();
+    </script>
+}

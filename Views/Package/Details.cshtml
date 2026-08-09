@@ -1,0 +1,1878 @@
+﻿@model TourwebsiteFYP.DB_data_models.Package
+@{
+    ViewBag.Title = Model.PackageName + " - Details";
+    ViewBag.ActivePage = "Packages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var relatedPackages = ViewBag.RelatedPackages as List<TourwebsiteFYP.DB_data_models.Package>;
+    var user = ViewBag.User as TourwebsiteFYP.DB_data_models.User;
+    var images = Model.PackageImages?.ToList() ?? new List<TourwebsiteFYP.DB_data_models.PackageImage>();
+}
+
+@section HeadStyles {
+    <style>
+        /* ═══════════════════════════════════════════════
+           ROOT VARIABLES — matching Packages page exactly
+        ═══════════════════════════════════════════════ */
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-surface: rgba(15, 15, 20, 0.85);
+            --glass: rgba(20, 20, 28, 0.7);
+            --glass-hi: rgba(30, 30, 38, 0.85);
+            --border: rgba(70, 70, 90, 0.3);
+            --border-hi: rgba(100, 100, 130, 0.4);
+            --accent: #4deeEA;
+            --accent2: #a855f7;
+            --purple: #c084fc;
+            --text: #f0f0f4;
+            --sub: #a0a0b0;
+            --font-head: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', 'JetBrains Mono', monospace;
+            --font-body: 'Inter', system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text);
+            font-family: var(--font-body);
+        }
+
+        /* ═══════════════════════════════════════════════
+           HERO SECTION — EXACT MATCH with Packages page
+        ═══════════════════════════════════════════════ */
+        #det-hero {
+            position: relative;
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 50% 50%, #0f0f1e 0%, #06060c 50%, #020205 100%);
+        }
+
+        #det-hero-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+        }
+
+        .det-hero-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 40%, rgba(77,238,234,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(168,85,247,0.06) 0%, transparent 50%), radial-gradient(ellipse at 30% 70%, rgba(77,238,234,0.04) 0%, transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .det-hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient( to bottom, transparent 0%, transparent 45%, rgba(10,10,15,0.5) 65%, rgba(10,10,15,0.85) 85%, var(--bg-deep) 100% );
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .det-hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 1200px;
+            width: 100%;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .det-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(77,238,234,0.08);
+            border: 1px solid rgba(77,238,234,0.2);
+            border-radius: 100px;
+            padding: 0.5rem 1.2rem;
+            margin-bottom: 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeUpDet 0.8s ease 0.3s forwards;
+        }
+
+        .det-hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulseDot {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.5);
+            }
+        }
+
+        .det-hero-h1 {
+            font-family: var(--font-head);
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUpDet 0.9s ease 0.5s forwards;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @@keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .det-hero-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUpDet 0.9s ease 0.7s forwards;
+            margin-bottom: 2.5rem;
+        }
+
+        .det-hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--sub);
+        }
+
+            .det-hero-meta-item i {
+                color: var(--accent);
+                font-size: 0.85rem;
+            }
+
+        .det-hero-meta-sep {
+            width: 5px;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+
+        .det-hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUpDet 0.9s ease 0.9s forwards;
+        }
+
+        .btn-primary-det {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 100px;
+            padding: 0.85rem 2rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 30px rgba(77,238,234,0.3);
+        }
+
+            .btn-primary-det:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(77,238,234,0.4);
+            }
+
+        .btn-ghost-det {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 100px;
+            padding: 0.85rem 2rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+            .btn-ghost-det:hover {
+                background: rgba(255,255,255,0.1);
+                border-color: rgba(77,238,234,0.35);
+                transform: translateY(-2px);
+            }
+
+        @@keyframes fadeUpDet {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll hint */
+        .det-scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 3;
+            opacity: 0;
+            animation: fadeUpDet 1s ease 1.3s forwards;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+            .det-scroll-hint:hover {
+                opacity: 0.8;
+            }
+
+            .det-scroll-hint span {
+                font-family: var(--font-mono);
+                font-size: 0.65rem;
+                color: var(--sub);
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+            }
+
+        .scroll-icon {
+            width: 24px;
+            height: 40px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            padding-top: 6px;
+        }
+
+        .scroll-dot {
+            width: 4px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 2px;
+            animation: scrollDot 2s ease-in-out infinite;
+        }
+
+        @@keyframes scrollDot {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateY(12px);
+                opacity: 0.3;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════
+           BENTO GALLERY
+        ═══════════════════════════════════════════════ */
+        .gallery-section {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2.5rem 0;
+        }
+
+        .gallery-bento {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 1rem;
+            height: 480px;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .bento-main {
+            grid-column: 2;
+            grid-row: 1 / 3;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .bento-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+            .bento-main img,
+            .bento-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.7s ease;
+                display: block;
+            }
+
+            .bento-main:hover img,
+            .bento-item:hover img {
+                transform: scale(1.05);
+            }
+
+        .bento-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.5), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .bento-main:hover .bento-overlay,
+        .bento-item:hover .bento-overlay {
+            opacity: 1;
+        }
+
+        .gallery-count-badge {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10,10,15,0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            padding: 0.4rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .gallery-cta-row {
+            max-width: 1280px;
+            margin: 1.2rem auto 0;
+            padding: 0 2.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-view-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(77,238,234,0.08);
+            border: 1px solid rgba(77,238,234,0.22);
+            border-radius: 100px;
+            padding: 0.5rem 1.3rem;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--accent);
+            cursor: pointer;
+            letter-spacing: 0.1em;
+            transition: all 0.3s;
+        }
+
+            .btn-view-all:hover {
+                background: rgba(77,238,234,0.14);
+                border-color: rgba(77,238,234,0.4);
+            }
+
+        /* ═══════════════════════════════════════════════
+           MAIN CONTENT — Two-column layout
+        ═══════════════════════════════════════════════ */
+        .main-content {
+            max-width: 1280px;
+            margin: 4rem auto;
+            padding: 0 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        /* ── LEFT COLUMN ── */
+        .det-tags {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+        }
+
+        .det-tag {
+            background: rgba(77,238,234,0.08);
+            border: 1px solid rgba(77,238,234,0.18);
+            border-radius: 100px;
+            padding: 0.3rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+        }
+
+            .det-tag.purple {
+                background: rgba(168,85,247,0.08);
+                border-color: rgba(168,85,247,0.2);
+                color: var(--purple);
+            }
+
+        .det-title {
+            font-family: var(--font-head);
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .det-description {
+            color: var(--sub);
+            line-height: 1.75;
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 1px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-cell {
+            background: var(--glass);
+            padding: 1.4rem 0.8rem;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+            .stat-cell:hover {
+                background: var(--glass-hi);
+            }
+
+            .stat-cell i {
+                font-size: 1.2rem;
+                color: var(--accent);
+                margin-bottom: 0.5rem;
+                display: block;
+            }
+
+        .stat-val {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-key {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--sub);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Section headings */
+        .sec-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+        }
+
+        .sec-title {
+            font-family: var(--font-head);
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.2rem;
+        }
+
+        .overview-text {
+            color: var(--sub);
+            line-height: 1.75;
+            font-size: 0.9rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Included Grid */
+        .included-wrap {
+            margin-bottom: 2.5rem;
+        }
+
+        .included-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.7rem;
+        }
+
+        .included-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 0.75rem 1rem;
+            font-size: 0.82rem;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+            .included-item:hover {
+                border-color: rgba(77,238,234,0.25);
+                background: rgba(77,238,234,0.04);
+            }
+
+            .included-item i {
+                color: var(--accent);
+                width: 18px;
+                flex-shrink: 0;
+            }
+
+        /* Itinerary Accordion */
+        .itinerary-wrap {
+            margin-bottom: 1rem;
+        }
+
+        .acc-item {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+            .acc-item:hover {
+                border-color: rgba(77,238,234,0.2);
+            }
+
+            .acc-item.open {
+                border-color: rgba(77,238,234,0.3);
+            }
+
+        .acc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.1rem 1.4rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s;
+        }
+
+            .acc-header:hover {
+                background: rgba(255,255,255,0.02);
+            }
+
+        .acc-day-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .acc-day-num {
+            font-family: var(--font-head);
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--accent);
+            min-width: 50px;
+        }
+
+        .acc-day-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .acc-chevron {
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            color: var(--sub);
+        }
+
+        .acc-item.open .acc-chevron {
+            transform: rotate(180deg);
+        }
+
+        .acc-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .acc-item.open .acc-body {
+            max-height: 400px;
+        }
+
+        .acc-body-inner {
+            padding: 0 1.4rem 1.4rem;
+            display: flex;
+            gap: 1.2rem;
+            align-items: flex-start;
+        }
+
+            .acc-body-inner img {
+                width: 110px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 12px;
+                flex-shrink: 0;
+            }
+
+        .acc-body-text {
+            color: var(--sub);
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        /* ── RIGHT COLUMN — Sticky Booking Card ── */
+        .booking-sidebar {
+            position: sticky;
+            top: 100px;
+            align-self: start;
+        }
+
+        .booking-card {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+            .booking-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 24px;
+                padding: 1px;
+                background: linear-gradient(135deg, rgba(77,238,234,0.15), transparent 40%, rgba(168,85,247,0.1));
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                pointer-events: none;
+            }
+
+        .booking-seller-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #000;
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 0.35rem 1.1rem;
+            border-radius: 100px;
+            letter-spacing: 0.12em;
+            white-space: nowrap;
+        }
+
+        .booking-price-row {
+            text-align: center;
+            padding: 1rem 0 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .booking-price-val {
+            font-family: var(--font-head);
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .booking-price-sub {
+            font-size: 0.78rem;
+            color: var(--sub);
+            font-family: var(--font-mono);
+        }
+
+        /* Booking inclusions row */
+        .booking-inclusions {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .book-inc-item {
+            text-align: center;
+        }
+
+            .book-inc-item i {
+                font-size: 1.2rem;
+                color: var(--accent);
+                display: block;
+                margin-bottom: 0.4rem;
+            }
+
+            .book-inc-item span {
+                font-size: 0.62rem;
+                color: var(--sub);
+                font-family: var(--font-mono);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+
+        /* Booking form */
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+            .form-group i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--sub);
+                font-size: 0.8rem;
+                pointer-events: none;
+            }
+
+            .form-group.textarea-group i {
+                top: 1rem;
+                transform: none;
+            }
+
+        .form-input {
+            width: 100%;
+            background: rgba(10,10,15,0.8);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 0.85rem 1rem 0.85rem 2.5rem;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+
+            .form-input::placeholder {
+                color: var(--sub);
+            }
+
+            .form-input:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(77,238,234,0.1);
+            }
+
+        textarea.form-input {
+            resize: none;
+            padding-top: 0.85rem;
+        }
+
+        .btn-book {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 14px;
+            padding: 1rem;
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #000;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            letter-spacing: -0.01em;
+        }
+
+            .btn-book:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(77,238,234,0.4);
+            }
+
+        .booking-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--sub);
+            margin-top: 0.8rem;
+            font-family: var(--font-mono);
+        }
+
+            .booking-note i {
+                color: var(--accent);
+            }
+
+        /* ═══════════════════════════════════════════════
+           CAROUSEL MODAL — Full Screen Lightbox
+        ═══════════════════════════════════════════════ */
+        .carousel-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(5,5,10,0.97);
+            backdrop-filter: blur(20px);
+        }
+
+            .carousel-modal.active {
+                display: flex;
+                flex-direction: column;
+            }
+
+        .carousel-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
+
+        .carousel-modal-title {
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .carousel-modal-counter {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--sub);
+        }
+
+        .carousel-modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+            .carousel-modal-close:hover {
+                background: rgba(255,255,255,0.08);
+                border-color: rgba(255,255,255,0.2);
+            }
+
+        .carousel-main-view {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 1rem 5rem;
+        }
+
+            .carousel-main-view img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                border-radius: 16px;
+                transition: opacity 0.3s, transform 0.3s;
+            }
+
+                .carousel-main-view img.slide-out-left {
+                    opacity: 0;
+                    transform: translateX(-60px) scale(0.95);
+                }
+
+                .carousel-main-view img.slide-out-right {
+                    opacity: 0;
+                    transform: translateX(60px) scale(0.95);
+                }
+
+        .carousel-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(20,20,30,0.8);
+            backdrop-filter: blur(10px);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+            .carousel-nav-btn:hover {
+                background: rgba(77,238,234,0.15);
+                border-color: rgba(77,238,234,0.4);
+                color: var(--accent);
+            }
+
+            .carousel-nav-btn.prev {
+                left: 1rem;
+            }
+
+            .carousel-nav-btn.next {
+                right: 1rem;
+            }
+
+        .carousel-thumbnails {
+            display: flex;
+            gap: 0.6rem;
+            padding: 1rem 2rem 1.5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex-shrink: 0;
+            justify-content: center;
+        }
+
+            .carousel-thumbnails::-webkit-scrollbar {
+                display: none;
+            }
+
+        .carousel-thumb {
+            width: 72px;
+            height: 52px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            opacity: 0.5;
+        }
+
+            .carousel-thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .carousel-thumb:hover {
+                opacity: 0.85;
+            }
+
+            .carousel-thumb.active {
+                border-color: var(--accent);
+                opacity: 1;
+                box-shadow: 0 0 16px rgba(77,238,234,0.4);
+            }
+
+        /* ═══════════════════════════════════════════════
+           RECOMMENDED SECTION
+        ═══════════════════════════════════════════════ */
+        .rec-section {
+            max-width: 1280px;
+            margin: 5rem auto;
+            padding: 0 2.5rem;
+        }
+
+        .rec-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+            .rec-header .sec-label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .rec-header .sec-title {
+                font-size: clamp(1.8rem,3vw,2.4rem);
+            }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 1.5rem;
+        }
+
+        .rec-card {
+            background: linear-gradient(180deg, rgba(30,30,45,0.6) 0%, rgba(20,20,30,0.8) 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+            .rec-card:hover {
+                transform: translateY(-8px);
+                border-color: rgba(77,238,234,0.15);
+                box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 30px rgba(77,238,234,0.05);
+            }
+
+        .rec-img {
+            height: 210px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .rec-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.7s ease;
+            }
+
+        .rec-card:hover .rec-img img {
+            transform: scale(1.05);
+        }
+
+        .rec-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.5), transparent 60%);
+        }
+
+        .rec-body {
+            padding: 1.3rem;
+        }
+
+        .rec-title {
+            font-family: var(--font-head);
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .rec-meta {
+            display: flex;
+            gap: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--sub);
+            margin-bottom: 0.9rem;
+        }
+
+        .rec-price {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ═══════════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════════ */
+        @@media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr 340px;
+                gap: 2.5rem;
+            }
+
+            .rec-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .gallery-bento {
+                height: 420px;
+            }
+        }
+
+        @@media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-sidebar {
+                position: static;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .gallery-bento {
+                grid-template-columns: 1fr;
+                grid-template-rows: 280px;
+                height: auto;
+            }
+
+            .bento-main {
+                grid-column: 1;
+                grid-row: 1;
+                height: 280px;
+            }
+
+            .bento-item {
+                display: none;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .included-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .rec-grid {
+                grid-template-columns: 1fr;
+                max-width: 440px;
+                margin: 0 auto;
+            }
+
+            .det-hero-content {
+                padding: 0 1.5rem;
+            }
+
+            .det-hero-actions {
+                flex-direction: column;
+            }
+
+            .det-hero-meta {
+                gap: 1rem;
+            }
+
+            .carousel-main-view {
+                padding: 1rem 4rem;
+            }
+
+            .carousel-nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+}
+
+<!-- ═══════════════════════════════════════════════
+     HERO SECTION — EXACT MATCH with Packages page
+═══════════════════════════════════════════════ -->
+<section id="det-hero">
+    <canvas id="det-hero-canvas"></canvas>
+    <div class="det-hero-glow"></div>
+    <div class="det-hero-overlay"></div>
+
+    <div class="det-hero-content">
+    
+
+        <h1 class="det-hero-h1">
+            @Model.PackageName
+        </h1>
+
+        <div class="det-hero-meta">
+            <div class="det-hero-meta-item">
+                <i class="fa fa-clock"></i>
+                <span>@Model.DurationDays Days</span>
+            </div>
+            <div class="det-hero-meta-sep"></div>
+            <div class="det-hero-meta-item">
+                <i class="fa fa-users"></i>
+                <span>Up to @Model.People People</span>
+            </div>
+            <div class="det-hero-meta-sep"></div>
+            <div class="det-hero-meta-item">
+                <i class="fa fa-star"></i>
+                <span>4.9 · Best Seller</span>
+            </div>
+            <div class="det-hero-meta-sep"></div>
+            <div class="det-hero-meta-item">
+                <i class="fa fa-map-marker-alt"></i>
+                <span>@(Model.Destination != null ? Model.Destination.Name : "World Tour")</span>
+            </div>
+        </div>
+
+        <div class="det-hero-actions">
+            <a href="#booking-form" class="btn-primary-det">
+                <i class="fa fa-paper-plane"></i> Book This Package
+            </a>
+            <button class="btn-ghost-det" onclick="openCarousel(0)">
+                <i class="fa fa-images"></i> View Gallery
+            </button>
+        </div>
+    </div>
+
+  
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     BENTO GALLERY
+═══════════════════════════════════════════════ -->
+<div class="gallery-section">
+    <div class="gallery-bento">
+        <!-- Left column -->
+        @if (images.Count > 1)
+        {
+            <div class="bento-item" onclick="openCarousel(1)">
+                <img src="@Url.Content(images[1].ImageUrl)" alt="@Model.PackageName" />
+                <div class="bento-overlay"></div>
+            </div>
+        }
+        @if (images.Count > 2)
+        {
+            <div class="bento-item" onclick="openCarousel(2)">
+                <img src="@Url.Content(images[2].ImageUrl)" alt="@Model.PackageName" />
+                <div class="bento-overlay"></div>
+            </div>
+        }
+
+        <!-- Main center image -->
+        <div class="bento-main" onclick="openCarousel(0)">
+            <img src="@(images.Any() ? Url.Content(images.First().ImageUrl) : Url.Content("~/content/images/no-image.jpg"))"
+                 alt="@Model.PackageName" />
+            <div class="bento-overlay"></div>
+            <div class="gallery-count-badge">
+                <i class="fa fa-images"></i>
+                @images.Count Photos
+            </div>
+        </div>
+
+        <!-- Right column -->
+        @if (images.Count > 3)
+        {
+            <div class="bento-item" onclick="openCarousel(3)">
+                <img src="@Url.Content(images[3].ImageUrl)" alt="@Model.PackageName" />
+                <div class="bento-overlay"></div>
+            </div>
+        }
+        @if (images.Count > 4)
+        {
+            <div class="bento-item" onclick="openCarousel(4)">
+                <img src="@Url.Content(images[4].ImageUrl)" alt="@Model.PackageName" />
+                <div class="bento-overlay"></div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="gallery-cta-row">
+    <button class="btn-view-all" onclick="openCarousel(0)">
+        <i class="fa fa-th"></i> VIEW ALL @images.Count PHOTOS
+    </button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════ -->
+<div class="main-content">
+
+    <!-- ── LEFT: Details ── -->
+    <div class="details-col">
+
+        <!-- Tags -->
+        <div class="det-tags">
+            <span class="det-tag">📌 @(Model.PackageType != null ? Model.PackageType.TypeName : "Classic") Tour</span>
+            <span class="det-tag">🎫 Trip Code: PKG-@Model.PackageId</span>
+            <span class="det-tag purple">⭐ Best Seller</span>
+        </div>
+
+        <h1 class="det-title">@Model.PackageName</h1>
+        <p class="det-description">@Model.Description</p>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-cell">
+                <i class="fa fa-clock"></i>
+                <div class="stat-val">@Model.DurationDays</div>
+                <div class="stat-key">Days</div>
+            </div>
+            <div class="stat-cell">
+                <i class="fa fa-users"></i>
+                <div class="stat-val">@Model.People</div>
+                <div class="stat-key">People</div>
+            </div>
+            <div class="stat-cell">
+                <i class="fa fa-mountain"></i>
+                <div class="stat-val">Moderate</div>
+                <div class="stat-key">Difficulty</div>
+            </div>
+            <div class="stat-cell">
+                <i class="fa fa-hotel"></i>
+                <div class="stat-val">5★</div>
+                <div class="stat-key">Hotels</div>
+            </div>
+        </div>
+
+        <!-- Trip Overview -->
+        <div class="sec-label">ABOUT THIS PACKAGE</div>
+        <h2 class="sec-title">Trip Overview</h2>
+        <p class="overview-text">
+            Experience the journey of a lifetime with our expertly crafted @Model.PackageName package.
+            From breathtaking landscapes to immersive cultural experiences, every moment is designed to
+            create lasting memories. Our local guides, premium accommodations, and seamless logistics
+            ensure you can focus entirely on enjoying your adventure.
+        </p>
+
+        <!-- What's Included -->
+        <div class="included-wrap">
+            <div class="sec-label">PACKAGE BENEFITS</div>
+            <h2 class="sec-title">What's Included</h2>
+            <div class="included-grid">
+                <div class="included-item"><i class="fa fa-check-circle"></i> 5-Star Hotel Accommodation</div>
+                <div class="included-item"><i class="fa fa-check-circle"></i> Daily Breakfast &amp; Selected Meals</div>
+                <div class="included-item"><i class="fa fa-check-circle"></i> Airport Transfers</div>
+                <div class="included-item"><i class="fa fa-check-circle"></i> Professional Guided Tours</div>
+                <div class="included-item"><i class="fa fa-check-circle"></i> Travel Insurance</div>
+                <div class="included-item"><i class="fa fa-check-circle"></i> 24/7 Customer Support</div>
+                <div class="included-item"><i class="fa fa-check-circle"></i> Entrance Fees to Attractions</div>
+                <div class="included-item"><i class="fa fa-check-circle"></i> Free Cancellation (7 days prior)</div>
+            </div>
+        </div>
+
+        <!-- Itinerary Accordion -->
+        <div class="itinerary-wrap">
+            <div class="sec-label">DAY BY DAY</div>
+            <h2 class="sec-title">Daily Itinerary</h2>
+
+            @if (ViewBag.Itinerary is List<TourwebsiteFYP.DB_data_models.PackageItinerary> itinerary && itinerary.Any())
+            {
+                foreach (var day in itinerary.OrderBy(d => d.DayNumber))
+                {
+                    <div class="acc-item" onclick="toggleAcc(this)">
+                        <div class="acc-header">
+                            <div class="acc-day-info">
+                                <span class="acc-day-num">Day @day.DayNumber</span>
+                                <span class="acc-day-title">@(day.DayNumber == 1 ? "Arrival & Welcome" : day.DayNumber == itinerary.Count() ? "Departure Day" : "Adventure Day")</span>
+                            </div>
+                            <i class="fa fa-chevron-down acc-chevron"></i>
+                        </div>
+                        <div class="acc-body">
+                            <div class="acc-body-inner">
+                                @if (images.Count > 0)
+                                {
+                                    <img src="@Url.Content(images[0].ImageUrl)" alt="Day @day.DayNumber" />
+                                }
+                                <p class="acc-body-text">@day.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="acc-item" onclick="toggleAcc(this)">
+                    <div class="acc-header">
+                        <div class="acc-day-info">
+                            <span class="acc-day-num">Day 1</span>
+                            <span class="acc-day-title">Arrival Day</span>
+                        </div>
+                        <i class="fa fa-chevron-down acc-chevron"></i>
+                    </div>
+                    <div class="acc-body">
+                        <div class="acc-body-inner">
+                            <p class="acc-body-text">Welcome to your destination! Our local guide will meet you at the airport and transfer you to your luxury hotel. Evening welcome dinner included.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="acc-item" onclick="toggleAcc(this)">
+                    <div class="acc-header">
+                        <div class="acc-day-info">
+                            <span class="acc-day-num">Day 2</span>
+                            <span class="acc-day-title">City Exploration</span>
+                        </div>
+                        <i class="fa fa-chevron-down acc-chevron"></i>
+                    </div>
+                    <div class="acc-body">
+                        <div class="acc-body-inner">
+                            <p class="acc-body-text">Discover the highlights of the city with our expert local guide. Visit iconic landmarks and hidden gems off the beaten path.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="acc-item" onclick="toggleAcc(this)">
+                    <div class="acc-header">
+                        <div class="acc-day-info">
+                            <span class="acc-day-num">Day 3</span>
+                            <span class="acc-day-title">Cultural Immersion</span>
+                        </div>
+                        <i class="fa fa-chevron-down acc-chevron"></i>
+                    </div>
+                    <div class="acc-body">
+                        <div class="acc-body-inner">
+                            <p class="acc-body-text">A day of authentic local experiences — traditional food, artisan workshops, and cultural performances curated by our expert team.</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ── RIGHT: Sticky Booking Sidebar ── -->
+    <div class="booking-sidebar" id="booking-form">
+        <div class="booking-card">
+            <div class="booking-seller-badge">🔥 TOP SELLER</div>
+
+            <div class="booking-price-row">
+                <div class="booking-price-val">$@Model.Price.ToString("N0")</div>
+                <div class="booking-price-sub">per person · all inclusive</div>
+            </div>
+
+            <div class="booking-inclusions">
+                <div class="book-inc-item">
+                    <i class="fa fa-plane"></i>
+                    <span>Flights</span>
+                </div>
+                <div class="book-inc-item">
+                    <i class="fa fa-hotel"></i>
+                    <span>Hotels</span>
+                </div>
+                <div class="book-inc-item">
+                    <i class="fa fa-map-marked-alt"></i>
+                    <span>Tours</span>
+                </div>
+                <div class="book-inc-item">
+                    <i class="fa fa-utensils"></i>
+                    <span>Meals</span>
+                </div>
+            </div>
+
+            @using (Html.BeginForm("CreateBooking", "Package", FormMethod.Post, new { @class = "booking-form" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="PackageId" value="@Model.PackageId" />
+                <div class="form-group">
+                    <i class="fa fa-user"></i>
+                    <input type="text" name="FullName" class="form-input"
+                           placeholder="Full Name"
+                           value="@(user?.FullName ?? "")" required />
+                </div>
+                <div class="form-group">
+                    <i class="fa fa-envelope"></i>
+                    <input type="email" name="Email" class="form-input"
+                           placeholder="Email Address"
+                           value="@(user?.Email ?? "")" required />
+                </div>
+                <div class="form-group">
+                    <i class="fa fa-phone"></i>
+                    <input type="tel" name="Phone" class="form-input"
+                           placeholder="Phone Number"
+                           value="@(user?.Phone ?? "")" />
+                </div>
+                <div class="form-group">
+                    <i class="fa fa-calendar"></i>
+                    <input type="date" name="BookingDate" class="form-input" required />
+                </div>
+                <div class="form-group textarea-group">
+                    <i class="fa fa-comment-alt"></i>
+                    <textarea name="SpecialRequest" class="form-input" rows="2"
+                              placeholder="Special Requests (optional)"></textarea>
+                </div>
+                <button type="submit" class="btn-book">
+                    <i class="fa fa-paper-plane"></i> Confirm Booking →
+                </button>
+            }
+
+            <div class="booking-note">
+                <i class="fa fa-lock"></i> Secure booking · Free cancellation within 7 days
+            </div>
+        </div>
+    </div>
+
+</div><!-- /main-content -->
+<!-- ═══════════════════════════════════════════════
+     IMAGE CAROUSEL MODAL
+═══════════════════════════════════════════════ -->
+<div class="carousel-modal" id="carouselModal" role="dialog" aria-modal="true">
+    <div class="carousel-modal-header">
+        <div class="carousel-modal-title">@Model.PackageName — Gallery</div>
+        <div style="display:flex;align-items:center;gap:1.5rem;">
+            <span class="carousel-modal-counter" id="carouselCounter">1 / @images.Count</span>
+            <button class="carousel-modal-close" onclick="closeCarousel()" aria-label="Close">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="carousel-main-view">
+        <button class="carousel-nav-btn prev" onclick="carouselNav(-1)" aria-label="Previous">
+            <i class="fa fa-chevron-left"></i>
+        </button>
+        <img id="carouselMainImg"
+             src="@(images.Any() ? Url.Content(images.First().ImageUrl) : Url.Content("~/content/images/no-image.jpg"))"
+             alt="@Model.PackageName" />
+        <button class="carousel-nav-btn next" onclick="carouselNav(1)" aria-label="Next">
+            <i class="fa fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <div class="carousel-thumbnails" id="carouselThumbs">
+        @for (int i = 0; i < images.Count; i++)
+        {
+            <div class="carousel-thumb @(i == 0 ? "active" : "")"
+                 onclick="carouselGoTo(@i)"
+                 data-index="@i">
+                <img src="@Url.Content(images[i].ImageUrl)" alt="Photo @(i+1)" />
+            </div>
+        }
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     RECOMMENDED FOR YOU
+═══════════════════════════════════════════════ -->
+<div class="rec-section">
+    <div class="rec-header">
+        <span class="sec-label">YOU MAY ALSO LIKE</span>
+        <h2 class="sec-title">Recommended <span class="text-gradient">For You</span></h2>
+    </div>
+
+    <div class="rec-grid">
+        @if (relatedPackages != null && relatedPackages.Any())
+        {
+            foreach (var pkg in relatedPackages.Take(3))
+            {
+                var pkgImages = pkg.PackageImages?.ToList() ?? new List<TourwebsiteFYP.DB_data_models.PackageImage>();
+                var pkgImg = pkgImages.FirstOrDefault()?.ImageUrl ?? Url.Content("~/content/images/no-image.jpg");
+                <a href="@Url.Action("Details","Package", new { id = pkg.PackageId })" class="rec-card">
+                    <div class="rec-img">
+                        <img src="@Url.Content(pkgImg)" alt="@pkg.PackageName" loading="lazy" />
+                        <div class="rec-img-overlay"></div>
+                    </div>
+                    <div class="rec-body">
+                        <h3 class="rec-title">@pkg.PackageName</h3>
+                        <div class="rec-meta">
+                            <span><i class="fa fa-clock"></i> @pkg.DurationDays days</span>
+                            <span><i class="fa fa-users"></i> @pkg.People travelers</span>
+                        </div>
+                        <div class="rec-price">From $@pkg.Price.ToString("N0") <span style="font-size:.65rem;color:var(--sub);font-family:var(--font-mono);font-weight:400">/person</span></div>
+                    </div>
+                </a>
+            }
+        }
+        else
+        {
+            <a href="#" class="rec-card">
+                <div class="rec-img">
+                    <img src="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=400" alt="Santorini" loading="lazy" />
+                    <div class="rec-img-overlay"></div>
+                </div>
+                <div class="rec-body">
+                    <h3 class="rec-title">Santorini Escape</h3>
+                    <div class="rec-meta"><span>7 days</span><span>2-4 travelers</span></div>
+                    <div class="rec-price">From $1,299 <span style="font-size:.65rem;color:var(--sub);font-family:var(--font-mono);font-weight:400">/person</span></div>
+                </div>
+            </a>
+            <a href="#" class="rec-card">
+                <div class="rec-img">
+                    <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400" alt="Kyoto" loading="lazy" />
+                    <div class="rec-img-overlay"></div>
+                </div>
+                <div class="rec-body">
+                    <h3 class="rec-title">Kyoto Odyssey</h3>
+                    <div class="rec-meta"><span>10 days</span><span>2-6 travelers</span></div>
+                    <div class="rec-price">From $2,199 <span style="font-size:.65rem;color:var(--sub);font-family:var(--font-mono);font-weight:400">/person</span></div>
+                </div>
+            </a>
+            <a href="#" class="rec-card">
+                <div class="rec-img">
+                    <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400" alt="Maldives" loading="lazy" />
+                    <div class="rec-img-overlay"></div>
+                </div>
+                <div class="rec-body">
+                    <h3 class="rec-title">Maldives Luxe</h3>
+                    <div class="rec-meta"><span>7 days</span><span>2 travelers</span></div>
+                    <div class="rec-price">From $4,899 <span style="font-size:.65rem;color:var(--sub);font-family:var(--font-mono);font-weight:400">/person</span></div>
+                </div>
+            </a>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        /* ═══════════════════════════════════════════════
+           3D EARTH + ORBIT RINGS — EXACT MATCH with Packages page
+        ═══════════════════════════════════════════════ */
+        (function () {
+            const canvas = document.getElementById('det-hero-canvas');
+            if (!canvas || typeof THREE === 'undefined') return;
+
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020205, 0.0006);
+
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0.3, 4.2);
+
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Textures
+            const TL = new THREE.TextureLoader();
+            const earthMap = TL.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+            const earthSpec = TL.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+            const earthNorm = TL.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+            const cloudMap = TL.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+
+            // Earth
+            const earth = new THREE.Mesh(
+                new THREE.SphereGeometry(1.1, 128, 128),
+                new THREE.MeshPhongMaterial({
+                    map: earthMap,
+                    specularMap: earthSpec,
+                    specular: new THREE.Color('grey'),
+                    shininess: 5,
+                    normalMap: earthNorm,
+                    normalScale: new THREE.Vector2(0.8, 0.8)
+                })
+            );
+            scene.add(earth);
+
+            // Clouds
+            const clouds = new THREE.Mesh(
+                new THREE.SphereGeometry(1.12, 128, 128),
+                new THREE.MeshPhongMaterial({
+                    map: cloudMap,
+                    transparent: true,
+                    opacity: 0.12,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                })
+            );
+            scene.add(clouds);
+
+            // Stars
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 4000;
+            const starPositions = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) {
+                starPositions[i * 3] = (Math.random() - 0.5) * 2500;
+                starPositions[i * 3 + 1] = (Math.random() - 0.5) * 2500;
+                starPositions[i * 3 + 2] = (Math.random() - 0.5) * 600 - 200;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            const stars = new THREE.Points(starGeo,
+                new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true, opacity: 0.7 })
+            );
+            scene.add(stars);
+
+            // Orbit Rings
+            function createRing(radius, color, opacity) {
+                const pts = [];
+                for (let j = 0; j <= 200; j++) {
+                    const a = (j / 200) * Math.PI * 2;
+                    pts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+                }
+                const geo = new THREE.BufferGeometry().setFromPoints(pts);
+                const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+                return new THREE.LineLoop(geo, mat);
+            }
+            const ring1 = createRing(1.55, 0x4deeEA, 0.3);
+            const ring2 = createRing(1.75, 0xa855f7, 0.25);
+            scene.add(ring1);
+            scene.add(ring2);
+
+            // Lighting
+            scene.add(new THREE.AmbientLight(0x111122));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            dirLight.position.set(5, 3, 5);
+            scene.add(dirLight);
+            scene.add(new THREE.PointLight(0x445566, 0.8, 10, 2));
+            scene.add(new THREE.PointLight(0x4deeEA, 0.4, 5, 2));
+
+            // Mouse parallax
+            let targetRY = 0, targetRX = 0, currentRY = 0, currentRX = 0;
+            document.getElementById('det-hero').addEventListener('mousemove', function (e) {
+                targetRY = (e.clientX / window.innerWidth - 0.5) * 0.8;
+                targetRX = (e.clientY / window.innerHeight - 0.5) * 0.4;
+            });
+
+            // Animate
+            let time = 0;
+            (function tick() {
+                requestAnimationFrame(tick);
+                time += 0.004;
+                currentRY += (targetRY - currentRY) * 0.04;
+                currentRX += (targetRX - currentRX) * 0.04;
+
+                earth.rotation.y = currentRY + time * 0.5;
+                earth.rotation.x = currentRX * 0.2;
+                clouds.rotation.y = currentRY + time * 0.6;
+                clouds.rotation.x = currentRX * 0.2;
+
+                ring1.rotation.y += 0.0008;
+                ring1.rotation.x = Math.sin(time * 0.4) * 0.1;
+                ring2.rotation.z += 0.001;
+                ring2.rotation.x = Math.cos(time * 0.3) * 0.1;
+
+                stars.rotation.y += 0.0003;
+                stars.rotation.x += 0.0002;
+
+                renderer.render(scene, camera);
+            })();
+
+            window.addEventListener('resize', function () {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+
+        /* ═══════════════════════════════════════════════
+           ACCORDION TOGGLE
+        ═══════════════════════════════════════════════ */
+        function toggleAcc(el) {
+            el.classList.toggle('open');
+        }
+
+        /* ═══════════════════════════════════════════════
+           CAROUSEL LIGHTBOX
+        ═══════════════════════════════════════════════ */
+        const carouselImages = [
+            @if (images.Any()) {
+                for (int i = 0; i < images.Count; i++) {
+                    @:{ src: '@Url.Content(images[i].ImageUrl)', alt: '@Model.PackageName Photo @(i+1)' }@(i < images.Count - 1 ? "," : "")
+                }
+            }
+        ];
+        let carouselIndex = 0;
+
+        function openCarousel(idx) {
+            if (!carouselImages.length) return;
+            carouselIndex = idx || 0;
+            updateCarousel();
+            document.getElementById('carouselModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCarousel() {
+            document.getElementById('carouselModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function carouselNav(dir) {
+            if (!carouselImages.length) return;
+            carouselIndex = (carouselIndex + dir + carouselImages.length) % carouselImages.length;
+            updateCarousel(dir > 0 ? 'next' : 'prev');
+        }
+
+        function carouselGoTo(idx) {
+            if (idx === carouselIndex) return;
+            const dir = idx > carouselIndex ? 'next' : 'prev';
+            carouselIndex = idx;
+            updateCarousel(dir);
+        }
+
+        function updateCarousel(dir) {
+            if (!carouselImages.length) return;
+            const img = document.getElementById('carouselMainImg');
+            const ctr = document.getElementById('carouselCounter');
+            const thumbs = document.querySelectorAll('.carousel-thumb');
+
+            if (dir) {
+                img.classList.add(dir === 'next' ? 'slide-out-right' : 'slide-out-left');
+                setTimeout(() => {
+                    img.src = carouselImages[carouselIndex].src;
+                    img.alt = carouselImages[carouselIndex].alt;
+                    img.classList.remove('slide-out-left', 'slide-out-right');
+                }, 280);
+            } else {
+                img.src = carouselImages[carouselIndex].src;
+                img.alt = carouselImages[carouselIndex].alt;
+            }
+
+            ctr.textContent = (carouselIndex + 1) + ' / ' + carouselImages.length;
+            thumbs.forEach((t, i) => t.classList.toggle('active', i === carouselIndex));
+
+            const activeThumb = thumbs[carouselIndex];
+            if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            if (!document.getElementById('carouselModal').classList.contains('active')) return;
+            if (e.key === 'ArrowRight') carouselNav(1);
+            if (e.key === 'ArrowLeft') carouselNav(-1);
+            if (e.key === 'Escape') closeCarousel();
+        });
+
+        // Click backdrop to close
+        document.getElementById('carouselModal').addEventListener('click', function (e) {
+            if (e.target === this) closeCarousel();
+        });
+
+        /* ═══════════════════════════════════════════════
+           DATE PICKER MIN DATE
+        ═══════════════════════════════════════════════ */
+        (function () {
+            const d = document.querySelector('input[name="BookingDate"]');
+            if (!d) return;
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            d.min = y + '-' + m + '-' + day;
+        })();
+    </script>
+}

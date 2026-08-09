@@ -1,0 +1,620 @@
+﻿@{
+    ViewBag.Title = "Create Product Type";
+    ViewBag.ActiveAdmin = "ProductType";
+    Layout = "~/Areas/AdminArea/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <style>
+        /* ── CREATE PRODUCT TYPE PAGE ─────────────────── */
+        .form-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 800px;
+        }
+
+        .form-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(52,211,153,0.05);
+        }
+
+        .form-card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .form-card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.05));
+            border: 1px solid rgba(52,211,153,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+            flex-shrink: 0;
+        }
+
+        .form-card-title {
+            font-family: var(--font-head);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .form-card-subtitle {
+            font-size: 0.78rem;
+            color: var(--sub);
+            margin-top: 0.15rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
+        }
+
+        .form-card-badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--success);
+            background: rgba(52,211,153,0.1);
+            border: 1px solid rgba(52,211,153,0.25);
+            border-radius: 100px;
+            padding: 0.3rem 0.8rem;
+            letter-spacing: 0.08em;
+        }
+
+        .form-card-body {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+            .form-field.full {
+                grid-column: 1 / -1;
+            }
+
+        .form-label {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--sub);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+            .form-label .required {
+                color: var(--danger);
+                margin-left: 2px;
+            }
+
+        .form-input {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            font-size: 0.875rem;
+            font-family: var(--font-body);
+            outline: none;
+            transition: all 0.25s ease;
+            width: 100%;
+        }
+
+            .form-input:focus {
+                border-color: var(--success);
+                background: rgba(52,211,153,0.04);
+                box-shadow: 0 0 0 3px rgba(52,211,153,0.08);
+            }
+
+            .form-input.error {
+                border-color: var(--danger);
+                box-shadow: 0 0 0 3px rgba(248,113,113,0.08);
+            }
+
+            .form-input::placeholder {
+                color: rgba(255,255,255,0.2);
+            }
+
+        /* File Upload Styling */
+        .file-upload-container {
+            position: relative;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.3s ease;
+            cursor: none;
+        }
+
+            .file-upload-area:hover {
+                border-color: var(--success);
+                background: rgba(52,211,153,0.03);
+            }
+
+            .file-upload-area.has-file {
+                border-color: var(--success);
+                background: rgba(52,211,153,0.05);
+            }
+
+            .file-upload-area.required-highlight {
+                border-color: rgba(248,113,113,0.4);
+            }
+
+        .file-upload-icon {
+            margin-bottom: 0.75rem;
+            color: var(--sub);
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover .file-upload-icon {
+            color: var(--success);
+            transform: translateY(-3px);
+        }
+
+        .file-upload-text {
+            font-size: 0.82rem;
+            color: var(--sub);
+            margin-bottom: 0.25rem;
+        }
+
+        .file-upload-hint {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.25);
+            font-family: var(--font-mono);
+        }
+
+        .file-input-hidden {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: none;
+        }
+
+        .file-name-display {
+            margin-top: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--success);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(52,211,153,0.08);
+            border: 1px solid rgba(52,211,153,0.2);
+            border-radius: 8px;
+        }
+
+            .file-name-display.visible {
+                display: flex;
+            }
+
+        .file-remove-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: none;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+            .file-remove-btn:hover {
+                opacity: 1;
+            }
+
+        /* Image Preview */
+        .image-preview-container {
+            margin-top: 0.75rem;
+            display: none;
+        }
+
+            .image-preview-container.visible {
+                display: block;
+            }
+
+        .image-preview-card {
+            width: 160px;
+            height: 100px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+            .image-preview-card img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .image-preview-badge {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.58rem;
+            background: rgba(0,0,0,0.75);
+            color: var(--success);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            letter-spacing: 0.06em;
+            border: 1px solid rgba(52,211,153,0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Form Tips */
+        .form-tips {
+            margin-top: 1.5rem;
+            padding: 1rem 1.25rem;
+            background: rgba(77,238,234,0.03);
+            border: 1px solid rgba(77,238,234,0.1);
+            border-radius: 10px;
+        }
+
+        .form-tips-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-tips-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+            .form-tips-list li {
+                font-size: 0.78rem;
+                color: var(--sub);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+                .form-tips-list li::before {
+                    content: '';
+                    width: 4px;
+                    height: 4px;
+                    background: var(--accent);
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+
+        /* Form Footer */
+        .form-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding: 1.25rem 2rem;
+            border-top: 1px solid var(--border);
+            background: rgba(0,0,0,0.2);
+        }
+
+        .btn-submit {
+            padding: 0.65rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-family: var(--font-body);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--success), #10b981);
+            color: #000;
+            border: none;
+            cursor: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 4px 15px rgba(52,211,153,0.25);
+        }
+
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(52,211,153,0.4);
+            }
+
+        .btn-cancel {
+            padding: 0.65rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-family: var(--font-body);
+            font-weight: 500;
+            background: transparent;
+            color: var(--sub);
+            border: 1px solid var(--border);
+            cursor: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+            .btn-cancel:hover {
+                border-color: var(--danger);
+                color: var(--danger);
+                background: rgba(248,113,113,0.05);
+            }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .form-card-footer {
+                flex-direction: column;
+            }
+
+            .btn-submit, .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Create Product Type</h1>
+        <p class="page-subtitle">Add a new product category to the inventory</p>
+    </div>
+    <div class="page-header-actions">
+        <a href="~/AdminArea/ManageProductType/Index" class="btn-cancel" style="text-decoration:none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+@if (ViewBag.Message != null)
+{
+    <div class="adm-alert adm-alert-success">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12" />
+        </svg>
+        @ViewBag.Message
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="adm-alert adm-alert-danger">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Form Card -->
+<div class="form-card">
+    <div class="form-card-header">
+        <div class="form-card-header-left">
+            <div class="form-card-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+            </div>
+            <div>
+                <div class="form-card-title">New Product Type</div>
+                <div class="form-card-subtitle">Fill in the details below to create a new category</div>
+            </div>
+        </div>
+        <span class="form-card-badge">CREATE NEW</span>
+    </div>
+
+    <form enctype="multipart/form-data" method="post" action="/AdminArea/ManageProductType/Create" id="createForm">
+        <div class="form-card-body">
+            <div class="form-grid">
+                <!-- Product Type Name -->
+                <div class="form-field">
+                    <label class="form-label">
+                        Product Type Name <span class="required">*</span>
+                    </label>
+                    <input name="TypeName"
+                           type="text"
+                           class="form-input"
+                           placeholder="e.g., Backpacks, Luggage, Accessories"
+                           required
+                           minlength="2"
+                           maxlength="100" />
+                </div>
+
+                <!-- Upload Image -->
+                <div class="form-field">
+                    <label class="form-label">
+                        Upload Image <span class="required">*</span>
+                    </label>
+                    <div class="file-upload-container">
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <div class="file-upload-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                            </div>
+                            <div class="file-upload-text">Drag & drop an image or click to browse</div>
+                            <div class="file-upload-hint">PNG, JPG, or WebP recommended (max 5MB)</div>
+                        </div>
+                        <input type="file"
+                               name="img"
+                               class="file-input-hidden"
+                               id="fileInput"
+                               accept="image/png,image/jpeg,image/webp"
+                               required
+                               onchange="handleFileSelect(this)" />
+                        <div class="file-name-display" id="fileNameDisplay">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span id="selectedFileName"></span>
+                            <button type="button" class="file-remove-btn" onclick="removeFile()" title="Remove file">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Image Preview -->
+                    <div class="image-preview-container" id="imagePreview">
+                        <div class="image-preview-card">
+                            <img id="previewImg" src="" alt="Preview" />
+                            <span class="image-preview-badge">PREVIEW</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Tips -->
+            <div class="form-tips">
+                <div class="form-tips-title">Tips for creating a product type</div>
+                <ul class="form-tips-list">
+                    <li>Use a clear, descriptive name that customers will understand</li>
+                    <li>Choose a high-quality image that represents the category</li>
+                    <li>Product types help organize your inventory for better management</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="form-card-footer">
+            <a href="~/AdminArea/ManageProductType/Index" class="btn-cancel">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+                Cancel
+            </a>
+            <button type="submit" class="btn-submit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Create Product Type
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+    function handleFileSelect(input) {
+        const area = document.getElementById('fileUploadArea');
+        const display = document.getElementById('fileNameDisplay');
+        const previewContainer = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const fileNameSpan = document.getElementById('selectedFileName');
+
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+
+            // Update file name display
+            fileNameSpan.textContent = file.name;
+            area.classList.add('has-file');
+            display.classList.add('visible');
+
+            // Show image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewContainer.classList.add('visible');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            resetFileUpload();
+        }
+    }
+
+    function removeFile() {
+        const fileInput = document.getElementById('fileInput');
+        fileInput.value = '';
+        resetFileUpload();
+    }
+
+    function resetFileUpload() {
+        const area = document.getElementById('fileUploadArea');
+        const display = document.getElementById('fileNameDisplay');
+        const previewContainer = document.getElementById('imagePreview');
+
+        area.classList.remove('has-file');
+        display.classList.remove('visible');
+        previewContainer.classList.remove('visible');
+        document.getElementById('selectedFileName').textContent = '';
+    }
+
+    // Drag and drop support
+    const dropArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('fileInput');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, function() {
+            dropArea.style.borderColor = 'var(--success)';
+            dropArea.style.background = 'rgba(52,211,153,0.05)';
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, function() {
+            dropArea.style.borderColor = '';
+            dropArea.style.background = '';
+        });
+    });
+
+    dropArea.addEventListener('drop', function(e) {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect(fileInput);
+        }
+    });
+    </script>
+}

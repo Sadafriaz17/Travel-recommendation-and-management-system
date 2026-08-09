@@ -1,0 +1,1078 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title — NEXVOY | AI Travel Intelligence</title>
+    <meta name="description" content="AI-powered immersive travel ecosystem. VR previews, smart packages, intelligent planning." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ═══════════════════════════════════════════
+           NEXVOY — GLOBAL DESIGN SYSTEM
+           AI × VR Smart Tour Management System
+        ═══════════════════════════════════════════ */
+        :root {
+            --bg: #000000;
+            --glass: rgba(255,255,255,0.04);
+            --glass-mid: rgba(255,255,255,0.07);
+            --glass-hi: rgba(255,255,255,0.12);
+            --accent: #4DEEEA;
+            --accent2: #7E6BFF;
+            --purple: #A855F7;
+            --text: #ffffff;
+            --sub: rgba(255,255,255,0.65);
+            --border: rgba(255,255,255,0.08);
+            --border-hi: rgba(77,238,234,0.3);
+            --glow-a: rgba(77,238,234,0.15);
+            --glow-p: rgba(168,85,247,0.15);
+            --font-head: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Custom Cursor - Only for desktop */
+        @@media (min-width: 1024px) {
+            #cursor-dot {
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 99999;
+                width: 8px;
+                height: 8px;
+                background: var(--accent);
+                border-radius: 50%;
+                pointer-events: none;
+                transform: translate(-50%, -50%);
+                transition: transform 0.1s ease;
+                mix-blend-mode: difference;
+            }
+
+            #cursor-ring {
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 99998;
+                width: 36px;
+                height: 36px;
+                border: 1.5px solid var(--accent);
+                border-radius: 50%;
+                pointer-events: none;
+                transform: translate(-50%, -50%);
+                transition: transform 0.35s cubic-bezier(0.23,1,0.32,1), width 0.3s, height 0.3s, border-color 0.3s;
+                opacity: 0.7;
+            }
+
+            body:hover #cursor-ring {
+                opacity: 1;
+            }
+
+            a, button, [data-hover] {
+                cursor: none;
+            }
+        }
+
+        /* ── NAVBAR ─────────────────────────────── */
+        #nexnav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9000;
+            padding: 0 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), background 0.3s;
+        }
+
+            #nexnav.hidden {
+                transform: translateY(-100%);
+            }
+
+            #nexnav.scrolled {
+                background: rgba(0,0,0,0.85);
+            }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-family: var(--font-head);
+            font-weight: 800;
+            font-size: 1.35rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-brand-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--accent), 0 0 28px rgba(77,238,234,0.4);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulseDot {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: 0.8;
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            list-style: none;
+        }
+
+            .nav-links li {
+                list-style: none;
+            }
+
+            .nav-links a, .nav-links .dropdown-toggle {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 0.45rem 1rem;
+                border-radius: 100px;
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: var(--sub);
+                text-decoration: none;
+                letter-spacing: 0.02em;
+                transition: color 0.25s, background 0.25s;
+                position: relative;
+            }
+
+                .nav-links a:hover,
+                .nav-links .dropdown-toggle:hover,
+                .nav-links a.active,
+                .nav-links .dropdown-toggle.active {
+                    color: var(--text);
+                    background: var(--glass-mid);
+                }
+
+                    .nav-links a.active::after,
+                    .nav-links .dropdown-toggle.active::after {
+                        content: '';
+                        position: absolute;
+                        bottom: 4px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 4px;
+                        height: 4px;
+                        background: var(--accent);
+                        border-radius: 50%;
+                    }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+        }
+
+            .dropdown-toggle i.fa-chevron-down {
+                transition: transform 0.3s ease;
+                font-size: 0.7rem;
+            }
+
+            .dropdown-toggle[aria-expanded="true"] i.fa-chevron-down {
+                transform: rotate(180deg);
+            }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(15, 25, 45, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 255, 255, 0.1);
+            padding: 12px 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+            .dropdown-menu.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .dropdown-menu .dropdown-item {
+                color: #ffffff;
+                font-weight: 500;
+                padding: 10px 24px 10px 20px;
+                border-radius: 40px;
+                transition: all 0.25s ease;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-decoration: none;
+            }
+
+                .dropdown-menu .dropdown-item i {
+                    width: 22px;
+                    color: #0ff;
+                    font-size: 1rem;
+                }
+
+                .dropdown-menu .dropdown-item:hover {
+                    background: rgba(0, 255, 255, 0.15);
+                    color: #0ff;
+                    transform: translateX(6px);
+                }
+
+                .dropdown-menu .dropdown-item.active {
+                    background: linear-gradient(95deg, rgba(0, 255, 255, 0.2), rgba(183, 122, 255, 0.2));
+                    color: #0ff;
+                    border-left: 3px solid #0ff;
+                }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-ghost {
+            padding: 0.45rem 1.1rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--sub);
+            font-size: 0.83rem;
+            font-family: var(--font-body);
+            text-decoration: none;
+            transition: all 0.25s;
+            display: inline-block;
+        }
+
+            .btn-ghost:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+                background: var(--glow-a);
+            }
+
+        .btn-primary-nex {
+            padding: 0.48rem 1.3rem;
+            border-radius: 100px;
+            border: none;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #000;
+            font-size: 0.83rem;
+            font-weight: 700;
+            font-family: var(--font-body);
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(77,238,234,0.25);
+            display: inline-block;
+        }
+
+            .btn-primary-nex:hover {
+                transform: translateY(-2px) scale(1.03);
+                box-shadow: 0 0 32px rgba(77,238,234,0.45);
+            }
+
+        /* ── MOBILE NAV TOGGLE ───────────────────── */
+        #nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+        }
+
+            #nav-toggle span {
+                display: block;
+                width: 24px;
+                height: 1.5px;
+                background: var(--text);
+                border-radius: 2px;
+                transition: all 0.3s;
+            }
+
+        /* Mobile Navigation Overlay */
+        #mobile-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 8999;
+            background: rgba(0, 0, 0, 0.97);
+            backdrop-filter: blur(24px);
+            padding: 6rem 2rem 2rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            overflow-y: auto;
+        }
+
+            #mobile-nav a {
+                font-family: var(--font-head);
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--text);
+                text-decoration: none;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border);
+                transition: color 0.3s;
+            }
+
+                #mobile-nav a:hover {
+                    color: var(--accent);
+                }
+
+        /* ── MAIN CONTENT ────────────────────────── */
+        main {
+            min-height: 100vh;
+        }
+
+        /* ── FOOTER ──────────────────────────────── */
+        #nexfooter {
+            background: #000;
+            border-top: 1px solid var(--border);
+            padding: 5rem 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+            #nexfooter::before {
+                content: '';
+                position: absolute;
+                bottom: -200px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 600px;
+                height: 400px;
+                background: radial-gradient(ellipse, rgba(77,238,234,0.06) 0%, transparent 70%);
+                pointer-events: none;
+            }
+
+        .footer-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .footer-brand-col p {
+            font-size: 0.875rem;
+            color: var(--sub);
+            margin-top: 1rem;
+            max-width: 280px;
+            line-height: 1.7;
+        }
+
+        .footer-col h4 {
+            font-family: var(--font-head);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--sub);
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+            .footer-col ul li {
+                margin-bottom: 0.65rem;
+            }
+
+                .footer-col ul li a {
+                    font-size: 0.875rem;
+                    color: rgba(255,255,255,0.5);
+                    text-decoration: none;
+                    transition: color 0.2s;
+                }
+
+                    .footer-col ul li a:hover {
+                        color: var(--accent);
+                    }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 2rem auto 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+            .footer-bottom p {
+                font-size: 0.8rem;
+                color: rgba(255,255,255,0.3);
+                font-family: var(--font-mono);
+            }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+            .footer-social a {
+                width: 36px;
+                height: 36px;
+                border: 1px solid var(--border);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--sub);
+                font-size: 0.8rem;
+                text-decoration: none;
+                transition: all 0.25s;
+            }
+
+                .footer-social a:hover {
+                    border-color: var(--accent);
+                    color: var(--accent);
+                    background: var(--glow-a);
+                }
+
+        /* ── TOAST NOTIFICATION ───────────────────── */
+        #nex-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            background: var(--glass-mid);
+            border: 1px solid var(--border-hi);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+            font-size: 0.875rem;
+        }
+
+            #nex-toast.show {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            #nex-toast .toast-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--accent);
+                border-radius: 50%;
+                flex-shrink: 0;
+                box-shadow: 0 0 8px var(--accent);
+            }
+
+        /* ── SHARED UTILITIES ─────────────────────── */
+        .nex-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            transition: border-color 0.3s, background 0.3s, transform 0.3s;
+        }
+
+            .glass-card:hover {
+                border-color: rgba(77,238,234,0.2);
+                background: var(--glass-mid);
+                transform: translateY(-4px);
+            }
+
+        .nex-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.3rem 0.85rem;
+            border-radius: 100px;
+            border: 1px solid var(--border-hi);
+            background: var(--glow-a);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+            .nex-badge::before {
+                content: '';
+                width: 5px;
+                height: 5px;
+                background: var(--accent);
+                border-radius: 50%;
+                box-shadow: 0 0 6px var(--accent);
+            }
+
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--sub);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-head);
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gradient-purple {
+            background: linear-gradient(135deg, var(--purple), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--accent);
+            }
+
+        /* Alert styles */
+        .nex-alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            border: 1px solid;
+        }
+
+        .nex-alert-danger {
+            background: rgba(239,68,68,0.08);
+            border-color: rgba(239,68,68,0.3);
+            color: #fca5a5;
+        }
+
+        .nex-alert-success {
+            background: rgba(77,238,234,0.08);
+            border-color: var(--border-hi);
+            color: var(--accent);
+        }
+
+        /* Data reveal animation */
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.23,1,0.32,1);
+        }
+
+        /* Particles canvas */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.35;
+        }
+
+        /* ── RESPONSIVE ────────────────────────── */
+        @@media (max-width: 900px) {
+            .nav-links {
+                display: none;
+            }
+
+            #nav-toggle {
+                display: flex;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @@media (max-width: 600px) {
+            #nexnav {
+                padding: 0 1.25rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+    @RenderSection("HeadStyles", required: false)
+</head>
+
+<body>
+
+    <!-- ── CUSTOM CURSOR ──────────────────────── -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- ── NAVBAR ────────────────────────────── -->
+    <nav id="nexnav" role="navigation" aria-label="Main navigation">
+        <a href="@Url.Action("Index", "Home")" class="nav-brand">
+            <span class="nav-brand-dot"></span>
+            NEXVOY
+        </a>
+
+        <ul class="nav-links" role="list">
+
+            <li>
+                <a href="@Url.Action("Index", "Home")"
+                   class="@(ViewBag.ActivePage == "Home" ? "active" : "")">
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="@Url.Action("Index", "Destination")"
+                   class="@(ViewBag.ActivePage == "Destination" ? "active" : "")">
+                    Explore Destinations
+                </a>
+            </li>
+
+            <li>
+                <a href="@Url.Action("Index", "Package")"
+                   class="@(ViewBag.ActivePage == "Package" ? "active" : "")">
+                    Tour Packages
+                </a>
+            </li>
+
+            <li>
+                <a href="@Url.Action("Index", "Product")"
+                   class="@(ViewBag.ActivePage == "Product" ? "active" : "")">
+                    Travel Store
+                </a>
+            </li>
+
+            <!-- AI Travel Suite -->
+            <li class="dropdown">
+                <button class="dropdown-toggle @(ViewBag.ActivePage == "RecommendationAI" || ViewBag.ActivePage == "PackingListGenerator" ? "active" : "")"
+                        id="aiDropdown"
+                        aria-expanded="false">
+                    AI Travel Suite <i class="fas fa-chevron-down"></i>
+                </button>
+
+                <ul class="dropdown-menu" aria-labelledby="aiDropdown">
+                    <li>
+                        <a href="@Url.Action("Index", "RecommendationAI")"
+                           class="dropdown-item @(ViewBag.ActivePage == "RecommendationAI" ? "active" : "")">
+                            <i class="fas fa-route"></i>
+                            AI Trip Planner
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "PackingListGenerator")"
+                           class="dropdown-item @(ViewBag.ActivePage == "PackingListGenerator" ? "active" : "")">
+                            <i class="fas fa-suitcase"></i>
+                            AI Packing Assistant
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- More -->
+            <li class="dropdown">
+                <button class="dropdown-toggle @(ViewBag.ActivePage == "Gallery" || ViewBag.ActivePage == "Services" || ViewBag.ActivePage == "VendorMarketPlace" || ViewBag.ActivePage == "Contact" ? "active" : "")"
+                        id="moreDropdown"
+                        aria-expanded="false">
+                    More <i class="fas fa-chevron-down"></i>
+                </button>
+
+                <ul class="dropdown-menu" aria-labelledby="moreDropdown">
+                    <li>
+                        <a href="@Url.Action("Index", "Gallery")"
+                           class="dropdown-item @(ViewBag.ActivePage == "Gallery" ? "active" : "")">
+                            <i class="fas fa-images"></i>
+                            Travel Gallery
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Services")"
+                           class="dropdown-item @(ViewBag.ActivePage == "Services" ? "active" : "")">
+                            <i class="fas fa-concierge-bell"></i>
+                            Travel Services
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "VendorMarketPlace")"
+                           class="dropdown-item @(ViewBag.ActivePage == "VendorMarketPlace" ? "active" : "")">
+                            <i class="fas fa-store"></i>
+                            Travel Marketplace
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Contact", "Home")"
+                           class="dropdown-item @(ViewBag.ActivePage == "Contact" ? "active" : "")">
+                            <i class="fas fa-envelope"></i>
+                            Contact Us
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+
+        <div class="nav-actions">
+            @if (Session["UserEmail"] != null)
+            {
+                <a href="@Url.Action("Index", "UserDashboard")" class="btn-ghost">Dashboard</a>
+                <a href="@Url.Action("Index", "Logout")" class="btn-ghost">Logout</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "Login")" class="btn-ghost">Sign In</a>
+                <a href="@Url.Action("Index", "Signup")" class="btn-primary-nex">Get Started</a>
+            }
+            <button id="nav-toggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Nav Overlay -->
+    <div id="mobile-nav" style="display: none;">
+        <a href="@Url.Action("Index", "Home")">Home</a>
+        <a href="@Url.Action("Index", "Destination")">Destinations</a>
+        <a href="@Url.Action("Index", "Package")">Packages</a>
+        <a href="@Url.Action("Index", "Product")">Product</a>
+        <a href="@Url.Action("Index", "Gallery")">Gallery</a>
+        <a href="@Url.Action("Index", "Services")">Services</a>
+        <a href="@Url.Action("Contact", "Home")">Contact</a>
+        <a href="@Url.Action("VendorMarketPlace", "VendorMarketPlace")">Marketplace</a>
+    </div>
+
+    <!-- ── MAIN ───────────────────────────────── -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- ── FOOTER ────────────────────────────── -->
+    <footer id="nexfooter">
+        <div class="footer-grid">
+            <div class="footer-brand-col">
+                <a href="@Url.Action("Index", "Home")" class="nav-brand" style="font-size:1.5rem;">
+                    <span class="nav-brand-dot"></span>NEXVOY
+                </a>
+                <p>AI-powered smart tour management system. VR previews, intelligent itineraries, and immersive travel experiences.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter">𝕏</a>
+                    <a href="#" aria-label="Instagram">▣</a>
+                    <a href="#" aria-label="LinkedIn">in</a>
+                    <a href="#" aria-label="YouTube">▶</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="@Url.Action("Index", "Destination")">All Destinations</a></li>
+                    <li><a href="@Url.Action("Index", "Package")">Travel Packages</a></li>
+                    <li><a href="@Url.Action("Index", "Gallery")">Gallery</a></li>
+                    <li><a href="@Url.Action("Index", "Blog")">Travel Stories</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#">AI Trip Planner</a></li>
+                    <li><a href="#">Smart Packing List Generator</a></li>
+                    <li><a href="#">Group Bookings</a></li>
+                    <li><a href="#">Vendor Marketplace</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="@Url.Action("Contact", "Home")">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="@Url.Action("AdminDashboard", "AdminArea")">Admin</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 NEXVOY AI TRAVEL INTELLIGENCE. ALL RIGHTS RESERVED.</p>
+            <p style="font-size:0.72rem; color:rgba(255,255,255,0.2);">FINAL YEAR PROJECT — AI + VR SMART TOUR MANAGEMENT SYSTEM</p>
+        </div>
+    </footer>
+
+    <!-- ── TOAST ──────────────────────────────── -->
+    <div id="nex-toast" role="alert" aria-live="polite">
+        <div class="toast-dot"></div>
+        <span id="nex-toast-msg"></span>
+    </div>
+
+    <!-- ── PARTICLES CANVAS ─────────────────────── -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- ── GLOBAL SCRIPTS ─────────────────────── -->
+    <script>
+        (function () {
+            'use strict';
+
+            // ── Custom Cursor (Desktop only) ──
+            if (window.innerWidth >= 1024) {
+                var dot = document.getElementById('cursor-dot');
+                var ring = document.getElementById('cursor-ring');
+                var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+                document.addEventListener('mousemove', function (e) {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    if (dot) dot.style.transform = 'translate(' + mouseX + 'px, ' + mouseY + 'px) translate(-50%, -50%)';
+                });
+
+                function animateRing() {
+                    ringX += (mouseX - ringX) * 0.12;
+                    ringY += (mouseY - ringY) * 0.12;
+                    if (ring) ring.style.transform = 'translate(' + ringX + 'px, ' + ringY + 'px) translate(-50%, -50%)';
+                    requestAnimationFrame(animateRing);
+                }
+                animateRing();
+
+                document.querySelectorAll('a, button, [data-hover]').forEach(function (el) {
+                    el.addEventListener('mouseenter', function () {
+                        if (ring) { ring.style.width = '52px'; ring.style.height = '52px'; }
+                    });
+                    el.addEventListener('mouseleave', function () {
+                        if (ring) { ring.style.width = '36px'; ring.style.height = '36px'; }
+                    });
+                });
+            }
+
+            // ── Navbar scroll hide/show ──
+            var nav = document.getElementById('nexnav');
+            var lastY = 0;
+            window.addEventListener('scroll', function () {
+                var y = window.scrollY;
+                if (nav) {
+                    nav.classList.toggle('hidden', y > lastY && y > 120);
+                    nav.classList.toggle('scrolled', y > 40);
+                }
+                lastY = y;
+            });
+
+            // ── Dropdown Toggle (handles ALL .dropdown-toggle buttons) ──
+            var allToggles = document.querySelectorAll('.dropdown-toggle');
+
+            allToggles.forEach(function (toggle) {
+                toggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var menu = toggle.nextElementSibling;
+                    if (!menu) return;
+                    var isOpen = menu.classList.contains('show');
+
+                    // Close all other open menus first
+                    document.querySelectorAll('.dropdown-menu.show').forEach(function (m) {
+                        m.classList.remove('show');
+                        if (m.previousElementSibling) {
+                            m.previousElementSibling.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+
+                    // Toggle this one open if it was closed
+                    if (!isOpen) {
+                        menu.classList.add('show');
+                        toggle.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            });
+
+            // Close any open dropdown when clicking outside
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.dropdown-menu.show').forEach(function (m) {
+                    m.classList.remove('show');
+                    if (m.previousElementSibling) {
+                        m.previousElementSibling.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // ── Mobile nav toggle ──
+            var toggle = document.getElementById('nav-toggle');
+            var mobileNav = document.getElementById('mobile-nav');
+            if (toggle && mobileNav) {
+                toggle.addEventListener('click', function () {
+                    var isOpen = mobileNav.style.display === 'flex';
+                    mobileNav.style.display = isOpen ? 'none' : 'flex';
+                    var spans = toggle.querySelectorAll('span');
+                    if (!isOpen) {
+                        spans[0].style.transform = 'rotate(45deg) translate(4px, 4px)';
+                        spans[1].style.opacity = '0';
+                        spans[2].style.transform = 'rotate(-45deg) translate(4px, -4px)';
+                    } else {
+                        spans[0].style.transform = '';
+                        spans[1].style.opacity = '';
+                        spans[2].style.transform = '';
+                    }
+                });
+            }
+
+            // ── Toast helper ──
+            window.nexToast = function (msg, duration) {
+                duration = duration || 3000;
+                var toast = document.getElementById('nex-toast');
+                var toastMsg = document.getElementById('nex-toast-msg');
+                if (toast && toastMsg) {
+                    toastMsg.textContent = msg;
+                    toast.classList.add('show');
+                    setTimeout(function () { toast.classList.remove('show'); }, duration);
+                }
+            };
+
+            // ── Intersection observer fade-in ──
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            document.querySelectorAll('[data-reveal]').forEach(function (el) {
+                var delay = el.dataset.delay || 0;
+                el.style.transitionDelay = delay + 'ms';
+                observer.observe(el);
+            });
+
+            // ── Particle canvas ──
+            var canvas = document.getElementById('particles-canvas');
+            if (canvas) {
+                var ctx = canvas.getContext('2d');
+                var W, H, particles = [];
+
+                function resizeCanvas() {
+                    W = canvas.width = window.innerWidth;
+                    H = canvas.height = window.innerHeight;
+                }
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+
+                for (var i = 0; i < 60; i++) {
+                    particles.push({
+                        x: Math.random() * W,
+                        y: Math.random() * H,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        r: Math.random() * 1.5 + 0.3,
+                        a: Math.random(),
+                        color: Math.random() > 0.5 ? '77,238,234' : '168,85,247'
+                    });
+                }
+
+                function animateParticles() {
+                    if (!ctx) return;
+                    ctx.clearRect(0, 0, W, H);
+                    for (var i = 0; i < particles.length; i++) {
+                        var p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0) p.x = W;
+                        if (p.x > W) p.x = 0;
+                        if (p.y < 0) p.y = H;
+                        if (p.y > H) p.y = 0;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(' + p.color + ',' + (p.a * 0.7) + ')';
+                        ctx.fill();
+                    }
+                    requestAnimationFrame(animateParticles);
+                }
+                animateParticles();
+            }
+
+        })();
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

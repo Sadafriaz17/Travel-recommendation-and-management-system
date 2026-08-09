@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+}
+
+<div class="col-md-12 mt-4">
+    <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-primary text-white">
+            <h5>Add Payment Method</h5>
+        </div>
+
+        <form method="post" action="/AdminArea/ManagePaymentType/Create">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Payment Type Name</label>
+                    <input name="PaymentTypeName" type="text" class="form-control" placeholder="Enter payment type name" required />
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-success">Submit</button>
+                <a href="/AdminArea/ManagePaymentType/Index" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

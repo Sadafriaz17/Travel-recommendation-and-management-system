@@ -1,0 +1,1752 @@
+﻿@{
+    ViewBag.Title = "AI Smart Packing Generator";
+    ViewBag.ActivePage = "PackingList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+                /* ═══════════════════════════════════════════════
+           AI PACKING GENERATOR — NEXVOY
+           Strict design system match with homepage
+        ═══════════════════════════════════════════════ */
+                :root {
+                    --bg-deep: #020205;
+                    --bg-surface: rgba(15,15,20,0.85);
+                    --glass: rgba(15,15,25,0.6);
+                    --glass-hi: rgba(30,30,38,0.85);
+                    --border: rgba(255,255,255,0.08);
+                    --border-hi: rgba(255,255,255,0.14);
+                    --accent: #4deeEA;
+                    --accent2: #a855f7;
+                    --purple: #c084fc;
+                    --text: #f0f0f4;
+                    --sub: rgba(240,240,244,0.5);
+                    --font-head: 'Inter', system-ui, sans-serif;
+                    --font-body: 'Inter', system-ui, sans-serif;
+                    --font-mono: 'SF Mono','JetBrains Mono',monospace;
+                    --ease-out: cubic-bezier(0.4,0,0.2,1);
+                }
+
+                *, *::before, *::after {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box
+                }
+
+                html {
+                    scroll-behavior: smooth
+                }
+
+                body {
+                    background: var(--bg-deep);
+                    color: var(--text);
+                    font-family: var(--font-body);
+                    -webkit-font-smoothing: antialiased;
+                    overflow-x: hidden;
+                }
+
+                /* ─── SHARED UTILITIES ─── */
+                .text-gradient {
+                    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--purple) 100%);
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                    background-size: 200% 200%;
+                    animation: gradShift 4s ease infinite;
+                }
+
+                @@keyframes gradShift {
+                    0%, 100% {
+                        background-position: 0% 50%
+                    }
+
+                    50% {
+                        background-position: 100% 50%
+                    }
+                }
+
+                .nex-badge {
+                    display: inline-block;
+                    font-family: var(--font-mono);
+                    font-size: 0.7rem;
+                    color: var(--accent);
+                    letter-spacing: 0.18em;
+                    text-transform: uppercase;
+                    margin-bottom: 1rem;
+                }
+
+                [data-reveal] {
+                    opacity: 0;
+                    transform: translateY(32px);
+                    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+                }
+
+                    [data-reveal].revealed {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+
+                @@keyframes fadeUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px)
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0)
+                    }
+                }
+
+                /* ─── HERO (EXACT HOMEPAGE MATCH) ─── */
+                #hero {
+                    position: relative;
+                    height: 100vh;
+                    min-height: 700px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                    background: radial-gradient(ellipse at 50% 50%, #0f0f1e 0%, #06060c 50%, #020205 100%);
+                }
+
+                #hero-3d-canvas {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    z-index: 0;
+                }
+
+                .hero-glow {
+                    position: absolute;
+                    inset: 0;
+                    z-index: 1;
+                    pointer-events: none;
+                    background: radial-gradient(ellipse 50% 50% at 50% 40%, rgba(77,238,234,0.08) 0%, transparent 50%), radial-gradient(ellipse 40% 40% at 70% 60%, rgba(168,85,247,0.06) 0%, transparent 50%), radial-gradient(ellipse 35% 35% at 30% 70%, rgba(77,238,234,0.04) 0%, transparent 40%);
+                }
+
+                .hero-content {
+                    position: relative;
+                    z-index: 3;
+                    text-align: center;
+                    padding: 0 1.5rem;
+                    max-width: 960px;
+                }
+
+                .hero-eyebrow {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 12px;
+                    font-family: var(--font-mono);
+                    font-size: 0.72rem;
+                    color: var(--accent);
+                    letter-spacing: 0.18em;
+                    text-transform: uppercase;
+                    margin-bottom: 1.75rem;
+                    opacity: 0;
+                    animation: fadeUp 0.8s ease 0.3s forwards;
+                }
+
+                .hero-eyebrow-line {
+                    width: 32px;
+                    height: 1px;
+                    background: var(--accent);
+                    box-shadow: 0 0 8px var(--accent);
+                }
+
+                .hero-h1 {
+                    font-family: var(--font-head);
+                    font-size: clamp(2.8rem, 6vw, 5.5rem);
+                    font-weight: 800;
+                    line-height: 0.95;
+                    letter-spacing: -0.04em;
+                    margin-bottom: 1.75rem;
+                    opacity: 0;
+                    animation: fadeUp 0.9s ease 0.5s forwards;
+                }
+
+                .hero-sub {
+                    font-size: clamp(1rem, 2vw, 1.15rem);
+                    color: var(--sub);
+                    max-width: 580px;
+                    margin: 0 auto 2rem;
+                    line-height: 1.65;
+                    font-weight: 300;
+                    opacity: 0;
+                    animation: fadeUp 0.9s ease 0.7s forwards;
+                }
+
+                .hero-stats {
+                    display: flex;
+                    justify-content: center;
+                    gap: 2.5rem;
+                    margin-bottom: 2.5rem;
+                    opacity: 0;
+                    animation: fadeUp 0.9s ease 0.85s forwards;
+                    flex-wrap: wrap;
+                }
+
+                .hero-stat {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 4px;
+                }
+
+                .hero-stat-val {
+                    font-family: var(--font-head);
+                    font-size: 1.4rem;
+                    font-weight: 800;
+                    letter-spacing: -0.03em;
+                }
+
+                .hero-stat-label {
+                    font-family: var(--font-mono);
+                    font-size: 0.62rem;
+                    color: var(--sub);
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                }
+
+                .hero-ctas {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    gap: 1rem;
+                    opacity: 0;
+                    animation: fadeUp 0.9s ease 1s forwards;
+                }
+
+                .btn-hero-primary {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 0.9rem 2rem;
+                    border-radius: 100px;
+                    background: linear-gradient(135deg, var(--accent), var(--accent2));
+                    color: #000;
+                    font-weight: 700;
+                    font-size: 0.9rem;
+                    font-family: var(--font-body);
+                    text-decoration: none;
+                    border: none;
+                    cursor: pointer;
+                    transition: all 0.35s var(--ease-out);
+                    box-shadow: 0 0 30px rgba(77,238,234,0.3);
+                }
+
+                    .btn-hero-primary:hover {
+                        transform: translateY(-3px) scale(1.04);
+                        box-shadow: 0 0 50px rgba(77,238,234,0.5);
+                        color: #000;
+                    }
+
+                .btn-hero-secondary {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 0.9rem 2rem;
+                    border-radius: 100px;
+                    border: 1px solid var(--border);
+                    background: var(--glass);
+                    backdrop-filter: blur(12px);
+                    color: var(--text);
+                    font-size: 0.9rem;
+                    font-family: var(--font-body);
+                    text-decoration: none;
+                    cursor: pointer;
+                    transition: all 0.3s var(--ease-out);
+                }
+
+                    .btn-hero-secondary:hover {
+                        border-color: var(--accent);
+                        background: rgba(77,238,234,0.1);
+                        transform: translateY(-2px);
+                    }
+
+                .hero-scroll-hint {
+                    position: absolute;
+                    bottom: 2.5rem;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 10px;
+                    z-index: 3;
+                    opacity: 0;
+                    animation: fadeUp 1s ease 1.3s forwards;
+                    cursor: pointer;
+                }
+
+                    .hero-scroll-hint span {
+                        font-family: var(--font-mono);
+                        font-size: 0.65rem;
+                        color: var(--sub);
+                        letter-spacing: 0.2em;
+                        text-transform: uppercase;
+                    }
+
+                .hero-scroll-icon {
+                    width: 24px;
+                    height: 40px;
+                    border: 2px solid rgba(255,255,255,0.2);
+                    border-radius: 12px;
+                    display: flex;
+                    justify-content: center;
+                    padding-top: 6px;
+                }
+
+                .hero-scroll-dot {
+                    width: 4px;
+                    height: 8px;
+                    background: var(--accent);
+                    border-radius: 2px;
+                    animation: scrollDot 2s ease-in-out infinite;
+                }
+
+                @@keyframes scrollDot {
+                    0%, 100% {
+                        transform: translateY(0);
+                        opacity: 1
+                    }
+
+                    50% {
+                        transform: translateY(12px);
+                        opacity: 0.3
+                    }
+                }
+
+                /* ─── MAIN CONTENT AREA ─── */
+                #packing-content {
+                    position: relative;
+                    z-index: 5;
+                    padding: 5rem 0 8rem;
+                }
+
+                .content-wrapper {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 0 2.5rem;
+                }
+
+                /* ─── INPUT SUMMARY CARD ─── */
+                .summary-card {
+                    background: var(--glass);
+                    border: 1px solid var(--border-hi);
+                    border-radius: 24px;
+                    padding: 2.5rem;
+                    backdrop-filter: blur(30px);
+                    margin-bottom: 2rem;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                    .summary-card::before {
+                        content: '';
+                        position: absolute;
+                        top: -80px;
+                        right: -80px;
+                        width: 300px;
+                        height: 300px;
+                        background: radial-gradient(ellipse, rgba(168,85,247,0.08) 0%, transparent 70%);
+                        pointer-events: none;
+                    }
+
+                .summary-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 2rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                }
+
+                .summary-title {
+                    font-family: var(--font-head);
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    letter-spacing: -0.02em;
+                }
+
+                .summary-grid {
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 1rem;
+                }
+
+                .summary-item {
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid var(--border);
+                    border-radius: 14px;
+                    padding: 1rem;
+                }
+
+                .summary-item-label {
+                    font-family: var(--font-mono);
+                    font-size: 0.6rem;
+                    color: var(--sub);
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    margin-bottom: 0.4rem;
+                }
+
+                .summary-item-value {
+                    font-size: 0.88rem;
+                    font-weight: 600;
+                    color: var(--text);
+                    line-height: 1.3;
+                }
+
+                    .summary-item-value.accent {
+                        color: var(--accent)
+                    }
+
+                /* ─── WEATHER INSIGHT CARD ─── */
+                .weather-card {
+                    background: linear-gradient(135deg, rgba(77,238,234,0.05) 0%, rgba(168,85,247,0.05) 100%);
+                    border: 1px solid rgba(77,238,234,0.2);
+                    border-radius: 20px;
+                    padding: 2rem 2.5rem;
+                    margin-bottom: 2rem;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 1.5rem;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                    .weather-card::after {
+                        content: '';
+                        position: absolute;
+                        inset: 0;
+                        background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(77,238,234,0.04) 0%, transparent 70%);
+                        pointer-events: none;
+                    }
+
+                .weather-icon {
+                    font-size: 2.5rem;
+                    flex-shrink: 0;
+                    margin-top: 0.2rem;
+                }
+
+                .weather-content {
+                    flex: 1
+                }
+
+                .weather-label {
+                    font-family: var(--font-mono);
+                    font-size: 0.65rem;
+                    color: var(--accent);
+                    letter-spacing: 0.14em;
+                    text-transform: uppercase;
+                    margin-bottom: 0.5rem;
+                }
+
+                .weather-title {
+                    font-family: var(--font-head);
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin-bottom: 0.6rem;
+                }
+
+                .weather-text {
+                    font-size: 0.875rem;
+                    color: var(--sub);
+                    line-height: 1.7;
+                }
+
+                .weather-chips {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                    margin-top: 1rem;
+                }
+
+                .weather-chip {
+                    font-family: var(--font-mono);
+                    font-size: 0.65rem;
+                    padding: 0.3rem 0.75rem;
+                    border-radius: 100px;
+                    border: 1px solid rgba(77,238,234,0.25);
+                    color: var(--accent);
+                    background: rgba(77,238,234,0.06);
+                    letter-spacing: 0.08em;
+                }
+
+                /* ─── TWO COLUMN LAYOUT ─── */
+                .packing-layout {
+                    display: grid;
+                    grid-template-columns: 1fr 340px;
+                    gap: 2rem;
+                    align-items: start;
+                }
+
+                /* ─── PACKING SECTIONS ─── */
+                .packing-sections {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem
+                }
+
+                .pack-section {
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 20px;
+                    overflow: hidden;
+                    backdrop-filter: blur(20px);
+                    transition: border-color 0.3s;
+                }
+
+                    .pack-section:hover {
+                        border-color: rgba(77,238,234,0.15)
+                    }
+
+                .pack-section-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 1.25rem 1.75rem;
+                    cursor: pointer;
+                    user-select: none;
+                    transition: background 0.25s;
+                }
+
+                    .pack-section-header:hover {
+                        background: rgba(255,255,255,0.02)
+                    }
+
+                .pack-section-header-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.85rem;
+                }
+
+                .pack-section-icon {
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.1rem;
+                    background: rgba(77,238,234,0.08);
+                    border: 1px solid rgba(77,238,234,0.15);
+                    flex-shrink: 0;
+                }
+
+                .pack-section-title {
+                    font-family: var(--font-head);
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    letter-spacing: -0.01em;
+                }
+
+                .pack-section-count {
+                    font-family: var(--font-mono);
+                    font-size: 0.65rem;
+                    color: var(--sub);
+                    letter-spacing: 0.08em;
+                    margin-top: 2px;
+                }
+
+                .pack-section-chevron {
+                    color: var(--sub);
+                    font-size: 0.8rem;
+                    transition: transform 0.3s;
+                }
+
+                .pack-section.open .pack-section-chevron {
+                    transform: rotate(180deg)
+                }
+
+                .pack-section-body {
+                    padding: 0 1.75rem;
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.4s var(--ease-out), padding 0.3s;
+                }
+
+                .pack-section.open .pack-section-body {
+                    max-height: 2000px;
+                    padding: 0 1.75rem 1.5rem;
+                }
+
+                .pack-subsection {
+                    margin-bottom: 1.25rem;
+                }
+
+                    .pack-subsection:last-child {
+                        margin-bottom: 0
+                    }
+
+                .pack-subsection-title {
+                    font-family: var(--font-mono);
+                    font-size: 0.65rem;
+                    color: var(--accent2);
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    margin-bottom: 0.75rem;
+                    padding-bottom: 0.5rem;
+                    border-bottom: 1px solid rgba(168,85,247,0.15);
+                }
+
+                .pack-items-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 0.4rem;
+                }
+
+                .pack-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.6rem;
+                    padding: 0.5rem 0.75rem;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                    font-size: 0.82rem;
+                    color: var(--sub);
+                }
+
+                    .pack-item:hover {
+                        background: rgba(255,255,255,0.04)
+                    }
+
+                    .pack-item.checked {
+                        color: var(--text)
+                    }
+
+                .pack-item-check {
+                    width: 16px;
+                    height: 16px;
+                    border: 1.5px solid rgba(255,255,255,0.2);
+                    border-radius: 4px;
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s;
+                    font-size: 0.65rem;
+                }
+
+                .pack-item.checked .pack-item-check {
+                    background: var(--accent);
+                    border-color: var(--accent);
+                    color: #000;
+                }
+
+                .pack-item-priority {
+                    font-size: 0.55rem;
+                    font-family: var(--font-mono);
+                    padding: 2px 5px;
+                    border-radius: 4px;
+                    letter-spacing: 0.06em;
+                    text-transform: uppercase;
+                    margin-left: auto;
+                    flex-shrink: 0;
+                }
+
+                .priority-must {
+                    background: rgba(77,238,234,0.1);
+                    color: var(--accent);
+                    border: 1px solid rgba(77,238,234,0.2);
+                }
+
+                .priority-rec {
+                    background: rgba(168,85,247,0.08);
+                    color: var(--accent2);
+                    border: 1px solid rgba(168,85,247,0.18);
+                }
+
+                .priority-opt {
+                    background: rgba(255,255,255,0.04);
+                    color: var(--sub);
+                    border: 1px solid rgba(255,255,255,0.06);
+                }
+
+                /* ─── PROGRESS BAR IN SECTION HEADER ─── */
+                .pack-section-progress {
+                    height: 2px;
+                    background: rgba(255,255,255,0.06);
+                    margin: 0 1.75rem;
+                    border-radius: 1px;
+                    overflow: hidden;
+                }
+
+                .pack-section-progress-fill {
+                    height: 100%;
+                    background: linear-gradient(90deg, var(--accent), var(--accent2));
+                    border-radius: 1px;
+                    transition: width 0.4s var(--ease-out);
+                    width: 0%;
+                }
+
+                /* ─── SIDEBAR ─── */
+                .sidebar {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    position: sticky;
+                    top: 2rem
+                }
+
+                /* Overall Progress */
+                .progress-card {
+                    background: var(--glass);
+                    border: 1px solid var(--border-hi);
+                    border-radius: 20px;
+                    padding: 1.75rem;
+                    backdrop-filter: blur(20px);
+                }
+
+                .progress-card-title {
+                    font-family: var(--font-head);
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    margin-bottom: 1.25rem;
+                }
+
+                .overall-progress-ring {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 1.25rem;
+                }
+
+                .progress-ring-svg {
+                    transform: rotate(-90deg)
+                }
+
+                .progress-ring-bg {
+                    fill: none;
+                    stroke: rgba(255,255,255,0.06);
+                    stroke-width: 6
+                }
+
+                .progress-ring-fill {
+                    fill: none;
+                    stroke: url(#progressGrad);
+                    stroke-width: 6;
+                    stroke-linecap: round;
+                    transition: stroke-dashoffset 0.5s var(--ease-out);
+                }
+
+                .progress-ring-center {
+                    position: absolute;
+                    text-align: center;
+                }
+
+                .progress-ring-pct {
+                    font-family: var(--font-head);
+                    font-size: 1.8rem;
+                    font-weight: 800;
+                    letter-spacing: -0.04em;
+                    line-height: 1;
+                }
+
+                .progress-ring-label {
+                    font-family: var(--font-mono);
+                    font-size: 0.6rem;
+                    color: var(--sub);
+                    letter-spacing: 0.1em;
+                    text-transform: uppercase;
+                    margin-top: 2px;
+                }
+
+                .progress-stats {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 0.75rem;
+                }
+
+                .progress-stat {
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 0.75rem;
+                    text-align: center;
+                }
+
+                .progress-stat-val {
+                    font-family: var(--font-head);
+                    font-size: 1.2rem;
+                    font-weight: 800;
+                    color: var(--accent);
+                }
+
+                .progress-stat-key {
+                    font-family: var(--font-mono);
+                    font-size: 0.58rem;
+                    color: var(--sub);
+                    letter-spacing: 0.08em;
+                    text-transform: uppercase;
+                    margin-top: 2px;
+                }
+
+                /* AI Recommendations Card */
+                .ai-tips-card {
+                    background: var(--glass);
+                    border: 1px solid var(--border-hi);
+                    border-radius: 20px;
+                    padding: 1.75rem;
+                    backdrop-filter: blur(20px);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                    .ai-tips-card::before {
+                        content: '';
+                        position: absolute;
+                        top: -60px;
+                        left: -60px;
+                        width: 200px;
+                        height: 200px;
+                        background: radial-gradient(ellipse, rgba(77,238,234,0.07) 0%, transparent 70%);
+                        pointer-events: none;
+                    }
+
+                .ai-tips-title {
+                    font-family: var(--font-head);
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    margin-bottom: 1.25rem;
+                }
+
+                .ai-tip {
+                    display: flex;
+                    gap: 0.75rem;
+                    padding: 0.85rem 0;
+                    border-bottom: 1px solid var(--border);
+                    font-size: 0.82rem;
+                    line-height: 1.55;
+                    color: var(--sub);
+                }
+
+                    .ai-tip:last-child {
+                        border-bottom: none;
+                        padding-bottom: 0
+                    }
+
+                .ai-tip-icon {
+                    color: var(--accent);
+                    font-size: 0.85rem;
+                    flex-shrink: 0;
+                    margin-top: 2px
+                }
+
+                /* Quick Actions */
+                .actions-card {
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 20px;
+                    padding: 1.5rem;
+                    backdrop-filter: blur(20px);
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+
+                .action-btn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    padding: 0.75rem;
+                    border-radius: 12px;
+                    font-size: 0.83rem;
+                    font-family: var(--font-body);
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.25s;
+                    border: none;
+                    text-decoration: none;
+                }
+
+                .action-btn-primary {
+                    background: linear-gradient(135deg, var(--accent), var(--accent2));
+                    color: #000;
+                }
+
+                    .action-btn-primary:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 24px rgba(77,238,234,0.3)
+                    }
+
+                .action-btn-secondary {
+                    background: rgba(255,255,255,0.04);
+                    border: 1px solid var(--border);
+                    color: var(--text);
+                }
+
+                    .action-btn-secondary:hover {
+                        border-color: var(--accent);
+                        background: rgba(77,238,234,0.06)
+                    }
+
+                /* ─── LOADING OVERLAY ─── */
+                #loading-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: var(--bg-deep);
+                    z-index: 9999;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 2rem;
+                    transition: opacity 0.5s, visibility 0.5s;
+                }
+
+                    #loading-overlay.hidden {
+                        opacity: 0;
+                        visibility: hidden
+                    }
+
+                .loading-orb {
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    border: 2px solid rgba(77,238,234,0.15);
+                    border-top-color: var(--accent);
+                    border-right-color: var(--accent2);
+                    animation: spin 1s linear infinite;
+                }
+
+                @@keyframes spin {
+                    to {
+                        transform: rotate(360deg)
+                    }
+                }
+
+                .loading-text {
+                    font-family: var(--font-mono);
+                    font-size: 0.75rem;
+                    color: var(--sub);
+                    letter-spacing: 0.15em;
+                    text-transform: uppercase;
+                }
+
+                .loading-steps {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    align-items: center;
+                }
+
+                .loading-step {
+                    font-size: 0.8rem;
+                    color: var(--sub);
+                    opacity: 0;
+                    transition: opacity 0.4s, color 0.4s;
+                }
+
+                    .loading-step.active {
+                        opacity: 1;
+                        color: var(--accent)
+                    }
+
+                    .loading-step.done {
+                        opacity: 0.5;
+                        color: var(--text)
+                    }
+
+                /* ─── SECTION HEADING ─── */
+                .section-head-block {
+                    margin-bottom: 3rem;
+                    text-align: center;
+                }
+
+                    .section-head-block h2 {
+                        font-family: var(--font-head);
+                        font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+                        font-weight: 800;
+                        letter-spacing: -0.03em;
+                        margin-bottom: 0.5rem;
+                    }
+
+                    .section-head-block p {
+                        color: var(--sub);
+                        font-size: 0.95rem;
+                    }
+
+                /* ─── RESPONSIVE ─── */
+                @@media(max-width:1024px) {
+                    .packing-layout {
+                        grid-template-columns: 1fr
+                    }
+
+                    .sidebar {
+                        position: static
+                    }
+
+                    .summary-grid {
+                        grid-template-columns: repeat(3,1fr)
+                    }
+                }
+
+                @@media(max-width:768px) {
+                    .summary-grid {
+                        grid-template-columns: repeat(2,1fr)
+                    }
+
+                    .pack-items-grid {
+                        grid-template-columns: 1fr
+                    }
+
+                    .hero-stats {
+                        gap: 1.5rem
+                    }
+                }
+
+                @@media(max-width:480px) {
+                    .summary-grid {
+                        grid-template-columns: 1fr 1fr
+                    }
+
+                    .content-wrapper {
+                        padding: 0 1.25rem
+                    }
+                }
+    </style>
+}
+
+<!-- ═══════════════════════ LOADING OVERLAY ═══════════════════════ -->
+<div id="loading-overlay">
+    <div class="loading-orb"></div>
+    <div class="loading-steps">
+        <div class="loading-step" id="ls1">Analyzing destination data...</div>
+        <div class="loading-step" id="ls2">Processing weather patterns...</div>
+        <div class="loading-step" id="ls3">Optimizing for travel style...</div>
+        <div class="loading-step" id="ls4">Generating smart packing list...</div>
+    </div>
+    <div class="loading-text">AI Processing</div>
+</div>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section id="hero">
+    <canvas id="hero-3d-canvas"></canvas>
+    <div class="hero-glow"></div>
+
+    <div class="hero-content">
+        @*<div class="hero-eyebrow">
+            <span class="hero-eyebrow-line"></span>
+            AI Powered Travel Assistant
+            <span class="hero-eyebrow-line"></span>
+        </div>*@
+        <h1 class="hero-h1">
+            AI Smart<br /><span class="text-gradient">Packing List</span><br />Generator
+        </h1>
+        <p class="hero-sub">
+            AI-powered travel intelligence using destination, weather, and activity analysis to build your perfect packing list.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-val text-gradient">95%</div>
+                <div class="hero-stat-label">Packing Accuracy</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-val text-gradient">✦</div>
+                <div class="hero-stat-label">Weather Optimized</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-val text-gradient">AI</div>
+                <div class="hero-stat-label">Smart Travel Ready</div>
+            </div>
+        </div>
+        <div class="hero-ctas">
+            <button class="btn-hero-primary" onclick="regeneratePacking()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6" /><path d="M1 20v-6h6" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>
+                Generate Again
+            </button>
+            <a href="~/PackingListGenerator/Index" class="btn-hero-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                Full Checklist View
+            </a>
+        </div>
+    </div>
+
+    @*<div class="hero-scroll-hint" onclick="document.getElementById('packing-content').scrollIntoView({behavior:'smooth'})">
+        <span>View your list</span>
+        <div class="hero-scroll-icon">
+            <div class="hero-scroll-dot"></div>
+        </div>
+    </div>*@
+</section>
+
+<!-- ═══════════════════════ PACKING CONTENT ═══════════════════════ -->
+<section id="packing-content">
+    <div class="content-wrapper">
+
+        <div class="section-head-block" data-reveal>
+            <div class="nex-badge">Your AI-Generated List</div>
+            <h2 style="margin-top:1rem">Smart Packing<br /><span class="text-gradient">Intelligence</span></h2>
+            <p style="margin-top:0.75rem">Personalized for your exact trip parameters</p>
+        </div>
+
+        <!-- Input Summary Card -->
+        <div class="summary-card" data-reveal id="summary-card">
+            <div class="summary-header">
+                <div>
+                    <div class="nex-badge" style="margin-bottom:0.5rem">Trip Summary</div>
+                    <div class="summary-title" id="summary-headline">Your Trip Overview</div>
+                </div>
+                <a href="/" class="btn-hero-secondary" style="padding:0.6rem 1.25rem;font-size:0.82rem">
+                    ← Edit Trip
+                </a>
+            </div>
+            <div class="summary-grid" id="summary-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Weather Insight Card -->
+        <div class="weather-card" data-reveal id="weather-card">
+            <div class="weather-icon" id="weather-icon">🌤️</div>
+            <div class="weather-content">
+                <div class="weather-label">AI Weather Intelligence</div>
+                <div class="weather-title" id="weather-title">Climate Analysis</div>
+                <div class="weather-text" id="weather-text"></div>
+                <div class="weather-chips" id="weather-chips"></div>
+            </div>
+        </div>
+
+        <!-- Two-Column Layout -->
+        <div class="packing-layout">
+
+            <!-- Packing Sections -->
+            <div class="packing-sections" id="packing-sections">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+
+                <!-- Progress Card -->
+                <div class="progress-card" data-reveal>
+                    <div class="progress-card-title">Packing Progress</div>
+                    <div class="overall-progress-ring" style="position:relative">
+                        <svg class="progress-ring-svg" width="120" height="120">
+                            <defs>
+                                <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#4deeEA" />
+                                    <stop offset="100%" stop-color="#a855f7" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-bg" cx="60" cy="60" r="52" />
+                            <circle class="progress-ring-fill" id="progress-ring-fill" cx="60" cy="60" r="52"
+                                    stroke-dasharray="326.7"
+                                    stroke-dashoffset="326.7" />
+                        </svg>
+                        <div class="progress-ring-center">
+                            <div class="progress-ring-pct text-gradient" id="progress-pct">0%</div>
+                            <div class="progress-ring-label">Packed</div>
+                        </div>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="progress-stat">
+                            <div class="progress-stat-val" id="stat-checked">0</div>
+                            <div class="progress-stat-key">Checked</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="progress-stat-val" id="stat-total">0</div>
+                            <div class="progress-stat-key">Total Items</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Tips Card -->
+                <div class="ai-tips-card" data-reveal>
+                    <div class="nex-badge" style="margin-bottom:0.75rem">✦ AI Tips</div>
+                    <div class="ai-tips-title">Smart Recommendations</div>
+                    <div id="ai-tips-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Actions Card -->
+                <div class="actions-card" data-reveal>
+                    <button class="action-btn action-btn-primary" onclick="regeneratePacking()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6" /><path d="M1 20v-6h6" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>
+                        Regenerate List
+                    </button>
+                    <a href="~/PackingListGenerator/Index" class="action-btn action-btn-secondary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /></svg>
+                        Full Checklist Page
+                    </a>
+                    <button class="action-btn action-btn-secondary" onclick="window.print()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg>
+                        Print / Export
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>/* ═══════════════════════════════════════════
+   3D EARTH — exact copy from homepage
+═══════════════════════════════════════════ */
+(function () {
+    var canvas = document.getElementById('hero-3d-canvas');
+    if (!canvas || typeof THREE === 'undefined') return;
+    var scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x020205, 0.0006);
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0.3, 4.2);
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    var TL = new THREE.TextureLoader();
+    var earthTex = TL.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+    var specTex  = TL.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+    var normTex  = TL.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+    var cloudTex = TL.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+    var earthMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1.1, 128, 128),
+        new THREE.MeshPhongMaterial({ map:earthTex, specularMap:specTex, specular:new THREE.Color('grey'), shininess:5, normalMap:normTex, normalScale:new THREE.Vector2(0.8,0.8) })
+    );
+    scene.add(earthMesh);
+    var cloudMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1.12, 128, 128),
+        new THREE.MeshPhongMaterial({ map:cloudTex, transparent:true, opacity:0.12, blending:THREE.AdditiveBlending, depthWrite:false })
+    );
+    scene.add(cloudMesh);
+    var sGeo = new THREE.BufferGeometry();
+    var sArr = new Float32Array(4000 * 3);
+    for (var i = 0; i < 4000; i++) {
+        sArr[i*3]   = (Math.random()-0.5)*2500;
+        sArr[i*3+1] = (Math.random()-0.5)*2500;
+        sArr[i*3+2] = (Math.random()-0.5)*600 - 200;
+    }
+    sGeo.setAttribute('position', new THREE.BufferAttribute(sArr, 3));
+    scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({ color:0xffffff, size:0.3, transparent:true, opacity:0.7 })));
+    function createRing(r, color, opacity) {
+        var pts = [];
+        for (var j = 0; j <= 200; j++) { var a=(j/200)*Math.PI*2; pts.push(new THREE.Vector3(Math.cos(a)*r,0,Math.sin(a)*r)); }
+        return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color:color, transparent:true, opacity:opacity }));
+    }
+    var ring1 = createRing(1.55, 0x4deeEA, 0.3);
+    var ring2 = createRing(1.75, 0xa855f7, 0.25);
+    scene.add(ring1); scene.add(ring2);
+    scene.add(new THREE.AmbientLight(0x111122));
+    var sun = new THREE.DirectionalLight(0xffffff, 1.5);
+    sun.position.set(5,3,5); scene.add(sun);
+    scene.add(new THREE.PointLight(0x4deeEA, 0.4, 5, 2));
+    var targetRY=0, targetRX=0, currentRY=0, currentRX=0;
+    document.getElementById('hero').addEventListener('mousemove', function(e) {
+        targetRY = (e.clientX/window.innerWidth - 0.5) * 0.8;
+        targetRX = (e.clientY/window.innerHeight - 0.5) * 0.4;
+    });
+    var time = 0;
+    (function tick() {
+        requestAnimationFrame(tick);
+        time += 0.004;
+        currentRY += (targetRY - currentRY) * 0.04;
+        currentRX += (targetRX - currentRX) * 0.04;
+        earthMesh.rotation.y = currentRY + time * 0.5;
+        earthMesh.rotation.x = currentRX * 0.2;
+        cloudMesh.rotation.y = currentRY + time * 0.6;
+        cloudMesh.rotation.x = currentRX * 0.2;
+        ring1.rotation.y += 0.0008; ring1.rotation.x = Math.sin(time*0.4)*0.1;
+        ring2.rotation.z += 0.001;  ring2.rotation.x = Math.cos(time*0.3)*0.1;
+        renderer.render(scene, camera);
+    })();
+    window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
+
+/* ═══════════════════════════════════════════
+   AI PACKING ENGINE
+═══════════════════════════════════════════ */
+
+// ── Weather intelligence data ──
+var weatherProfiles = {
+    'Europe':     { icon:'🌤️', season:'Temperate', temp:'10–22°C', desc:'European climate varies significantly by season. Layering is key — mornings can be brisk while afternoons warm considerably. Pack versatile, moisture-wicking fabrics that transition between indoor and outdoor settings.', chips:['Layering Essential','Rain Possible','Mild Days'] },
+    'Asia':       { icon:'🌏', season:'Tropical',  temp:'25–35°C', desc:'Asian destinations typically feature high humidity and warmth. Breathable, quick-dry fabrics are critical. Many cultural sites require conservative coverage, so pack lightweight cover-ups alongside your casual wear.', chips:['High Humidity','Sun Protection','Modest Dress'] },
+    'USA':        { icon:'🗽', season:'Varied',    temp:'15–28°C', desc:'The USA spans multiple climate zones. Urban environments require smart-casual options while outdoor regions demand activity-ready gear. Air conditioning is ubiquitous indoors, so carry a light layer even in summer.', chips:['Climate Varies','AC Indoors','Versatile Pack'] },
+    'South-Asia': { icon:'🕌', season:'Hot & Dry', temp:'28–42°C', desc:'South Asian travel demands heat management above all else. Ultra-light, loose fabrics in natural fibers work best. Cultural and religious sites are numerous — respectful dress (arms, legs covered) is a must. Hydration accessories are critical.', chips:['Extreme Heat','Conservative Dress','UV Protection'] },
+    'Africa':     { icon:'🌍', season:'Varied',    temp:'20–38°C', desc:'African destinations range from savannah heat to coastal humidity. Safari packing emphasizes neutral colors and functionality. Urban centers are increasingly cosmopolitan, but rural and adventure regions demand rugged, dust-resistant gear.', chips:['Safari Neutral Colors','Dust Resistant','Varied Climate'] }
+};
+
+// ── Packing database ──
+var packingDB = {
+    clothing: {
+        icon: '👕', title: 'Clothing Essentials',
+        subsections: {
+            'Tops': {
+                minimal: ['T-Shirts (3×)','Dress Shirt (1×)'],
+                balanced: ['T-Shirts (4×)','Casual Shirt (2×)','Dress Shirt (1×)','Polo Shirt (1×)'],
+                full: ['T-Shirts (5×)','Casual Shirts (3×)','Dress Shirts (2×)','Polo Shirt (1×)','Tank Tops (2×)']
+            },
+            'Bottoms': {
+                minimal: ['Jeans (1×)','Shorts (1×)'],
+                balanced: ['Jeans (2×)','Shorts (2×)','Chinos (1×)'],
+                full: ['Jeans (2×)','Shorts (3×)','Chinos (1×)','Smart Trousers (1×)','Track Pants (1×)']
+            },
+            'Innerwear': {
+                minimal: ['Underwear (4×)','Socks (4 pairs)'],
+                balanced: ['Underwear (6×)','Socks (6 pairs)','Sports Socks (2 pairs)'],
+                full: ['Underwear (7×)','Socks (7 pairs)','Sports Socks (3 pairs)','Compression Socks (1×)']
+            },
+            'Outerwear': {
+                minimal: ['Light Jacket (1×)'],
+                balanced: ['Light Jacket (1×)','Rain Jacket (1×)'],
+                full: ['Light Jacket (1×)','Rain Jacket (1×)','Hoodie (1×)','Fleece Layer (1×)']
+            },
+            'Sleepwear': {
+                minimal: ['Sleepwear Set (1×)'],
+                balanced: ['Sleepwear Set (2×)'],
+                full: ['Sleepwear Set (2×)','Loungewear Pants (1×)']
+            }
+        }
+    },
+    footwear: {
+        icon: '👟', title: 'Footwear',
+        subsections: {
+            'Shoes': {
+                minimal: ['Sneakers (1×)','Sandals (1×)'],
+                balanced: ['Sneakers (1×)','Sandals (1×)','Dress Shoes (1×)'],
+                full: ['Sneakers (1×)','Sandals (1×)','Dress Shoes (1×)','Flip Flops (1×)','Waterproof Boots (1×)']
+            },
+            'Accessories': {
+                minimal: ['Shoe Bag (1×)'],
+                balanced: ['Shoe Bags (2×)','Extra Laces'],
+                full: ['Shoe Bags (3×)','Extra Laces','Insoles','Shoe Deodorizer']
+            }
+        }
+    },
+    toiletries: {
+        icon: '🧴', title: 'Toiletries & Skincare',
+        subsections: {
+            'Core Toiletries': {
+                minimal: ['Toothbrush','Toothpaste','Deodorant','Shampoo (travel)','Body Wash (travel)'],
+                balanced: ['Toothbrush','Toothpaste','Deodorant','Shampoo','Conditioner','Body Wash','Moisturizer','Lip Balm'],
+                full: ['Toothbrush','Toothpaste','Floss','Deodorant','Shampoo','Conditioner','Body Wash','Moisturizer','Lip Balm','Face Wash','Toner','Serum']
+            },
+            'Sun & Skin': {
+                minimal: ['Sunscreen SPF 50'],
+                balanced: ['Sunscreen SPF 50','After-Sun Lotion','Face SPF'],
+                full: ['Sunscreen SPF 50','After-Sun Lotion','Face SPF','Aloe Vera Gel','Insect Repellent']
+            }
+        }
+    },
+    documents: {
+        icon: '📄', title: 'Important Documents',
+        subsections: {
+            'Travel Documents': {
+                minimal: ['Passport','Visa Documents','Travel Insurance','Hotel Confirmations'],
+                balanced: ['Passport','Visa Documents','Travel Insurance','Hotel Confirmations','Flight Tickets','Emergency Contacts'],
+                full: ['Passport (+ 2 copies)','Visa Documents','Travel Insurance','Hotel Confirmations','Flight Tickets','Emergency Contacts','Vaccination Records','International Driving Permit']
+            },
+            'Payment': {
+                minimal: ['Credit Card','Debit Card','Local Cash'],
+                balanced: ['Credit Card','Debit Card','Local Cash','Travel Card'],
+                full: ['Credit Card (2×)','Debit Card','Local Cash','Travel Card','US Dollars (backup)']
+            }
+        }
+    },
+    electronics: {
+        icon: '🔌', title: 'Electronics',
+        subsections: {
+            'Devices': {
+                minimal: ['Phone','Charger','Power Bank'],
+                balanced: ['Phone','Charger','Power Bank','Earphones','Camera'],
+                full: ['Phone','Charger','Power Bank (20K mAh)','Earphones','Camera','Laptop','E-Reader','Smart Watch']
+            },
+            'Adapters & Cables': {
+                minimal: ['Universal Adapter','USB Cable'],
+                balanced: ['Universal Adapter','USB-C Cable','Lightning Cable','Multi-Port Hub'],
+                full: ['Universal Adapter','USB-C Cable','Lightning Cable','Multi-Port Hub','HDMI Adapter','Memory Cards (2×)']
+            }
+        }
+    },
+    health: {
+        icon: '💊', title: 'Health & Safety',
+        subsections: {
+            'First Aid': {
+                minimal: ['Paracetamol','Antidiarrheal','Band-Aids','Hand Sanitizer'],
+                balanced: ['Paracetamol','Antidiarrheal','Antihistamine','Band-Aids','Antiseptic Wipes','Hand Sanitizer','Motion Sickness Pills'],
+                full: ['Paracetamol','Ibuprofen','Antidiarrheal','Antihistamine','Band-Aids','Antiseptic Wipes','Hand Sanitizer','Motion Sickness Pills','Rehydration Salts','Cold & Flu Meds']
+            },
+            'Prescriptions': {
+                minimal: ['Personal Medications','Prescription Copy'],
+                balanced: ['Personal Medications','Prescription Copy','Vitamins'],
+                full: ['Personal Medications (2-week supply)','Prescription Copy','Vitamins','Melatonin (jet lag)','Probiotics']
+            }
+        }
+    }
+};
+
+// ── Activity-specific additions ──
+var activityGear = {
+    'Hiking': {
+        icon: '🥾', title: 'Hiking Gear',
+        items: {
+            minimal: ['Hiking Boots','Trekking Poles','Water Bottle (1L)'],
+            balanced: ['Hiking Boots','Trekking Poles','Water Bottle (2L)','Trail Snacks','Hiking Socks (3×)','Headlamp'],
+            full: ['Hiking Boots','Trekking Poles','Water Bottle (2L)','Hydration Pack','Trail Snacks','Hiking Socks (4×)','Headlamp','Trail Map / GPS','Blister Kit','Emergency Whistle','Bear Spray (if needed)']
+        }
+    },
+    'Camping': {
+        icon: '⛺', title: 'Camping Essentials',
+        items: {
+            minimal: ['Sleeping Bag','Tent (1-person)','Camping Knife'],
+            balanced: ['Sleeping Bag','Tent','Camping Knife','Camp Stove','Mess Kit','Fire Starter'],
+            full: ['Sleeping Bag','Tent','Camping Knife','Camp Stove','Mess Kit','Fire Starter','Rope (10m)','Tarp','Portable Filter','Solar Lantern','Bear Canister']
+        }
+    },
+    'Skydiving': {
+        icon: '🪂', title: 'Skydiving Essentials',
+        items: {
+            minimal: ['Release Form Copy','Comfortable Fit Clothing','Closed-Toe Shoes'],
+            balanced: ['Release Form Copy','Comfortable Fit Clothing','Closed-Toe Shoes','Goggles (personal)','Altimeter Watch'],
+            full: ['Release Form Copy','Comfortable Fit Clothing','Closed-Toe Shoes','Goggles (personal)','Altimeter Watch','GoPro Mount Harness','Earplugs','Energy Bars']
+        }
+    },
+    'Beach': {
+        icon: '🏖️', title: 'Beach Gear',
+        items: {
+            minimal: ['Swimwear (2×)','Sunscreen SPF 50','Flip Flops'],
+            balanced: ['Swimwear (3×)','Sunscreen SPF 50','Flip Flops','Beach Towel','Snorkel Set','UV Sunglasses'],
+            full: ['Swimwear (4×)','Sunscreen SPF 50','After-Sun Lotion','Flip Flops','Beach Towel (2×)','Snorkel Set','UV Sunglasses','Waterproof Phone Case','Dry Bag','Rash Guard','Beach Bag']
+        }
+    },
+    'City Tour': {
+        icon: '🗺️', title: 'City Tour Essentials',
+        items: {
+            minimal: ['Comfortable Walking Shoes','City Map / App','Daypack'],
+            balanced: ['Comfortable Walking Shoes','City Map / App','Daypack','Portable Charger','Umbrella','Travel Locks'],
+            full: ['Comfortable Walking Shoes','City Map / App','Daypack','Portable Charger','Umbrella','Travel Locks','Neck Pouch (anti-theft)','Museum Pass','Translation App','Collapsible Water Bottle']
+        }
+    }
+};
+
+// ── AI Tips engine ──
+function generateAITips(data) {
+    var tips = [];
+    var pref = (data.packingPreference || 'balanced').toLowerCase();
+
+    if (pref === 'minimal') {
+        tips.push({ icon:'⚡', text:'Pack only multi-use items — a navy blazer works for dinners, day tours, and cool evenings.' });
+        tips.push({ icon:'🔄', text:'Plan to do laundry every 4–5 days to stay minimal while staying fresh.' });
+    } else if (pref === 'full') {
+        tips.push({ icon:'🎯', text:'With a full pack, use packing cubes to compress and organize by category.' });
+    } else {
+        tips.push({ icon:'⚖️', text:'Balanced packing: choose 3 base colors that mix-and-match across all outfits.' });
+    }
+
+    var dest = (data.destination || '').toLowerCase();
+    if (dest.includes('asia') || dest.includes('south-asia')) {
+        tips.push({ icon:'🕌', text:'Many temples require covered shoulders and knees — keep a lightweight scarf handy at all times.' });
+    }
+    if (dest.includes('europe')) {
+        tips.push({ icon:'🚶', text:'European cities involve a lot of walking on cobblestones — prioritize comfort over style for footwear.' });
+    }
+
+    var transport = (data.transport || '').toLowerCase();
+    if (transport.includes('airplane')) {
+        tips.push({ icon:'✈️', text:'Roll clothes instead of folding — saves 30% bag space and reduces creases for airplane travel.' });
+        tips.push({ icon:'🛡️', text:'Pack a neck pillow, eye mask, and noise-cancelling earphones in your carry-on for the flight.' });
+    }
+
+    var days = parseInt(data.duration) || 7;
+    if (days > 10) {
+        tips.push({ icon:'💧', text:'For trips over 10 days, bring travel-size laundry detergent for sink washing mid-trip.' });
+    }
+
+    tips.push({ icon:'📦', text:'Pack heavier items (shoes, tech) at the bottom near the wheels of your bag to balance load.' });
+    tips.push({ icon:'🔐', text:'Always keep travel documents, valuables, and a 24-hour clothing set in your carry-on bag.' });
+
+    return tips.slice(0, 6);
+}
+
+// ── Priority assignment ──
+function assignPriority(item, section) {
+    var mustItems = ['Passport','Visa','Insurance','Medications','Phone','Charger','Underwear','Toothbrush','Deodorant','Sunscreen'];
+    var isMust = mustItems.some(function(k) { return item.indexOf(k) !== -1 });
+    if (isMust) return 'must';
+    if (section === 'documents' || section === 'health') return 'must';
+    var optionalItems = ['E-Reader','HDMI','Insoles','Trail Map','Rope','Bear Canister'];
+    var isOpt = optionalItems.some(function(k) { return item.indexOf(k) !== -1 });
+    return isOpt ? 'opt' : 'rec';
+}
+
+// ── Main generate function ──
+function generatePackingList(data) {
+    var pref = (data.packingPreference || 'balanced').toLowerCase();
+    if (pref !== 'minimal' && pref !== 'full') pref = 'balanced';
+
+    var activities = data.activities || [];
+    if (typeof activities === 'string') activities = [activities];
+
+    var sections = [];
+
+    // Core sections
+    var coreOrder = ['clothing','footwear','toiletries','documents','electronics','health'];
+    coreOrder.forEach(function(key) {
+        var db = packingDB[key];
+        var sectionItems = [];
+        Object.keys(db.subsections).forEach(function(subName) {
+            var sub = db.subsections[subName];
+            var items = sub[pref] || sub['balanced'];
+            sectionItems.push({ title: subName, items: items, sectionKey: key });
+        });
+        sections.push({ key: key, icon: db.icon, title: db.title, subsections: sectionItems });
+    });
+
+    // Activity sections
+    activities.forEach(function(activity) {
+        var trimmed = activity.trim();
+        if (activityGear[trimmed]) {
+            var ag = activityGear[trimmed];
+            var items = ag.items[pref] || ag.items['balanced'];
+            sections.push({
+                key: 'activity_' + trimmed,
+                icon: ag.icon,
+                title: ag.title,
+                subsections: [{ title: trimmed + ' Items', items: items, sectionKey: 'activity' }]
+            });
+        }
+    });
+
+    return sections;
+}
+
+// ── Render UI ──
+var totalItems = 0;
+var checkedItems = 0;
+
+function renderSections(sections) {
+    var container = document.getElementById('packing-sections');
+    container.innerHTML = '';
+    totalItems = 0;
+
+    sections.forEach(function(section, idx) {
+        var sectionTotal = 0;
+        section.subsections.forEach(function(sub) { sectionTotal += sub.items.length; });
+        totalItems += sectionTotal;
+
+        var el = document.createElement('div');
+        el.className = 'pack-section' + (idx === 0 ? ' open' : '');
+        el.dataset.reveal = '';
+
+        var subsHTML = '';
+        section.subsections.forEach(function(sub) {
+            subsHTML += '<div class="pack-subsection">';
+            subsHTML += '<div class="pack-subsection-title">' + sub.title + '</div>';
+            subsHTML += '<div class="pack-items-grid">';
+            sub.items.forEach(function(item) {
+                var priority = assignPriority(item, sub.sectionKey);
+                var priorityLabel = priority === 'must' ? 'MUST' : priority === 'rec' ? 'REC' : 'OPT';
+                var priorityClass = 'priority-' + priority;
+                var safeItem = item.replace(/'/g, '&#39;');
+                subsHTML += '<div class="pack-item" onclick="toggleItem(this)">';
+                subsHTML += '<div class="pack-item-check"></div>';
+                subsHTML += '<span>' + item + '</span>';
+                subsHTML += '<span class="pack-item-priority ' + priorityClass + '">' + priorityLabel + '</span>';
+                subsHTML += '</div>';
+            });
+            subsHTML += '</div></div>';
+        });
+
+        el.innerHTML =
+            '<div class="pack-section-header" onclick="toggleSection(this)">' +
+                '<div class="pack-section-header-left">' +
+                    '<div class="pack-section-icon">' + section.icon + '</div>' +
+                    '<div>' +
+                        '<div class="pack-section-title">' + section.title + '</div>' +
+                        '<div class="pack-section-count">' + sectionTotal + ' items</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="pack-section-chevron">▼</div>' +
+            '</div>' +
+            '<div class="pack-section-progress"><div class="pack-section-progress-fill" style="width:0%"></div></div>' +
+            '<div class="pack-section-body">' + subsHTML + '</div>';
+
+        container.appendChild(el);
+    });
+
+    document.getElementById('stat-total').textContent = totalItems;
+    updateProgress();
+
+    // Trigger reveal
+    setTimeout(function() {
+        container.querySelectorAll('[data-reveal]').forEach(function(el) {
+            el.classList.add('revealed');
+        });
+    }, 100);
+}
+
+function toggleSection(header) {
+    var section = header.closest('.pack-section');
+    section.classList.toggle('open');
+}
+
+function toggleItem(itemEl) {
+    itemEl.classList.toggle('checked');
+    if (itemEl.classList.contains('checked')) {
+        itemEl.querySelector('.pack-item-check').textContent = '✓';
+        checkedItems++;
+    } else {
+        itemEl.querySelector('.pack-item-check').textContent = '';
+        checkedItems--;
+    }
+    updateProgress();
+    updateSectionProgress(itemEl.closest('.pack-section'));
+}
+
+function updateProgress() {
+    var pct = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('stat-checked').textContent = checkedItems;
+    var circumference = 326.7;
+    var offset = circumference - (pct / 100) * circumference;
+    document.getElementById('progress-ring-fill').style.strokeDashoffset = offset;
+}
+
+function updateSectionProgress(sectionEl) {
+    var items = sectionEl.querySelectorAll('.pack-item');
+    var checked = sectionEl.querySelectorAll('.pack-item.checked').length;
+    var pct = items.length > 0 ? (checked / items.length) * 100 : 0;
+    sectionEl.querySelector('.pack-section-progress-fill').style.width = pct + '%';
+}
+
+function renderSummary(data) {
+    var grid = document.getElementById('summary-grid');
+    var fields = [
+        { label: 'Destination',  value: data.destination || '—' },
+        { label: 'Duration',     value: data.duration || '—' },
+        { label: 'Trip Type',    value: data.tripType || '—' },
+        { label: 'Activities',   value: (data.activities || []).join(', ') || '—' },
+        { label: 'Traveler',     value: data.travelerType || '—' },
+        { label: 'Transport',    value: data.transport || '—' },
+        { label: 'Accommodation',value: data.accommodation || '—' },
+        { label: 'Budget',       value: data.budget || '—' },
+        { label: 'Travel Dates', value: data.travelDates || '—' },
+        { label: 'Packing Pref',value: data.packingPreference || '—', accent: true }
+    ];
+    grid.innerHTML = fields.map(function(f) {
+        return '<div class="summary-item">' +
+            '<div class="summary-item-label">' + f.label + '</div>' +
+            '<div class="summary-item-value' + (f.accent ? ' accent' : '') + '">' + f.value + '</div>' +
+        '</div>';
+    }).join('');
+
+    document.getElementById('summary-headline').textContent =
+        (data.destination || 'Your Trip') + ' · ' + (data.duration || '') + ' · ' + (data.tripType || '');
+}
+
+function renderWeather(data) {
+    var dest = data.destination || 'Europe';
+    var profile = weatherProfiles[dest] || weatherProfiles['Europe'];
+
+    document.getElementById('weather-icon').textContent = profile.icon;
+    document.getElementById('weather-title').textContent = dest + ' Climate Intelligence';
+    document.getElementById('weather-text').textContent =
+        profile.desc + ' Your ' + (data.duration || '7-day') + ' ' + (data.tripType || '') +
+        ' trip calls for ' + (data.packingPreference || 'balanced') + ' packing strategy.';
+
+    var chips = profile.chips.concat([
+        data.packingPreference || 'Balanced Pack',
+        data.budget || 'Mid Budget'
+    ]);
+    document.getElementById('weather-chips').innerHTML =
+        chips.map(function(c) { return '<div class="weather-chip">' + c + '</div>'; }).join('');
+}
+
+function renderAITips(data) {
+    var tips = generateAITips(data);
+    document.getElementById('ai-tips-list').innerHTML =
+        tips.map(function(t) {
+            return '<div class="ai-tip"><span class="ai-tip-icon">' + t.icon + '</span><span>' + t.text + '</span></div>';
+        }).join('');
+}
+
+// ── Loading animation ──
+function runLoadingAnimation(callback) {
+    var steps = ['ls1','ls2','ls3','ls4'];
+    var i = 0;
+    var overlay = document.getElementById('loading-overlay');
+    overlay.classList.remove('hidden');
+
+    function next() {
+        if (i < steps.length) {
+            if (i > 0) document.getElementById(steps[i-1]).classList.replace('active','done');
+            document.getElementById(steps[i]).classList.add('active');
+            i++;
+            setTimeout(next, 650);
+        } else {
+            setTimeout(function() {
+                overlay.classList.add('hidden');
+                callback();
+            }, 400);
+        }
+    }
+    next();
+}
+
+// ── Main init ──
+function initPackingPage() {
+    var raw = sessionStorage.getItem('nexvoy_trip_data');
+    var data = raw ? JSON.parse(raw) : {
+        destination: 'Europe',
+        duration: '7 Days',
+        tripType: 'Adventure',
+        activities: ['Hiking','City Tour'],
+        travelerType: 'Couple',
+        transport: 'Airplane',
+        accommodation: 'Hotel',
+        budget: 'Medium',
+        travelDates: 'Summer 2025',
+        packingPreference: 'Balanced'
+    };
+
+    runLoadingAnimation(function() {
+        renderSummary(data);
+        renderWeather(data);
+        var sections = generatePackingList(data);
+        renderSections(sections);
+        renderAITips(data);
+        checkedItems = 0;
+
+        // Reveal animations
+        setTimeout(function() {
+            document.querySelectorAll('[data-reveal]').forEach(function(el) {
+                el.classList.add('revealed');
+            });
+        }, 200);
+    });
+}
+
+function regeneratePacking() {
+    checkedItems = 0;
+    initPackingPage();
+    document.getElementById('packing-content').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Scroll reveal ──
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+            if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('[data-reveal]').forEach(function(el) { observer.observe(el); });
+})();
+
+// Init on load
+window.addEventListener('DOMContentLoaded', initPackingPage);</script>
+}

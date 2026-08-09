@@ -1,0 +1,969 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEXVOY Admin | @ViewBag.Title</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-void: #020408;
+            --bg-deep: #060c14;
+            --bg-surface: #0a1220;
+            --bg-card: #0d1825;
+            --bg-hover: #111e30;
+            --border: rgba(0, 220, 180, 0.08);
+            --border-glow: rgba(0, 220, 180, 0.25);
+            --accent-cyan: #00ddb4;
+            --accent-teal: #00b8d9;
+            --accent-purple: #7c5cfc;
+            --accent-grad: linear-gradient(135deg, #00ddb4 0%, #7c5cfc 100%);
+            --text-primary: #f0f4f8;
+            --text-secondary: #7a9ab5;
+            --text-muted: #3d5a75;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg-void);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+                pointer-events: none;
+                z-index: 0;
+            }
+
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ══════════════════════════════════
+           SIDEBAR
+        ══════════════════════════════════ */
+        .app-sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 100;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+            .app-sidebar::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: var(--accent-grad);
+            }
+
+        .sidebar-brand {
+            padding: 0 20px;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .brand-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan), 0 0 20px rgba(0,221,180,0.3);
+            animation: pulse-dot 3s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        @@keyframes pulse-dot {
+            0%, 100% {
+                box-shadow: 0 0 10px var(--accent-cyan), 0 0 20px rgba(0,221,180,0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 6px var(--accent-cyan), 0 0 12px rgba(0,221,180,0.2);
+            }
+        }
+
+        .brand-text {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: 0.08em;
+        }
+
+        .sidebar-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+            .sidebar-wrapper::-webkit-scrollbar {
+                width: 3px;
+            }
+
+            .sidebar-wrapper::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .sidebar-wrapper::-webkit-scrollbar-thumb {
+                background: var(--border-glow);
+                border-radius: 2px;
+            }
+
+        .nav-section-label {
+            padding: 12px 20px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .sidebar-nav .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 400;
+            transition: all 0.2s;
+            border-left: 2px solid transparent;
+        }
+
+            .sidebar-nav .nav-link:hover {
+                color: var(--text-primary);
+                background: var(--bg-hover);
+                border-left-color: rgba(0,221,180,0.3);
+            }
+
+            .sidebar-nav .nav-link.active {
+                color: var(--accent-cyan);
+                background: rgba(0, 221, 180, 0.07);
+                border-left-color: var(--accent-cyan);
+            }
+
+            .sidebar-nav .nav-link i.nav-icon {
+                font-size: 16px;
+                width: 18px;
+                flex-shrink: 0;
+            }
+
+        .nav-arrow {
+            margin-left: auto;
+            font-size: 10px;
+            transition: transform 0.25s;
+        }
+
+        .nav-item.open > .sidebar-nav .nav-link .nav-arrow,
+        .nav-item.open > a .nav-arrow {
+            transform: rotate(180deg);
+        }
+
+        .nav-item.open > a {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+
+        .nav-treeview {
+            list-style: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .nav-item.open > .nav-treeview {
+            max-height: 400px;
+        }
+
+        .nav-treeview .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px 8px 50px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+            .nav-treeview .nav-link::before {
+                content: '';
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                border: 1px solid currentColor;
+                flex-shrink: 0;
+            }
+
+            .nav-treeview .nav-link:hover {
+                color: var(--text-secondary);
+                background: var(--bg-hover);
+            }
+
+            .nav-treeview .nav-link.active {
+                color: var(--accent-cyan);
+                background: rgba(0,221,180,0.05);
+                border-left-color: var(--accent-cyan);
+            }
+
+        /* ══════════════════════════════════
+           HEADER
+        ══════════════════════════════════ */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: rgba(6, 12, 20, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 90;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .header-toggle {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+            .header-toggle:hover {
+                background: var(--bg-hover);
+                color: var(--text-primary);
+            }
+
+        .breadcrumb-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+            .breadcrumb-wrap .bc-sep {
+                font-size: 10px;
+            }
+
+            .breadcrumb-wrap .bc-current {
+                color: var(--text-secondary);
+            }
+
+        .header-icon-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+            .header-icon-btn:hover {
+                background: var(--bg-hover);
+                border-color: var(--border);
+                color: var(--text-primary);
+            }
+
+        .nav-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            border: 1px solid var(--bg-deep);
+        }
+
+        .badge-danger {
+            background: #e2445c;
+            color: #fff;
+        }
+
+        .badge-warning {
+            background: var(--accent-cyan);
+            color: var(--bg-void);
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+            margin: 0 6px;
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+            .user-chip:hover {
+                border-color: var(--border-glow);
+                background: var(--bg-hover);
+                color: var(--text-primary);
+            }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent-grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--bg-void);
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* ══════════════════════════════════
+           DROPDOWNS
+        ══════════════════════════════════ */
+        .hdr-dropdown {
+            position: relative;
+        }
+
+        .hdr-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 280px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            z-index: 999;
+        }
+
+        .hdr-dropdown.open .hdr-dropdown-menu {
+            display: block;
+        }
+
+        .dd-header {
+            padding: 12px 16px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dd-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 16px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+            .dd-item:last-child {
+                border-bottom: none;
+            }
+
+            .dd-item:hover {
+                background: var(--bg-hover);
+                color: var(--text-primary);
+            }
+
+        .dd-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+
+        .dd-footer {
+            display: block;
+            padding: 10px 16px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--accent-cyan);
+            background: rgba(0,221,180,0.04);
+            text-decoration: none;
+        }
+
+            .dd-footer:hover {
+                background: rgba(0,221,180,0.09);
+            }
+
+        /* ══════════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════════ */
+        .app-main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height) - 44px);
+            padding: 28px 28px 20px;
+        }
+
+        /* ══════════════════════════════════
+           FOOTER
+        ══════════════════════════════════ */
+        .app-footer {
+            position: fixed;
+            bottom: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 44px;
+            background: rgba(6,12,20,0.92);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            z-index: 89;
+        }
+
+        .footer-brand {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            letter-spacing: 0.12em;
+        }
+
+        /* scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,221,180,0.2);
+            border-radius: 4px;
+        }
+
+        /* sidebar collapsed on mobile */
+        .sidebar-collapsed .app-sidebar {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-collapsed .app-header {
+            left: 0;
+        }
+
+        .sidebar-collapsed .app-main {
+            margin-left: 0;
+        }
+
+        .sidebar-collapsed .app-footer {
+            left: 0;
+        }
+
+        @@media (max-width: 992px) {
+            .app-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .app-header {
+                left: 0;
+            }
+
+            .app-main {
+                margin-left: 0;
+            }
+
+            .app-footer {
+                left: 0;
+            }
+
+            .sidebar-open .app-sidebar {
+                transform: translateX(0);
+            }
+        }
+    </style>
+
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <div class="app-wrapper" id="appWrapper">
+
+        <!-- ════════════════════════════
+             SIDEBAR
+        ════════════════════════════ -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <a href="@Url.Action("Index","Home")" class="brand-link">
+                    <div class="brand-dot"></div>
+                    <span class="brand-text">NEXVOY</span>
+                </a>
+            </div>
+
+            <div class="sidebar-wrapper">
+                <nav>
+                    <div class="nav-section-label">Overview</div>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","Dashboard", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
+                                <i class="bi bi-speedometer2 nav-icon"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="nav-section-label">Catalog</div>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item @(ViewBag.ActiveMenu == "Products" ? "open" : "")" id="menu-products">
+                            <a href="#" class="nav-link" onclick="toggleMenu('menu-products'); return false;">
+                                <i class="bi bi-box-seam nav-icon"></i>
+                                <span>Products</span>
+                                <i class="bi bi-chevron-down nav-arrow"></i>
+                            </a>
+                            <ul class="nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManageProductType", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "ProductTypes" ? "active" : "")">Product Types</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManageProducts", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "Products" ? "active" : "")">Products</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item @(ViewBag.ActiveMenu == "Packages" ? "open" : "")" id="menu-packages">
+                            <a href="#" class="nav-link" onclick="toggleMenu('menu-packages'); return false;">
+                                <i class="bi bi-gift nav-icon"></i>
+                                <span>Packages</span>
+                                <i class="bi bi-chevron-down nav-arrow"></i>
+                            </a>
+                            <ul class="nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManagePackageType", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "PackageTypes" ? "active" : "")">Package Types</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "Packages" ? "active" : "")">Packages</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "ManageMarketplaceListing", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Marketplace" ? "active" : "")">
+                                <i class="bi bi-shop nav-icon"></i>
+                                <span>Marketplace</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="nav-section-label">Operations</div>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Bookings" ? "active" : "")">
+                                <i class="bi bi-journal-check nav-icon"></i>
+                                <span>Bookings</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item @(ViewBag.ActiveMenu == "Payments" ? "open" : "")" id="menu-payments">
+                            <a href="#" class="nav-link" onclick="toggleMenu('menu-payments'); return false;">
+                                <i class="bi bi-credit-card nav-icon"></i>
+                                <span>Payments</span>
+                                <i class="bi bi-chevron-down nav-arrow"></i>
+                            </a>
+                            <ul class="nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManagePayments", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "PaymentList" ? "active" : "")">Payment List</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManagePaymentType", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "PaymentTypes" ? "active" : "")">Payment Types</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item @(ViewBag.ActiveMenu == "Users" ? "open" : "")" id="menu-users">
+                            <a href="#" class="nav-link" onclick="toggleMenu('menu-users'); return false;">
+                                <i class="bi bi-people nav-icon"></i>
+                                <span>Users</span>
+                                <i class="bi bi-chevron-down nav-arrow"></i>
+                            </a>
+                            <ul class="nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManageUserType", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "UserTypes" ? "active" : "")">User Types</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManageUsers", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "Users" ? "active" : "")">Users</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="nav-section-label">Content</div>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageDestination", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Destinations" ? "active" : "")">
+                                <i class="bi bi-geo-alt nav-icon"></i>
+                                <span>Destinations</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageBlogs", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Blogs" ? "active" : "")">
+                                <i class="bi bi-pencil-square nav-icon"></i>
+                                <span>Blogs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageGallery", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Gallery" ? "active" : "")">
+                                <i class="bi bi-images nav-icon"></i>
+                                <span>Gallery</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManagePackageImages", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "PackageImages" ? "active" : "")">
+                                <i class="bi bi-card-image nav-icon"></i>
+                                <span>Package Images</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManagePageContent", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "PageContent" ? "active" : "")">
+                                <i class="bi bi-file-text nav-icon"></i>
+                                <span>Page Content</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="nav-section-label">Accommodation</div>
+                    <ul class="sidebar-nav">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Hotels" ? "active" : "")">
+                                <i class="bi bi-building nav-icon"></i>
+                                <span>Hotels</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageHotelImages", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "HotelImages" ? "active" : "")">
+                                <i class="bi bi-image nav-icon"></i>
+                                <span>Hotel Images</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManagePackageItinerary", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Itinerary" ? "active" : "")">
+                                <i class="bi bi-calendar-event nav-icon"></i>
+                                <span>Package Itinerary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- ════════════════════════════
+             HEADER
+        ════════════════════════════ -->
+        <nav class="app-header">
+            <div class="header-left">
+                <button class="header-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="breadcrumb-wrap">
+                    <span>Admin</span>
+                    <span class="bc-sep"><i class="bi bi-chevron-right"></i></span>
+                    <span class="bc-current">@ViewBag.Title</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- Search -->
+                <a href="#" class="header-icon-btn"><i class="bi bi-search"></i></a>
+
+                <!-- Messages -->
+                <div class="hdr-dropdown" id="dd-messages">
+                    <a href="#" class="header-icon-btn" onclick="toggleDd('dd-messages'); return false;">
+                        <i class="bi bi-chat-text"></i>
+                        <span class="nav-badge badge-danger">3</span>
+                    </a>
+                    <div class="hdr-dropdown-menu">
+                        <div class="dd-header">Messages</div>
+                        <a href="#" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-person"></i></div>
+                            <div>
+                                <div style="font-weight:500;color:var(--text-primary);font-size:13px">Brad Diesel</div>
+                                <div style="font-size:11px;color:var(--text-muted)">Call me whenever you can... · 4h ago</div>
+                            </div>
+                        </a>
+                        <a href="#" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-person"></i></div>
+                            <div>
+                                <div style="font-weight:500;color:var(--text-primary);font-size:13px">John Pierce</div>
+                                <div style="font-size:11px;color:var(--text-muted)">I got your message bro · 4h ago</div>
+                            </div>
+                        </a>
+                        <a href="#" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-person"></i></div>
+                            <div>
+                                <div style="font-weight:500;color:var(--text-primary);font-size:13px">Nora Silvester</div>
+                                <div style="font-size:11px;color:var(--text-muted)">The subject goes here · 4h ago</div>
+                            </div>
+                        </a>
+                        <a href="#" class="dd-footer">See All Messages</a>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="hdr-dropdown" id="dd-notifs">
+                    <a href="#" class="header-icon-btn" onclick="toggleDd('dd-notifs'); return false;">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="nav-badge badge-warning">15</span>
+                    </a>
+                    <div class="hdr-dropdown-menu">
+                        <div class="dd-header">15 Notifications</div>
+                        <a href="#" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-envelope"></i></div>
+                            <div>
+                                <div style="font-weight:500;color:var(--text-primary);font-size:13px">4 new messages</div>
+                                <div style="font-size:11px;color:var(--text-muted)">3 minutes ago</div>
+                            </div>
+                        </a>
+                        <a href="#" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-people-fill"></i></div>
+                            <div>
+                                <div style="font-weight:500;color:var(--text-primary);font-size:13px">8 friend requests</div>
+                                <div style="font-size:11px;color:var(--text-muted)">12 hours ago</div>
+                            </div>
+                        </a>
+                        <a href="#" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-file-earmark-fill"></i></div>
+                            <div>
+                                <div style="font-weight:500;color:var(--text-primary);font-size:13px">3 new reports</div>
+                                <div style="font-size:11px;color:var(--text-muted)">2 days ago</div>
+                            </div>
+                        </a>
+                        <a href="#" class="dd-footer">See All Notifications</a>
+                    </div>
+                </div>
+
+                <!-- Fullscreen -->
+                <a href="#" class="header-icon-btn" id="fsBtn" onclick="toggleFullscreen(); return false;">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                </a>
+
+                <div class="header-divider"></div>
+
+                <!-- User -->
+                <div class="hdr-dropdown" id="dd-user">
+                    <a href="#" class="user-chip" onclick="toggleDd('dd-user'); return false;">
+                        <div class="user-avatar">AP</div>
+                        <span class="user-name">Alexander Pierce</span>
+                        <i class="bi bi-chevron-down" style="font-size:11px;color:var(--text-muted);margin-left:2px"></i>
+                    </a>
+                    <div class="hdr-dropdown-menu" style="min-width:220px">
+                        <div style="padding:16px;border-bottom:1px solid var(--border)">
+                            <div style="font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text-primary)">Alexander Pierce</div>
+                            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Web Developer · Member since Nov 2023</div>
+                        </div>
+                        <a href="#" class="dd-item"><div class="dd-icon"><i class="bi bi-person"></i></div> Profile</a>
+                        <a href="#" class="dd-item"><div class="dd-icon"><i class="bi bi-gear"></i></div> Settings</a>
+                        <a href="#" class="dd-item" style="color:#e2445c"><div class="dd-icon" style="color:#e2445c"><i class="bi bi-box-arrow-right"></i></div> Sign out</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ════════════════════════════
+             MAIN BODY — Views render here
+        ════════════════════════════ -->
+        <main class="app-main">
+            @RenderBody()
+        </main>
+
+        <!-- ════════════════════════════
+             FOOTER
+        ════════════════════════════ -->
+        <footer class="app-footer">
+            <span>© 2025 <span class="footer-brand">NEXVOY</span> AI TRAVEL INTELLIGENCE. ALL RIGHTS RESERVED.</span>
+            <span style="letter-spacing:0.1em">FINAL YEAR PROJECT — AI + VR SMART TOUR MANAGEMENT SYSTEM</span>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        /* Sidebar toggle */
+        function toggleSidebar() {
+            document.getElementById('appWrapper').classList.toggle('sidebar-collapsed');
+        }
+
+        /* Treeview */
+        function toggleMenu(id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.toggle('open');
+        }
+
+        /* Header dropdowns */
+        function toggleDd(id) {
+            var el = document.getElementById(id);
+            var isOpen = el.classList.contains('open');
+            document.querySelectorAll('.hdr-dropdown.open').forEach(function (d) { d.classList.remove('open'); });
+            if (!isOpen) el.classList.add('open');
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.hdr-dropdown')) {
+                document.querySelectorAll('.hdr-dropdown.open').forEach(function (d) { d.classList.remove('open'); });
+            }
+        });
+
+        /* Fullscreen */
+        function toggleFullscreen() {
+            var btn = document.getElementById('fsBtn');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                btn.innerHTML = '<i class="bi bi-fullscreen-exit"></i>';
+            } else {
+                document.exitFullscreen();
+                btn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i>';
+            }
+        }
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

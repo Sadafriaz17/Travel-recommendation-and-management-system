@@ -1,0 +1,959 @@
+﻿@{
+    ViewBag.Title = "My Dashboard";
+    ViewBag.ActivePage = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <style>
+                /* ═══════════════════════════════════════════
+           USER DASHBOARD — AI COMMAND CENTER
+        ═══════════════════════════════════════════ */
+                #udash-wrap {
+                    padding-top: 72px;
+                    min-height: 100vh;
+                    position: relative;
+                }
+
+                .udash-bg {
+                    position: fixed;
+                    inset: 0;
+                    z-index: 0;
+                    pointer-events: none;
+                    background: radial-gradient(ellipse at 10% 20%, rgba(77,238,234,0.04), transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(168,85,247,0.04), transparent 50%);
+                }
+
+                /* ── DASH HEADER ────────────────────── */
+                .udash-header {
+                    position: relative;
+                    z-index: 1;
+                    padding: 3.5rem 2.5rem 2rem;
+                    max-width: 1280px;
+                    margin: 0 auto;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 2rem;
+                    flex-wrap: wrap;
+                    border-bottom: 1px solid var(--border);
+                }
+
+                .udash-greeting {
+                    font-family: var(--font-head);
+                    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+                    font-weight: 800;
+                    letter-spacing: -0.04em;
+                    line-height: 1.1;
+                }
+
+                .udash-sub {
+                    color: var(--sub);
+                    font-size: 0.9rem;
+                    margin-top: 0.4rem;
+                }
+
+                .udash-user-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 1rem 1.5rem;
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 100px;
+                }
+
+                .udash-avatar {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, var(--accent), var(--accent2));
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: var(--font-head);
+                    font-weight: 800;
+                    font-size: 1.1rem;
+                    color: #000;
+                    flex-shrink: 0;
+                    box-shadow: 0 0 20px rgba(77,238,234,0.25);
+                }
+
+                .udash-user-info {
+                }
+
+                .udash-user-name {
+                    font-weight: 700;
+                    font-size: 0.9rem;
+                }
+
+                .udash-user-level {
+                    font-family: var(--font-mono);
+                    font-size: 0.65rem;
+                    color: var(--accent);
+                    letter-spacing: 0.1em;
+                    text-transform: uppercase;
+                }
+
+                /* ── MAIN LAYOUT ────────────────────── */
+                .udash-content {
+                    position: relative;
+                    z-index: 1;
+                    max-width: 1280px;
+                    margin: 0 auto;
+                    padding: 2.5rem 2.5rem 6rem;
+                    display: grid;
+                    grid-template-columns: 1fr 340px;
+                    gap: 2rem;
+                    align-items: start;
+                }
+
+                /* ── STAT CARDS ─────────────────────── */
+                .udash-stats {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 1rem;
+                    margin-bottom: 2rem;
+                }
+
+                .udash-stat {
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 18px;
+                    padding: 1.5rem;
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.3s;
+                }
+
+                    .udash-stat:hover {
+                        border-color: rgba(77,238,234,0.2);
+                        transform: translateY(-3px);
+                    }
+
+                .udash-stat-icon {
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 1rem;
+                    font-size: 1rem;
+                }
+
+                .udash-stat-num {
+                    font-family: var(--font-head);
+                    font-size: 1.7rem;
+                    font-weight: 800;
+                    letter-spacing: -0.04em;
+                    line-height: 1;
+                    margin-bottom: 0.2rem;
+                }
+
+                .udash-stat-label {
+                    font-size: 0.72rem;
+                    color: var(--sub);
+                    font-family: var(--font-mono);
+                    letter-spacing: 0.06em;
+                    text-transform: uppercase;
+                }
+
+                .udash-stat::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, currentColor, transparent);
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                }
+
+                .udash-stat:hover::after {
+                    opacity: 0.4;
+                }
+
+                /* ── UPCOMING BOOKINGS ──────────────── */
+                .dash-section-title {
+                    font-family: var(--font-head);
+                    font-size: 1rem;
+                    font-weight: 700;
+                    margin-bottom: 1.25rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                    .dash-section-title a {
+                        font-size: 0.75rem;
+                        color: var(--accent);
+                        font-family: var(--font-mono);
+                        text-decoration: none;
+                        letter-spacing: 0.06em;
+                        transition: opacity 0.2s;
+                    }
+
+                        .dash-section-title a:hover {
+                            opacity: 0.7;
+                        }
+
+                .booking-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 1.25rem;
+                    padding: 1.25rem;
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 16px;
+                    margin-bottom: 0.75rem;
+                    transition: all 0.3s;
+                }
+
+                    .booking-item:hover {
+                        border-color: rgba(77,238,234,0.15);
+                        background: var(--glass-mid);
+                    }
+
+                .booking-item-img {
+                    width: 70px;
+                    height: 70px;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    flex-shrink: 0;
+                }
+
+                    .booking-item-img img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                .booking-item-info {
+                    flex: 1;
+                }
+
+                .booking-item-dest {
+                    font-family: var(--font-head);
+                    font-weight: 700;
+                    font-size: 0.95rem;
+                    margin-bottom: 0.25rem;
+                }
+
+                .booking-item-pkg {
+                    font-size: 0.78rem;
+                    color: var(--sub);
+                    margin-bottom: 0.5rem;
+                }
+
+                .booking-item-dates {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    font-size: 0.72rem;
+                    color: var(--sub);
+                    font-family: var(--font-mono);
+                }
+
+                    .booking-item-dates span {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                    }
+
+                .booking-item-status {
+                    flex-shrink: 0;
+                }
+
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 5px;
+                    padding: 0.25rem 0.65rem;
+                    border-radius: 100px;
+                    font-size: 0.68rem;
+                    font-family: var(--font-mono);
+                    font-weight: 700;
+                    letter-spacing: 0.06em;
+                }
+
+                    .status-badge::before {
+                        content: '';
+                        width: 5px;
+                        height: 5px;
+                        border-radius: 50%;
+                    }
+
+                .status-confirmed {
+                    background: rgba(52,211,153,0.1);
+                    color: #34d399;
+                    border: 1px solid rgba(52,211,153,0.25);
+                }
+
+                    .status-confirmed::before {
+                        background: #34d399;
+                        box-shadow: 0 0 6px #34d399;
+                    }
+
+                .status-upcoming {
+                    background: rgba(77,238,234,0.1);
+                    color: var(--accent);
+                    border: 1px solid rgba(77,238,234,0.25);
+                }
+
+                    .status-upcoming::before {
+                        background: var(--accent);
+                    }
+
+                .status-pending {
+                    background: rgba(251,191,36,0.1);
+                    color: #fbbf24;
+                    border: 1px solid rgba(251,191,36,0.25);
+                }
+
+                    .status-pending::before {
+                        background: #fbbf24;
+                    }
+
+                /* ── AI RECOMMENDATIONS ──────────────── */
+                .ai-recs-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 0.75rem;
+                }
+
+                .ai-rec-card {
+                    border-radius: 16px;
+                    overflow: hidden;
+                    position: relative;
+                    cursor: none;
+                    border: 1px solid var(--border);
+                    transition: all 0.35s;
+                    aspect-ratio: 4/3;
+                }
+
+                    .ai-rec-card:hover {
+                        border-color: rgba(77,238,234,0.2);
+                        transform: scale(1.02) translateY(-4px);
+                        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+                    }
+
+                    .ai-rec-card img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        filter: brightness(0.65);
+                        transition: transform 0.5s;
+                    }
+
+                    .ai-rec-card:hover img {
+                        transform: scale(1.08);
+                    }
+
+                .ai-rec-overlay {
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent 55%);
+                    padding: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                }
+
+                .ai-rec-match {
+                    position: absolute;
+                    top: 0.75rem;
+                    right: 0.75rem;
+                    background: linear-gradient(135deg, var(--accent), var(--accent2));
+                    color: #000;
+                    font-family: var(--font-mono);
+                    font-size: 0.6rem;
+                    font-weight: 700;
+                    padding: 0.18rem 0.5rem;
+                    border-radius: 100px;
+                    letter-spacing: 0.06em;
+                }
+
+                .ai-rec-name {
+                    font-family: var(--font-head);
+                    font-weight: 700;
+                    font-size: 0.85rem;
+                    line-height: 1.2;
+                }
+
+                .ai-rec-price {
+                    font-size: 0.7rem;
+                    color: var(--accent);
+                    font-family: var(--font-mono);
+                    margin-top: 2px;
+                }
+
+                /* ── TRAVEL HISTORY ─────────────────── */
+                .history-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 0.9rem 0;
+                    border-bottom: 1px solid var(--border);
+                }
+
+                    .history-item:last-child {
+                        border-bottom: none;
+                    }
+
+                .history-dest-img {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    flex-shrink: 0;
+                }
+
+                    .history-dest-img img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                .history-dest-name {
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                }
+
+                .history-dest-date {
+                    font-size: 0.72rem;
+                    color: var(--sub);
+                    font-family: var(--font-mono);
+                }
+
+                .history-dest-rating {
+                    margin-left: auto;
+                    color: var(--accent);
+                    font-size: 0.75rem;
+                }
+
+                /* ── SIDEBAR ─────────────────────────── */
+                .udash-sidebar {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.25rem;
+                }
+
+                .sidebar-widget {
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 20px;
+                    padding: 1.5rem;
+                    transition: border-color 0.3s;
+                }
+
+                    .sidebar-widget:hover {
+                        border-color: rgba(255,255,255,0.1);
+                    }
+
+                .widget-title {
+                    font-family: var(--font-head);
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    margin-bottom: 1.25rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .widget-title-icon {
+                    color: var(--accent);
+                }
+
+                /* AI Chat Widget */
+                .ai-chat-window {
+                    background: rgba(0,0,0,0.3);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 1rem;
+                    height: 180px;
+                    overflow-y: auto;
+                    margin-bottom: 0.75rem;
+                    scrollbar-width: none;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                    .ai-chat-window::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                .chat-msg {
+                    max-width: 85%;
+                    padding: 0.5rem 0.85rem;
+                    border-radius: 12px;
+                    font-size: 0.78rem;
+                    line-height: 1.5;
+                }
+
+                    .chat-msg.bot {
+                        background: rgba(77,238,234,0.08);
+                        border: 1px solid rgba(77,238,234,0.15);
+                        color: var(--text);
+                        align-self: flex-start;
+                        border-radius: 4px 12px 12px 12px;
+                    }
+
+                    .chat-msg.user {
+                        background: var(--glass-mid);
+                        color: var(--text);
+                        align-self: flex-end;
+                        border-radius: 12px 4px 12px 12px;
+                    }
+
+                .chat-input-row {
+                    display: flex;
+                    gap: 0.5rem;
+                }
+
+                .chat-input {
+                    flex: 1;
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 8px;
+                    padding: 0.55rem 0.85rem;
+                    color: var(--text);
+                    font-size: 0.78rem;
+                    font-family: var(--font-body);
+                    outline: none;
+                    transition: border-color 0.25s;
+                }
+
+                    .chat-input:focus {
+                        border-color: var(--accent);
+                    }
+
+                    .chat-input::placeholder {
+                        color: rgba(255,255,255,0.25);
+                    }
+
+                .chat-send-btn {
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 8px;
+                    background: linear-gradient(135deg, var(--accent), var(--accent2));
+                    border: none;
+                    color: #000;
+                    cursor: none;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.25s;
+                }
+
+                    .chat-send-btn:hover {
+                        transform: scale(1.05);
+                    }
+
+                /* Progress ring */
+                .progress-ring-wrap {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+
+                .progress-ring {
+                    flex-shrink: 0;
+                    width: 64px;
+                    height: 64px;
+                    position: relative;
+                }
+
+                    .progress-ring svg {
+                        transform: rotate(-90deg);
+                    }
+
+                    .progress-ring circle {
+                        fill: none;
+                    }
+
+                    .progress-ring .track {
+                        stroke: var(--border);
+                        stroke-width: 4;
+                    }
+
+                    .progress-ring .fill {
+                        stroke: url(#ringGrad);
+                        stroke-width: 4;
+                        stroke-linecap: round;
+                        stroke-dasharray: 163;
+                        stroke-dashoffset: 163;
+                        transition: stroke-dashoffset 1.5s cubic-bezier(0.23,1,0.32,1);
+                    }
+
+                    .progress-ring .val {
+                        position: absolute;
+                        inset: 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-family: var(--font-head);
+                        font-size: 0.78rem;
+                        font-weight: 800;
+                    }
+
+                /* Quick action btns */
+                .quick-actions {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .quick-action-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0.75rem 1rem;
+                    background: var(--glass);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    color: var(--text);
+                    font-size: 0.82rem;
+                    text-decoration: none;
+                    cursor: none;
+                    transition: all 0.25s;
+                }
+
+                    .quick-action-btn:hover {
+                        border-color: var(--accent);
+                        background: rgba(77,238,234,0.05);
+                        color: var(--accent);
+                    }
+
+                    .quick-action-btn svg {
+                        color: var(--accent);
+                        flex-shrink: 0;
+                    }
+
+                .quick-action-badge {
+                    margin-left: auto;
+                    background: rgba(248,113,113,0.12);
+                    color: #f87171;
+                    border: 1px solid rgba(248,113,113,0.25);
+                    border-radius: 100px;
+                    font-size: 0.62rem;
+                    padding: 0.1rem 0.4rem;
+                    font-family: var(--font-mono);
+                }
+
+                /* Responsive */
+                @@media (max-width: 1024px) {
+                    .udash-content {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .udash-sidebar {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                    }
+
+                    .sidebar-widget {
+                        flex: 1;
+                        min-width: 260px;
+                    }
+                }
+
+                @@media (max-width: 768px) {
+                    .udash-stats {
+                        grid-template-columns: 1fr 1fr;
+                    }
+
+                    .ai-recs-grid {
+                        grid-template-columns: 1fr 1fr;
+                    }
+                }
+
+                @@media (max-width: 480px) {
+                    .udash-stats {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .ai-recs-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+    </style>
+}
+
+<div id="udash-wrap">
+    <div class="udash-bg"></div>
+
+    <!-- Header -->
+    <div class="udash-header">
+        <div data-reveal>
+            <div class="nex-badge" style="margin-bottom:0.75rem;">AI Command Center</div>
+            <div class="udash-greeting">
+                Good @(DateTime.Now.Hour < 12 ? "Morning" : DateTime.Now.Hour < 17 ? "Afternoon" : "Evening"),<br />
+                <span class="text-gradient">@(Session["UserName"] ?? "Traveler")</span> ✦
+            </div>
+            <p class="udash-sub">Your personalized travel intelligence hub — @DateTime.Now.ToString("dddd, MMMM dd")</p>
+        </div>
+        <div class="udash-user-card" data-reveal data-delay="100">
+            <div class="udash-avatar">@((Session["UserName"] ?? "T").ToString()[0])</div>
+            <div class="udash-user-info">
+                <div class="udash-user-name">@(Session["UserName"] ?? "Traveler")</div>
+                <div class="udash-user-level">✦ Gold Explorer</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="udash-content">
+        <!-- Left Column -->
+        <div>
+            <!-- Stats -->
+            <div class="udash-stats" style="margin-bottom:2rem;">
+                <div class="udash-stat" data-reveal style="color:var(--accent);">
+                    <div class="udash-stat-icon" style="background:rgba(77,238,234,0.1);">✈️</div>
+                    <div class="udash-stat-num text-gradient">7</div>
+                    <div class="udash-stat-label">Trips Completed</div>
+                </div>
+                <div class="udash-stat" data-reveal data-delay="80" style="color:var(--purple);">
+                    <div class="udash-stat-icon" style="background:rgba(168,85,247,0.1);">🌍</div>
+                    <div class="udash-stat-num text-gradient-purple">14</div>
+                    <div class="udash-stat-label">Countries Visited</div>
+                </div>
+                <div class="udash-stat" data-reveal data-delay="160" style="color:#34d399;">
+                    <div class="udash-stat-icon" style="background:rgba(52,211,153,0.1);">⭐</div>
+                    <div class="udash-stat-num" style="color:#34d399;">2,840</div>
+                    <div class="udash-stat-label">Reward Points</div>
+                </div>
+            </div>
+
+            <!-- Upcoming Bookings -->
+            <div class="dash-section-title" data-reveal>
+                <span>Upcoming Journeys</span>
+                <a href="~/Bookings/Index">+ New Booking</a>
+            </div>
+
+            @{
+                var myBookings = new[] {
+                    new { dest="Santorini, Greece", pkg="Azure Escape · Luxury", dep="Jun 12, 2025", ret="Jun 19, 2025", status="confirmed", img="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=200&q=60&fit=crop" },
+                    new { dest="Kyoto, Japan", pkg="Kyoto Odyssey · Cultural", dep="Aug 3, 2025", ret="Aug 13, 2025", status="upcoming", img="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=200&q=60&fit=crop" },
+                    new { dest="Maldives", pkg="Island Luxe · Premium", dep="Dec 20, 2025", ret="Dec 27, 2025", status="pending", img="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=200&q=60&fit=crop" },
+                };
+            }
+            @foreach (var b in myBookings)
+            {
+                <div class="booking-item" data-reveal>
+                    <div class="booking-item-img">
+                        <img src="@b.img" alt="@b.dest" />
+                    </div>
+                    <div class="booking-item-info">
+                        <div class="booking-item-dest">@b.dest</div>
+                        <div class="booking-item-pkg">@b.pkg</div>
+                        <div class="booking-item-dates">
+                            <span>✈ @b.dep</span>
+                            <span>→</span>
+                            <span>@b.ret</span>
+                        </div>
+                    </div>
+                    <div class="booking-item-status">
+                        <span class="status-badge status-@b.status">@b.status</span>
+                    </div>
+                </div>
+            }
+
+            <!-- AI Recommendations -->
+            <div class="dash-section-title" style="margin-top:2.5rem;" data-reveal>
+                <span>✦ AI Recommends for You</span>
+                <a href="~/Destinations/Index">View All</a>
+            </div>
+            <div class="ai-recs-grid" data-reveal>
+                @{
+                    var recs = new[] {
+                        new { name="Bali, Indonesia", price="From $899", match="98%", img="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=70&fit=crop" },
+                        new { name="Amalfi, Italy", price="From $1,499", match="95%", img="https://images.unsplash.com/photo-1520175480921-4edfa2983e0f?w=400&q=70&fit=crop" },
+                        new { name="Machu Picchu", price="From $1,299", match="91%", img="https://images.unsplash.com/photo-1580502304784-8985b7eb7260?w=400&q=70&fit=crop" },
+                    };
+                }
+                @foreach (var r in recs)
+                {
+                    <a href="~/Destinations/Index" class="ai-rec-card">
+                        <img src="@r.img" alt="@r.name" loading="lazy" />
+                        <div class="ai-rec-match">@r.match MATCH</div>
+                        <div class="ai-rec-overlay">
+                            <div class="ai-rec-name">@r.name</div>
+                            <div class="ai-rec-price">@r.price</div>
+                        </div>
+                    </a>
+                }
+            </div>
+
+            <!-- Travel History -->
+            <div class="dash-section-title" style="margin-top:2.5rem;" data-reveal>
+                <span>Past Journeys</span>
+                <a href="#">All History</a>
+            </div>
+            <div class="booking-section-card" style="background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:1.25rem;" data-reveal>
+                @{
+                    var history = new[] {
+                        new { name="Dubai, UAE", date="Feb 2025", rating="5.0", img="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=100&q=60" },
+                        new { name="Kyoto, Japan", date="Oct 2024", rating="4.8", img="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&q=60" },
+                        new { name="Maldives", date="Jul 2024", rating="5.0", img="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=100&q=60" },
+                        new { name="Santorini", date="May 2024", rating="4.9", img="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=100&q=60" },
+                    };
+                }
+                @foreach (var h in history)
+                {
+                    <div class="history-item">
+                        <div class="history-dest-img">
+                            <img src="@h.img" alt="@h.name" />
+                        </div>
+                        <div>
+                            <div class="history-dest-name">@h.name</div>
+                            <div class="history-dest-date">@h.date</div>
+                        </div>
+                        <div class="history-dest-rating">★ @h.rating</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="udash-sidebar">
+
+            <!-- AI Travel Assistant -->
+            <div class="sidebar-widget" data-reveal>
+                <div class="widget-title">
+                    <span class="widget-title-icon">✦</span> AI Travel Assistant
+                </div>
+                <div class="ai-chat-window" id="chatWindow">
+                    <div class="chat-msg bot">Hello! I'm your NEXVOY AI assistant. Ask me anything about destinations, packages, or trip planning.</div>
+                </div>
+                <div class="chat-input-row">
+                    <input type="text" class="chat-input" id="chatInput"
+                           placeholder="Ask AI anything..." maxlength="200"
+                           onkeydown="if(event.key==='Enter')sendChat()" />
+                    <button class="chat-send-btn" onclick="sendChat()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loyalty Progress -->
+            <div class="sidebar-widget" data-reveal data-delay="100">
+                <div class="widget-title">
+                    <span class="widget-title-icon">⭐</span> Loyalty Status
+                </div>
+                <div class="progress-ring-wrap">
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 64 64" width="64" height="64">
+                            <defs>
+                                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#4DEEEA" />
+                                    <stop offset="100%" stop-color="#A855F7" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="track" cx="32" cy="32" r="26" />
+                            <circle class="fill" id="ringFill" cx="32" cy="32" r="26" stroke-dashoffset="50" />
+                        </svg>
+                        <div class="val">71%</div>
+                    </div>
+                    <div>
+                        <div style="font-family:var(--font-head);font-weight:700;font-size:0.9rem;">Gold Explorer</div>
+                        <div style="font-size:0.75rem;color:var(--sub);margin-top:3px;">2,840 / 4,000 points</div>
+                        <div style="font-size:0.7rem;color:var(--accent);font-family:var(--font-mono);margin-top:4px;">1,160 pts to Platinum ✦</div>
+                    </div>
+                </div>
+                <div style="background:var(--border);border-radius:4px;height:4px;overflow:hidden;">
+                    <div style="width:71%;height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:4px;"></div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="sidebar-widget" data-reveal data-delay="150">
+                <div class="widget-title">
+                    <span class="widget-title-icon">⚡</span> Quick Actions
+                </div>
+                <div class="quick-actions">
+                    <a href="~/Bookings/Index" class="quick-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                        Book New Trip
+                    </a>
+                    <a href="~/Destinations/Index" class="quick-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+                        Explore Destinations
+                    </a>
+                    <a href="#" class="quick-action-btn" onclick="generatePlan()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" /></svg>
+                        Generate AI Plan
+                    </a>
+                    <a href="#" class="quick-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                        Edit Profile
+                    </a>
+                    <a href="~/Packages/Index" class="quick-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12" /><rect x="2" y="7" width="20" height="5" /><line x1="12" y1="22" x2="12" y2="7" /><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" /><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" /></svg>
+                        View Packages
+                        <span class="quick-action-badge">3 NEW</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>// ── AI Chat ──
+const chatResponses = {
+    'santorini': 'Santorini is perfect May–June! Book Oia 3 months ahead. I can generate a full 7-day itinerary for you.',
+    'maldives':  'For Maldives, November–April is ideal. Your Gold status gets you 15% off luxury water villa packages!',
+    'bali':      'Bali in May–September is peak season. Canggu or Seminyak for surf vibes, Ubud for cultural immersion.',
+    'japan':     'Cherry blossom season (late March – early April) books out fast. Want me to check availability for Kyoto?',
+    'budget':    'Based on your profile, Bali, Vietnam, or Morocco offer 10-day trips from $700 all-inclusive.',
+    'recommend': 'Based on your travel history, I recommend Amalfi Coast (95% match) or Bali (98% match). Want details?',
+    'reward':    'You have 2,840 Gold points. Just 1,160 more to reach Platinum status with exclusive lounge access!',
+    'plan':      'I can generate a custom itinerary in seconds! Tell me your destination, dates, and travel style.',
+    'default':   'Great question! I can help with destination recommendations, package comparisons, VR previews, and itinerary planning. What would you like to explore?'
+};
+
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    const window = document.getElementById('chatWindow');
+    const text = input.value.trim();
+    if (!text) return;
+    const userMsg = document.createElement('div');
+    userMsg.className = 'chat-msg user';
+    userMsg.textContent = text;
+    window.appendChild(userMsg);
+    input.value = '';
+    window.scrollTop = window.scrollHeight;
+    setTimeout(() => {
+        const lower = text.toLowerCase();
+        let reply = chatResponses.default;
+        for (const [key, val] of Object.entries(chatResponses)) {
+            if (lower.includes(key)) { reply = val; break; }
+        }
+        const botMsg = document.createElement('div');
+        botMsg.className = 'chat-msg bot';
+        botMsg.textContent = reply;
+        window.appendChild(botMsg);
+        window.scrollTop = window.scrollHeight;
+    }, 800);
+}
+
+function generatePlan() {
+    window.nexToast && window.nexToast('✦ Opening AI Trip Planner...');
+    setTimeout(() => window.location.href = '/#ai-generator', 500);
+}
+
+// Animate loyalty ring
+document.addEventListener('DOMContentLoaded', () => {
+    const fill = document.getElementById('ringFill');
+    if (fill) {
+        const pct = 0.71;
+        const circumference = 2 * Math.PI * 26;
+        fill.style.strokeDasharray = circumference;
+        fill.style.strokeDashoffset = circumference * (1 - pct);
+    }
+});</script>
+}

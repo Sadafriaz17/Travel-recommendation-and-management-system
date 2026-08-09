@@ -1,0 +1,37 @@
+﻿@model TourwebsiteFYP.DB_data_models.PackageImage
+@{
+    ViewBag.Title = "Edit Image";
+}
+
+<div class="container mt-4">
+    <h3>Edit Image</h3>
+    <hr />
+    @using (Html.BeginForm("Edit", "ManagePackageImages", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(m => m.ImageId)
+
+        <div class="mb-3">
+            <label>Package</label>
+            <select name="PackageId" class="form-control">
+                @foreach (var pkg in ViewBag.Packages)
+                {
+                    <option value="@pkg.PackageId" @(Model.PackageId == pkg.PackageId ? "selected" : "")>
+                        @pkg.PackageName
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Current Image</label><br />
+            <img src="@Model.ImageUrl" alt="Image" style="width:100px;height:auto;" />
+        </div>
+        <div class="mb-3">
+            <label>Replace Image(s)</label>
+            <input type="file" name="files" class="form-control" multiple />
+            <small class="text-muted">You can select one or multiple images to replace</small>
+        </div>
+
+        <button type="submit" class="btn btn-warning">Update</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+    }
+</div>

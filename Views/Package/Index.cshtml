@@ -1,0 +1,930 @@
+﻿@* =========================================
+    PACKAGES INDEX — Views/Packages/Index.cshtml
+    ========================================= *@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Package>
+
+@{
+    ViewBag.Title = "Travel Packages";
+    ViewBag.ActivePage = "Packages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <style>
+        /* ── ROOT VARIABLES ── */
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-surface: rgba(15, 15, 20, 0.85);
+            --glass: rgba(20, 20, 28, 0.7);
+            --glass-hi: rgba(30, 30, 38, 0.85);
+            --border: rgba(70, 70, 90, 0.3);
+            --border-hi: rgba(100, 100, 130, 0.4);
+            --accent: #4deeEA;
+            --accent2: #a855f7;
+            --purple: #c084fc;
+            --text: #f0f0f4;
+            --sub: #a0a0b0;
+            --font-head: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', 'JetBrains Mono', monospace;
+            --font-body: 'Inter', system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text);
+            font-family: var(--font-body);
+        }
+
+        /* ── HERO SECTION ── */
+        #pkg-hero {
+            position: relative;
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 50% 50%, #0f0f1e 0%, #06060c 50%, #020205 100%);
+        }
+
+        #pkg-hero-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+        }
+
+        .pkg-hero-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 40%, rgba(77,238,234,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(168,85,247,0.06) 0%, transparent 50%), radial-gradient(ellipse at 30% 70%, rgba(77,238,234,0.04) 0%, transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pkg-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            width: 100%;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .pkg-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(77,238,234,0.08);
+            border: 1px solid rgba(77,238,234,0.2);
+            border-radius: 100px;
+            padding: 0.5rem 1.2rem;
+            margin-bottom: 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeUpPkg 0.8s ease 0.3s forwards;
+        }
+
+        .pkg-hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.5);
+            }
+        }
+
+        .pkg-hero-h1 {
+            font-family: var(--font-head);
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUpPkg 0.9s ease 0.5s forwards;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @@keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .pkg-hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--sub);
+            max-width: 500px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeUpPkg 0.9s ease 0.7s forwards;
+        }
+
+        /* ── INTEGRATED FILTERS ── */
+        .pkg-hero-filters {
+            opacity: 0;
+            animation: fadeUpPkg 0.9s ease 0.9s forwards;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .pkg-filter-glass {
+            background: rgba(15, 15, 25, 0.6);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 0.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .pkg-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .pkg-filter-scroll {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex: 1;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+            .pkg-filter-scroll::-webkit-scrollbar {
+                display: none;
+            }
+
+        .pkg-filter-btn {
+            padding: 0.6rem 1.3rem;
+            border-radius: 100px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            font-weight: 500;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            position: relative;
+        }
+
+            .pkg-filter-btn:hover {
+                color: rgba(255, 255, 255, 0.8);
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .pkg-filter-btn.active {
+                color: var(--bg-deep);
+                background: var(--accent);
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(77, 238, 234, 0.3), 0 0 30px rgba(77, 238, 234, 0.1);
+            }
+
+        .pkg-filter-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .pkg-sort-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            padding: 0.6rem 2rem 0.6rem 1.2rem;
+            color: var(--text);
+            font-size: 0.8rem;
+            font-family: var(--font-body);
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234deeEA' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            transition: all 0.3s;
+        }
+
+            .pkg-sort-select:hover {
+                border-color: rgba(77, 238, 234, 0.3);
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            .pkg-sort-select option {
+                background: #1a1a2e;
+                color: var(--text);
+            }
+
+        /* Scroll Hint */
+        .hero-scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 3;
+            opacity: 0;
+            animation: fadeUpPkg 1s ease 1.3s forwards;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+            .hero-scroll-hint:hover {
+                opacity: 0.8;
+            }
+
+            .hero-scroll-hint span {
+                font-family: var(--font-mono);
+                font-size: 0.65rem;
+                color: var(--sub);
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+            }
+
+        .scroll-icon {
+            width: 24px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            padding-top: 6px;
+        }
+
+        .scroll-dot {
+            width: 4px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 2px;
+            animation: scrollDot 2s ease-in-out infinite;
+        }
+
+        @@keyframes scrollDot {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateY(12px);
+                opacity: 0.3;
+            }
+        }
+
+        @@keyframes fadeUpPkg {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── PACKAGES GRID ── */
+        #pkg-main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 6rem 2.5rem;
+        }
+
+        .pkg-section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .pkg-section-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .pkg-section-title {
+            font-family: var(--font-head);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .pkg-section-subtitle {
+            color: var(--sub);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .pkg-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        /* Package Card */
+        .nex-pkg-card {
+            background: linear-gradient(180deg, rgba(30, 30, 45, 0.6) 0%, rgba(20, 20, 30, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+            .nex-pkg-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 20px;
+                padding: 1px;
+                background: linear-gradient(135deg, rgba(77,238,234,0.1), transparent 50%, rgba(168,85,247,0.1));
+                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                z-index: 1;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.4s;
+            }
+
+            .nex-pkg-card:hover {
+                transform: translateY(-8px);
+                border-color: rgba(77,238,234,0.15);
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(77, 238, 234, 0.05);
+            }
+
+                .nex-pkg-card:hover::before {
+                    opacity: 1;
+                }
+
+            .nex-pkg-card.popular {
+                background: linear-gradient(180deg, rgba(40, 30, 60, 0.6) 0%, rgba(20, 20, 35, 0.8) 100%);
+                border-color: rgba(168,85,247,0.15);
+            }
+
+        .pkg-card-media {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+
+            .pkg-card-media img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.7s ease;
+            }
+
+        .nex-pkg-card:hover .pkg-card-media img {
+            transform: scale(1.05);
+        }
+
+        .pkg-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+        }
+
+        .pkg-card-badge-row {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            display: flex;
+            justify-content: space-between;
+            z-index: 2;
+        }
+
+        .pkg-type-tag {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            padding: 0.3rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .pkg-pop-tag {
+            background: linear-gradient(135deg, var(--accent2), var(--purple));
+            border-radius: 100px;
+            padding: 0.3rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .pkg-card-body {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pkg-card-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--sub);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.8rem;
+        }
+
+            .pkg-card-location svg {
+                width: 12px;
+                height: 12px;
+                stroke: var(--accent);
+            }
+
+        .pkg-card-title {
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .pkg-card-desc {
+            font-size: 0.82rem;
+            color: var(--sub);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .pkg-card-specs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pkg-spec {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.6rem;
+            text-align: center;
+        }
+
+        .pkg-spec-val {
+            font-family: var(--font-head);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .pkg-spec-key {
+            font-size: 0.6rem;
+            color: var(--sub);
+            font-family: var(--font-mono);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .pkg-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .pkg-price-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pkg-price-val {
+            font-family: var(--font-head);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .pkg-price-per {
+            font-size: 0.65rem;
+            color: var(--sub);
+            font-family: var(--font-mono);
+        }
+
+        .pkg-book-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.65rem 1.3rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            position: relative;
+            z-index: 2;
+        }
+
+            .pkg-book-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+
+        .nex-pkg-card.popular .pkg-book-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(77, 238, 234, 0.3);
+        }
+
+            .nex-pkg-card.popular .pkg-book-btn:hover {
+                box-shadow: 0 8px 25px rgba(77, 238, 234, 0.4);
+                transform: translateY(-3px);
+            }
+
+        /* ── RESPONSIVE ── */
+        @@media (max-width: 1024px) {
+            .pkg-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .pkg-cards-grid {
+                grid-template-columns: 1fr;
+                max-width: 450px;
+                margin: 0 auto;
+            }
+
+            .pkg-hero-content {
+                padding: 0 1.5rem;
+            }
+
+            .pkg-filter-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .pkg-filter-scroll {
+                width: 100%;
+            }
+
+            .pkg-filter-divider {
+                display: none;
+            }
+
+            .pkg-sort-select {
+                width: 100%;
+            }
+
+            #pkg-main {
+                padding: 4rem 1.5rem;
+            }
+        }
+    </style>
+}
+
+<!-- HERO SECTION WITH INTEGRATED FILTERS -->
+<section id="pkg-hero">
+    <canvas id="pkg-hero-canvas"></canvas>
+    <div class="pkg-hero-glow"></div>
+
+    <div class="pkg-hero-content">
+        @*<div class="pkg-hero-badge">
+            <div class="pkg-hero-badge-dot"></div>
+            CURATED EXPERIENCES
+        </div>*@
+
+        <h1 class="pkg-hero-h1">
+            Discover<br />
+            <span class="text-gradient">Extraordinary</span> Journeys
+        </h1>
+
+        <p class="pkg-hero-subtitle">
+            AI-crafted travel packages designed for unforgettable adventures. Every detail refined for your perfect escape.
+        </p>
+
+        <!-- Integrated Filters -->
+        <div class="pkg-hero-filters">
+            <div class="pkg-filter-glass">
+                <div class="pkg-filter-row">
+                    <div class="pkg-filter-scroll">
+                        <button class="pkg-filter-btn active" onclick="filterPkgs(this,'all')">All Packages</button>
+                        <button class="pkg-filter-btn" onclick="filterPkgs(this,'luxury')">Luxury</button>
+                        <button class="pkg-filter-btn" onclick="filterPkgs(this,'adventure')">Adventure</button>
+                        <button class="pkg-filter-btn" onclick="filterPkgs(this,'cultural')">Cultural</button>
+                        <button class="pkg-filter-btn" onclick="filterPkgs(this,'romantic')">Romantic</button>
+                        <button class="pkg-filter-btn" onclick="filterPkgs(this,'family')">Family</button>
+                    </div>
+                    <div class="pkg-filter-divider"></div>
+                    <select class="pkg-sort-select" onchange="sortPkgs(this.value)">
+                        <option value="popular">Most Popular</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-scroll-hint" onclick="document.getElementById('pkg-main').scrollIntoView({behavior:'smooth'})">
+        <span>Explore</span>
+        <div class="scroll-icon">
+            <div class="scroll-dot"></div>
+        </div>
+    </div>
+</section>
+
+<!-- PACKAGES GRID -->
+<div id="pkg-main">
+    <div class="pkg-section-header">
+        <div class="pkg-section-label">Our Selection</div>
+        <h2 class="pkg-section-title">Featured <span class="text-gradient">Packages</span></h2>
+        <p class="pkg-section-subtitle">Handpicked experiences that combine luxury, adventure, and culture</p>
+    </div>
+
+    <div class="pkg-cards-grid" id="pkgGrid">
+        @foreach (var p in Model)
+        {
+            var images = p.PackageImages?.ToList();
+            var mainImg = (images != null && images.Count > 0) ? images[0].ImageUrl : Url.Content("~/images/no-image.jpg");
+            var packageType = (p.PackageType != null ? p.PackageType.TypeName : "N/A").ToLower();
+            var isPopular = packageType == "luxury" || packageType == "adventure";
+
+            <a href="@Url.Action("Details", "Package", new { id = p.PackageId })" class="nex-pkg-card @(isPopular ? "popular" : "")" data-cat="@packageType" data-price="@p.Price">
+                <div class="pkg-card-media">
+                    <img src="@mainImg" alt="@p.PackageName" loading="lazy" />
+                    <div class="pkg-card-overlay"></div>
+                    <div class="pkg-card-badge-row">
+                        <span class="pkg-type-tag">@(p.PackageType != null ? p.PackageType.TypeName : "N/A")</span>
+                        @if (isPopular)
+                        {
+                            <span class="pkg-pop-tag">POPULAR</span>
+                        }
+                    </div>
+                </div>
+                <div class="pkg-card-body">
+                    <div class="pkg-card-location">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        @(p.Destination != null ? p.Destination.Name : "Unknown Destination")
+                    </div>
+                    <h3 class="pkg-card-title">@p.PackageName</h3>
+                    <p class="pkg-card-desc">@p.Description</p>
+                    <div class="pkg-card-specs">
+                        <div class="pkg-spec">
+                            <div class="pkg-spec-val">@p.DurationDays</div>
+                            <div class="pkg-spec-key">Days</div>
+                        </div>
+                        <div class="pkg-spec">
+                            <div class="pkg-spec-val">@p.People</div>
+                            <div class="pkg-spec-key">People</div>
+                        </div>
+                        <div class="pkg-spec">
+                            <div class="pkg-spec-val">★ 4.8</div>
+                            <div class="pkg-spec-key">Rating</div>
+                        </div>
+                    </div>
+                    <div class="pkg-card-footer">
+                        <div class="pkg-price-block">
+                            <span class="pkg-price-val">$@p.Price.ToString("N0")</span>
+                            <span class="pkg-price-per">per person</span>
+                        </div>
+                        <span class="pkg-book-btn" onclick="event.stopPropagation(); window.location.href='@Url.Action("Index", "Booking")'">Book Now →</span>
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ── 3D EARTH + ORBIT RINGS ──
+        (function () {
+            const canvas = document.getElementById('pkg-hero-canvas');
+            if (!canvas) return;
+
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020205, 0.0006);
+
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0.3, 4.2);
+
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Earth
+            const textureLoader = new THREE.TextureLoader();
+            const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+            const earthSpecularMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+            const earthNormalMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+            const cloudMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+
+            const earthGeometry = new THREE.SphereGeometry(1.1, 128, 128);
+            const earthMaterial = new THREE.MeshPhongMaterial({
+                map: earthMap,
+                specularMap: earthSpecularMap,
+                specular: new THREE.Color('grey'),
+                shininess: 5,
+                normalMap: earthNormalMap,
+                normalScale: new THREE.Vector2(0.8, 0.8)
+            });
+            const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+            scene.add(earth);
+
+            // Clouds
+            const cloudGeometry = new THREE.SphereGeometry(1.12, 128, 128);
+            const cloudMaterial = new THREE.MeshPhongMaterial({
+                map: cloudMap,
+                transparent: true,
+                opacity: 0.12,
+                blending: THREE.AdditiveBlending
+            });
+            const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+            scene.add(clouds);
+
+            // Stars
+            const starGeometry = new THREE.BufferGeometry();
+            const starCount = 4000;
+            const starPositions = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) {
+                starPositions[i * 3] = (Math.random() - 0.5) * 2500;
+                starPositions[i * 3 + 1] = (Math.random() - 0.5) * 2500;
+                starPositions[i * 3 + 2] = (Math.random() - 0.5) * 600 - 200;
+            }
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true, opacity: 0.7 });
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+
+            // Orbit Rings
+            const createRing = (radius, color, opacity, segments = 200) => {
+                const points = [];
+                for (let i = 0; i <= segments; i++) {
+                    const angle = (i / segments) * Math.PI * 2;
+                    points.push(new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
+                }
+                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+                return new THREE.LineLoop(geo, mat);
+            };
+
+            const ring1 = createRing(1.55, 0x4deeEA, 0.3);
+            const ring2 = createRing(1.75, 0xa855f7, 0.25);
+            scene.add(ring1);
+            scene.add(ring2);
+
+            // Lighting
+            scene.add(new THREE.AmbientLight(0x111122));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            dirLight.position.set(5, 3, 5);
+            scene.add(dirLight);
+            scene.add(new THREE.PointLight(0x445566, 0.8, 10, 2));
+            scene.add(new THREE.PointLight(0x4deeEA, 0.4, 5, 2));
+
+            // Interaction
+            let targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
+
+            document.getElementById('pkg-hero').addEventListener('mousemove', (e) => {
+                targetRY = (e.clientX / window.innerWidth - 0.5) * 0.8;
+                targetRX = (e.clientY / window.innerHeight - 0.5) * 0.4;
+            });
+
+            // Animation
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.004;
+
+                currentRY += (targetRY - currentRY) * 0.04;
+                currentRX += (targetRX - currentRX) * 0.04;
+
+                earth.rotation.y = currentRY + time * 0.5;
+                earth.rotation.x = currentRX * 0.2;
+                clouds.rotation.y = currentRY + time * 0.6;
+                clouds.rotation.x = currentRX * 0.2;
+
+                ring1.rotation.y += 0.0008;
+                ring1.rotation.x = Math.sin(time * 0.4) * 0.1;
+                ring2.rotation.z += 0.001;
+                ring2.rotation.x = Math.cos(time * 0.3) * 0.1;
+
+                stars.rotation.y += 0.0003;
+                stars.rotation.x += 0.0002;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+
+        // ── Filter & Sort ──
+        function filterPkgs(btn, cat) {
+            document.querySelectorAll('.pkg-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.nex-pkg-card').forEach(card => {
+                card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'block' : 'none';
+            });
+        }
+
+        function sortPkgs(val) {
+            const grid = document.getElementById('pkgGrid');
+            const cards = Array.from(grid.querySelectorAll('.nex-pkg-card'));
+
+            cards.sort((a, b) => {
+                if (val === 'price-asc') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                if (val === 'price-desc') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                return 0;
+            });
+
+            cards.forEach(c => grid.appendChild(c));
+        }
+    </script>
+}

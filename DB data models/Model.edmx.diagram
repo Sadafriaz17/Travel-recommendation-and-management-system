@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8ebddb65269d41ceaa1a8fc3c1ac2eec" Name="Diagram1" ZoomLevel="95" ShowGrid="false">
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Blog" Width="1.5" PointX="7.5" PointY="22.5" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.BookingDetail" Width="1.5" PointX="9.75" PointY="10.125" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Destination" Width="1.5" PointX="3" PointY="14" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Gallery" Width="1.5" PointX="8.25" PointY="14.375" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Package" Width="1.5" PointX="5.25" PointY="13.125" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.PackageImage" Width="1.5" PointX="7.5" PointY="27.25" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.PackageType" Width="1.5" PointX="0.75" PointY="14.75" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.PageContent" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Payment" Width="1.5" PointX="9.75" PointY="6.375" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.PaymentType" Width="1.5" PointX="7.5" PointY="0.75" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Product" Width="1.5" PointX="6" PointY="3.875" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.ProductType" Width="1.5" PointX="3.75" PointY="4.75" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Review" Width="1.5" PointX="7.5" PointY="18.25" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.User" Width="1.5" PointX="5.25" PointY="9" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.UserType" Width="1.5" PointX="3" PointY="9.875" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Blog__AuthorId__60A75C0F" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__BookingDe__Packa__6383C8BA" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__BookingDe__Produ__6477ECF3" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Gallery__Destina__656C112C" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Destinations_PackageType" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Package_Destination" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Gallery__Product__66603565" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Package__Package__6754599E" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__PackageIm__Packa__73BA3083" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Review__PackageI__6B24EA82" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_PackageImages_Packages" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Payment_PaymentType" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Product__Product__6A30C649" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Review__ProductI__6C190EBB" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Review__UserId__6D0D32F4" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__User__UserTypeId__6E01572D" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Booking" Width="1.5" PointX="7.5" PointY="8.75" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Booking__Destina__06CD04F7" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Booking__Package__05D8E0BE" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Booking__UserId__619B8048" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__BookingDe__Booki__628FA481" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Payment__Booking__68487DD7" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Flight" Width="1.5" PointX="7.5" PointY="32.75" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.HotelImage" Width="1.5" PointX="12.75" PointY="14.5" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Hotel" Width="1.5" PointX="10.5" PointY="14.25" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.PackageItinerary" Width="1.5" PointX="7.5" PointY="30" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__Flights__Package__160F4887" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_HotelImages_Hotels" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Hotels_MainImage" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Hotels_Package" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK__PackageIt__Packa__1CBC4616" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
