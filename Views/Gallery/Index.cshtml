@@ -6,574 +6,386 @@
 
 @section HeadStyles {
     <style>
-                /* ═══════════════════════════════════════════
-           GALLERY PAGE — NEXVOY
-           3D Floating Wall · Masonry · Lightbox
-        ═══════════════════════════════════════════ */
+        /* ── HERO SECTION ── */
+        #gallery-hero {
+            position: relative;
+            width: 100%;
+            min-height: 100vh; /* Matches the Homepage & Destinations layout */
+            background-image: url('/images/background.jpg'); /* Your standard hero image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 80px;
+            padding-bottom: 60px;
+        }
 
-                /* ── HERO ──────────────────────────────── */
-                #gallery-hero {
-                    padding-top: 72px;
-                    min-height: 46vh;
-                    display: flex;
-                    align-items: flex-end;
-                    position: relative;
-                    overflow: hidden;
+            #gallery-hero::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
+                pointer-events: none;
+            }
+
+        .gallery-hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            max-width: 800px;
+            padding: 0 1rem;
+            margin-bottom: 3.5rem;
+        }
+
+            .gallery-hero-content h1 {
+                font-family: var(--font-main);
+                font-size: clamp(2.8rem, 4vw, 4rem);
+                font-weight: 700;
+                line-height: 1.15;
+                margin-bottom: 1rem;
+                letter-spacing: -0.02em;
+            }
+
+            .gallery-hero-content p {
+                font-size: 1.1rem;
+                color: rgba(255,255,255,0.85);
+                font-weight: 300;
+            }
+
+        /* ── FILTER BAR ── */
+        #gallery-filters {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 900px;
+            padding: 0 1rem;
+        }
+
+        .gal-filters-inner {
+            background: #fff;
+            border-radius: 60px;
+            padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .gal-filter-scroll {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex: 1;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+            .gal-filter-scroll::-webkit-scrollbar {
+                display: none;
+            }
+
+        .gal-filter {
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: var(--font-main);
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+            .gal-filter:hover {
+                color: var(--text-dark);
+                background: var(--bg-body);
+            }
+
+            .gal-filter.active {
+                color: #fff;
+                background: var(--text-dark);
+                font-weight: 600;
+            }
+
+        .gal-filter-sep {
+            width: 1px;
+            height: 30px;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        .gal-search-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.4rem 1rem 0.4rem 1.2rem;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+            .gal-search-wrap:focus-within {
+                border-color: var(--text-dark);
+                background: #fff;
+            }
+
+            .gal-search-wrap input {
+                background: none;
+                border: none;
+                outline: none;
+                color: var(--text-dark);
+                font-family: var(--font-main);
+                font-size: 0.85rem;
+                width: 140px;
+            }
+
+                .gal-search-wrap input::placeholder {
+                    color: var(--text-muted);
                 }
 
-                #gallery-hero-canvas {
-                    position: absolute;
-                    inset: 0;
+        .count-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            align-self: center;
+            margin-left: auto;
+            padding-right: 1rem;
+        }
+
+        /* ── MAIN CONTENT ── */
+        #gallery-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem 3rem;
+        }
+
+        .gallery-section-head {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .gallery-section-eyebrow {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-section-title {
+            font-family: var(--font-main);
+            font-size: clamp(2rem, 3vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .gallery-section-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* ── MASONRY GALLERY ── */
+        .gallery-masonry {
+            column-count: 4;
+            column-gap: 1.5rem;
+        }
+
+        .gal-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            display: block;
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+            .gal-item:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-hover);
+            }
+
+            .gal-item img {
+                width: 100%;
+                display: block;
+                object-fit: cover;
+                transition: transform 0.5s;
+            }
+
+            .gal-item:hover img {
+                transform: scale(1.05);
+            }
+
+        .gal-item-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gal-item:hover .gal-item-overlay {
+            opacity: 1;
+        }
+
+        .gal-item-category {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+        }
+
+        .gal-item-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .gal-item-location {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 0.2rem;
+        }
+
+        /* ── RESPONSIVE ── */
+        @@media (max-width: 1024px) {
+            .gallery-masonry {
+                column-count: 3;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .gallery-masonry {
+                column-count: 2;
+            }
+
+            .gal-filters-inner {
+                flex-direction: column;
+                border-radius: 20px;
+                padding: 1rem;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .gal-filter-scroll {
+                width: 100%;
+            }
+
+            .gal-filter-sep {
+                display: none;
+            }
+
+            .gal-search-wrap {
+                width: 100%;
+            }
+
+                .gal-search-wrap input {
                     width: 100%;
-                    height: 100%;
-                    pointer-events: none;
                 }
 
-                .gallery-hero-content {
-                    position: relative;
-                    z-index: 1;
-                    padding: 4rem 2.5rem;
-                    max-width: 1280px;
-                    margin: 0 auto;
-                    width: 100%;
-                }
+            #gallery-main {
+                padding: 4rem 1.5rem 3rem;
+            }
 
-                .gallery-hero-label {
-                    font-family: var(--font-mono);
-                    font-size: 0.7rem;
-                    color: var(--accent);
-                    letter-spacing: 0.18em;
-                    text-transform: uppercase;
-                    margin-bottom: 1rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
+            #gallery-hero {
+                min-height: 70vh;
+            }
+        }
 
-                    .gallery-hero-label::before {
-                        content: '';
-                        width: 28px;
-                        height: 1px;
-                        background: var(--accent);
-                        box-shadow: 0 0 6px var(--accent);
-                    }
-
-                .gallery-hero-h1 {
-                    font-family: var(--font-head);
-                    font-size: clamp(2.5rem, 6vw, 5rem);
-                    font-weight: 800;
-                    letter-spacing: -0.04em;
-                    line-height: 1;
-                }
-
-                /* ── FILTER TABS ─────────────────────── */
-                #gallery-filters {
-                    background: rgba(0,0,0,0.75);
-                    backdrop-filter: blur(24px);
-                    border-bottom: 1px solid var(--border);
-                    position: sticky;
-                    top: 72px;
-                    z-index: 80;
-                    padding: 1rem 0;
-                }
-
-                .gal-filters-inner {
-                    max-width: 1280px;
-                    margin: 0 auto;
-                    padding: 0 2.5rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    flex-wrap: wrap;
-                }
-
-                .gal-filter {
-                    padding: 0.4rem 1rem;
-                    border-radius: 100px;
-                    border: 1px solid var(--border);
-                    background: transparent;
-                    color: var(--sub);
-                    font-size: 0.78rem;
-                    font-family: var(--font-mono);
-                    letter-spacing: 0.05em;
-                    cursor: none;
-                    transition: all 0.25s;
-                }
-
-                    .gal-filter:hover, .gal-filter.active {
-                        border-color: var(--accent);
-                        color: var(--accent);
-                        background: rgba(77,238,234,0.06);
-                    }
-
-                .gal-view-toggle {
-                    margin-left: auto;
-                    display: flex;
-                    gap: 0.4rem;
-                }
-
-                .view-btn {
-                    width: 36px;
-                    height: 36px;
-                    border: 1px solid var(--border);
-                    border-radius: 8px;
-                    background: transparent;
-                    color: var(--sub);
-                    cursor: none;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: all 0.25s;
-                }
-
-                    .view-btn.active, .view-btn:hover {
-                        border-color: var(--accent);
-                        color: var(--accent);
-                        background: rgba(77,238,234,0.06);
-                    }
-
-                .count-label {
-                    font-family: var(--font-mono);
-                    font-size: 0.7rem;
-                    color: var(--sub);
-                    align-self: center;
-                    margin-left: 0.5rem;
-                    letter-spacing: 0.08em;
-                }
-
-                /* ── MASONRY GALLERY ─────────────────── */
-                #gallery-main {
-                    max-width: 1280px;
-                    margin: 0 auto;
-                    padding: 3rem 2.5rem 6rem;
-                }
-
-                /* Masonry layout */
-                .gallery-masonry {
-                    column-count: 4;
-                    column-gap: 1rem;
-                }
-
-                    .gallery-masonry.cols-3 {
-                        column-count: 3;
-                    }
-
-                    .gallery-masonry.cols-2 {
-                        column-count: 2;
-                    }
-
-                .gal-item {
-                    break-inside: avoid;
-                    margin-bottom: 1rem;
-                    border-radius: 16px;
-                    overflow: hidden;
-                    position: relative;
-                    cursor: none;
-                    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s;
-                    border: 1px solid var(--border);
-                    display: block;
-                }
-
-                    .gal-item:hover {
-                        transform: scale(1.015) translateY(-4px);
-                        box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 30px rgba(77,238,234,0.08);
-                        border-color: rgba(77,238,234,0.2);
-                        z-index: 2;
-                    }
-
-                    .gal-item img {
-                        width: 100%;
-                        display: block;
-                        filter: brightness(0.88) saturate(1.15);
-                        transition: transform 0.6s ease, filter 0.4s;
-                    }
-
-                    .gal-item:hover img {
-                        transform: scale(1.06);
-                        filter: brightness(0.65) saturate(1.3);
-                    }
-
-                .gal-item-overlay {
-                    position: absolute;
-                    inset: 0;
-                    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
-                    padding: 1.25rem;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: flex-end;
-                    opacity: 0;
-                    transition: opacity 0.35s;
-                }
-
-                .gal-item:hover .gal-item-overlay {
-                    opacity: 1;
-                }
-
-                .gal-item-category {
-                    font-family: var(--font-mono);
-                    font-size: 0.62rem;
-                    color: var(--accent);
-                    letter-spacing: 0.15em;
-                    text-transform: uppercase;
-                    margin-bottom: 0.3rem;
-                }
-
-                .gal-item-title {
-                    font-family: var(--font-head);
-                    font-size: 0.95rem;
-                    font-weight: 700;
-                    line-height: 1.2;
-                }
-
-                .gal-item-location {
-                    font-size: 0.72rem;
-                    color: var(--sub);
-                    margin-top: 0.25rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                }
-
-                    .gal-item-location::before {
-                        content: '';
-                        width: 4px;
-                        height: 4px;
-                        background: var(--accent);
-                        border-radius: 50%;
-                    }
-
-                .gal-item-expand {
-                    position: absolute;
-                    top: 1rem;
-                    right: 1rem;
-                    width: 32px;
-                    height: 32px;
-                    background: rgba(0,0,0,0.6);
-                    border: 1px solid rgba(255,255,255,0.2);
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: var(--text);
-                    font-size: 0.75rem;
-                    opacity: 0;
-                    transform: scale(0.8);
-                    transition: all 0.3s;
-                }
-
-                .gal-item:hover .gal-item-expand {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-
-                /* Special: Featured item spanning */
-                .gal-item.tall img {
-                    aspect-ratio: 3/4;
-                }
-
-                .gal-item.wide {
-                    display: none;
-                }
-                /* handled by grid view */
-                .gal-item img {
-                    object-fit: cover;
-                }
-
-                .gal-item.h1 img {
-                    aspect-ratio: 4/3;
-                }
-
-                .gal-item.h2 img {
-                    aspect-ratio: 3/5;
-                }
-
-                .gal-item.h3 img {
-                    aspect-ratio: 1;
-                }
-
-                /* ── GRID VIEW ───────────────────────── */
-                .gallery-grid {
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    gap: 1rem;
-                    display: none;
-                }
-
-                    .gallery-grid.cols-3 {
-                        grid-template-columns: repeat(3, 1fr);
-                    }
-
-                    .gallery-grid .gal-item img {
-                        aspect-ratio: 4/3;
-                    }
-
-                /* ── LIGHTBOX ────────────────────────── */
-                #lightbox {
-                    position: fixed;
-                    inset: 0;
-                    z-index: 9999;
-                    background: rgba(0,0,0,0.96);
-                    backdrop-filter: blur(30px);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    opacity: 0;
-                    pointer-events: none;
-                    transition: opacity 0.4s;
-                    padding: 2rem;
-                }
-
-                    #lightbox.open {
-                        opacity: 1;
-                        pointer-events: all;
-                    }
-
-                .lb-inner {
-                    position: relative;
-                    max-width: 1000px;
-                    width: 100%;
-                    max-height: 90vh;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                }
-
-                .lb-img-wrap {
-                    border-radius: 20px;
-                    overflow: hidden;
-                    position: relative;
-                    width: 100%;
-                    transform: scale(0.9);
-                    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
-                }
-
-                #lightbox.open .lb-img-wrap {
-                    transform: scale(1);
-                }
-
-                #lb-img {
-                    width: 100%;
-                    max-height: 75vh;
-                    object-fit: contain;
-                    display: block;
-                    filter: brightness(0.95);
-                }
-
-                .lb-close {
-                    position: fixed;
-                    top: 1.5rem;
-                    right: 1.5rem;
-                    width: 44px;
-                    height: 44px;
-                    border: 1px solid var(--border);
-                    border-radius: 50%;
-                    background: rgba(0,0,0,0.8);
-                    color: var(--sub);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: none;
-                    font-size: 1rem;
-                    transition: all 0.25s;
-                    z-index: 10;
-                }
-
-                    .lb-close:hover {
-                        border-color: var(--accent);
-                        color: var(--accent);
-                    }
-
-                .lb-nav {
-                    position: fixed;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    width: 44px;
-                    height: 44px;
-                    border: 1px solid var(--border);
-                    border-radius: 50%;
-                    background: rgba(0,0,0,0.8);
-                    color: var(--sub);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: none;
-                    transition: all 0.25s;
-                    font-size: 1.1rem;
-                }
-
-                    .lb-nav:hover {
-                        border-color: var(--accent);
-                        color: var(--accent);
-                    }
-
-                #lb-prev {
-                    left: 1.5rem;
-                }
-
-                #lb-next {
-                    right: 1.5rem;
-                }
-
-                .lb-meta {
-                    text-align: center;
-                    margin-top: 1.25rem;
-                    padding: 0 1rem;
-                }
-
-                .lb-meta-title {
-                    font-family: var(--font-head);
-                    font-size: 1.1rem;
-                    font-weight: 700;
-                    margin-bottom: 0.25rem;
-                }
-
-                .lb-meta-sub {
-                    font-size: 0.8rem;
-                    color: var(--sub);
-                    font-family: var(--font-mono);
-                    letter-spacing: 0.08em;
-                }
-
-                .lb-counter {
-                    position: fixed;
-                    bottom: 2rem;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    font-family: var(--font-mono);
-                    font-size: 0.7rem;
-                    color: rgba(255,255,255,0.4);
-                    letter-spacing: 0.1em;
-                }
-
-                .lb-tags {
-                    display: flex;
-                    justify-content: center;
-                    gap: 0.5rem;
-                    margin-top: 0.75rem;
-                    flex-wrap: wrap;
-                }
-
-                .lb-tag {
-                    padding: 0.2rem 0.65rem;
-                    border: 1px solid var(--border);
-                    border-radius: 100px;
-                    font-size: 0.68rem;
-                    color: var(--sub);
-                    font-family: var(--font-mono);
-                }
-
-                /* ── LOAD MORE ───────────────────────── */
-                .gallery-load-more {
-                    text-align: center;
-                    margin-top: 2rem;
-                }
-
-                /* ── FLOATING 3D TILT ────────────────── */
-                .gal-item {
-                    transform-style: preserve-3d;
-                    perspective: 600px;
-                }
-
-                /* ── RESPONSIVE ──────────────────────── */
-                @@media (max-width: 1100px) {
-                    .gallery-masonry {
-                        column-count: 3;
-                    }
-
-                    .gallery-grid {
-                        grid-template-columns: repeat(3, 1fr);
-                    }
-                }
-
-                @@media (max-width: 768px) {
-                    .gallery-masonry {
-                        column-count: 2;
-                    }
-
-                    .gallery-grid {
-                        grid-template-columns: repeat(2, 1fr);
-                    }
-
-                    #lb-prev {
-                        left: 0.5rem;
-                    }
-
-                    #lb-next {
-                        right: 0.5rem;
-                    }
-                }
-
-                @@media (max-width: 480px) {
-                    .gallery-masonry {
-                        column-count: 1;
-                    }
-
-                    .gallery-grid {
-                        grid-template-columns: 1fr;
-                    }
-                }
+        @@media (max-width: 480px) {
+            .gallery-masonry {
+                column-count: 1;
+            }
+        }
     </style>
 }
 
 <!-- ── HERO ──────────────────────────────── -->
 <section id="gallery-hero">
-    <canvas id="gallery-hero-canvas"></canvas>
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(168,85,247,0.05),transparent 60%),radial-gradient(ellipse at 20% 70%,rgba(77,238,234,0.04),transparent 60%);"></div>
     <div class="gallery-hero-content">
-        <div class="gallery-hero-label">Visual Gallery</div>
-        <h1 class="gallery-hero-h1">
-            Moments <span class="text-gradient-purple">Captured</span><br />
-            From Around <span class="text-gradient">The World</span>
-        </h1>
+        <h1>Visual <br />Gallery</h1>
+        <p>Moments captured from around the world, curated just for you.</p>
+    </div>
+
+    <!-- ── FILTERS ── -->
+    <div id="gallery-filters">
+        <div class="gal-filters-inner">
+            <div class="gal-filter-scroll">
+                <button class="gal-filter active" onclick="filterGallery(this,'all')">All</button>
+                <button class="gal-filter" onclick="filterGallery(this,'nature')">Nature</button>
+                <button class="gal-filter" onclick="filterGallery(this,'city')">Cities</button>
+                <button class="gal-filter" onclick="filterGallery(this,'beach')">Beaches</button>
+                <button class="gal-filter" onclick="filterGallery(this,'culture')">Culture</button>
+                <button class="gal-filter" onclick="filterGallery(this,'adventure')">Adventure</button>
+                <button class="gal-filter" onclick="filterGallery(this,'food')">Food</button>
+            </div>
+
+            <div class="gal-filter-sep"></div>
+
+            <div class="gal-search-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" placeholder="Search gallery…" oninput="searchGallery(this.value)" />
+            </div>
+
+            <span class="count-label" id="img-count">— images</span>
+        </div>
     </div>
 </section>
 
-<!-- ── FILTERS ─────────────────────────── -->
-<div id="gallery-filters">
-    <div class="gal-filters-inner">
-        <button class="gal-filter active" onclick="filterGallery(this,'all')">All</button>
-        <button class="gal-filter" onclick="filterGallery(this,'nature')">Nature</button>
-        <button class="gal-filter" onclick="filterGallery(this,'city')">Cities</button>
-        <button class="gal-filter" onclick="filterGallery(this,'beach')">Beaches</button>
-        <button class="gal-filter" onclick="filterGallery(this,'culture')">Culture</button>
-        <button class="gal-filter" onclick="filterGallery(this,'adventure')">Adventure</button>
-        <button class="gal-filter" onclick="filterGallery(this,'food')">Food</button>
-        <span class="count-label" id="img-count">— images</span>
-        <div class="gal-view-toggle">
-            <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" title="Masonry">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></svg>
-            </button>
-            <button class="view-btn" id="btn-grid" onclick="setView('grid')" title="Grid">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- ── GALLERY MAIN ────────────────────── -->
 <div id="gallery-main">
+    <div class="gallery-section-head">
+        <span class="gallery-section-eyebrow">Curated Moments</span>
+        <h2 class="gallery-section-title">Travel Memories</h2>
+        <p class="gallery-section-desc">Handpicked visual stories from the most beautiful places on earth</p>
+    </div>
 
     @{
-        // Gallery data: title, location, category, img, aspect class
         var galleryItems = new[] {
-            new { title="Blue Caldera", location="Santorini, Greece", cat="beach", img="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&q=85&fit=crop", cls="h2", tags="Greece, Caldera, Sunset" },
-            new { title="Bamboo Forest", location="Arashiyama, Japan", cat="nature", img="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=85&fit=crop", cls="h1", tags="Japan, Forest, Nature" },
-            new { title="Overwater Bliss", location="Maldives", cat="beach", img="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=85&fit=crop", cls="h1", tags="Maldives, Luxury, Ocean" },
-            new { title="Burj at Dusk", location="Dubai, UAE", cat="city", img="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=85&fit=crop", cls="h2", tags="Dubai, Skyline, City" },
-            new { title="Rice Terraces", location="Ubud, Bali", cat="nature", img="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=85&fit=crop", cls="h1", tags="Bali, Rice, Terraces" },
-            new { title="Machu Picchu Dawn", location="Peru", cat="culture", img="https://images.unsplash.com/photo-1580502304784-8985b7eb7260?w=800&q=85&fit=crop", cls="h3", tags="Peru, Inca, Heritage" },
-            new { title="Positano Cliffs", location="Amalfi Coast, Italy", cat="beach", img="https://images.unsplash.com/photo-1520175480921-4edfa2983e0f?w=800&q=85&fit=crop", cls="h2", tags="Italy, Coast, Village" },
-            new { title="Patagonia Peaks", location="Torres del Paine, Chile", cat="adventure", img="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85&fit=crop", cls="h1", tags="Chile, Mountains, Trek" },
-            new { title="Kyoto Temple", location="Kyoto, Japan", cat="culture", img="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=85&fit=crop", cls="h2", tags="Japan, Temple, Culture" },
-            new { title="Desert Safari", location="Dubai, UAE", cat="adventure", img="https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=85&fit=crop", cls="h1", tags="Dubai, Desert, Safari" },
-            new { title="Street Food", location="Bangkok, Thailand", cat="food", img="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=85&fit=crop", cls="h3", tags="Thailand, Food, Street" },
-            new { title="Northern Lights", location="Tromsø, Norway", cat="nature", img="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=85&fit=crop", cls="h1", tags="Norway, Aurora, Night" },
-            new { title="Ancient Medina", location="Marrakech, Morocco", cat="culture", img="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800&q=85&fit=crop", cls="h2", tags="Morocco, Medina, Culture" },
-            new { title="Swiss Alps", location="Interlaken, Switzerland", cat="adventure", img="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85&fit=crop", cls="h1", tags="Switzerland, Alps, Mountains" },
-            new { title="Italian Cuisine", location="Rome, Italy", cat="food", img="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85&fit=crop", cls="h2", tags="Italy, Food, Pasta" },
-            new { title="Tokyo Nights", location="Tokyo, Japan", cat="city", img="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=85&fit=crop", cls="h1", tags="Tokyo, Night, Neon" },
-            new { title="Amazon Canopy", location="Amazon, Brazil", cat="nature", img="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&q=85&fit=crop", cls="h3", tags="Brazil, Amazon, Jungle" },
-            new { title="NYC Skyline", location="New York, USA", cat="city", img="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=800&q=85&fit=crop", cls="h2", tags="New York, Skyline, City" },
+            new { title="Blue Caldera", location="Santorini, Greece", cat="beach", img="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&q=85&fit=crop" },
+            new { title="Bamboo Forest", location="Arashiyama, Japan", cat="nature", img="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=85&fit=crop" },
+            new { title="Overwater Bliss", location="Maldives", cat="beach", img="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=85&fit=crop" },
+            new { title="Burj at Dusk", location="Dubai, UAE", cat="city", img="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=85&fit=crop" },
+            new { title="Rice Terraces", location="Ubud, Bali", cat="nature", img="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=85&fit=crop" },
+            new { title="Machu Picchu Dawn", location="Peru", cat="culture", img="https://images.unsplash.com/photo-1580502304784-8985b7eb7260?w=800&q=85&fit=crop" },
+            new { title="Positano Cliffs", location="Amalfi Coast, Italy", cat="beach", img="https://images.unsplash.com/photo-1520175480921-4edfa2983e0f?w=800&q=85&fit=crop" },
+            new { title="Patagonia Peaks", location="Torres del Paine, Chile", cat="adventure", img="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85&fit=crop" },
+            new { title="Kyoto Temple", location="Kyoto, Japan", cat="culture", img="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=85&fit=crop" },
+            new { title="Desert Safari", location="Dubai, UAE", cat="adventure", img="https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=85&fit=crop" },
+            new { title="Street Food", location="Bangkok, Thailand", cat="food", img="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=85&fit=crop" },
+            new { title="Northern Lights", location="Tromsø, Norway", cat="nature", img="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=85&fit=crop" },
+            new { title="Ancient Medina", location="Marrakech, Morocco", cat="culture", img="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800&q=85&fit=crop" },
+            new { title="Swiss Alps", location="Interlaken, Switzerland", cat="adventure", img="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85&fit=crop" },
+            new { title="Italian Cuisine", location="Rome, Italy", cat="food", img="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85&fit=crop" },
+            new { title="Tokyo Nights", location="Tokyo, Japan", cat="city", img="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=85&fit=crop" }
         };
     }
 
@@ -582,17 +394,14 @@
         @for (int i = 0; i < galleryItems.Length; i++)
         {
             var item = galleryItems[i];
-            <div class="gal-item @item.cls"
+            <div class="gal-item"
                  data-cat="@item.cat"
                  data-title="@item.title"
                  data-location="@item.location"
-                 data-tags="@item.tags"
                  data-img="@item.img"
                  data-index="@i"
-                 data-reveal data-delay="@(i * 40)"
                  onclick="openLightbox(@i)">
                 <img src="@item.img" alt="@item.title — @item.location" loading="lazy" />
-                <div class="gal-item-expand">⤢</div>
                 <div class="gal-item-overlay">
                     <div class="gal-item-category">@item.cat</div>
                     <div class="gal-item-title">@item.title</div>
@@ -601,176 +410,86 @@
             </div>
         }
     </div>
-
-    <!-- Grid Layout (hidden by default) -->
-    <div class="gallery-grid" id="galleryGrid">
-        @for (int i = 0; i < galleryItems.Length; i++)
-        {
-            var item = galleryItems[i];
-            <div class="gal-item"
-                 data-cat="@item.cat"
-                 data-title="@item.title"
-                 data-location="@item.location"
-                 data-tags="@item.tags"
-                 data-img="@item.img"
-                 onclick="openLightbox(@i)">
-                <img src="@item.img" alt="@item.title" loading="lazy" />
-                <div class="gal-item-expand">⤢</div>
-                <div class="gal-item-overlay">
-                    <div class="gal-item-title">@item.title</div>
-                    <div class="gal-item-location">@item.location</div>
-                </div>
-            </div>
-        }
-    </div>
-
-</div>
-
-<!-- ── LIGHTBOX ─────────────────────────── -->
-<div id="lightbox" onclick="if(event.target===this)closeLightbox()">
-    <button class="lb-close" onclick="closeLightbox()">✕</button>
-    <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹</button>
-    <button class="lb-nav" id="lb-next" onclick="lbNav(1)">›</button>
-
-    <div class="lb-inner">
-        <div class="lb-img-wrap">
-            <img id="lb-img" src="" alt="" />
-        </div>
-        <div class="lb-meta">
-            <div class="lb-meta-title" id="lb-title"></div>
-            <div class="lb-meta-sub" id="lb-location"></div>
-            <div class="lb-tags" id="lb-tags"></div>
-        </div>
-    </div>
-    <div class="lb-counter" id="lb-counter"></div>
 </div>
 
 @section Scripts {
-    <script>// ── Hero canvas ──
-(function() {
-    const canvas = document.getElementById('gallery-hero-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-    const pts = Array.from({length:120}, () => ({
-        x:Math.random()*canvas.width, y:Math.random()*canvas.height,
-        r:Math.random()*1.3+0.2, a:Math.random()*0.4+0.1,
-        vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2,
-        c:Math.random()>0.5?'168,85,247':'77,238,234'
-    }));
-    (function f(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        pts.forEach(p=>{
-            p.x+=p.vx; p.y+=p.vy;
-            if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
-            if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
-            ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-            ctx.fillStyle=`rgba(${p.c},${p.a})`; ctx.fill();
-        });
-        requestAnimationFrame(f);
-    })();
-})();
+    <script>
+        // ── Gallery data ──
+        const galleryData = Array.from(document.querySelectorAll('.gal-item')).map(el => ({
+            img: el.dataset.img,
+            title: el.dataset.title,
+            location: el.dataset.location,
+            cat: el.dataset.cat
+        }));
+        let currentIndex = 0;
 
-// ── Gallery data (for lightbox) ──
-const galleryData = Array.from(document.querySelectorAll('#galleryMasonry .gal-item')).map(el => ({
-    img:      el.dataset.img,
-    title:    el.dataset.title,
-    location: el.dataset.location,
-    tags:     el.dataset.tags || '',
-    cat:      el.dataset.cat
-}));
-let currentIndex = 0;
+        // Update count
+        function updateCount() {
+            const visible = document.querySelectorAll('.gal-item:not([style*="display: none"])').length;
+            document.getElementById('img-count').textContent = visible + ' images';
+        }
+        updateCount();
 
-// Update count
-function updateCount() {
-    const visible = document.querySelectorAll('#galleryMasonry .gal-item:not([style*="display: none"])').length;
-    document.getElementById('img-count').textContent = visible + ' images';
-}
-updateCount();
+        // ── Filter ──
+        function filterGallery(btn, cat) {
+            document.querySelectorAll('.gal-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.gal-item').forEach(item => {
+                const show = cat === 'all' || item.dataset.cat === cat;
+                item.style.display = show ? '' : 'none';
+            });
+            updateCount();
+        }
 
-// ── Filter ──
-function filterGallery(btn, cat) {
-    document.querySelectorAll('.gal-filter').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.gal-item').forEach(item => {
-        const show = cat === 'all' || item.dataset.cat === cat;
-        item.style.display = show ? '' : 'none';
-    });
-    updateCount();
-}
+        // ── Search ──
+        function searchGallery(val) {
+            const q = val.toLowerCase().trim();
+            document.querySelectorAll('.gal-item').forEach(item => {
+                const title = (item.dataset.title || '').toLowerCase();
+                const loc = (item.dataset.location || '').toLowerCase();
+                const show = !q || title.includes(q) || loc.includes(q);
+                item.style.display = show ? '' : 'none';
+            });
+            updateCount();
+        }
 
-// ── View toggle ──
-function setView(view) {
-    const masonry = document.getElementById('galleryMasonry');
-    const grid = document.getElementById('galleryGrid');
-    const btnM = document.getElementById('btn-masonry');
-    const btnG = document.getElementById('btn-grid');
-    if (view === 'masonry') {
-        masonry.style.display = ''; grid.style.display = 'none';
-        btnM.classList.add('active'); btnG.classList.remove('active');
-    } else {
-        masonry.style.display = 'none'; grid.style.display = 'grid';
-        btnG.classList.add('active'); btnM.classList.remove('active');
-    }
-}
+        // ── Lightbox ──
+        function openLightbox(index) {
+            currentIndex = index;
+            const d = galleryData[currentIndex];
+            const img = document.getElementById('lb-img');
 
-// ── Lightbox ──
-function openLightbox(index) {
-    currentIndex = index;
-    renderLightbox();
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-}
-function lbNav(dir) {
-    currentIndex = (currentIndex + dir + galleryData.length) % galleryData.length;
-    renderLightbox();
-}
-function renderLightbox() {
-    const d = galleryData[currentIndex];
-    const img = document.getElementById('lb-img');
-    img.style.opacity = '0';
-    img.src = d.img;
-    img.onload = () => {
-        img.style.transition = 'opacity 0.35s';
-        img.style.opacity = '1';
-    };
-    img.alt = d.title;
-    document.getElementById('lb-title').textContent = d.title;
-    document.getElementById('lb-location').textContent = d.location;
-    document.getElementById('lb-counter').textContent = (currentIndex + 1) + ' / ' + galleryData.length;
-    const tagsEl = document.getElementById('lb-tags');
-    tagsEl.innerHTML = (d.tags || '').split(',').map(t =>
-        `<span class="lb-tag">${t.trim()}</span>`
-    ).join('');
-}
+            // Create Lightbox dynamically
+            const lb = document.createElement('div');
+            lb.id = 'lb-container';
+            lb.style.cssText = `
+                    position: fixed; inset: 0; z-index: 9999;
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    display: flex; flex-direction: column; align-items: center; justify-content: center;
+                    padding: 2rem;
+                `;
 
-// Keyboard navigation
-document.addEventListener('keydown', e => {
-    const lb = document.getElementById('lightbox');
-    if (!lb.classList.contains('open')) return;
-    if (e.key === 'ArrowRight') lbNav(1);
-    if (e.key === 'ArrowLeft') lbNav(-1);
-    if (e.key === 'Escape') closeLightbox();
-});
+            lb.innerHTML = `
+                    <button onclick="closeLightbox()" style="position:absolute; top:1.5rem; right:1.5rem; width:44px; height:44px; border:1px solid #e5e7eb; border-radius:50%; background:#fff; color:#1a1a1a; font-size:1.2rem; cursor:pointer;">✕</button>
+                    <div style="max-width:1000px; width:100%; text-align:center;">
+                        <img src="${d.img}" alt="${d.title}" style="width:100%; max-height:80vh; object-fit:contain; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.1);" />
+                        <div style="margin-top:1.5rem;">
+                            <div style="font-size:1.2rem; font-weight:700; color:#1a1a1a;">${d.title}</div>
+                            <div style="font-size:0.9rem; color:#6b7280;">${d.location}</div>
+                        </div>
+                        <div style="margin-top:1rem; font-size:0.8rem; color:#9ca3af;">${currentIndex + 1} / ${galleryData.length}</div>
+                    </div>
+                `;
 
-// ── 3D tilt on hover ──
-document.querySelectorAll('.gal-item').forEach(card => {
-    card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `scale(1.015) translateY(-4px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
-    });
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s';
-    });
-    card.addEventListener('mouseenter', () => {
-        card.style.transition = 'transform 0.1s, box-shadow 0.4s';
-    });
-});</script>
+            document.body.appendChild(lb);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lb = document.getElementById('lb-container');
+            if (lb) lb.remove();
+            document.body.style.overflow = '';
+        }
+    </script>
 }

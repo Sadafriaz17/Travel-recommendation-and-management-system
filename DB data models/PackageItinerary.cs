@@ -18,7 +18,13 @@ namespace TourwebsiteFYP.DB_data_models
         public int PackageId { get; set; }
         public int DayNumber { get; set; }
         public string Description { get; set; }
-    
+        public string Title { get; set; }
+        public string ActivityDescription { get; set; }
+        public string Accommodation { get; set; }
+        public string MealsProvided { get; set; }
+        public string Location { get; set; }
+
+
         public virtual Package Package { get; set; }
     }
 }

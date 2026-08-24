@@ -1,33 +1,87 @@
-﻿
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Destination>
 @{
-    ViewBag.Title = "HomepageDestination";
-     Layout = null;
+    Layout = null;
 }
 
+<style>
+    .dest-grid-2x2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
 
-<div class="container-xxl py-5 destination">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Destination</h6>
-            <h1 class="mb-5">Popular Destination</h1>
-        </div>
-        <div class="row g-3">
-            @foreach (var item in Model)
-            {
-                <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.2s">
-                    <a class="position-relative d-block overflow-hidden" href="@Url.Action("Details","Destination", new { id=item.DestinationId })">
-                        <img class="img-fluid" src="@Url.Content(item.Image)" alt="@item.Name" style="object-fit:cover; height:250px; width:100%;">
-                        <div class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">
-                           @item.Price.ToString("C")
+    .dest-card-v2 {
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        height: 280px;
+        width: 100%;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
 
-                        </div>
-                        <div class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">
-                            @item.Name
-                        </div>
-                    </a>
-                </div>
+        .dest-card-v2 img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .dest-card-v2:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Black text overlay at bottom-left */
+        .dest-card-v2 .overlay-v2 {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+            color: #fff;
+        }
+
+            .dest-card-v2 .overlay-v2 h4 {
+                font-weight: 600;
+                font-size: 1.2rem;
+                margin-bottom: 0.2rem;
             }
-        </div>
-    </div>
-</div>
 
+            .dest-card-v2 .overlay-v2 span {
+                font-size: 0.9rem;
+                opacity: 0.9;
+                display: block;
+            }
+
+    @@media (max-width: 768px) {
+        .dest-grid-2x2 {
+            grid-template-columns: 1fr;
+        }
+
+        .dest-card-v2 {
+            height: 220px;
+        }
+    }
+</style>
+
+<div class="dest-grid-2x2">
+    @if (Model != null && Model.Count() > 0)
+    {
+        foreach (var item in Model.Take(4))
+        {
+            <a href="@Url.Action("Details", "Destination", new { id = item.DestinationId })" class="dest-card-v2">
+                <img src="@Url.Content(item.Image)" alt="@item.Name" loading="lazy" />
+                <div class="overlay-v2">
+                    <h4>@item.Name</h4>
+                    <span>Explore this beautiful destination</span>
+                </div>
+            </a>
+        }
+    }
+    else
+    {
+        <p style="grid-column: span 2; text-align: center; color: #6b7280;">No destinations available.</p>
+    }
+</div>

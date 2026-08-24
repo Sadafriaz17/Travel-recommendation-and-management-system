@@ -1,826 +1,664 @@
 ﻿@{
-    ViewBag.Title = "Create Account";
+    ViewBag.Title = "Sign Up";
     ViewBag.ActivePage = "Signup";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section HeadStyles {
     <style>
-                /* ═══════════════════════════════════════════
-           SIGNUP PAGE — NEXVOY
-        ═══════════════════════════════════════════ */
-                #signup-wrap {
-                    min-height: 100vh;
-                    display: flex;
-                    align-items: stretch;
-                    padding-top: 72px; /* navbar height */
-                }
+        :root {
+            --accent-cyan: #00e5ff;
+            --accent-purple: #8b5cf6;
+            --accent-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            --auth-dark: #07070c;
+            --auth-dark-2: #0d0d18;
+            --glass-bg: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.10);
+        }
 
-                /* Left Panel */
-                .signup-left {
-                    flex: 1;
-                    position: relative;
-                    overflow: hidden;
-                    display: none;
-                }
+        body:has(.auth-page) #site-header {
+            position: static;
+            max-width: 100%;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 1.1rem 2rem;
+        }
 
-                @@media (min-width: 900px) {
-                    .signup-left {
-                        display: block;
-                    }
-                }
+            body:has(.auth-page) #site-header .logo,
+            body:has(.auth-page) #site-header .nav-links a {
+                color: var(--text-dark);
+            }
 
-                .signup-left-img {
-                    position: absolute;
-                    inset: 0;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    filter: brightness(0.35) saturate(1.4);
-                }
-
-                .signup-left-overlay {
-                    position: absolute;
-                    inset: 0;
-                    background: linear-gradient(135deg, rgba(77,238,234,0.08) 0%, rgba(0,0,0,0.6) 100%);
-                }
-
-                .signup-left-content {
-                    position: absolute;
-                    inset: 0;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: flex-end;
-                    padding: 3rem;
-                }
-
-                .signup-left-quote {
-                    font-family: var(--font-head);
-                    font-size: clamp(1.8rem, 2.5vw, 2.6rem);
-                    font-weight: 800;
-                    letter-spacing: -0.03em;
-                    line-height: 1.1;
-                    margin-bottom: 1rem;
-                }
-
-                .signup-left-sub {
-                    font-size: 0.875rem;
-                    color: var(--sub);
-                    line-height: 1.65;
-                    max-width: 360px;
-                }
-
-                .signup-left-stats {
-                    display: flex;
-                    gap: 2.5rem;
-                    margin-top: 2rem;
-                    padding-top: 2rem;
-                    border-top: 1px solid var(--border);
-                }
-
-                .signup-left-stat-num {
-                    font-family: var(--font-head);
-                    font-size: 1.5rem;
-                    font-weight: 800;
-                    color: var(--accent);
-                }
-
-                .signup-left-stat-label {
-                    font-size: 0.72rem;
-                    color: var(--sub);
-                    font-family: var(--font-mono);
-                    letter-spacing: 0.08em;
-                    text-transform: uppercase;
-                    margin-top: 2px;
-                }
-
-                /* Right Panel */
-                .signup-right {
-                    width: 100%;
-                    max-width: 520px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 3rem 2.5rem;
-                    background: var(--bg);
-                    border-left: 1px solid var(--border);
-                }
-
-                @@media (min-width: 900px) {
-                    .signup-right {
-                        min-height: calc(100vh - 72px);
-                    }
-                }
-
-                .signup-form-inner {
-                    width: 100%;
-                    max-width: 400px;
-                }
-
-                .signup-eyebrow {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    font-family: var(--font-mono);
-                    font-size: 0.7rem;
-                    color: var(--accent);
-                    letter-spacing: 0.15em;
-                    text-transform: uppercase;
-                    margin-bottom: 1.5rem;
-                }
-
-                    .signup-eyebrow::before {
-                        content: '';
-                        width: 20px;
-                        height: 1px;
-                        background: var(--accent);
-                        box-shadow: 0 0 6px var(--accent);
-                    }
-
-                .signup-title {
-                    font-family: var(--font-head);
-                    font-size: clamp(1.8rem, 3vw, 2.4rem);
-                    font-weight: 800;
-                    letter-spacing: -0.03em;
-                    line-height: 1.1;
-                    margin-bottom: 0.5rem;
-                }
-
-                .signup-subtitle {
-                    color: var(--sub);
-                    font-size: 0.875rem;
-                    margin-bottom: 2.5rem;
-                    line-height: 1.6;
-                }
-
-                /* Form Fields */
-                .nex-form-group {
-                    margin-bottom: 1.25rem;
-                    position: relative;
-                }
-
-                .nex-form-label {
-                    display: block;
-                    font-size: 0.72rem;
-                    font-family: var(--font-mono);
-                    color: var(--sub);
-                    letter-spacing: 0.1em;
-                    text-transform: uppercase;
-                    margin-bottom: 0.5rem;
-                    transition: color 0.25s;
-                }
-
-                .nex-form-group:focus-within .nex-form-label {
-                    color: var(--accent);
-                }
-
-                .nex-input-wrap {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                }
-
-                .nex-input-icon {
-                    position: absolute;
-                    left: 1rem;
-                    color: rgba(255,255,255,0.3);
-                    pointer-events: none;
-                    transition: color 0.25s;
-                    width: 16px;
-                    height: 16px;
-                    flex-shrink: 0;
-                }
-
-                .nex-form-group:focus-within .nex-input-icon {
-                    color: var(--accent);
-                }
-
-                .nex-form-input {
-                    width: 100%;
-                    background: var(--glass);
-                    border: 1px solid var(--border);
-                    border-radius: 12px;
-                    padding: 0.85rem 1rem 0.85rem 2.75rem;
-                    color: var(--text);
-                    font-size: 0.9rem;
-                    font-family: var(--font-body);
-                    outline: none;
-                    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-                }
-
-                    .nex-form-input:focus {
-                        border-color: var(--accent);
-                        background: rgba(77,238,234,0.04);
-                        box-shadow: 0 0 0 3px rgba(77,238,234,0.08);
-                    }
-
-                    .nex-form-input.error-input {
-                        border-color: #f87171;
-                        box-shadow: 0 0 0 3px rgba(248,113,113,0.08);
-                    }
-
-                    .nex-form-input::placeholder {
-                        color: rgba(255,255,255,0.25);
-                    }
-
-                /* Password toggle */
-                .pwd-toggle {
-                    position: absolute;
-                    right: 1rem;
-                    background: none;
-                    border: none;
-                    color: rgba(255,255,255,0.3);
-                    cursor: none;
-                    padding: 4px;
-                    transition: color 0.2s;
-                    line-height: 0;
-                }
-
-                    .pwd-toggle:hover {
-                        color: var(--sub);
-                    }
-
-                .nex-error-msg {
-                    display: none;
-                    font-size: 0.72rem;
-                    color: #f87171;
-                    margin-top: 0.4rem;
-                    padding-left: 0.25rem;
-                    font-family: var(--font-mono);
-                }
-
-                    .nex-error-msg.visible {
-                        display: block;
-                    }
-
-                .nex-success-msg {
-                    display: none;
-                    font-size: 0.72rem;
-                    color: var(--accent);
-                    margin-top: 0.4rem;
-                    padding-left: 0.25rem;
-                    font-family: var(--font-mono);
-                }
-
-                    .nex-success-msg.visible {
-                        display: block;
-                    }
-
-                /* Password strength */
-                .pwd-strength-bar {
-                    display: flex;
-                    gap: 4px;
-                    margin-top: 0.5rem;
-                }
-
-                .pwd-strength-seg {
-                    height: 3px;
-                    flex: 1;
-                    border-radius: 2px;
-                    background: var(--border);
-                    transition: background 0.4s;
-                }
-
-                .pwd-strength-label {
-                    font-size: 0.68rem;
-                    color: var(--sub);
-                    font-family: var(--font-mono);
-                    margin-top: 0.3rem;
-                    transition: color 0.3s;
-                }
-
-                /* Avatar upload */
-                .avatar-upload-area {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                    padding: 1rem;
-                    border: 1px dashed var(--border);
-                    border-radius: 12px;
-                    cursor: none;
-                    transition: border-color 0.25s, background 0.25s;
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                    .avatar-upload-area:hover {
-                        border-color: var(--accent);
-                        background: rgba(77,238,234,0.03);
-                    }
-
-                .avatar-preview {
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, var(--accent), var(--accent2));
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-family: var(--font-head);
-                    font-weight: 700;
-                    font-size: 1.1rem;
+                body:has(.auth-page) #site-header .nav-links a:hover {
                     color: #000;
-                    flex-shrink: 0;
-                    overflow: hidden;
                 }
 
-                    .avatar-preview img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        display: none;
-                    }
+            body:has(.auth-page) #site-header .nav-actions .btn-outline-light {
+                background: var(--text-dark);
+                color: #fff;
+                border: 1px solid var(--text-dark);
+            }
 
-                .avatar-upload-text {
-                    font-size: 0.82rem;
-                    color: var(--sub);
+        body:has(.auth-page) main {
+            display: block;
+        }
+
+        /* ---------- MAIN CONTAINER ---------- */
+        .auth-page {
+            display: flex;
+            align-items: stretch; /* Forces both columns to stretch to the exact same height */
+            min-height: calc(100vh - 73px); /* Ensures it fills the screen if content is short */
+            width: 100%;
+        }
+
+        /* ---------- Left: photo panel ---------- */
+        .auth-visual {
+            position: relative;
+            flex: 1 1 46%;
+            /* Removed hard-coded heights. It will now stretch automatically based on parent min-height or sibling content */
+            overflow: hidden;
+            background-image: url('/images/signup.jpg'); /* UPDATE THIS URL FOR SIGNUP PAGE */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column; /* Ensures footer stays pushed to the bottom */
+            justify-content: space-between; /* Pushes logo up and footer down */
+            padding: 3rem;
+            color: #fff;
+        }
+
+            .auth-visual::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(165deg, rgba(7,7,12,0.35) 0%, rgba(7,7,12,0.82) 100%), linear-gradient(135deg, rgba(0,229,255,0.32), rgba(139,92,246,0.42));
+                mix-blend-mode: multiply;
+                pointer-events: none;
+            }
+
+            .auth-visual .grid-overlay {
+                position: absolute;
+                inset: 0;
+                background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+                background-size: 42px 42px;
+                mask-image: radial-gradient(ellipse at 50% 40%, #000 10%, transparent 72%);
+                pointer-events: none;
+            }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.35;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .orb-1 {
+            width: 340px;
+            height: 340px;
+            background: var(--accent-cyan);
+            top: -80px;
+            left: -60px;
+            animation: drift1 16s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 280px;
+            height: 280px;
+            background: var(--accent-purple);
+            bottom: -60px;
+            right: -40px;
+            animation: drift2 20s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            top: 42%;
+            left: 55%;
+            opacity: 0.25;
+            animation: drift3 13s ease-in-out infinite;
+        }
+
+        @@keyframes drift1 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px,50px) scale(1.12);
+            }
+        }
+
+        @@keyframes drift2 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+            }
+
+            50% {
+                transform: translate(-30px,-40px) scale(1.08);
+            }
+        }
+
+        @@keyframes drift3 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+                opacity: 0.25;
+            }
+
+            50% {
+                transform: translate(-20px,25px) scale(1.3);
+                opacity: 0.4;
+            }
+        }
+
+        .auth-logo {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            width: fit-content;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+
+        .auth-visual-content {
+            position: relative;
+            z-index: 2;
+            /* margin: auto allows centering if content is short, but flexbox handles most cases */
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+            .auth-visual-content h2 {
+                font-size: clamp(1.8rem, 3vw, 2.6rem);
+                line-height: 1.2;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin-bottom: 1rem;
+                text-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            }
+
+            .auth-visual-content p {
+                color: rgba(255,255,255,0.75);
+                font-size: 0.95rem;
+                max-width: 380px;
+                margin-bottom: 2rem;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            }
+
+        .auth-chip-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .auth-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+            .auth-chip i {
+                background: var(--accent-gradient);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+        .auth-visual-foot {
+            position: relative;
+            z-index: 2;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            /* Ensures it stays at the very bottom */
+            margin-top: auto;
+        }
+
+        /* ---------- Right: form panel ---------- */
+        .auth-form-panel {
+            flex: 1 1 54%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            background: var(--bg-body);
+            /* Stretches perfectly with the left side */
+            overflow-y: auto;
+        }
+
+        .auth-form-card {
+            width: 100%;
+            max-width: 400px;
+            margin: auto 0; /* Keeps it vertically centered */
+        }
+
+        .auth-eyebrow {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent-purple);
+            margin-bottom: 0.6rem;
+        }
+
+        .auth-form-card h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-form-card > .auth-form-header > p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+            .auth-form-card > .auth-form-header > p a {
+                color: var(--text-dark);
+                font-weight: 600;
+                text-decoration: underline;
+                text-underline-offset: 3px;
+            }
+
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0.85rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .btn-google i {
+                color: #ea4335;
+                font-size: 1rem;
+            }
+
+            .btn-google:hover {
+                border-color: #d1d5db;
+                box-shadow: var(--shadow);
+                transform: translateY(-1px);
+            }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1.6rem 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+            .divider::before, .divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+            }
+
+        .field-group {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+            .field-group input {
+                width: 100%;
+                padding: 1.15rem 2.7rem 0.5rem 1rem;
+                border-radius: 12px;
+                border: 1.5px solid var(--border);
+                font-family: var(--font-main);
+                font-size: 0.92rem;
+                color: var(--text-dark);
+                background: #fff;
+                outline: none;
+                transition: 0.2s;
+            }
+
+                .field-group input:focus {
+                    border-color: var(--accent-purple);
+                    box-shadow: 0 0 0 4px rgba(139,92,246,0.12);
                 }
 
-                    .avatar-upload-text span {
-                        color: var(--accent);
-                    }
+            .field-group label {
+                position: absolute;
+                left: 1rem;
+                top: 0.95rem;
+                font-size: 0.92rem;
+                color: var(--text-muted);
+                pointer-events: none;
+                transition: 0.15s ease;
+                transform-origin: left top;
+            }
 
-                .avatar-upload-area input[type=file] {
-                    position: absolute;
-                    inset: 0;
-                    opacity: 0;
-                    cursor: pointer;
-                    width: 100%;
-                    height: 100%;
-                }
+            .field-group input:focus + label,
+            .field-group input:not(:placeholder-shown) + label {
+                top: 0.4rem;
+                font-size: 0.68rem;
+                font-weight: 600;
+                color: var(--accent-purple);
+            }
 
-                /* Terms */
-                .terms-row {
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 0.75rem;
-                    margin: 1.5rem 0;
-                }
+            .field-group input:invalid:not(:placeholder-shown):not(:focus) {
+                border-color: #ef4444;
+            }
 
-                .nex-checkbox {
-                    width: 18px;
-                    height: 18px;
-                    border: 1.5px solid var(--border);
-                    border-radius: 4px;
-                    background: var(--glass);
-                    appearance: none;
-                    -webkit-appearance: none;
-                    cursor: none;
-                    flex-shrink: 0;
-                    margin-top: 1px;
-                    transition: all 0.2s;
-                    position: relative;
-                }
+        .field-icon {
+            position: absolute;
+            right: 1rem;
+            top: 1.05rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
 
-                    .nex-checkbox:checked {
-                        background: var(--accent);
-                        border-color: var(--accent);
-                    }
+        .toggle-pass {
+            position: absolute;
+            right: 0.9rem;
+            top: 0.75rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.4rem;
+            font-size: 0.85rem;
+        }
 
-                        .nex-checkbox:checked::after {
-                            content: '';
-                            position: absolute;
-                            top: 2px;
-                            left: 5px;
-                            width: 5px;
-                            height: 9px;
-                            border-right: 2px solid #000;
-                            border-bottom: 2px solid #000;
-                            transform: rotate(45deg);
-                        }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.6rem;
+            font-size: 0.83rem;
+        }
 
-                .terms-text {
-                    font-size: 0.8rem;
-                    color: var(--sub);
-                    line-height: 1.6;
-                }
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
 
-                    .terms-text a {
-                        color: var(--accent);
-                        text-decoration: none;
-                    }
+            .checkbox input {
+                accent-color: var(--accent-purple);
+            }
 
-                        .terms-text a:hover {
-                            text-decoration: underline;
-                        }
+        .forgot-link {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
 
-                /* Submit button */
-                .signup-submit-btn {
-                    width: 100%;
-                    padding: 0.95rem;
-                    border-radius: 12px;
-                    border: none;
-                    background: linear-gradient(135deg, var(--accent), var(--accent2));
-                    color: #000;
-                    font-size: 0.95rem;
-                    font-weight: 700;
-                    font-family: var(--font-body);
-                    cursor: none;
-                    transition: all 0.35s;
-                    position: relative;
-                    overflow: hidden;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                }
+        .btn-block {
+            width: 100%;
+            position: relative;
+            padding: 0.95rem 2rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-                    .signup-submit-btn::after {
-                        content: '';
-                        position: absolute;
-                        inset: 0;
-                        background: linear-gradient(135deg, transparent, rgba(255,255,255,0.15));
-                        opacity: 0;
-                        transition: opacity 0.3s;
-                    }
+        .btn-spinner {
+            display: none;
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+        }
 
-                    .signup-submit-btn:hover::after {
-                        opacity: 1;
-                    }
+        .auth-page form.is-loading .btn-spinner {
+            display: inline-block;
+            animation: spin 0.7s linear infinite;
+        }
 
-                    .signup-submit-btn:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 15px 40px rgba(77,238,234,0.3);
-                    }
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-                    .signup-submit-btn:disabled {
-                        opacity: 0.5;
-                        cursor: default;
-                        transform: none;
-                    }
+        .auth-page form.is-loading .btn-text {
+            opacity: 0.7;
+        }
 
-                .signup-divider {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                    margin: 1.5rem 0;
-                    font-size: 0.75rem;
-                    color: rgba(255,255,255,0.25);
-                    font-family: var(--font-mono);
-                }
+        .auth-form-card .field-group.shake {
+            animation: shake 0.35s;
+        }
 
-                    .signup-divider::before, .signup-divider::after {
-                        content: '';
-                        flex: 1;
-                        height: 1px;
-                        background: var(--border);
-                    }
+        @@keyframes shake {
+            25% {
+                transform: translateX(-4px);
+            }
 
-                .signup-footer-link {
-                    text-align: center;
-                    font-size: 0.85rem;
-                    color: var(--sub);
-                    margin-top: 1.5rem;
-                }
+            75% {
+                transform: translateX(4px);
+            }
+        }
 
-                    .signup-footer-link a {
-                        color: var(--accent);
-                        text-decoration: none;
-                        font-weight: 600;
-                    }
+        /* Mobile Responsiveness */
+        @@media (max-width: 900px) {
+            .auth-page {
+                flex-direction: column;
+                min-height: auto; /* Let it flow naturally on mobile */
+            }
 
-                        .signup-footer-link a:hover {
-                            text-decoration: underline;
-                        }
+            .auth-visual {
+                /* On mobile, give it a fixed height so it doesn't get squashed */
+                min-height: 280px;
+                height: 280px;
+                padding: 2rem;
+                flex: none;
+            }
 
-                /* Features list on left panel */
-                .feature-chips {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 0.5rem;
-                    margin-top: 1.5rem;
-                }
+            .auth-chip-row {
+                display: none;
+            }
 
-                .feature-chip {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 0.3rem 0.75rem;
-                    border: 1px solid var(--border);
-                    border-radius: 100px;
-                    font-size: 0.72rem;
-                    color: var(--sub);
-                    background: var(--glass);
-                    font-family: var(--font-mono);
-                }
-
-                    .feature-chip::before {
-                        content: '✦';
-                        color: var(--accent);
-                        font-size: 0.6rem;
-                    }
+            .auth-form-panel {
+                padding: 2.5rem 1.5rem;
+                overflow-y: visible;
+            }
+        }
     </style>
 }
 
-<div id="signup-wrap">
-    <!-- Left Cinematic Panel -->
-    <div class="signup-left">
-        <img class="signup-left-img"
-             src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=90&fit=crop"
-             alt="Travel destination" />
-        <div class="signup-left-overlay"></div>
-        <div class="signup-left-content">
-            @*<div class="nex-badge" style="margin-bottom:1.5rem;">AI + VR Travel Intelligence</div>*@
-            <div class="signup-left-quote">
-                Your Journey<br />Starts <span class="text-gradient">Here</span>
-            </div>
-            <p class="signup-left-sub">
-                Join NEXVOY and unlock AI-powered travel planning, VR destination previews, and personalised smart itineraries crafted just for you.
-            </p>
-            <div class="feature-chips">
-                <span class="feature-chip">AI Itineraries</span>
-                <span class="feature-chip">Smart Packing</span>
-                <span class="feature-chip">Smart Packages</span>
-                <span class="feature-chip">24/7 Assistant</span>
-                <span class="feature-chip">Vendor Marketplace</span>
-            </div>
-            <div class="signup-left-stats">
-                <div>
-                    <div class="signup-left-stat-num">500+</div>
-                    <div class="signup-left-stat-label">Destinations</div>
-                </div>
-                <div>
-                    <div class="signup-left-stat-num">12K+</div>
-                    <div class="signup-left-stat-label">Happy Travelers</div>
-                </div>
-                <div>
-                    <div class="signup-left-stat-num">4.9★</div>
-                    <div class="signup-left-stat-label">App Rating</div>
-                </div>
+<div class="auth-page">
+    <div class="auth-visual">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+
+        
+
+        <div class="auth-visual-content">
+            <h2>Create an account,<br />unlock the map.</h2>
+            <p>Get AI-matched destinations, save unlimited itineraries, and check out in one tap on every future booking.</p>
+            <div class="auth-chip-row">
+                <div class="auth-chip"><i class="fas fa-wand-magic-sparkles"></i> AI recommendations</div>
+                <div class="auth-chip"><i class="fas fa-bookmark"></i> Saved itineraries</div>
+                <div class="auth-chip"><i class="fas fa-lock"></i> Free forever</div>
             </div>
         </div>
+
+        <div class="auth-visual-foot">&copy; 2025 NEXVOY. All Rights Reserved.</div>
     </div>
 
-    <!-- Right Form Panel -->
-    <div class="signup-right">
-        <div class="signup-form-inner">
-            <div class="signup-eyebrow">Create Account</div>
-            <h1 class="signup-title">
-                Join <span class="text-gradient">NEXVOY</span>
-            </h1>
-            <p class="signup-subtitle">Start planning your dream journeys with AI intelligence</p>
+    <div class="auth-form-panel">
+        <div class="auth-form-card">
+            <div class="auth-form-header">
+                <span class="auth-eyebrow">Get started</span>
+                <h1>Create your account</h1>
+                <p>Already have one? <a href="@Url.Action("Index", "Login")">Sign in</a></p>
+            </div>
 
-            @if (ViewBag.Message != null)
-            {
-                <div class="nex-alert nex-alert-danger" style="margin-bottom:1.5rem;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
-                    @ViewBag.Message
-                </div>
-            }
+            <button type="button" class="btn-google" id="googleSignupBtn">
+                <i class="fab fa-google"></i> Continue with Google
+            </button>
 
-            <form id="signupForm" enctype="multipart/form-data" method="post" action="/signup/index" novalidate>
+            <div class="divider"><span>or sign up with email</span></div>
 
-                <!-- Full Name -->
-                <div class="nex-form-group">
-                    <label class="nex-form-label" for="FullName">Full Name</label>
-                    <div class="nex-input-wrap">
-                        <svg class="nex-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                        <input type="text" id="FullName" name="FullName" class="nex-form-input"
-                               placeholder="Enter your full name" required autocomplete="name" />
-                    </div>
-                    <span class="nex-error-msg" id="name-error">Please enter your full name</span>
+            <form action="@Url.Action("Index", "Signup")" method="post" id="signupForm" novalidate>
+
+                <div class="field-group">
+                    <input type="text" id="fullName" name="FullName" placeholder=" " required />
+                    <label for="fullName">Full name</label>
+                    <i class="fas fa-user field-icon"></i>
                 </div>
 
-                <!-- Email -->
-                <div class="nex-form-group">
-                    <label class="nex-form-label" for="Email">Email Address</label>
-                    <div class="nex-input-wrap">
-                        <svg class="nex-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                        <input type="email" id="Email" name="Email" class="nex-form-input"
-                               placeholder="your@email.com" required autocomplete="email" />
-                    </div>
-                    <span class="nex-error-msg" id="email-error">Please enter a valid email address</span>
+                <div class="field-group">
+                    <input type="email" id="email" name="Email" placeholder=" " required />
+                    <label for="email">Email address</label>
+                    <i class="fas fa-envelope field-icon"></i>
                 </div>
 
-                <!-- Password -->
-                <div class="nex-form-group">
-                    <label class="nex-form-label" for="PasswordHash">Password</label>
-                    <div class="nex-input-wrap">
-                        <svg class="nex-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                        <input type="password" id="PasswordHash" name="PasswordHash" class="nex-form-input"
-                               placeholder="Create a strong password" required autocomplete="new-password"
-                               oninput="checkStrength(this.value)" />
-                        <button type="button" class="pwd-toggle" onclick="togglePwd('PasswordHash', this)" aria-label="Show password">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                        </button>
-                    </div>
-                    <div class="pwd-strength-bar">
-                        <div class="pwd-strength-seg" id="seg1"></div>
-                        <div class="pwd-strength-seg" id="seg2"></div>
-                        <div class="pwd-strength-seg" id="seg3"></div>
-                        <div class="pwd-strength-seg" id="seg4"></div>
-                    </div>
-                    <div class="pwd-strength-label" id="pwd-label">Enter a password</div>
-                    <span class="nex-error-msg" id="pwd-error">Password must be at least 8 characters</span>
+                <div class="field-group">
+                    <input type="password" id="password" name="Password" placeholder=" " required minlength="8" />
+                    <label for="password">Password</label>
+                    <button type="button" class="toggle-pass" data-target="password" aria-label="Show password">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
-
-                <!-- Confirm Password -->
-                <div class="nex-form-group">
-                    <label class="nex-form-label" for="ConfirmPassword">Confirm Password</label>
-                    <div class="nex-input-wrap">
-                        <svg class="nex-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                        <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="nex-form-input"
-                               placeholder="Repeat your password" required autocomplete="new-password"
-                               oninput="checkMatch()" />
-                        <button type="button" class="pwd-toggle" onclick="togglePwd('ConfirmPassword', this)" aria-label="Show password">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                        </button>
-                    </div>
-                    <span class="nex-error-msg" id="match-error">Passwords do not match</span>
-                    <span class="nex-success-msg" id="match-ok">✦ Passwords match</span>
+                <div class="strength-meter" id="strengthMeter">
+                    <i></i><i></i><i></i><i></i>
                 </div>
+                <div class="strength-label" id="strengthLabel"></div>
 
-                <!-- Profile Photo (optional) -->
-                <div class="nex-form-group">
-                    <label class="nex-form-label">Profile Photo <span style="color:rgba(255,255,255,0.25);font-size:0.65rem;">(optional)</span></label>
-                    <div class="avatar-upload-area" id="avatar-area">
-                        <div class="avatar-preview" id="avatar-preview">
-                            N
-                            <img id="avatar-img" src="" alt="" />
-                        </div>
-                        <div class="avatar-upload-text">
-                            <div><span>Click to upload</span> your photo</div>
-                            <div style="font-size:0.72rem;margin-top:2px;color:rgba(255,255,255,0.2);">JPG, PNG up to 5MB</div>
-                        </div>
-                        <input type="file" name="ProfileImage" accept="image/*"
-                               onchange="previewAvatar(this)" />
-                    </div>
+                <div class="field-group">
+                    <input type="password" id="confirmPassword" name="ConfirmPassword" placeholder=" " required />
+                    <label for="confirmPassword">Confirm password</label>
+                    <button type="button" class="toggle-pass" data-target="confirmPassword" aria-label="Show password">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
+                <div class="match-hint" id="matchHint"></div>
 
-                <!-- Terms -->
-                <div class="terms-row">
-                    <input type="checkbox" id="terms" class="nex-checkbox" required />
-                    <label for="terms" class="terms-text">
-                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-                        I consent to receiving personalised travel recommendations from NEXVOY.
-                    </label>
-                </div>
+                <label class="checkbox">
+                    <input type="checkbox" name="AcceptTerms" required />
+                    <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                </label>
 
-                <button type="submit" id="submitBtn" class="signup-submit-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                    Create My Account
+                <button type="submit" class="btn-primary btn-block" id="submitBtn">
+                    <span class="btn-text">Create Account</span>
+                    <span class="btn-spinner"></span>
                 </button>
             </form>
-
-            <div class="signup-divider">or</div>
-
-            <div class="signup-footer-link">
-                Already have an account? <a href="~/Login/Index">Sign In →</a>
-            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-// ── Password strength checker ──
-function checkStrength(val) {
-    const segs = [document.getElementById('seg1'), document.getElementById('seg2'),
-                  document.getElementById('seg3'), document.getElementById('seg4')];
-    const label = document.getElementById('pwd-label');
-    let score = 0;
-    if (val.length >= 8) score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
+        (function () {
+            document.querySelectorAll('.toggle-pass').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var input = document.getElementById(btn.dataset.target);
+                    var icon = btn.querySelector('i');
+                    var isHidden = input.type === 'password';
+                    input.type = isHidden ? 'text' : 'password';
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                });
+            });
 
-    const colors = ['#f87171', '#fbbf24', '#4DEEEA', '#34d399'];
-    const labels = ['Too weak', 'Fair', 'Good', 'Strong ✦'];
+            var passwordInput = document.getElementById('password');
+            var bars = document.querySelectorAll('#strengthMeter i');
+            var strengthLabel = document.getElementById('strengthLabel');
+            var colors = ['#ef4444', '#f59e0b', '#eab308', '#16a34a'];
+            var labels = ['Weak', 'Fair', 'Good', 'Strong'];
 
-    segs.forEach((s, i) => {
-        s.style.background = i < score ? colors[score - 1] : 'var(--border)';
-    });
-    label.textContent = score > 0 ? labels[score - 1] : 'Enter a password';
-    label.style.color = score > 0 ? colors[score - 1] : 'var(--sub)';
-}
+            function scorePassword(val) {
+                var score = 0;
+                if (val.length >= 8) score++;
+                if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+                if (/\d/.test(val)) score++;
+                if (/[^A-Za-z0-9]/.test(val)) score++;
+                return score;
+            }
 
-// ── Password match checker ──
-function checkMatch() {
-    const pwd = document.getElementById('PasswordHash').value;
-    const conf = document.getElementById('ConfirmPassword').value;
-    const errEl = document.getElementById('match-error');
-    const okEl = document.getElementById('match-ok');
-    const input = document.getElementById('ConfirmPassword');
+            passwordInput.addEventListener('input', function () {
+                var score = scorePassword(passwordInput.value);
+                bars.forEach(function (bar, i) {
+                    bar.style.background = i < score ? colors[Math.max(score - 1, 0)] : '';
+                });
+                strengthLabel.textContent = passwordInput.value ? labels[Math.max(score - 1, 0)] : '';
+                strengthLabel.style.color = passwordInput.value ? colors[Math.max(score - 1, 0)] : '';
+                checkMatch();
+            });
 
-    if (conf.length === 0) {
-        errEl.classList.remove('visible');
-        okEl.classList.remove('visible');
-        input.classList.remove('error-input');
-        return;
-    }
-    if (pwd !== conf) {
-        errEl.classList.add('visible');
-        okEl.classList.remove('visible');
-        input.classList.add('error-input');
-    } else {
-        errEl.classList.remove('visible');
-        okEl.classList.add('visible');
-        input.classList.remove('error-input');
-    }
-}
+            var confirmInput = document.getElementById('confirmPassword');
+            var matchHint = document.getElementById('matchHint');
 
-// ── Toggle password visibility ──
-function togglePwd(id, btn) {
-    const input = document.getElementById(id);
-    const isText = input.type === 'text';
-    input.type = isText ? 'password' : 'text';
-    btn.innerHTML = isText
-        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
-        : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
-}
+            function checkMatch() {
+                if (!confirmInput.value) {
+                    matchHint.textContent = '';
+                    matchHint.className = 'match-hint';
+                    return;
+                }
+                if (confirmInput.value === passwordInput.value) {
+                    matchHint.textContent = 'Passwords match';
+                    matchHint.className = 'match-hint ok';
+                } else {
+                    matchHint.textContent = 'Passwords do not match';
+                    matchHint.className = 'match-hint no';
+                }
+            }
+            confirmInput.addEventListener('input', checkMatch);
 
-// ── Avatar preview ──
-function previewAvatar(input) {
-    if (!input.files || !input.files[0]) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        const img = document.getElementById('avatar-img');
-        img.src = e.target.result;
-        img.style.display = 'block';
-        // Update initial letter
-        const name = document.getElementById('FullName').value;
-        document.getElementById('avatar-preview').firstChild.textContent = '';
-    };
-    reader.readAsDataURL(input.files[0]);
-}
+            var form = document.getElementById('signupForm');
+            form.addEventListener('submit', function (e) {
+                var passwordsMatch = passwordInput.value === confirmInput.value;
+                if (!form.checkValidity() || !passwordsMatch) {
+                    e.preventDefault();
+                    form.querySelectorAll(':invalid').forEach(function (el) {
+                        var group = el.closest('.field-group');
+                        if (!group) return;
+                        group.classList.remove('shake');
+                        void group.offsetWidth;
+                        group.classList.add('shake');
+                    });
+                    if (!passwordsMatch) {
+                        var group = confirmInput.closest('.field-group');
+                        group.classList.remove('shake');
+                        void group.offsetWidth;
+                        group.classList.add('shake');
+                        checkMatch();
+                    }
+                    return;
+                }
+                form.classList.add('is-loading');
+                document.getElementById('submitBtn').disabled = true;
+            });
 
-// Update avatar initial as name is typed
-document.getElementById('FullName').addEventListener('input', function() {
-    const img = document.getElementById('avatar-img');
-    if (img.style.display === 'none' || !img.src) {
-        document.getElementById('avatar-preview').innerHTML =
-            (this.value.trim()[0] || 'N').toUpperCase() +
-            '<img id="avatar-img" src="" alt="" style="display:none;" />';
-    }
-});
-
-// ── Form validation ──
-document.getElementById('signupForm').addEventListener('submit', function(e) {
-    let valid = true;
-
-    const name = document.getElementById('FullName');
-    const email = document.getElementById('Email');
-    const pwd = document.getElementById('PasswordHash');
-    const conf = document.getElementById('ConfirmPassword');
-    const terms = document.getElementById('terms');
-
-    // Name
-    if (!name.value.trim()) {
-        document.getElementById('name-error').classList.add('visible');
-        name.classList.add('error-input');
-        valid = false;
-    } else {
-        document.getElementById('name-error').classList.remove('visible');
-        name.classList.remove('error-input');
-    }
-
-    // Email
-    if (!email.value || !/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(email.value)) {
-        document.getElementById('email-error').classList.add('visible');
-        email.classList.add('error-input');
-        valid = false;
-    } else {
-        document.getElementById('email-error').classList.remove('visible');
-        email.classList.remove('error-input');
-    }
-
-    // Password
-    if (pwd.value.length < 8) {
-        document.getElementById('pwd-error').classList.add('visible');
-        pwd.classList.add('error-input');
-        valid = false;
-    } else {
-        document.getElementById('pwd-error').classList.remove('visible');
-        pwd.classList.remove('error-input');
-    }
-
-    // Match
-    if (pwd.value !== conf.value) {
-        document.getElementById('match-error').classList.add('visible');
-        conf.classList.add('error-input');
-        valid = false;
-    }
-
-    if (!terms.checked) {
-        window.nexToast && window.nexToast('Please accept the Terms of Service to continue.');
-        valid = false;
-    }
-
-    if (!valid) {
-        e.preventDefault();
-        // Scroll to first error
-        const firstErr = document.querySelector('.nex-error-msg.visible');
-        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg> Creating Account...`;
-    }
-});
-
-// Spin animation for loader
-const style = document.createElement('style');
-style.textContent = `@@keyframes spin { to { transform: rotate(360deg); } }`;
-document.head.appendChild(style);
+            document.getElementById('googleSignupBtn').addEventListener('click', function () {
+                window.location.href = '@Url.Action("GoogleLogin", "Signup")';
+            });
+        })();
     </script>
 }

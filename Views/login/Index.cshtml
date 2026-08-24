@@ -3,644 +3,1077 @@
     ViewBag.ActivePage = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 @section HeadStyles {
     <style>
-                /* ═══════════════════════════════════════════
-           LOGIN PAGE — NEXVOY
-        ═══════════════════════════════════════════ */
+        :root {
+            --accent-cyan: #00e5ff;
+            --accent-purple: #8b5cf6;
+            --accent-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            --auth-dark: #07070c;
+            --auth-dark-2: #0d0d18;
+            --glass-bg: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.10);
+        }
 
-                #login-wrap {
-                    min-height: 100vh;
-                    padding-top: 72px;
-                    display: flex;
-                    align-items: stretch;
-                    position: relative;
-                    overflow: hidden;
+        body:has(.auth-page) #site-header {
+            position: static;
+            max-width: 100%;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 1.1rem 2rem;
+        }
+
+            body:has(.auth-page) #site-header .logo,
+            body:has(.auth-page) #site-header .nav-links a {
+                color: var(--text-dark);
+            }
+
+                body:has(.auth-page) #site-header .nav-links a:hover {
+                    color: #000;
                 }
 
-                /* Background canvas */
-                #login-bg {
-                    position: fixed;
-                    inset: 0;
-                    z-index: 0;
-                    pointer-events: none;
+            body:has(.auth-page) #site-header .nav-actions .btn-outline-light {
+                background: var(--text-dark);
+                color: #fff;
+                border: 1px solid var(--text-dark);
+            }
+
+        body:has(.auth-page) main {
+            display: block;
+        }
+
+        /* ---------- MAIN CONTAINER ---------- */
+        .auth-page {
+            display: flex;
+            align-items: stretch; /* Forces both columns to stretch to the exact same height */
+            min-height: calc(100vh - 73px); /* Ensures it fills the screen if content is short */
+            width: 100%;
+        }
+
+        /* ---------- Left: photo panel ---------- */
+        .auth-visual {
+            position: relative;
+            flex: 1 1 46%;
+            /* Removed hard-coded heights. It will now stretch automatically based on parent min-height or sibling content */
+            overflow: hidden;
+            background-image: url('/images/signup.jpg'); /* UPDATE THIS URL FOR SIGNUP PAGE */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column; /* Ensures footer stays pushed to the bottom */
+            justify-content: space-between; /* Pushes logo up and footer down */
+            padding: 3rem;
+            color: #fff;
+        }
+
+            .auth-visual::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(165deg, rgba(7,7,12,0.35) 0%, rgba(7,7,12,0.82) 100%), linear-gradient(135deg, rgba(0,229,255,0.32), rgba(139,92,246,0.42));
+                mix-blend-mode: multiply;
+                pointer-events: none;
+            }
+
+            .auth-visual .grid-overlay {
+                position: absolute;
+                inset: 0;
+                background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+                background-size: 42px 42px;
+                mask-image: radial-gradient(ellipse at 50% 40%, #000 10%, transparent 72%);
+                pointer-events: none;
+            }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.35;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .orb-1 {
+            width: 340px;
+            height: 340px;
+            background: var(--accent-cyan);
+            top: -80px;
+            left: -60px;
+            animation: drift1 16s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 280px;
+            height: 280px;
+            background: var(--accent-purple);
+            bottom: -60px;
+            right: -40px;
+            animation: drift2 20s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            top: 42%;
+            left: 55%;
+            opacity: 0.25;
+            animation: drift3 13s ease-in-out infinite;
+        }
+
+        @@keyframes drift1 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px,50px) scale(1.12);
+            }
+        }
+
+        @@keyframes drift2 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+            }
+
+            50% {
+                transform: translate(-30px,-40px) scale(1.08);
+            }
+        }
+
+        @@keyframes drift3 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+                opacity: 0.25;
+            }
+
+            50% {
+                transform: translate(-20px,25px) scale(1.3);
+                opacity: 0.4;
+            }
+        }
+
+        .auth-logo {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            width: fit-content;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+
+        .auth-visual-content {
+            position: relative;
+            z-index: 2;
+            /* margin: auto allows centering if content is short, but flexbox handles most cases */
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+            .auth-visual-content h2 {
+                font-size: clamp(1.8rem, 3vw, 2.6rem);
+                line-height: 1.2;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin-bottom: 1rem;
+                text-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            }
+
+            .auth-visual-content p {
+                color: rgba(255,255,255,0.75);
+                font-size: 0.95rem;
+                max-width: 380px;
+                margin-bottom: 2rem;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            }
+
+        .auth-chip-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .auth-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+            .auth-chip i {
+                background: var(--accent-gradient);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+        .auth-visual-foot {
+            position: relative;
+            z-index: 2;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            /* Ensures it stays at the very bottom */
+            margin-top: auto;
+        }
+
+        /* ---------- Right: form panel ---------- */
+        .auth-form-panel {
+            flex: 1 1 54%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            background: var(--bg-body);
+            /* Stretches perfectly with the left side */
+            overflow-y: auto;
+        }
+
+        .auth-form-card {
+            width: 100%;
+            max-width: 400px;
+            margin: auto 0; /* Keeps it vertically centered */
+        }
+
+        .auth-eyebrow {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent-purple);
+            margin-bottom: 0.6rem;
+        }
+
+        .auth-form-card h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-form-card > .auth-form-header > p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+            .auth-form-card > .auth-form-header > p a {
+                color: var(--text-dark);
+                font-weight: 600;
+                text-decoration: underline;
+                text-underline-offset: 3px;
+            }
+
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0.85rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .btn-google i {
+                color: #ea4335;
+                font-size: 1rem;
+            }
+
+            .btn-google:hover {
+                border-color: #d1d5db;
+                box-shadow: var(--shadow);
+                transform: translateY(-1px);
+            }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1.6rem 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+            .divider::before, .divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+            }
+
+        .field-group {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+            .field-group input {
+                width: 100%;
+                padding: 1.15rem 2.7rem 0.5rem 1rem;
+                border-radius: 12px;
+                border: 1.5px solid var(--border);
+                font-family: var(--font-main);
+                font-size: 0.92rem;
+                color: var(--text-dark);
+                background: #fff;
+                outline: none;
+                transition: 0.2s;
+            }
+
+                .field-group input:focus {
+                    border-color: var(--accent-purple);
+                    box-shadow: 0 0 0 4px rgba(139,92,246,0.12);
                 }
 
-                .login-container {
-                    position: relative;
-                    z-index: 1;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    flex: 1;
-                    padding: 3rem 1.5rem;
-                }
+            .field-group label {
+                position: absolute;
+                left: 1rem;
+                top: 0.95rem;
+                font-size: 0.92rem;
+                color: var(--text-muted);
+                pointer-events: none;
+                transition: 0.15s ease;
+                transform-origin: left top;
+            }
 
-                .login-card {
-                    width: 100%;
-                    max-width: 420px;
-                    background: rgba(255, 255, 255, 0.03);
-                    border: 1px solid var(--border);
-                    border-radius: 28px;
-                    padding: 2.75rem;
-                    backdrop-filter: blur(40px);
-                    -webkit-backdrop-filter: blur(40px);
-                    position: relative;
-                    overflow: hidden;
-                    animation: cardSlideUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-                }
+            .field-group input:focus + label,
+            .field-group input:not(:placeholder-shown) + label {
+                top: 0.4rem;
+                font-size: 0.68rem;
+                font-weight: 600;
+                color: var(--accent-purple);
+            }
 
-                @@keyframes cardSlideUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(40px);
-                    }
+            .field-group input:invalid:not(:placeholder-shown):not(:focus) {
+                border-color: #ef4444;
+            }
 
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
+        .field-icon {
+            position: absolute;
+            right: 1rem;
+            top: 1.05rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
 
-                /* Top glowing line on card */
-                .login-card::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 1px;
-                    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
-                }
+        .toggle-pass {
+            position: absolute;
+            right: 0.9rem;
+            top: 0.75rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.4rem;
+            font-size: 0.85rem;
+        }
 
-                /* Decorative glow blob top-right */
-                .login-card::after {
-                    content: '';
-                    position: absolute;
-                    top: -120px;
-                    right: -120px;
-                    width: 300px;
-                    height: 300px;
-                    background: radial-gradient(ellipse, rgba(0, 255, 255, 0.06) 0%, transparent 70%);
-                    pointer-events: none;
-                }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.6rem;
+            font-size: 0.83rem;
+        }
 
-                /* Logo */
-                .login-logo {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    margin-bottom: 2rem;
-                    text-decoration: none;
-                }
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
 
-                .login-logo-dot {
-                    width: 10px;
-                    height: 10px;
-                    background: var(--accent);
-                    border-radius: 50%;
-                    box-shadow: 0 0 12px cyan, 0 0 24px rgba(0, 255, 255, 0.3);
-                    animation: pulseDot 2s ease-in-out infinite;
-                }
+            .checkbox input {
+                accent-color: var(--accent-purple);
+            }
 
-                .login-logo-text {
-                    font-family: var(--font-head);
-                    font-weight: 800;
-                    font-size: 1.2rem;
-                    color: var(--text);
-                    letter-spacing: -0.02em;
-                }
+        .forgot-link {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
 
-                .login-title {
-                    font-family: var(--font-head);
-                    font-size: 2rem;
-                    font-weight: 800;
-                    letter-spacing: -0.04em;
-                    line-height: 1.1;
-                    margin-bottom: 0.5rem;
-                }
+        .btn-block {
+            width: 100%;
+            position: relative;
+            padding: 0.95rem 2rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-                .login-sub {
-                    color: var(--sub);
-                    font-size: 0.875rem;
-                    margin-bottom: 2rem;
-                    line-height: 1.6;
-                }
+        .btn-spinner {
+            display: none;
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+        }
 
+        .auth-page form.is-loading .btn-spinner {
+            display: inline-block;
+            animation: spin 0.7s linear infinite;
+        }
 
-                /* ── Form ── */
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-                .nex-form-group {
-                    margin-bottom: 1.15rem;
-                    position: relative;
-                }
+        .auth-page form.is-loading .btn-text {
+            opacity: 0.7;
+        }
 
-                .nex-form-label {
-                    display: block;
-                    font-size: 0.7rem;
-                    font-family: var(--font-mono);
-                    color: var(--sub);
-                    letter-spacing: 0.1em;
-                    text-transform: uppercase;
-                    margin-bottom: 0.45rem;
-                    transition: color 0.25s;
-                }
+        .auth-form-card .field-group.shake {
+            animation: shake 0.35s;
+        }
 
-                .nex-form-group:focus-within .nex-form-label {
-                    color: cyan;
-                }
+        @@keyframes shake {
+            25% {
+                transform: translateX(-4px);
+            }
 
-                .nex-input-wrap {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                }
+            75% {
+                transform: translateX(4px);
+            }
+        }
 
-                .nex-input-icon {
-                    position: absolute;
-                    left: 1rem;
-                    color: rgba(255, 255, 255, 0.3);
-                    pointer-events: none;
-                    transition: color 0.25s;
-                }
+        /* Mobile Responsiveness */
+        @@media (max-width: 900px) {
+            .auth-page {
+                flex-direction: column;
+                min-height: auto; /* Let it flow naturally on mobile */
+            }
 
-                .nex-form-group:focus-within .nex-input-icon {
-                    color: cyan;
-                }
+            .auth-visual {
+                /* On mobile, give it a fixed height so it doesn't get squashed */
+                min-height: 280px;
+                height: 280px;
+                padding: 2rem;
+                flex: none;
+            }
 
-                .nex-form-input {
-                    width: 100%;
-                    background: rgba(255, 255, 255, 0.04);
-                    border: 1px solid var(--border);
-                    border-radius: 12px;
-                    padding: 0.85rem 1rem 0.85rem 2.75rem;
-                    color: var(--text);
-                    font-size: 0.9rem;
-                    font-family: var(--font-body);
-                    outline: none;
-                    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-                }
+            .auth-chip-row {
+                display: none;
+            }
 
-                    .nex-form-input:focus {
-                        border-color: cyan;
-                        background: rgba(0, 255, 255, 0.04);
-                        box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.07);
-                    }
-
-                    .nex-form-input::placeholder {
-                        color: rgba(255, 255, 255, 0.22);
-                    }
-
-                .pwd-toggle {
-                    position: absolute;
-                    right: 1rem;
-                    background: none;
-                    border: none;
-                    color: rgba(255, 255, 255, 0.3);
-                    cursor: pointer;
-                    padding: 4px;
-                    transition: color 0.2s;
-                    line-height: 0;
-                }
-
-                    .pwd-toggle:hover {
-                        color: var(--sub);
-                    }
-
-                .nex-error-msg {
-                    display: none;
-                    font-size: 0.72rem;
-                    color: salmon;
-                    margin-top: 0.4rem;
-                    font-family: var(--font-mono);
-                }
-
-                    .nex-error-msg.visible {
-                        display: block;
-                    }
-
-
-                /* ── Options row ── */
-
-                .login-options-row {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    margin: 0.5rem 0 1.5rem;
-                }
-
-                .remember-row {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
-
-                .nex-checkbox {
-                    width: 16px;
-                    height: 16px;
-                    border: 1.5px solid var(--border);
-                    border-radius: 4px;
-                    background: transparent;
-                    appearance: none;
-                    -webkit-appearance: none;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    position: relative;
-                }
-
-                    .nex-checkbox:checked {
-                        background: cyan;
-                        border-color: cyan;
-                    }
-
-                        .nex-checkbox:checked::after {
-                            content: '';
-                            position: absolute;
-                            top: 1px;
-                            left: 4px;
-                            width: 5px;
-                            height: 8px;
-                            border-right: 2px solid black;
-                            border-bottom: 2px solid black;
-                            transform: rotate(45deg);
-                        }
-
-                .remember-label {
-                    font-size: 0.8rem;
-                    color: var(--sub);
-                    cursor: pointer;
-                }
-
-                .forgot-link {
-                    font-size: 0.72rem;
-                    color: cyan;
-                    text-decoration: none;
-                    font-family: var(--font-mono);
-                    transition: opacity 0.2s;
-                }
-
-                    .forgot-link:hover {
-                        opacity: 0.7;
-                    }
-
-
-                /* ── Submit button ── */
-
-                .login-submit-btn {
-                    width: 100%;
-                    padding: 0.95rem;
-                    border-radius: 12px;
-                    border: none;
-                    background: linear-gradient(135deg, cyan, blueviolet);
-                    color: black;
-                    font-size: 0.95rem;
-                    font-weight: 700;
-                    font-family: var(--font-body);
-                    cursor: pointer;
-                    transition: all 0.35s;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                    /* Shine overlay on hover */
-                    .login-submit-btn::after {
-                        content: '';
-                        position: absolute;
-                        inset: 0;
-                        background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.15));
-                        opacity: 0;
-                        transition: opacity 0.3s;
-                    }
-
-                    .login-submit-btn:hover::after {
-                        opacity: 1;
-                    }
-
-                    .login-submit-btn:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.3);
-                    }
-
-
-                /* ── Divider ── */
-
-                .login-divider {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                    margin: 1.5rem 0;
-                    font-size: 0.72rem;
-                    color: rgba(255, 255, 255, 0.2);
-                    font-family: var(--font-mono);
-                }
-
-                    .login-divider::before,
-                    .login-divider::after {
-                        content: '';
-                        flex: 1;
-                        height: 1px;
-                        background: var(--border);
-                    }
-
-
-                /* ── Footer link ── */
-
-                .login-footer-link {
-                    text-align: center;
-                    font-size: 0.85rem;
-                    color: var(--sub);
-                    margin-top: 1.5rem;
-                }
-
-                    .login-footer-link a {
-                        color: cyan;
-                        text-decoration: none;
-                        font-weight: 600;
-                    }
-
-                        .login-footer-link a:hover {
-                            text-decoration: underline;
-                        }
-
-
-                /* ── Trust indicators ── */
-
-                .trust-row {
-                    display: flex;
-                    justify-content: center;
-                    gap: 1.5rem;
-                    margin-top: 2rem;
-                    padding-top: 1.5rem;
-                    border-top: 1px solid var(--border);
-                }
-
-                .trust-item {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 4px;
-                    font-family: var(--font-mono);
-                    font-size: 0.62rem;
-                    color: rgba(255, 255, 255, 0.25);
-                    letter-spacing: 0.08em;
-                    text-transform: uppercase;
-                }
-
-                    .trust-item svg {
-                        color: rgba(255, 255, 255, 0.2);
-                    }
-
-
-                /* ── Floating background destination cards ── */
-
-                .bg-dest-card {
-                    position: fixed;
-                    background: rgba(255, 255, 255, 0.02);
-                    border: 1px solid rgba(255, 255, 255, 0.05);
-                    border-radius: 16px;
-                    overflow: hidden;
-                    pointer-events: none;
-                    z-index: 0;
-                    animation: floatCard 8s ease-in-out infinite;
-                }
-
-                    .bg-dest-card img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        opacity: 0.25;
-                    }
-
-                @@keyframes floatCard {
-                    0%, 100% {
-                        transform: translateY(0) rotate(var(--rot));
-                    }
-
-                    50% {
-                        transform: translateY(-12px) rotate(var(--rot));
-                    }
-                }
+            .auth-form-panel {
+                padding: 2.5rem 1.5rem;
+                overflow-y: visible;
+            }
+        }
     </style>
 }
 
-<!-- Background floating cards -->
-<div class="bg-dest-card" style="width:180px;height:240px;top:15%;left:5%;--rot:-6deg;animation-delay:0s;">
-    <img src="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=400&q=60" alt="" />
-</div>
-<div class="bg-dest-card" style="width:140px;height:190px;top:55%;left:2%;--rot:4deg;animation-delay:2s;">
-    <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=60" alt="" />
-</div>
-<div class="bg-dest-card" style="width:160px;height:210px;top:20%;right:4%;--rot:5deg;animation-delay:1s;">
-    <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=60" alt="" />
-</div>
-<div class="bg-dest-card" style="width:130px;height:170px;top:60%;right:6%;--rot:-3deg;animation-delay:3s;">
-    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=60" alt="" />
-</div>
+<div class="auth-page">
+    <div class="auth-visual">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
 
-<canvas id="login-bg"></canvas>
+        @section HeadStyles {
+    <style>
+        :root {
+            --accent-cyan: #00e5ff;
+            --accent-purple: #8b5cf6;
+            --accent-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            --auth-dark: #07070c;
+            --auth-dark-2: #0d0d18;
+            --glass-bg: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.10);
+        }
 
-<div id="login-wrap">
-    <div class="login-container">
-        <div class="login-card">
-            <a href="~/Home/Index" class="login-logo">
-                <div class="login-logo-dot"></div>
-                <span class="login-logo-text">NEXVOY</span>
-            </a>
+        body:has(.auth-page) #site-header {
+            position: static;
+            max-width: 100%;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 1.1rem 2rem;
+        }
 
-            <h1 class="login-title">
-                Welcome <span class="text-gradient">Back</span>
-            </h1>
-            <p class="login-sub">Sign in to your travel intelligence dashboard</p>
-
-            @if (ViewBag.Message != null)
-            {
-                <div class="nex-alert nex-alert-danger" style="margin-bottom:1.5rem;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
-                    @ViewBag.Message
-                </div>
+            body:has(.auth-page) #site-header .logo,
+            body:has(.auth-page) #site-header .nav-links a {
+                color: var(--text-dark);
             }
 
-            <form id="loginForm" method="post" action="/login/index" novalidate>
+                body:has(.auth-page) #site-header .nav-links a:hover {
+                    color: #000;
+                }
 
-                <!-- Email -->
-                <div class="nex-form-group">
-                    <label class="nex-form-label" for="Email">Email Address</label>
-                    <div class="nex-input-wrap">
-                        <svg class="nex-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                        <input type="email" id="Email" name="Email" class="nex-form-input"
-                               placeholder="your@email.com" required autocomplete="email" />
-                    </div>
-                    <span class="nex-error-msg" id="email-error">Please enter a valid email</span>
+            body:has(.auth-page) #site-header .nav-actions .btn-outline-light {
+                background: var(--text-dark);
+                color: #fff;
+                border: 1px solid var(--text-dark);
+            }
+
+        body:has(.auth-page) main {
+            display: block;
+        }
+
+        /* ---------- MAIN CONTAINER ---------- */
+        .auth-page {
+            display: flex;
+            align-items: stretch; /* Forces both columns to the exact same height */
+            min-height: calc(100vh - 73px); /* Ensures it fills the screen if content is short */
+            width: 100%;
+        }
+
+        /* ---------- Left: photo panel ---------- */
+        .auth-visual {
+            position: relative;
+            flex: 1 1 46%;
+            /* CHANGE 1: Stretch to the absolute bottom of the container */
+            height: 100%;
+            padding: 3rem 3rem 0 3rem; /* Remove bottom padding so the footer touches the container edge */
+            overflow: hidden;
+            background-image: url('/images/login.jpg'); /* UPDATE THIS URL FOR SIGNUP PAGE */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #fff;
+        }
+
+            .auth-visual::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(165deg, rgba(7,7,12,0.35) 0%, rgba(7,7,12,0.82) 100%), linear-gradient(135deg, rgba(0,229,255,0.32), rgba(139,92,246,0.42));
+                mix-blend-mode: multiply;
+                pointer-events: none;
+            }
+
+            .auth-visual .grid-overlay {
+                position: absolute;
+                inset: 0;
+                background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+                background-size: 42px 42px;
+                mask-image: radial-gradient(ellipse at 50% 40%, #000 10%, transparent 72%);
+                pointer-events: none;
+            }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.35;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .orb-1 {
+            width: 340px;
+            height: 340px;
+            background: var(--accent-cyan);
+            top: -80px;
+            left: -60px;
+            animation: drift1 16s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 280px;
+            height: 280px;
+            background: var(--accent-purple);
+            bottom: -60px;
+            right: -40px;
+            animation: drift2 20s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            top: 42%;
+            left: 55%;
+            opacity: 0.25;
+            animation: drift3 13s ease-in-out infinite;
+        }
+
+        @@keyframes drift1 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px,50px) scale(1.12);
+            }
+        }
+
+        @@keyframes drift2 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+            }
+
+            50% {
+                transform: translate(-30px,-40px) scale(1.08);
+            }
+        }
+
+        @@keyframes drift3 {
+            0%, 100% {
+                transform: translate(0,0) scale(1);
+                opacity: 0.25;
+            }
+
+            50% {
+                transform: translate(-20px,25px) scale(1.3);
+                opacity: 0.4;
+            }
+        }
+
+        .auth-logo {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            width: fit-content;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+
+        .auth-visual-content {
+            position: relative;
+            z-index: 2;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+            .auth-visual-content h2 {
+                font-size: clamp(1.8rem, 3vw, 2.6rem);
+                line-height: 1.2;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin-bottom: 1rem;
+                text-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            }
+
+            .auth-visual-content p {
+                color: rgba(255,255,255,0.75);
+                font-size: 0.95rem;
+                max-width: 380px;
+                margin-bottom: 2rem;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            }
+
+        .auth-chip-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .auth-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+            .auth-chip i {
+                background: var(--accent-gradient);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+        .auth-visual-foot {
+            position: relative;
+            z-index: 2;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            /* CHANGE 2: Add internal padding so text doesn't hit the very bottom, 
+               giving the illusion the footer starts right here */
+            padding-bottom: 3rem; 
+        }
+
+        /* ---------- Right: form panel ---------- */
+        .auth-form-panel {
+            flex: 1 1 54%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            background: var(--bg-body);
+            overflow-y: auto;
+        }
+
+        .auth-form-card {
+            width: 100%;
+            max-width: 400px;
+            margin: auto 0;
+        }
+
+        .auth-eyebrow {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent-purple);
+            margin-bottom: 0.6rem;
+        }
+
+        .auth-form-card h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-form-card > .auth-form-header > p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+            .auth-form-card > .auth-form-header > p a {
+                color: var(--text-dark);
+                font-weight: 600;
+                text-decoration: underline;
+                text-underline-offset: 3px;
+            }
+
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0.85rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .btn-google i {
+                color: #ea4335;
+                font-size: 1rem;
+            }
+
+            .btn-google:hover {
+                border-color: #d1d5db;
+                box-shadow: var(--shadow);
+                transform: translateY(-1px);
+            }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1.6rem 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+            .divider::before, .divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+            }
+
+        .field-group {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+            .field-group input {
+                width: 100%;
+                padding: 1.15rem 2.7rem 0.5rem 1rem;
+                border-radius: 12px;
+                border: 1.5px solid var(--border);
+                font-family: var(--font-main);
+                font-size: 0.92rem;
+                color: var(--text-dark);
+                background: #fff;
+                outline: none;
+                transition: 0.2s;
+            }
+
+                .field-group input:focus {
+                    border-color: var(--accent-purple);
+                    box-shadow: 0 0 0 4px rgba(139,92,246,0.12);
+                }
+
+            .field-group label {
+                position: absolute;
+                left: 1rem;
+                top: 0.95rem;
+                font-size: 0.92rem;
+                color: var(--text-muted);
+                pointer-events: none;
+                transition: 0.15s ease;
+                transform-origin: left top;
+            }
+
+            .field-group input:focus + label,
+            .field-group input:not(:placeholder-shown) + label {
+                top: 0.4rem;
+                font-size: 0.68rem;
+                font-weight: 600;
+                color: var(--accent-purple);
+            }
+
+            .field-group input:invalid:not(:placeholder-shown):not(:focus) {
+                border-color: #ef4444;
+            }
+
+        .field-icon {
+            position: absolute;
+            right: 1rem;
+            top: 1.05rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 0.9rem;
+            top: 0.75rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.6rem;
+            font-size: 0.83rem;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+            .checkbox input {
+                accent-color: var(--accent-purple);
+            }
+
+        .forgot-link {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .btn-block {
+            width: 100%;
+            position: relative;
+            padding: 0.95rem 2rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-spinner {
+            display: none;
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+        }
+
+        .auth-page form.is-loading .btn-spinner {
+            display: inline-block;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .auth-page form.is-loading .btn-text {
+            opacity: 0.7;
+        }
+
+        .auth-form-card .field-group.shake {
+            animation: shake 0.35s;
+        }
+
+        @@keyframes shake {
+            25% {
+                transform: translateX(-4px);
+            }
+
+            75% {
+                transform: translateX(4px);
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @@media (max-width: 900px) {
+            .auth-page {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .auth-visual {
+                min-height: 280px;
+                /* CHANGE 3: On mobile, don't use 100% height as it squashes the image */
+                height: 280px; 
+                padding: 2rem 2rem 0 2rem;
+                flex: none;
+            }
+            
+            .auth-visual-foot {
+                padding-bottom: 2rem;
+            }
+
+            .auth-chip-row {
+                display: none;
+            }
+
+            .auth-form-panel {
+                padding: 2.5rem 1.5rem;
+                overflow-y: visible;
+            }
+        }
+    </style>
+}
+
+        <div class="auth-visual-content">
+            <h2>Every journey starts<br />with a single sign in.</h2>
+            <p>Pick up your saved itineraries, track live bookings, and get AI-matched destinations the moment you're back in.</p>
+            <div class="auth-chip-row">
+                <div class="auth-chip"><i class="fas fa-route"></i> Smart itineraries</div>
+                <div class="auth-chip"><i class="fas fa-shield-halved"></i> Secure by design</div>
+                <div class="auth-chip"><i class="fas fa-bolt"></i> Instant sync</div>
+            </div>
+        </div>
+
+        <div class="auth-visual-foot">&copy; 2025 NEXVOY. All Rights Reserved.</div>
+    </div>
+
+    <div class="auth-form-panel">
+        <div class="auth-form-card">
+            <div class="auth-form-header">
+                <span class="auth-eyebrow">Welcome back</span>
+                <h1>Sign in to your account</h1>
+                <p>New to NEXVOY? <a href="@Url.Action("Index", "Signup")">Create an account</a></p>
+            </div>
+
+            <button type="button" class="btn-google" id="googleLoginBtn">
+                <i class="fab fa-google"></i> Continue with Google
+            </button>
+
+            <div class="divider"><span>or sign in with email</span></div>
+
+            <form action="@Url.Action("Index", "Login")" method="post" id="loginForm" novalidate>
+
+                <div class="field-group">
+                    <input type="email" id="email" name="Email" placeholder=" " required />
+                    <label for="email">Email address</label>
+                    <i class="fas fa-envelope field-icon"></i>
                 </div>
 
-                <!-- Password -->
-                <div class="nex-form-group">
-                    <label class="nex-form-label" for="PasswordHash">Password</label>
-                    <div class="nex-input-wrap">
-                        <svg class="nex-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                        <input type="password" id="PasswordHash" name="PasswordHash" class="nex-form-input"
-                               placeholder="Enter your password" required autocomplete="current-password" />
-                        <button type="button" class="pwd-toggle" onclick="togglePwd('PasswordHash', this)" aria-label="Show password">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                        </button>
-                    </div>
-                    <span class="nex-error-msg" id="pwd-error">Please enter your password</span>
+                <div class="field-group">
+                    <input type="password" id="password" name="Password" placeholder=" " required minlength="6" />
+                    <label for="password">Password</label>
+                    <button type="button" class="toggle-pass" data-target="password" aria-label="Show password">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
 
-                <!-- Options -->
-                <div class="login-options-row">
-                    <div class="remember-row">
-                        <input type="checkbox" id="remember" name="RememberMe" class="nex-checkbox" />
-                        <label for="remember" class="remember-label">Remember me</label>
-                    </div>
+                <div class="form-row">
+                    <label class="checkbox">
+                        <input type="checkbox" name="RememberMe" /> <span>Remember me</span>
+                    </label>
                     <a href="#" class="forgot-link">Forgot password?</a>
                 </div>
 
-                <button type="submit" id="loginBtn" class="login-submit-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" y1="12" x2="3" y2="12" /></svg>
-                    Sign In
+                <button type="submit" class="btn-primary btn-block" id="submitBtn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-spinner"></span>
                 </button>
             </form>
-
-            <div class="login-divider">or</div>
-
-            <div class="login-footer-link">
-                New to NEXVOY? <a href="~/Signup/Index">Create free account →</a>
-            </div>
-
-            <div class="trust-row">
-                <div class="trust-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                    SSL Secured
-                </div>
-                <div class="trust-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                    Data Safe
-                </div>
-                <div class="trust-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                    24/7 Support
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        /* ═══════════════════════════════════════
-   PART 1: MOVING GLOWING CIRCLES
-═══════════════════════════════════════ */
+        (function () {
+            document.querySelectorAll('.toggle-pass').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var input = document.getElementById(btn.dataset.target);
+                    var icon = btn.querySelector('i');
+                    var isHidden = input.type === 'password';
+                    input.type = isHidden ? 'text' : 'password';
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                });
+            });
 
-        var canvas = document.getElementById('login-bg');
-        var pen = canvas.getContext('2d');
+            var form = document.getElementById('loginForm');
+            form.addEventListener('submit', function (e) {
+                if (!form.checkValidity()) {
+                    e.preventDefault();
+                    form.querySelectorAll(':invalid').forEach(function (el) {
+                        var group = el.closest('.field-group');
+                        group.classList.remove('shake');
+                        void group.offsetWidth;
+                        group.classList.add('shake');
+                    });
+                    return;
+                }
+                form.classList.add('is-loading');
+                document.getElementById('submitBtn').disabled = true;
+            });
 
-        // Match canvas to screen size
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // 3 glowing circles — position, size, speed, color
-        var circles = [
-            { x: 200, y: 300, size: 350, speedX: 0.20, speedY: 0.10, color: '0,255,255' },
-            { x: 1000, y: 600, size: 280, speedX: -0.15, speedY: -0.20, color: '138,43,226' },
-            { x: 600, y: 400, size: 200, speedX: 0.10, speedY: -0.15, color: '126,107,255' }
-        ];
-
-        function drawCircle(c) {
-            var glow = pen.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.size);
-            glow.addColorStop(0, 'rgba(' + c.color + ', 0.07)');
-            glow.addColorStop(1, 'transparent');
-            pen.fillStyle = glow;
-            pen.beginPath();
-            pen.arc(c.x, c.y, c.size, 0, Math.PI * 2);
-            pen.fill();
-        }
-
-        function moveCircle(c) {
-            c.x += c.speedX;
-            c.y += c.speedY;
-            if (c.x < -c.size || c.x > canvas.width + c.size) c.speedX *= -1;
-            if (c.y < -c.size || c.y > canvas.height + c.size) c.speedY *= -1;
-        }
-
-        function animate() {
-            pen.clearRect(0, 0, canvas.width, canvas.height);
-            circles.forEach(function (c) { moveCircle(c); drawCircle(c); });
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-
-        /* ═══════════════════════════════════════
-           PART 2: SHOW / HIDE PASSWORD
-        ═══════════════════════════════════════ */
-
-        var eyeIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-        var eyeCrossedIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
-
-        function togglePwd(inputId, button) {
-            var box = document.getElementById(inputId);
-            var isHidden = box.type === 'password';
-            box.type = isHidden ? 'text' : 'password';
-            button.innerHTML = isHidden ? eyeCrossedIcon : eyeIcon;
-        }
-
-
-        /* ═══════════════════════════════════════
-           PART 3: FORM VALIDATION
-        ═══════════════════════════════════════ */
-
-        function showError(errorId, input) {
-            document.getElementById(errorId).classList.add('visible');
-            input.style.borderColor = 'salmon';
-        }
-
-        function hideError(errorId, input) {
-            document.getElementById(errorId).classList.remove('visible');
-            input.style.borderColor = '';
-        }
-
-        function isValidEmail(email) {
-            return /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(email);
-        }
-
-        function showLoadingButton() {
-            var btn = document.getElementById('loginBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg> Signing In...';
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            var emailBox = document.getElementById('Email');
-            var pwdBox = document.getElementById('PasswordHash');
-            var valid = true;
-
-            if (!isValidEmail(emailBox.value)) { showError('email-error', emailBox); valid = false; }
-            else { hideError('email-error', emailBox); }
-
-            if (!pwdBox.value) { showError('pwd-error', pwdBox); valid = false; }
-            else { hideError('pwd-error', pwdBox); }
-
-            if (!valid) { e.preventDefault(); }
-            else { showLoadingButton(); }
-        });
-
-
-        /* ═══════════════════════════════════════
-           PART 4: SPIN ANIMATION FOR BUTTON
-        ═══════════════════════════════════════ */
-
-        var styleTag = document.createElement('style');
-        styleTag.textContent = '@@keyframes spin { to { transform: rotate(360deg); } }';
-        document.head.appendChild(styleTag);
+            document.getElementById('googleLoginBtn').addEventListener('click', function () {
+                window.location.href = '@Url.Action("GoogleLogin", "Login")';
+            });
+        })();
     </script>
 }

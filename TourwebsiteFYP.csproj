@@ -1179,7 +1179,6 @@
     <Folder Include="Areas\AdminArea\Views\ManagePackageItenirary\" />
     <Folder Include="Areas\AdminArea\Views\PageContent\" />
     <Folder Include="Images\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Dashborad\" />
     <Folder Include="Views\Default\" />
   </ItemGroup>

@@ -1,58 +1,668 @@
-﻿@{
-    ViewBag.Title = "About";
-}
-
+﻿@* =========================================
+    ABOUT PAGE — Views/About/Index.cshtml
+    (or Views/Home/About.cshtml — adjust controller/action to match your routing)
+    ========================================= *@
 @{
-    Html.RenderAction("Index", "navbar", new { pageName = "About-Index" });
+    ViewBag.Title = "About Us";
+    ViewBag.ActivePage = "About";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section HeadStyles {
+    <style>
+        /* ── ABOUT HERO ── */
+        .about-hero-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 78vh;
+            background-image: url('/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 100px;
+            padding-bottom: 70px;
+        }
 
-<!-- About Start -->
-<div class="container-xxl py-5">
-    <div class="container">
-        <div class="row g-5">
+            .about-hero-wrapper::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.75) 100%);
+                pointer-events: none;
+            }
 
-            <!-- Image Side -->
-            <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s" style="min-height: 400px;">
-                <div class="position-relative h-100">
-                    <img class="img-fluid position-absolute w-100 h-100"
-                         src="~/content/frontend/travel-agency-html-template/img/travelimage3.jpg"
-                         alt="About Us" style="object-fit: cover;">
-                </div>
-            </div>
+        .about-hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            max-width: 760px;
+            padding: 0 1rem;
+        }
 
-            <!-- Text Side -->
-            <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
-                <h6 class="section-title bg-white text-start text-primary pe-3">About Us</h6>
-                <h1 class="mb-4">Welcome to <span class="text-primary">SmartTour</span></h1>
-                <p class="mb-4">
-                    SmartTour is a modern tour package management system that brings travel and technology together.
-                    We provide worldwide tour packages, hotel & flight bookings, and complete travel planning — all in one place.
-                </p>
+        .about-breadcrumb {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.6rem;
+        }
 
-                <!-- Always visible text -->
-                <p class="mb-4">
-                    With AI-powered smart packing lists, personalized package recommendations, and an integrated travel store,
-                    we make sure your journey is smooth, enjoyable, and stress-free.
-                </p>
+            .about-breadcrumb a {
+                color: rgba(255, 255, 255, 0.7);
+            }
 
-                <!-- Collapsible hidden content -->
-                <div class="collapse" id="aboutMore">
-                    <p class="mb-4">
-                        Our mission is to simplify travel by combining expert planning with cutting-edge AI.
-                        Whether you are traveling solo, with family, or in a group, we ensure comfort, affordability, and memorable experiences.
-                    </p>
-                    <p class="mb-4">
-                        From destination guides to 24/7 support, SmartTour is your trusted partner for stress-free travel.
-                    </p>
-                </div>
+                .about-breadcrumb a:hover {
+                    color: #fff;
+                }
 
-                <!-- Button to toggle collapse -->
-                <a class="btn btn-primary py-3 px-5 mt-2" data-bs-toggle="collapse" href="#aboutMore" role="button" aria-expanded="false" aria-controls="aboutMore">
-                    Read More
-                </a>
-            </div>
+            .about-breadcrumb i {
+                font-size: 0.6rem;
+                margin: 0 0.5rem;
+                vertical-align: middle;
+            }
+
+        .about-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 1.6rem;
+        }
+
+            .about-hero-badge i {
+                color: #fbbf24;
+                font-size: 0.7rem;
+            }
+
+        .about-hero-content h1 {
+            font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 1.3rem;
+        }
+
+            .about-hero-content h1 .accent {
+                font-style: italic;
+                font-weight: 500;
+                position: relative;
+                display: inline-block;
+            }
+
+                .about-hero-content h1 .accent::after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: 6px;
+                    height: 10px;
+                    background: rgba(255,255,255,0.18);
+                    z-index: -1;
+                    border-radius: 4px;
+                }
+
+        .about-hero-content p {
+            font-size: 1.08rem;
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 560px;
+            margin: 0 auto 2.2rem;
+            line-height: 1.7;
+        }
+
+        .about-hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero-outline {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.35);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.92rem;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+            .btn-hero-outline:hover {
+                background: rgba(255,255,255,0.15);
+                border-color: rgba(255,255,255,0.6);
+                color: #fff;
+            }
+
+        /* ── FLOATING STATS STRIP ── */
+        .about-hero-stats-wrapper {
+            position: relative;
+            z-index: 3;
+            width: calc(100% - 2rem);
+            max-width: 1000px;
+            margin: -46px auto 0;
+        }
+
+        .about-hero-stats {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.14);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 1.8rem 1rem;
+        }
+
+        .about-hero-stat {
+            text-align: center;
+            padding: 0 1rem;
+            position: relative;
+        }
+
+            .about-hero-stat:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 10%;
+                bottom: 10%;
+                width: 1px;
+                background: var(--border);
+            }
+
+            .about-hero-stat i {
+                font-size: 1.2rem;
+                color: #1a1a1a;
+                margin-bottom: 0.6rem;
+            }
+
+            .about-hero-stat h3 {
+                font-size: 1.7rem;
+                font-weight: 800;
+                letter-spacing: -0.02em;
+                margin-bottom: 0.2rem;
+            }
+
+            .about-hero-stat p {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+            }
+
+        @@media (max-width: 768px) {
+            .about-hero-wrapper {
+                min-height: 68vh;
+            }
+
+            .about-hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem 0;
+            }
+
+            .about-hero-stat:nth-child(2)::after {
+                display: none;
+            }
+
+            .about-hero-stat:not(:last-child)::after {
+                display: none;
+            }
+
+            .about-hero-stats-wrapper {
+                margin-top: -30px;
+            }
+        }
+        /* ── STORY SECTION ── */
+        .about-story {
+            padding: 6rem 0;
+        }
+
+        .about-story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-story-media {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            height: 480px;
+            box-shadow: var(--shadow);
+        }
+
+            .about-story-media img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+        .about-story-badge {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            background: #fff;
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+            .about-story-badge i {
+                font-size: 1.6rem;
+                color: #1a1a1a;
+            }
+
+            .about-story-badge h4 {
+                font-size: 1.3rem;
+                font-weight: 800;
+                letter-spacing: -0.02em;
+            }
+
+            .about-story-badge p {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+            }
+
+        .about-story-text .sub-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+
+        .about-story-text h2 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 1.2rem;
+        }
+
+        .about-story-text p {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            margin-bottom: 1.1rem;
+        }
+
+        /* ── VALUES ── */
+        .about-values {
+            padding: 3rem 0 6rem;
+            background: var(--bg-white);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .value-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem 1.6rem;
+            transition: 0.3s ease;
+            background: #fff;
+        }
+
+            .value-card:hover {
+                box-shadow: var(--shadow-hover);
+                transform: translateY(-6px);
+                border-color: #d1d5db;
+            }
+
+        .value-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: #1a1a1a;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .value-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.01em;
+        }
+
+        .value-card p {
+            font-size: 0.87rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        /* ── STATS BANNER ── */
+        .about-stats-banner {
+            background: #1a1a1a;
+            border-radius: var(--radius);
+            padding: 3.5rem 3rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin: 6rem 0;
+        }
+
+        .about-stat {
+            text-align: center;
+            color: #fff;
+        }
+
+            .about-stat h3 {
+                font-size: 2.4rem;
+                font-weight: 800;
+                letter-spacing: -0.02em;
+                margin-bottom: 0.4rem;
+            }
+
+            .about-stat p {
+                font-size: 0.82rem;
+                color: rgba(255,255,255,0.6);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+            }
+
+        /* ── TEAM ── */
+        .about-team {
+            padding: 0 0 6rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.8rem;
+            margin-top: 2.5rem;
+        }
+
+        .team-card {
+            text-align: center;
+        }
+
+        .team-photo {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: #f3f4f6;
+        }
+
+            .team-photo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+        .team-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .team-card span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .team-socials {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+            .team-socials a {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #6b7280;
+                font-size: 0.8rem;
+            }
+
+                .team-socials a:hover {
+                    background: #1a1a1a;
+                    color: #fff;
+                    border-color: #1a1a1a;
+                }
+
+        /* ── CTA BANNER ── */
+        .about-cta {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+            border-radius: var(--radius);
+            padding: 4rem 3rem;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 6rem;
+        }
+
+            .about-cta h2 {
+                font-size: 2rem;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin-bottom: 0.8rem;
+            }
+
+            .about-cta p {
+                color: rgba(255,255,255,0.7);
+                font-size: 0.95rem;
+                margin-bottom: 2rem;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .about-cta .btn-primary {
+                background: #fff;
+                color: #1a1a1a;
+            }
+
+                .about-cta .btn-primary:hover {
+                    background: #f3f4f6;
+                    color: #1a1a1a;
+                }
+
+        /* ── RESPONSIVE ── */
+        @@media (max-width: 1024px) {
+            .about-story-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .about-story-media {
+                height: 360px;
+            }
+
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .about-stats-banner {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .values-grid, .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-stats-banner {
+                grid-template-columns: 1fr 1fr;
+                padding: 2.5rem 1.5rem;
+                gap: 1.8rem;
+            }
+
+            .about-cta {
+                padding: 2.8rem 1.5rem;
+            }
+        }
+    </style>
+}
+
+<!-- HERO -->
+<!-- HERO -->
+<section class="about-hero-wrapper">
+    <div class="about-hero-content">
+        <div class="about-breadcrumb">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>About Us</span>
+        </div>
+
+        
+
+        <h1>Designing journeys <span class="accent">worth remembering</span></h1>
+
+        <p>
+            We're a team of travel obsessives building curated experiences, not just itineraries —
+            from the first search to the final sunset.
+        </p>
+
+        <div class="about-hero-actions">
+            <a href="@Url.Action("Index", "Package")" class="btn-primary" style="background:#fff; color:#1a1a1a;">
+                Explore Packages
+            </a>
+          
+        </div>
+    </div>
+</section>
+
+<!-- FLOATING STATS STRIP -->
+<div class="about-hero-stats-wrapper">
+    <div class="about-hero-stats">
+        <div class="about-hero-stat">
+            <i class="fas fa-users"></i>
+            <h3>50K+</h3>
+            <p>Happy Travelers</p>
+        </div>
+        <div class="about-hero-stat">
+            <i class="fas fa-map-marked-alt"></i>
+            <h3>120+</h3>
+            <p>Destinations</p>
+        </div>
+        <div class="about-hero-stat">
+            <i class="fas fa-star"></i>
+            <h3>4.8/5</h3>
+            <p>Average Rating</p>
+        </div>
+        <div class="about-hero-stat">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>8+</h3>
+            <p>Years of Experience</p>
         </div>
     </div>
 </div>
-<!-- About End -->
+<!-- STORY -->
+<section class="about-story">
+    <div class="container">
+        <div class="about-story-grid">
+            <div class="about-story-media">
+                <img src="@Url.Content("~/images/signup.jpg")" alt="Our story"
+                     onerror="this.onerror=null;this.src='@Url.Content("~/images/signup.jpg")';" />
+
+            </div>
+            <div class="about-story-text">
+                <span class="sub-label">Our Story</span>
+                <h2>Built by travelers, for travelers</h2>
+                <p>
+                    NEXVOY started with a simple frustration: booking a trip meant juggling a dozen tabs,
+                    generic packages, and guesswork. We set out to fix that — building a platform where every
+                    itinerary is thoughtfully curated, every destination is vetted by people who've actually
+                    been there, and every traveler gets a plan that fits their pace, budget, and curiosity.
+                </p>
+                <p>
+                    Today we work with local guides and partners across dozens of countries to bring you
+                    experiences that go beyond the postcard — real culture, real connection, and the kind of
+                    trip you'll still be talking about years later.
+                </p>
+                <a href="@Url.Action("Index", "Package")" class="btn-primary">Explore Our Packages</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VALUES -->
+<section class="about-values">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header-left">
+                <span class="sub-label">What Drives Us</span>
+                <h2>Our Core Values</h2>
+            </div>
+            <div class="section-header-right">
+                Everything we build comes back to these four principles — they shape how we design
+                packages, choose partners, and support every traveler along the way.
+            </div>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-heart"></i></div>
+                <h3>Genuine Experiences</h3>
+                <p>We prioritize authentic, local-led experiences over tourist traps — real culture, real connection.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Trust & Safety</h3>
+                <p>Every partner and destination is vetted so you can travel with confidence, wherever you go.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-leaf"></i></div>
+                <h3>Responsible Travel</h3>
+                <p>We work to minimize our footprint and support the communities and places we send travelers to.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-headset"></i></div>
+                <h3>Support That Cares</h3>
+                <p>From planning to landing back home, our team is there to help — real people, real answers.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- CTA -->
+<div class="container">
+    <div class="about-cta">
+        <h2>Ready to plan your next adventure?</h2>
+        <p>Browse our curated packages or tell us what you're dreaming of — we'll help you build the perfect trip.</p>
+        <a href="@Url.Action("Index", "Package")" class="btn-primary">Browse Packages</a>
+    </div>
+</div>
