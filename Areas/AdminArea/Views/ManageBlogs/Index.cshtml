@@ -1,142 +1,96 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Blog>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Blog>
 @{
     ViewBag.Title = "Manage Blogs";
+    ViewBag.ActiveMenu = "Blogs";
 }
 
-<!-- ✅ Styling Block -->
-<style>
-    /* Card Styling */
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        overflow: hidden;
-    }
-
-    .card-header {
-        background: linear-gradient(90deg, #6c757d, #495057);
-        color: #fff;
-        font-size: 1.25rem;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-    }
-
-    /* Table Styling */
-    .table {
-        margin: 0;
-        border-collapse: separate;
-        border-spacing: 0 8px; /* spacing between rows */
-    }
-
-        .table thead th {
-            background: #f8f9fa;
-            color: #444;
-            font-weight: 600;
-            padding: 12px;
-            border: none;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-
-        .table tbody tr {
-            background: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border-radius: 6px;
-        }
-
-        .table tbody td {
-            padding: 12px;
-            vertical-align: middle;
-            border: none;
-        }
-
-    .table-hover tbody tr:hover {
-        background: #f1f3f5;
-        transform: scale(1.01);
-        transition: 0.2s;
-    }
-
-    /* Action Buttons */
-    .btn {
-        border-radius: 6px;
-        padding: 5px 12px;
-        font-size: 0.85rem;
-    }
-
-    .btn-warning {
-        background: #ffc107;
-        border: none;
-        color: #000;
-    }
-
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-
-    .btn-danger {
-        background: #dc3545;
-        border: none;
-    }
-
-        .btn-danger:hover {
-            background: #bd2130;
-        }
-
-    .btn-success {
-        border-radius: 6px;
-        padding: 7px 14px;
-    }
-
-    /* Image Styling */
-    .package-img {
-        width: 80px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-</style>
-
-<!-- ✅ Blog Listing Card -->
-<div class="card mt-4">
-    <div class="card-header">
-        <span>Manage Blogs</span>
-        <a href="/AdminArea/ManageBlogs/Create" class="btn btn-success btn-sm">
-            <i class="bi bi-plus-circle"></i> Add New Blog
-        </a>
+<div class="page-header">
+    <div>
+        <div class="page-title">Blogs</div>
+        <div class="page-subtitle">Create and manage blog posts</div>
     </div>
-    <div class="card-body">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Created Date</th>
-                    <th style="width: 150px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var blog in Model)
-                {
-                    <tr>
-                        <td>
-                            <img src="@blog.FeaturedImage" class="package-img" />
-                        </td>
-                        <td>@blog.Title</td>
-                        <td>@blog.AuthorId</td>
-                        <td>@blog.CreatedDate</td>
-                        <td>
-                            <a href="/AdminArea/ManageBlogs/Edit/@blog.BlogId" class="btn btn-warning btn-sm">Edit</a>
-                            <a href="/AdminArea/ManageBlogs/Delete/@blog.BlogId"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Are you sure to delete this blog?');">Delete</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <a href="@Url.Action("Create", "ManageBlogs", new { area = "AdminArea" })" class="btn-admin btn-admin-primary">
+        <i class="bi bi-plus-circle"></i> Add Blog Post
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert-toast alert-toast-success">
+        <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+        <button class="alert-close"><i class="bi bi-x"></i></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert-toast alert-toast-error">
+        <i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"]
+        <button class="alert-close"><i class="bi bi-x"></i></button>
+    </div>
+}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title"><i class="bi bi-pencil-square"></i> All Blog Posts</div>
+        <span style="font-size:12px;color:var(--text-muted)">@Model.Count() records</span>
+    </div>
+    <div class="admin-card-body-flush">
+        @if (Model.Any())
+        {
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Featured Image</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Created Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            string imgSrc = !string.IsNullOrEmpty(item.FeaturedImage) ? item.FeaturedImage : "/images/default-blog.jpg";
+                            <tr>
+                                <td style="color:var(--text-muted);font-size:12px;font-weight:600">#@item.BlogId</td>
+                                <td>
+                                    <img src="@imgSrc" alt="@item.Title" class="tbl-img" onerror="this.src='/images/default-blog.jpg'" />
+                                </td>
+                                <td style="font-weight:600;max-width:260px">
+                                    <span class="text-truncate-cell">@item.Title</span>
+                                </td>
+                                <td>@(item.User?.FullName ?? "—")</td>
+                                <td style="color:var(--text-muted)">@(item.CreatedDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a href="@Url.Action("Edit","ManageBlogs", new { area = "AdminArea", id = item.BlogId })" class="btn-icon btn-icon-edit" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete","ManageBlogs", new { area = "AdminArea", id = item.BlogId })"
+                                           class="btn-icon btn-icon-delete" title="Delete"
+                                           onclick="return confirm('Delete this blog post?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-pencil-square"></i></div>
+                <h4>No Blog Posts</h4>
+                <p>Start by adding your first blog post.</p>
+                <a href="@Url.Action("Create","ManageBlogs", new { area = "AdminArea" })" class="btn-admin btn-admin-primary">
+                    <i class="bi bi-plus-circle"></i> Add Blog Post
+                </a>
+            </div>
+        }
     </div>
 </div>

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
+using System;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
 using TourwebsiteFYP.Filter;
@@ -16,66 +14,60 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
 
         public ActionResult Index()
         {
-            var listofData = _context.Users.ToList();
-            return View(listofData);
+            ViewBag.ActiveMenu = "Users";
+            ViewBag.ActivePage = "Users";
+            var users = _context.Users.Include(u => u.UserType).ToList();
+            return View(users);
         }
-        [HttpGet]
+
         public ActionResult Create()
         {
-            var usertype = _context.UserTypes.ToList();
-            ViewBag.usertypelist = usertype;
+            ViewBag.ActiveMenu = "Users";
+            ViewBag.ActivePage = "Users";
+            ViewBag.UserTypeList = _context.UserTypes.ToList();
             return View();
         }
 
         [HttpPost]
         public ActionResult Create(User model)
         {
-            try
-            {
-                model.CreatedAt = DateTime.Now;
-                _context.Users.Add(model);
-                _context.SaveChanges();
-
-                ViewBag.Message = "Data Insert Successfully";
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Message = "Error: " + ex.Message;
-            }
-
-
-            ViewBag.usertypeList = _context.UserTypes.ToList();
-
-
-            return View(model);
+            model.CreatedAt = DateTime.Now;
+            _context.Users.Add(model);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "User created successfully!";
+            return RedirectToAction("Index");
         }
 
-
-
-
-        [HttpGet]
         public ActionResult Edit(int id)
         {
-            var data = _context.Users.FirstOrDefault(x => x.UserId == id);
-            ViewBag.usertypeList = _context.UserTypes.ToList();
-            return View(data);
+            ViewBag.ActiveMenu = "Users";
+            ViewBag.ActivePage = "Users";
+            var user = _context.Users.Find(id);
+            if (user == null) return HttpNotFound();
+            ViewBag.UserTypeList = _context.UserTypes.ToList();
+            return View(user);
         }
-        [HttpPost]
-        public ActionResult Edit(User Model)
-        {
 
-            _context.Users.AddOrUpdate(Model);
+        [HttpPost]
+        public ActionResult Edit(User model)
+        {
+            _context.Entry(model).State = EntityState.Modified;
             _context.SaveChanges();
-            return RedirectToAction("index");
+            TempData["SuccessMessage"] = "User updated successfully!";
+            return RedirectToAction("Index");
         }
+
         public ActionResult Delete(int id)
         {
-            var data = _context.Users.FirstOrDefault(x => x.UserId == id);
-            _context.Users.Remove(data);
-            _context.SaveChanges();
-            ViewBag.Messsage = "Record Delete Successfully";
-            return RedirectToAction("index");
-
+            var user = _context.Users.Find(id);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "User deleted successfully!";
+            }
+            else { TempData["ErrorMessage"] = "User not found!"; }
+            return RedirectToAction("Index");
         }
     }
 }

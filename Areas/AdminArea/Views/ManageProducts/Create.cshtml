@@ -1,105 +1,50 @@
-﻿@{
-    ViewBag.Title = "Create Product";
+@{
+    ViewBag.Title = "Add Product";
+    ViewBag.ActiveMenu = "Products";
+    ViewBag.ActivePage = "Products";
 }
-
-<div class="container-fluid mt-4">
-    <div class="col-md-12">
-
-        <!--begin::Success/Error Messages-->
-        @if (TempData["SuccessMessage"] != null)
+<div class="page-header">
+    <div><div class="page-title">Add Product</div><div class="page-subtitle">Create a new item for sale</div></div>
+    <a href="@Url.Action("Index","ManageProducts", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-box-seam"></i> Product Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManageProducts", new { area = "AdminArea" }, FormMethod.Post))
         {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Product Name <span>*</span></label>
+                    <input type="text" name="ProductName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product Type</label>
+                    <select name="ProductTypeId" class="form-control">
+                        <option value="">— Select Type —</option>
+                        @foreach (var t in ViewBag.ProductTypeList) { <option value="@t.ProductTypeId">@t.TypeName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price ($) <span>*</span></label>
+                    <input type="number" name="Price" class="form-control" step="0.01" min="0" required />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stock Status</label>
+                    <select name="StockStatus" class="form-control">
+                        <option value="In Stock">In Stock</option>
+                        <option value="Low Stock">Low Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Product</button>
+                <a href="@Url.Action("Index","ManageProducts", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
         }
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        <!--end::Success/Error Messages-->
-        <!--begin::Package Create Card-->
-        <div class="card shadow-lg border-0 rounded-4">
-            <div class="card-header bg-primary text-white">
-                <h1 class="card-title mb-0 fs-5">Add Product</h1>
-                <a href="~/AdminArea/ManageProducts/Index" class="btn btn-light btn-sm float-end">
-                    <i class="bi bi-arrow-left-circle me-1"></i> Back to List
-                </a>
-            </div>
-
-            <!-- Form -->
-            <form enctype="multipart/form-data" method="post" action="/AdminArea/ManageProducts/Create">
-                <div class="card-body">
-                    <div class="row g-4">
-
-                        <!-- Package Name -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Product Name</label>
-                            <input name="ProductName" type="text" class="form-control" placeholder="Enter product name" required />
-                        </div>
-
-                        <!-- Description -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Description</label>
-                            <textarea name="Description" class="form-control" rows="3" placeholder="Enter product details" required></textarea>
-                        </div>
-
-                        <!-- Price -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Price</label>
-                            <div class="input-group">
-                                <span class="input-group-text">PKR</span>
-                                <input name="Price" type="text"  class="form-control" placeholder="Enter price" required />
-                            </div>
-                        </div>
-
-                      
-                        <!-- Package Type -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Package Type</label>
-                            <select name="ProductTypeId" class="form-select" required>
-                                <option value="">-- Select Product Type --</option>
-                                @foreach (var item in ViewBag.ProductTypeList)
-                                {
-                                    <option value="@item.ProductTypeId">@item.TypeName</option>
-                                }
-                            </select>
-                        </div>
-
-                        <!-- Images -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Image 1</label>
-                            <input type="file" name="img" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Image 2</label>
-                            <input type="file" name="img2" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Image 3</label>
-                            <input type="file" name="img3" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Image 4</label>
-                            <input type="file" name="img4" class="form-control" />
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="card-footer d-flex justify-content-end gap-2">
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-circle me-1"></i> Submit
-                    </button>
-                    <a href="~/AdminArea/ManageProducts/Index" class="btn btn-danger">
-                        <i class="bi bi-x-circle me-1"></i> Cancel
-                    </a>
-                </div>
-            </form>
-        </div>
     </div>
 </div>

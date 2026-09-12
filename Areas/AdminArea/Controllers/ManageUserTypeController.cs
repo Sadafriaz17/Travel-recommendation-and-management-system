@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
+using System;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
-using TourwebsiteFYP.Filter;   // adjust namespace to your EF models
+using TourwebsiteFYP.Filter;
 
 namespace TourwebsiteFYP.Areas.AdminArea.Controllers
 {
@@ -14,59 +12,59 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
     {
         private Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // GET: AdminArea/ManageUserType
         public ActionResult Index()
         {
-            var userTypes = _context.UserTypes.ToList();
-            return View(userTypes);
+            ViewBag.ActiveMenu = "Users";
+            ViewBag.ActivePage = "UserTypes";
+            var types = _context.UserTypes.ToList();
+            return View(types);
         }
 
-        // GET: AdminArea/ManageUserType/Create
         public ActionResult Create()
         {
+            ViewBag.ActiveMenu = "Users";
+            ViewBag.ActivePage = "UserTypes";
             return View();
         }
 
-        // POST: AdminArea/ManageUserType/Create
         [HttpPost]
-       
-        public ActionResult Create(UserType userType)
+        public ActionResult Create(UserType model)
         {
-            if (ModelState.IsValid)
-            {
-                _context.UserTypes.Add(userType);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(userType);
+            _context.UserTypes.Add(model);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "User role added successfully!";
+            return RedirectToAction("Index");
         }
 
-        // GET: AdminArea/ManageUserType/Edit/5
         public ActionResult Edit(int id)
         {
-            var userType = _context.UserTypes.Find(id);
-            if (userType == null) return HttpNotFound();
-            return View(userType);
+            ViewBag.ActiveMenu = "Users";
+            ViewBag.ActivePage = "UserTypes";
+            var type = _context.UserTypes.Find(id);
+            if (type == null) return HttpNotFound();
+            return View(type);
         }
 
-        // POST: AdminArea/ManageUserType/Edit/5
         [HttpPost]
-       
-        public ActionResult Edit(UserType Model)
+        public ActionResult Edit(UserType model)
         {
-            _context.UserTypes.AddOrUpdate(Model);
+            _context.Entry(model).State = EntityState.Modified;
             _context.SaveChanges();
-            return RedirectToAction("index");
+            TempData["SuccessMessage"] = "User role updated successfully!";
+            return RedirectToAction("Index");
         }
 
-        // GET: AdminArea/ManageUserType/Delete/5
         public ActionResult Delete(int id)
         {
-            var data = _context.UserTypes.FirstOrDefault(x => x.UserTypeId == id);
-            _context.UserTypes.Remove(data);
-            _context.SaveChanges();
-            ViewBag.Messsage = "Record Delete Successfully";
-            return RedirectToAction("index");
+            var type = _context.UserTypes.Find(id);
+            if (type != null)
+            {
+                _context.UserTypes.Remove(type);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "User role deleted successfully!";
+            }
+            else { TempData["ErrorMessage"] = "Role not found!"; }
+            return RedirectToAction("Index");
         }
     }
 }

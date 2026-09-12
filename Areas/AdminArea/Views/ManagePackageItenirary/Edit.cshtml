@@ -1,0 +1,47 @@
+@model TourwebsiteFYP.DB_data_models.PackageItinerary
+@{
+    ViewBag.Title = "Edit Itinerary Day";
+    ViewBag.ActiveMenu = "Packages";
+    ViewBag.ActivePage = "Itinerary";
+}
+<div class="page-header">
+    <div><div class="page-title">Edit Itinerary Day</div><div class="page-subtitle">Update itinerary #@Model.ItineraryId</div></div>
+    <a href="@Url.Action("Index","ManagePackageItenirary", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Itinerary Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManagePackageItenirary", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <input type="hidden" name="ItineraryId" value="@Model.ItineraryId" />
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Package <span>*</span></label>
+                    <select name="PackageId" class="form-control" required>
+                        <option value="">— Select Package —</option>
+                        @foreach (var p in ViewBag.PackageList) {
+                            string sel = (p.PackageId == Model.PackageId) ? "selected" : "";
+                            <option value="@p.PackageId" @sel>@p.PackageName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Day Number <span>*</span></label>
+                    <input type="number" name="DayNumber" value="@Model.DayNumber" class="form-control" min="1" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="Title" value="@Model.Title" class="form-control" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Itinerary Day</button>
+                <a href="@Url.Action("Index","ManagePackageItenirary", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>

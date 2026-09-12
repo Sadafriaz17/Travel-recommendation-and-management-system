@@ -1,48 +1,29 @@
-﻿@model TourwebsiteFYP.DB_data_models.UserType
-
+@model TourwebsiteFYP.DB_data_models.UserType
 @{
-    ViewBag.Title = "Edit User Type";
+    ViewBag.Title = "Edit User Role";
+    ViewBag.ActiveMenu = "Users";
+    ViewBag.ActivePage = "UserTypes";
 }
-
-<div class="col-md-12">
-    <!--begin::Carousel Image Card-->
-    <div class="card shadow-sm rounded-4 mb-4">
-        <!--begin::Card Header-->
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Add Product Type</h5>
-        </div>
-        <!--end::Card Header-->
-        <!--begin::Form-->
-        <form enctype="multipart/form-data" method="post" action="/AdminArea/ProductType/Edit">
-            <input type="hidden" name="ProductTypeId" value="@Model.UserTypeId" />
-           
-            <!--begin::Card Body-->
-            <div class="card-body">
-                <div class="row g-3">
-
-
-                    <div class="col-md-6">
-                        <label class="form-label"> Type Name</label>
-                        <input value="@Model.TypeName" name="TypeName" type="text" class="form-control" />
-                    </div>
-                  
-
-
+<div class="page-header">
+    <div><div class="page-title">Edit User Role</div><div class="page-subtitle">Update role #@Model.UserTypeId</div></div>
+    <a href="@Url.Action("Index","ManageUserType", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Role Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManageUserType", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <input type="hidden" name="UserTypeId" value="@Model.UserTypeId" />
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Role Name <span>*</span></label>
+                    <input type="text" name="TypeName" value="@Model.TypeName" class="form-control" required />
                 </div>
             </div>
-            <!--end::Card Body-->
-            <!--begin::Card Footer-->
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Edit
-                </button>
-                <a href="/AdminArea/UserType/Index" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Role</button>
+                <a href="@Url.Action("Index","ManageUserType", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-            <!--end::Card Footer-->
-        </form>
-        <!--end::Form-->
+        }
     </div>
-    <!--end::Carousel Image Card-->
 </div>

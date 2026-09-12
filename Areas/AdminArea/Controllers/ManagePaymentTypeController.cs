@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -10,78 +10,56 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
     [SessionAuthFilter]
     public class ManagePaymentTypeController : Controller
     {
-        Demo_DevDBEntities _context = new Demo_DevDBEntities();
+        private Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // List all payment types
         public ActionResult Index()
         {
-            var paymentTypes = _context.PaymentTypes.ToList();
-            return View(paymentTypes);
+            ViewBag.ActiveMenu = "Payments";
+            ViewBag.ActivePage = "PaymentTypes";
+            var types = _context.PaymentTypes.ToList();
+            return View(types);
         }
 
-        // GET: Create
-        [HttpGet]
         public ActionResult Create()
         {
+            ViewBag.ActiveMenu = "Payments";
+            ViewBag.ActivePage = "PaymentTypes";
             return View();
         }
 
-        // POST: Create
         [HttpPost]
         public ActionResult Create(PaymentType model)
         {
-            model.CreatedDate = DateTime.Now;
-
-            try
-            {
-                _context.PaymentTypes.Add(model);
-                _context.SaveChanges();
-                TempData["SuccessMessage"] = "Payment type created successfully!";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = "Error: " + ex.Message;
-            }
+            _context.PaymentTypes.Add(model);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Payment type added successfully!";
             return RedirectToAction("Index");
         }
 
-        // GET: Edit
-        [HttpGet]
         public ActionResult Edit(int id)
         {
-            var data = _context.PaymentTypes.FirstOrDefault(x => x.PaymentTypeId == id);
-            if (data == null) return RedirectToAction("Index");
-            return View(data);
+            ViewBag.ActiveMenu = "Payments";
+            ViewBag.ActivePage = "PaymentTypes";
+            var type = _context.PaymentTypes.Find(id);
+            if (type == null) return HttpNotFound();
+            return View(type);
         }
 
-        // POST: Edit
         [HttpPost]
         public ActionResult Edit(PaymentType model)
         {
-            model.CreatedDate = DateTime.Now;
-            try
-            {
-                var existing = _context.PaymentTypes.FirstOrDefault(x => x.PaymentTypeId == model.PaymentTypeId);
-                if (existing == null) return RedirectToAction("Index");
-
-                existing.PaymentTypeName = model.PaymentTypeName;
-                _context.SaveChanges();
-                TempData["SuccessMessage"] = "Payment type updated successfully!";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = "Error: " + ex.Message;
-            }
+            _context.Entry(model).State = EntityState.Modified;
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Payment type updated successfully!";
             return RedirectToAction("Index");
         }
 
-        // Delete
         public ActionResult Delete(int id)
         {
-            var data = _context.PaymentTypes.FirstOrDefault(x => x.PaymentTypeId == id);
-            if (data != null)
+            var type = _context.PaymentTypes.Find(id);
+            if (type != null)
             {
-                _context.PaymentTypes.Remove(data);
+                _context.PaymentTypes.Remove(type);
                 _context.SaveChanges();
                 TempData["SuccessMessage"] = "Payment type deleted successfully!";
             }

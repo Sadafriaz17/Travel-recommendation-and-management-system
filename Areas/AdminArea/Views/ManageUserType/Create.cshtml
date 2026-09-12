@@ -1,50 +1,27 @@
-﻿@model TourwebsiteFYP.DB_data_models.UserType
-
 @{
-    ViewBag.Title = "Create User Type";
+    ViewBag.Title = "Add User Role";
+    ViewBag.ActiveMenu = "Users";
+    ViewBag.ActivePage = "UserTypes";
 }
-
-<div class="col-md-12">
-    @if (ViewBag.Message != null)
-    {
-        <label style="width:100%" class="alert alert-success">Data Inserted Successfully!</label>
-    }
-
-    <!--begin::Package Type Card-->
-    <div class="card shadow-sm rounded-4 mb-4">
-        <!--begin::Card Header-->
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Add User Type</h5>
-        </div>
-        <!--end::Card Header-->
-        <!--begin::Form-->
-        <form enctype="multipart/form-data" method="post" action="/AdminArea/ManageUserType/Create">
-            <!--begin::Card Body-->
-            <div class="card-body">
-                <div class="row g-3">
-                    <!-- Package Type Name -->
-                    <div class="col-md-6">
-                        <label class="form-label">User Type Name</label>
-                        <input name="TypeName" type="text" class="form-control" placeholder="Enter User type name" required />
-                    </div>
-
-                  
-                   
+<div class="page-header">
+    <div><div class="page-title">Add User Role</div><div class="page-subtitle">Create a new system role</div></div>
+    <a href="@Url.Action("Index","ManageUserType", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-shield-plus"></i> Role Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManageUserType", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Role Name <span>*</span></label>
+                    <input type="text" name="TypeName" class="form-control" placeholder="e.g. Admin, Customer" required />
                 </div>
             </div>
-            <!--end::Card Body-->
-            <!--begin::Card Footer-->
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Submit
-                </button>
-                <a href="/AdminArea/ManageUserType/Index" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Role</button>
+                <a href="@Url.Action("Index","ManageUserType", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-            <!--end::Card Footer-->
-        </form>
-        <!--end::Form-->
+        }
     </div>
-    <!--end::Package Type Card-->
 </div>

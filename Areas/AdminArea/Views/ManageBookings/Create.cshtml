@@ -1,0 +1,71 @@
+@{
+    ViewBag.Title = "Add Booking";
+    ViewBag.ActiveMenu = "Bookings";
+}
+
+<div class="page-header">
+    <div><div class="page-title">Add Booking</div><div class="page-subtitle">Create a new booking record</div></div>
+    <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-journal-plus"></i> Booking Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManageBookings", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Customer <span>*</span></label>
+                    <select name="UserId" class="form-control" required>
+                        <option value="">— Select Customer —</option>
+                        @foreach (var u in ViewBag.UserList) { <option value="@u.UserId">@u.FullName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Package</label>
+                    <select name="PackageId" class="form-control">
+                        <option value="">— Select Package —</option>
+                        @foreach (var p in ViewBag.PackageList) { <option value="@p.PackageId">@p.PackageName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <select name="DestinationId" class="form-control">
+                        <option value="">— Select Destination —</option>
+                        @foreach (var d in ViewBag.DestinationList) { <option value="@d.DestinationId">@d.Name</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select name="Status" class="form-control">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="Email" class="form-control" placeholder="customer@email.com" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Total Amount <span>*</span></label>
+                    <input type="number" name="TotalAmount" class="form-control" step="0.01" min="0" placeholder="0.00" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Booking Date</label>
+                    <input type="date" name="BookingDate" class="form-control" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Special Requests</label>
+                    <textarea name="SpecialRequest" class="form-control" rows="3" placeholder="Any special requests..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Booking</button>
+                <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>

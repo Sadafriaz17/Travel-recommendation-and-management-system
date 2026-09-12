@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
@@ -13,106 +12,87 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
     [SessionAuthFilter]
     public class ManageBlogsController : Controller
     {
-        Demo_DevDBEntities _context = new Demo_DevDBEntities();
+        private Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // GET: AdminArea/ManageBlogs
         public ActionResult Index()
         {
+            ViewBag.ActiveMenu = "Blogs";
             var blogs = _context.Blogs.ToList();
             return View(blogs);
         }
 
-        // GET: AdminArea/ManageBlogs/Create
         public ActionResult Create()
         {
+            ViewBag.ActiveMenu = "Blogs";
+            ViewBag.UserList = _context.Users.ToList();
             return View();
         }
 
-        // POST: AdminArea/ManageBlogs/Create
         [HttpPost]
         public ActionResult Create(Blog Model, HttpPostedFileBase img)
         {
-
+            Model.CreatedDate = DateTime.Now;
             if (img != null && img.ContentLength > 0)
             {
-
-                Model.CreatedDate = DateTime.Now;
-                //name
                 string fileName = Path.GetFileName(img.FileName);
-                //url
                 string filePath = Server.MapPath("~/uploads/Blogs/");
-                //filepath exists
-                if (!Directory.Exists(filePath))
-                {
-
-                    Directory.CreateDirectory(filePath);
-                }
-                //create full path
-                string fullPath = Path.Combine(filePath, fileName);
-                //image save 
-                img.SaveAs(fullPath);
-                //image save in db
+                if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
+                img.SaveAs(Path.Combine(filePath, fileName));
                 Model.FeaturedImage = "/uploads/Blogs/" + fileName;
             }
-          
-                _context.Blogs.Add(Model);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-          
-           
+            _context.Blogs.Add(Model);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Blog post created successfully!";
+            return RedirectToAction("Index");
         }
 
-        // GET: AdminArea/ManageBlogs/Edit/5
         public ActionResult Edit(int id)
         {
+            ViewBag.ActiveMenu = "Blogs";
             var blog = _context.Blogs.Find(id);
-            if (blog == null)
-            {
-                return HttpNotFound();
-            }
+            if (blog == null) return HttpNotFound();
+            ViewBag.UserList = _context.Users.ToList();
             return View(blog);
         }
 
-        // POST: AdminArea/ManageBlogs/Edit/5
         [HttpPost]
         public ActionResult Edit(Blog Model, HttpPostedFileBase img)
         {
             if (img != null && img.ContentLength > 0)
             {
-
-                Model.CreatedDate = DateTime.Now;
-                //name
                 string fileName = Path.GetFileName(img.FileName);
-                //url
                 string filePath = Server.MapPath("~/uploads/Blogs/");
-                //filepath exists
-                if (!Directory.Exists(filePath))
-                {
-
-                    Directory.CreateDirectory(filePath);
-                }
-                //create full path
-                string fullPath = Path.Combine(filePath, fileName);
-                //image save 
-                img.SaveAs(fullPath);
-                //image save in db
+                if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
+                img.SaveAs(Path.Combine(filePath, fileName));
                 Model.FeaturedImage = "/uploads/Blogs/" + fileName;
+            }
+            else
+            {
+                // Preserve existing image
+                var existing = _context.Blogs.Find(Model.BlogId);
+                if (existing != null) Model.FeaturedImage = existing.FeaturedImage;
+                _context.Entry(existing ?? Model).State = System.Data.Entity.EntityState.Detached;
             }
             _context.Blogs.AddOrUpdate(Model);
             _context.SaveChanges();
+            TempData["SuccessMessage"] = "Blog post updated successfully!";
             return RedirectToAction("Index");
-          
-          
         }
 
-        // GET: AdminArea/ManageBlogs/Delete/5
         public ActionResult Delete(int id)
         {
-            var data = _context.Blogs.FirstOrDefault(x => x.BlogId == id); ;
-            _context.Blogs.Remove(data);
-            _context.SaveChanges();
-            ViewBag.Messsage = "Record Delete Successfully";
-            return RedirectToAction("index");
+            var data = _context.Blogs.FirstOrDefault(x => x.BlogId == id);
+            if (data != null)
+            {
+                _context.Blogs.Remove(data);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Blog post deleted successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Blog post not found!";
+            }
+            return RedirectToAction("Index");
         }
     }
 }

@@ -1,25 +1,53 @@
-﻿@{
+@{
     ViewBag.Title = "Add Gallery Image";
+    ViewBag.ActiveMenu = "Gallery";
 }
-
-<div class="card mt-4">
-    <div class="card-header">
-        <span>Add Gallery Image</span>
-    </div>
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data" action="/AdminArea/ManageGallery/Create">
-            <div class="mb-3">
-                <label class="form-label">Title</label>
-                <input type="text" name="Title" class="form-control" />
+<div class="page-header">
+    <div><div class="page-title">Add Gallery Image</div><div class="page-subtitle">Upload a new image to the gallery</div></div>
+    <a href="@Url.Action("Index","ManageGallery", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-image-alt"></i> Image Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManageGallery", new { area = "AdminArea" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="Title" class="form-control" placeholder="Gallery image title" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Caption</label>
+                    <input type="text" name="Caption" class="form-control" placeholder="Short caption" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <select name="DestinationId" class="form-control">
+                        <option value="">— None —</option>
+                        @foreach (var d in ViewBag.DestinationList) { <option value="@d.DestinationId">@d.Name</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product</label>
+                    <select name="ProductId" class="form-control">
+                        <option value="">— None —</option>
+                        @foreach (var p in ViewBag.ProductList) { <option value="@p.ProductId">@p.ProductName</option> }
+                    </select>
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Upload Image</label>
+                    <input type="file" name="img" class="form-control" accept="image/*" />
+                    <span class="form-hint">Or provide a URL below if already hosted.</span>
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Image URL (if no file upload)</label>
+                    <input type="text" name="ImageUrl" class="form-control" placeholder="https://..." />
+                </div>
             </div>
-            <div class="col-md-6">
-                <label class="form-label">Upload Image</label>
-                <input type="file" name="img" class="form-control" />
-
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Image</button>
+                <a href="@Url.Action("Index","ManageGallery", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-            <button type="submit" class="btn btn-success">Save</button>
-            <a href="/AdminArea/ManageGallery/Index" class="btn btn-secondary">Cancel</a>
-        </form>
+        }
     </div>
 </div>
-

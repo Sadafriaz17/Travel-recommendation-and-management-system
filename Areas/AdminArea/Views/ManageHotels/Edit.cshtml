@@ -1,0 +1,51 @@
+@model TourwebsiteFYP.DB_data_models.Hotel
+@{
+    ViewBag.Title = "Edit Hotel";
+    ViewBag.ActiveMenu = "Hotels";
+    ViewBag.ActivePage = "Hotels";
+}
+<div class="page-header">
+    <div><div class="page-title">Edit Hotel</div><div class="page-subtitle">Update hotel #@Model.HotelId</div></div>
+    <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Hotel Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManageHotels", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <input type="hidden" name="HotelId" value="@Model.HotelId" />
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Hotel Name <span>*</span></label>
+                    <input type="text" name="HotelName" value="@Model.HotelName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="Location" value="@Model.Location" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rating (0–5)</label>
+                    <input type="number" name="Rating" value="@Model.Rating" class="form-control" step="0.1" min="0" max="5" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price Per Night ($)</label>
+                    <input type="number" name="PricePerNight" value="@Model.PricePerNight" class="form-control" step="0.01" min="0" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Associated Package</label>
+                    <select name="PackageId" class="form-control">
+                        <option value="">— None —</option>
+                        @foreach (var p in ViewBag.PackageList) {
+                            string sel = (p.PackageId == Model.PackageId) ? "selected" : "";
+                            <option value="@p.PackageId" @sel>@p.PackageName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Hotel</button>
+                <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>

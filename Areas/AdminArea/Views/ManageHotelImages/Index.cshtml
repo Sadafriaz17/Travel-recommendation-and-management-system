@@ -1,0 +1,58 @@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.HotelImage>
+@{
+    ViewBag.Title = "Manage Hotel Images";
+    ViewBag.ActiveMenu = "Hotels";
+    ViewBag.ActivePage = "HotelImages";
+}
+<div class="page-header">
+    <div><div class="page-title">Hotel Images</div><div class="page-subtitle">Manage hotel photo gallery</div></div>
+    <a href="@Url.Action("Create","ManageHotelImages", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Image</a>
+</div>
+@if (TempData["SuccessMessage"] != null)
+{ <div class="alert-toast alert-toast-success"><i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+@if (TempData["ErrorMessage"] != null)
+{ <div class="alert-toast alert-toast-error"><i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title"><i class="bi bi-image"></i> All Hotel Images</div>
+        <span style="font-size:12px;color:var(--text-muted)">@Model.Count() records</span>
+    </div>
+    <div class="admin-card-body-flush">
+        @if (Model.Any())
+        {
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>#</th><th>Image</th><th>Hotel</th><th>Caption</th><th>Created</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            string imgSrc = !string.IsNullOrEmpty(item.ImageUrl) ? item.ImageUrl : "/images/default-hotel.jpg";
+                            <tr>
+                                <td style="font-size:12px;color:var(--text-muted);font-weight:600">#@item.ImageId</td>
+                                <td><img src="@imgSrc" class="tbl-img" onerror="this.src='/images/default-hotel.jpg'" /></td>
+                                <td style="font-weight:600">@(item.Hotel?.HotelName ?? "—")</td>
+                                <td style="color:var(--text-muted)">@(item.Caption ?? "—")</td>
+                                <td style="color:var(--text-muted)">@(item.CreatedDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a href="@Url.Action("Edit","ManageHotelImages", new { area="AdminArea", id=item.ImageId })" class="btn-icon btn-icon-edit"><i class="bi bi-pencil"></i></a>
+                                        <a href="@Url.Action("Delete","ManageHotelImages", new { area="AdminArea", id=item.ImageId })" class="btn-icon btn-icon-delete" onclick="return confirm('Delete this image?')"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-image"></i></div>
+                <h4>No Hotel Images</h4>
+                <p>Add images to your hotels to showcase them.</p>
+                <a href="@Url.Action("Create","ManageHotelImages", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Image</a>
+            </div>
+        }
+    </div>
+</div>

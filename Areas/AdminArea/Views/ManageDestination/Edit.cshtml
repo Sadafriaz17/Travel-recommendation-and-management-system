@@ -1,60 +1,39 @@
-﻿@model TourwebsiteFYP.DB_data_models.Destination
+@model TourwebsiteFYP.DB_data_models.Destination
 @{
     ViewBag.Title = "Edit Destination";
+    ViewBag.ActiveMenu = "Destinations";
 }
-
-<div class="card mt-4">
-    <div class="card-header">
-        <span>Edit Destination</span>
-    </div>
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data" action="/AdminArea/ManageDestination/Edit">
+<div class="page-header">
+    <div><div class="page-title">Edit Destination</div><div class="page-subtitle">Update destination #@Model.DestinationId</div></div>
+    <a href="@Url.Action("Index","ManageDestination", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Destination Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManageDestination", new { area = "AdminArea" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
             <input type="hidden" name="DestinationId" value="@Model.DestinationId" />
-
-            <div class="mb-3">
-                <label class="form-label">Destination Name</label>
-                <input type="text" name="Name" value="@Model.Name" class="form-control" required />
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Name <span>*</span></label>
+                    <input type="text" name="Name" value="@Model.Name" class="form-control" required />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Image</label>
+                    @if (!string.IsNullOrEmpty(Model.Image))
+                    { <img src="@Model.Image" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);margin-bottom:8px" onerror="this.style.display='none'" /> }
+                    <input type="file" name="img" class="form-control" accept="image/*" />
+                    <span class="form-hint">Leave empty to keep current image.</span>
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Location</label>
-                <input type="text" name="Location" value="@Model.Location" class="form-control" required />
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Destination</button>
+                <a href="@Url.Action("Index","ManageDestination", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Description</label>
-                <input type="text" name="Description" value="@Model.Description" class="form-control" required />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Price</label>
-                <input type="text" name="Price" value="@Model.Price" class="form-control" required />
-            </div>
-            <div class="form-group col-md-6">
-                <label class="form-label">Package Type Name</label>
-                <select name="PackageTypeId" class="form-control">
-                    @foreach (var item in ViewBag.PackageTypeList)
-                    {
-                        string selectedVal = "";
-                        if (item.PackageTypeId == Model.PackageTypeId)
-                        {
-                            selectedVal = "selected";
-                        }
-                        <option @selectedVal value="@item.PackageTypeId">@item.TypeName</option>
-                    }
-                </select>
-            </div>
-
-            <!-- Image Uploads -->
-
-
-            <div class="form-group">
-                <label class="form-label">Upload Image </label>
-                <input type="file" name="img" class="form-control" />
-            </div>
-
-
-            <button type="submit" class="btn btn-success">Update</button>
-            <a href="/AdminArea/ManageDestination/Index" class="btn btn-secondary">Cancel</a>
-        </form>
+        }
     </div>
 </div>
-
-

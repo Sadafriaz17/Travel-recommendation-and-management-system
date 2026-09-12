@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
-using System.IO;
+using System;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
 using TourwebsiteFYP.Filter;
@@ -13,120 +10,61 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
     [SessionAuthFilter]
     public class ManagePackageTypeController : Controller
     {
-        Demo_DevDBEntities _context = new Demo_DevDBEntities();
+        private Demo_DevDBEntities _context = new Demo_DevDBEntities();
+
         public ActionResult Index()
         {
-            var packagetypelist = _context.PackageTypes.ToList();
-            return View(packagetypelist);
+            ViewBag.ActiveMenu = "Packages";
+            ViewBag.ActivePage = "PackageTypes";
+            var packageTypes = _context.PackageTypes.ToList();
+            return View(packageTypes);
         }
-        [HttpGet]
+
         public ActionResult Create()
         {
-          
+            ViewBag.ActiveMenu = "Packages";
+            ViewBag.ActivePage = "PackageTypes";
             return View();
         }
 
         [HttpPost]
-        public ActionResult Create(PackageType model, HttpPostedFileBase img)
+        public ActionResult Create(PackageType model)
         {
-            try
-            {
-
-
-
-                // Handle image upload
-                if (img != null && img.ContentLength > 0)
-                {
-                    // Get image file name
-                    string fileName = Path.GetFileName(img.FileName);
-
-                    // Create a folder path to store the image
-                    string filePath = Server.MapPath("~/uploads/packageTypes/");
-
-                    // Create folder if it doesn't exist
-                    if (!Directory.Exists(filePath))
-                    {
-                        Directory.CreateDirectory(filePath);
-                    }
-
-                    // Full path with filename
-                    string fullPath = Path.Combine(filePath, fileName);
-
-                    // Save file
-                    img.SaveAs(fullPath);
-
-                    // Save relative path to the model
-                    model.ImageUrl = "/uploads/packageTypes/" + fileName;
-                }
-
-                // Save to database
-                _context.PackageTypes.Add(model);
-                _context.SaveChanges();
-                TempData["SuccessMessage"] = "Package deleted successfully!";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = "Error: " + ex.Message;
-            }
-
-            // Reload dropdown in case of error or return
-            ViewBag.PackageTypeList = _context.PackageTypes.ToList();
-
+            _context.PackageTypes.Add(model);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Package type created successfully!";
             return RedirectToAction("Index");
         }
 
-
-        [HttpGet]
         public ActionResult Edit(int id)
         {
-            var data = _context.PackageTypes.FirstOrDefault(x => x.PackageTypeId == id);
-            return View(data);
+            ViewBag.ActiveMenu = "Packages";
+            ViewBag.ActivePage = "PackageTypes";
+            var packageType = _context.PackageTypes.Find(id);
+            if (packageType == null) return HttpNotFound();
+            return View(packageType);
         }
+
         [HttpPost]
-        public ActionResult Edit(PackageType Model, HttpPostedFileBase img)
+        public ActionResult Edit(PackageType model)
         {
-
-
-            if (img != null && img.ContentLength > 0)
-            {
-                //name
-                string fileName = Path.GetFileName(img.FileName);
-                //url
-                string filePath = Server.MapPath("~/uploads/packageTypes/");
-                //filepath exists
-                if (!Directory.Exists(filePath))
-                {
-
-                    Directory.CreateDirectory(filePath);
-                }
-                //create full path
-                string fullPath = Path.Combine(filePath, fileName);
-                //image save 
-                img.SaveAs(fullPath);
-                //image save in db
-                Model.ImageUrl = "/uploads/packageTypes/" + fileName;
-            }
-
-            _context.PackageTypes.AddOrUpdate(Model);
+            _context.Entry(model).State = EntityState.Modified;
             _context.SaveChanges();
-            TempData["SuccessMessage"] = "Package updated successfully!";
-            return RedirectToAction("index");
+            TempData["SuccessMessage"] = "Package type updated successfully!";
+            return RedirectToAction("Index");
         }
+
         public ActionResult Delete(int id)
         {
-            var data = _context.PackageTypes.FirstOrDefault(x => x.PackageTypeId == id);
-            if(data != null){
-                _context.PackageTypes.Remove(data);
-                _context.SaveChanges();
-                TempData["SuccessMessage"] = "Package deleted successfully!";
-            }
-            else
+            var packageType = _context.PackageTypes.Find(id);
+            if (packageType != null)
             {
-                TempData["ErrorMessage"] = "Package not found!";
+                _context.PackageTypes.Remove(packageType);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Package type deleted successfully!";
             }
-                return RedirectToAction("Index");
+            else { TempData["ErrorMessage"] = "Package type not found!"; }
+            return RedirectToAction("Index");
         }
-
-
     }
 }

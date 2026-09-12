@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -22,19 +22,29 @@
             --text-dark: #1a1a1a;
             --text-muted: #6b7280;
             --text-faint: #9ca3af;
-            --bg-body: #f8f9fa;
+            --bg-body: #f1f5f9;
             --bg-white: #ffffff;
             --bg-sidebar: #ffffff;
-            --bg-hover: #f3f4f6;
+            --bg-hover: #f8fafc;
             --accent: #1a1a1a;
             --accent-soft: rgba(26, 26, 26, 0.06);
-            --danger: #e2445c;
-            --border: #e5e7eb;
-            --sidebar-width: 260px;
+            --accent-blue: #3b82f6;
+            --accent-blue-soft: rgba(59,130,246,0.08);
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --sidebar-width: 264px;
             --header-height: 64px;
-            --radius: 16px;
-            --shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
-            --shadow-hover: 0 12px 35px rgba(0, 0, 0, 0.08);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --shadow-xs: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.06);
+            --shadow: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 16px 40px rgba(0,0,0,0.10);
+            --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
         }
 
         html, body {
@@ -44,6 +54,7 @@
             font-family: var(--font-main);
             font-size: 14px;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
         .app-wrapper {
@@ -66,8 +77,11 @@
             height: 100vh;
             z-index: 100;
             overflow-y: auto;
-            transition: transform 0.3s ease;
+            overflow-x: hidden;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+            scrollbar-width: none;
         }
+        .app-sidebar::-webkit-scrollbar { display: none; }
 
         .sidebar-brand {
             padding: 0 20px;
@@ -76,6 +90,10 @@
             align-items: center;
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            background: var(--bg-white);
+            z-index: 10;
         }
 
         .brand-link {
@@ -85,38 +103,58 @@
             text-decoration: none;
         }
 
-        .brand-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--accent);
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
+        }
+        .brand-logo i {
+            color: #fff;
+            font-size: 16px;
         }
 
         .brand-text {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
             color: var(--text-dark);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
+        }
+        .brand-tag {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: var(--text-faint);
+            text-transform: uppercase;
+            display: block;
+            margin-top: -3px;
         }
 
         .sidebar-wrapper {
             flex: 1;
             overflow-y: auto;
-            padding: 16px 0;
+            overflow-x: hidden;
+            padding: 12px 0 80px;
+            scrollbar-width: none;
         }
+        .sidebar-wrapper::-webkit-scrollbar { display: none; }
 
         .nav-section-label {
-            padding: 12px 20px 6px;
-            font-size: 10px;
+            padding: 14px 20px 5px;
+            font-size: 9.5px;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             color: var(--text-faint);
             text-transform: uppercase;
         }
 
         .sidebar-nav {
             list-style: none;
+            padding: 2px 10px;
         }
 
         .nav-item {
@@ -126,14 +164,16 @@
         .sidebar-nav .nav-link {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 9px 20px;
+            gap: 10px;
+            padding: 8.5px 12px;
             color: var(--text-muted);
             text-decoration: none;
             font-size: 13.5px;
             font-weight: 500;
-            transition: all 0.2s;
-            border-left: 2px solid transparent;
+            transition: var(--transition);
+            border-radius: var(--radius-sm);
+            position: relative;
+            margin-bottom: 2px;
         }
 
             .sidebar-nav .nav-link:hover {
@@ -144,53 +184,62 @@
             .sidebar-nav .nav-link.active {
                 color: var(--text-dark);
                 background: var(--accent-soft);
-                border-left-color: var(--accent);
                 font-weight: 600;
+            }
+            .sidebar-nav .nav-link.active::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 20%;
+                bottom: 20%;
+                width: 3px;
+                background: var(--accent);
+                border-radius: 0 3px 3px 0;
+                margin-left: -12px;
             }
 
             .sidebar-nav .nav-link i.nav-icon {
                 font-size: 16px;
                 width: 18px;
                 flex-shrink: 0;
+                text-align: center;
             }
 
         .nav-arrow {
             margin-left: auto;
             font-size: 10px;
             transition: transform 0.25s;
+            color: var(--text-faint);
         }
 
-        .nav-item.open > .sidebar-nav .nav-link .nav-arrow,
         .nav-item.open > a .nav-arrow {
             transform: rotate(180deg);
-        }
-
-        .nav-item.open > a {
-            color: var(--text-dark);
-            background: var(--bg-hover);
         }
 
         .nav-treeview {
             list-style: none;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
+            transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1);
+            padding: 0 0 0 10px;
         }
 
         .nav-item.open > .nav-treeview {
-            max-height: 400px;
+            max-height: 500px;
         }
 
         .nav-treeview .nav-link {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 8px 20px 8px 50px;
+            padding: 7px 12px;
             font-size: 13px;
             color: var(--text-muted);
             text-decoration: none;
-            border-left: 2px solid transparent;
-            transition: all 0.2s;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            position: relative;
+            margin-bottom: 1px;
         }
 
             .nav-treeview .nav-link::before {
@@ -198,8 +247,9 @@
                 width: 5px;
                 height: 5px;
                 border-radius: 50%;
-                border: 1px solid currentColor;
+                border: 1.5px solid currentColor;
                 flex-shrink: 0;
+                opacity: 0.5;
             }
 
             .nav-treeview .nav-link:hover {
@@ -210,9 +260,38 @@
             .nav-treeview .nav-link.active {
                 color: var(--text-dark);
                 background: var(--accent-soft);
-                border-left-color: var(--accent);
                 font-weight: 600;
             }
+            .nav-treeview .nav-link.active::before {
+                opacity: 1;
+                background: var(--text-dark);
+                border-color: var(--text-dark);
+            }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 12px 10px;
+            border-top: 1px solid var(--border);
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-white);
+        }
+        .sidebar-footer-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .sidebar-footer-link:hover {
+            background: rgba(239,68,68,0.06);
+            color: var(--danger);
+        }
 
         /* ══════════════════════════════════
            HEADER
@@ -223,7 +302,7 @@
             left: var(--sidebar-width);
             right: 0;
             height: var(--header-height);
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255,255,255,0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
@@ -232,12 +311,13 @@
             justify-content: space-between;
             padding: 0 24px;
             z-index: 90;
+            transition: var(--transition);
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .header-right {
@@ -247,22 +327,22 @@
         }
 
         .header-toggle {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            border: none;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
             background: transparent;
             color: var(--text-muted);
             cursor: pointer;
             font-size: 18px;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
-
             .header-toggle:hover {
                 background: var(--bg-hover);
+                border-color: var(--border);
                 color: var(--text-dark);
             }
 
@@ -273,11 +353,13 @@
             font-size: 13px;
             color: var(--text-faint);
         }
-
-            .breadcrumb-wrap .bc-sep {
-                font-size: 10px;
+            .breadcrumb-wrap .bc-sep { font-size: 10px; }
+            .breadcrumb-wrap .bc-home {
+                color: var(--text-muted);
+                text-decoration: none;
+                transition: var(--transition);
             }
-
+            .breadcrumb-wrap .bc-home:hover { color: var(--text-dark); }
             .breadcrumb-wrap .bc-current {
                 color: var(--text-dark);
                 font-weight: 600;
@@ -285,21 +367,20 @@
 
         .header-icon-btn {
             position: relative;
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             border: 1px solid transparent;
             background: transparent;
             color: var(--text-muted);
             cursor: pointer;
             font-size: 16px;
-            transition: all 0.2s;
+            transition: var(--transition);
             text-decoration: none;
         }
-
             .header-icon-btn:hover {
                 background: var(--bg-hover);
                 border-color: var(--border);
@@ -308,8 +389,8 @@
 
         .nav-badge {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 4px;
+            right: 4px;
             min-width: 16px;
             height: 16px;
             border-radius: 8px;
@@ -319,43 +400,34 @@
             align-items: center;
             justify-content: center;
             padding: 0 4px;
-            border: 1px solid var(--bg-white);
+            border: 2px solid #fff;
         }
-
-        .badge-danger {
-            background: var(--danger);
-            color: #fff;
-        }
-
-        .badge-warning {
-            background: var(--accent);
-            color: #fff;
-        }
+        .badge-danger { background: var(--danger); color: #fff; }
+        .badge-warning { background: var(--warning); color: #fff; }
 
         .header-divider {
             width: 1px;
-            height: 24px;
+            height: 22px;
             background: var(--border);
-            margin: 0 6px;
+            margin: 0 8px;
         }
 
         .user-chip {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 5px 12px 5px 5px;
+            gap: 8px;
+            padding: 4px 12px 4px 4px;
             border-radius: 40px;
             border: 1px solid var(--border);
             background: var(--bg-white);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
             text-decoration: none;
             color: var(--text-dark);
         }
-
             .user-chip:hover {
-                border-color: var(--text-dark);
-                background: var(--bg-hover);
+                border-color: var(--border-hover);
+                box-shadow: var(--shadow-xs);
             }
 
         .user-avatar {
@@ -381,9 +453,7 @@
         /* ══════════════════════════════════
            DROPDOWNS
         ══════════════════════════════════ */
-        .hdr-dropdown {
-            position: relative;
-        }
+        .hdr-dropdown { position: relative; }
 
         .hdr-dropdown-menu {
             display: none;
@@ -393,15 +463,18 @@
             min-width: 280px;
             background: var(--bg-white);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            box-shadow: var(--shadow-lg);
             z-index: 999;
+            animation: dropIn 0.15s cubic-bezier(0.4,0,0.2,1);
+        }
+        @@keyframes dropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .hdr-dropdown.open .hdr-dropdown-menu {
-            display: block;
-        }
+        .hdr-dropdown.open .hdr-dropdown-menu { display: block; }
 
         .dd-header {
             padding: 12px 16px 10px;
@@ -417,33 +490,26 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 16px;
+            padding: 10px 16px;
             color: var(--text-muted);
             font-size: 13px;
             text-decoration: none;
             border-bottom: 1px solid var(--border);
             transition: background 0.15s;
         }
-
-            .dd-item:last-child {
-                border-bottom: none;
-            }
-
-            .dd-item:hover {
-                background: var(--bg-hover);
-                color: var(--text-dark);
-            }
+            .dd-item:last-child { border-bottom: none; }
+            .dd-item:hover { background: var(--bg-hover); color: var(--text-dark); }
 
         .dd-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-sm);
             background: var(--bg-hover);
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-dark);
             flex-shrink: 0;
         }
@@ -458,10 +524,7 @@
             background: var(--bg-hover);
             text-decoration: none;
         }
-
-            .dd-footer:hover {
-                background: var(--border);
-            }
+            .dd-footer:hover { background: var(--border); }
 
         /* ══════════════════════════════════
            MAIN CONTENT
@@ -469,8 +532,418 @@
         .app-main {
             margin-left: var(--sidebar-width);
             margin-top: var(--header-height);
-            min-height: calc(100vh - var(--header-height) - 44px);
-            padding: 28px 28px 20px;
+            min-height: calc(100vh - var(--header-height));
+            width: calc(100% - var(--sidebar-width));
+            box-sizing: border-box;
+            padding: 28px;
+            transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ══════════════════════════════════
+           GLOBAL ADMIN CONTENT STYLES
+        ══════════════════════════════════ */
+
+        /* Page header */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+        }
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Cards */
+        .admin-card {
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        .admin-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .admin-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .admin-card-title i {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+        .admin-card-body {
+            padding: 24px;
+        }
+        .admin-card-body-flush {
+            padding: 0;
+        }
+
+        /* Stat Cards */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .stat-icon-blue  { background: rgba(59,130,246,0.10); color: #3b82f6; }
+        .stat-icon-green { background: rgba(16,185,129,0.10); color: #10b981; }
+        .stat-icon-orange{ background: rgba(245,158,11,0.10); color: #f59e0b; }
+        .stat-icon-red   { background: rgba(239,68,68,0.10);  color: #ef4444; }
+        .stat-icon-purple{ background: rgba(139,92,246,0.10); color: #8b5cf6; }
+        .stat-icon-dark  { background: rgba(26,26,26,0.07);  color: #1a1a1a; }
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Table */
+        .admin-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .admin-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+        }
+        .admin-table thead th {
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .admin-table tbody td {
+            padding: 13px 16px;
+            font-size: 13.5px;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .admin-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .admin-table tbody tr {
+            transition: background 0.15s;
+        }
+        .admin-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Thumbnail in table */
+        .tbl-img {
+            width: 52px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        /* Truncate */
+        .text-truncate-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        /* Badges */
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-success  { background: rgba(16,185,129,0.10); color: #059669; }
+        .badge-danger   { background: rgba(239,68,68,0.10);  color: #dc2626; }
+        .badge-warning  { background: rgba(245,158,11,0.10); color: #d97706; }
+        .badge-info     { background: rgba(59,130,246,0.10); color: #2563eb; }
+        .badge-neutral  { background: rgba(107,114,128,0.10);color: #4b5563; }
+        .badge-dark     { background: rgba(26,26,26,0.07);   color: #1a1a1a; }
+
+        /* Buttons */
+        .btn-admin {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: var(--transition);
+            text-decoration: none;
+            line-height: 1;
+        }
+        .btn-admin-primary {
+            background: var(--text-dark);
+            color: #fff;
+            border-color: var(--text-dark);
+        }
+        .btn-admin-primary:hover {
+            background: #333;
+            border-color: #333;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+        }
+        .btn-admin-outline {
+            background: transparent;
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+        .btn-admin-outline:hover {
+            background: var(--bg-hover);
+            color: var(--text-dark);
+            border-color: var(--border-hover);
+        }
+        .btn-admin-success {
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
+        }
+        .btn-admin-success:hover {
+            background: #059669;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Icon action buttons in table */
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .btn-icon-edit {
+            color: var(--accent-blue);
+            border-color: rgba(59,130,246,0.2);
+            background: rgba(59,130,246,0.06);
+        }
+        .btn-icon-edit:hover {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+        .btn-icon-delete {
+            color: var(--danger);
+            border-color: rgba(239,68,68,0.2);
+            background: rgba(239,68,68,0.06);
+        }
+        .btn-icon-delete:hover {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+        }
+        .action-group { display: flex; align-items: center; gap: 6px; }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-grid-1 { grid-column: span 2; }
+        @@media (max-width: 640px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid-1 { grid-column: span 1; }
+        }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .form-label span { color: var(--danger); margin-left: 2px; }
+        .form-control {
+            width: 100%;
+            padding: 9px 13px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            font-family: var(--font-main);
+            font-size: 13.5px;
+            color: var(--text-dark);
+            transition: var(--transition);
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: var(--text-dark);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+        .form-control:hover:not(:focus) { border-color: var(--border-hover); }
+        textarea.form-control { resize: vertical; min-height: 100px; }
+        .form-hint {
+            font-size: 11.5px;
+            color: var(--text-faint);
+        }
+
+        /* Validation */
+        .field-validation-error {
+            font-size: 11.5px;
+            color: var(--danger);
+            margin-top: 2px;
+        }
+        .validation-summary-errors {
+            padding: 12px 16px;
+            background: rgba(239,68,68,0.06);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+        }
+        .validation-summary-errors ul { padding-left: 16px; }
+        .validation-summary-errors li {
+            font-size: 13px;
+            color: var(--danger);
+        }
+
+        /* Alerts */
+        .alert-toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease;
+        }
+        @@keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .alert-toast-success {
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.2);
+            color: #059669;
+        }
+        .alert-toast-error {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            color: #dc2626;
+        }
+        .alert-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.6;
+            font-size: 16px;
+            padding: 0;
+            transition: opacity 0.15s;
+        }
+        .alert-close:hover { opacity: 1; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+        }
+        .empty-state-icon {
+            font-size: 48px;
+            color: var(--text-faint);
+            margin-bottom: 16px;
+        }
+        .empty-state h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Form actions */
+        .form-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 8px;
         }
 
         /* ══════════════════════════════════
@@ -488,69 +961,51 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 28px;
             font-size: 11px;
             color: var(--text-faint);
             letter-spacing: 0.04em;
             z-index: 89;
+            transition: var(--transition);
         }
+        .footer-brand { color: var(--text-dark); font-weight: 700; letter-spacing: 0.06em; }
 
-        .footer-brand {
-            color: var(--text-dark);
-            font-weight: 700;
-            letter-spacing: 0.06em;
-        }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
 
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        .sidebar-collapsed .app-sidebar {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-collapsed .app-header {
-            left: 0;
-        }
-
-        .sidebar-collapsed .app-main {
-            margin-left: 0;
-        }
-
-        .sidebar-collapsed .app-footer {
-            left: 0;
-        }
+        /* ══════════════════════════════════
+           SIDEBAR COLLAPSED
+        ══════════════════════════════════ */
+        .sidebar-collapsed .app-sidebar  { transform: translateX(-100%); }
+        .sidebar-collapsed .app-header   { left: 0; }
+        .sidebar-collapsed .app-main     { margin-left: 0; width: 100%; }
+        .sidebar-collapsed .app-footer   { left: 0; }
 
         @@media (max-width: 992px) {
-            .app-sidebar {
-                transform: translateX(-100%);
-            }
+            .app-sidebar  { transform: translateX(-100%); }
+            .app-header   { left: 0; }
+            .app-main     { margin-left: 0; width: 100%; padding: 20px 16px; }
+            .app-footer   { left: 0; }
+            .sidebar-open .app-sidebar { transform: translateX(0); }
+        }
 
-            .app-header {
-                left: 0;
-            }
+        @@media (max-width: 640px) {
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .admin-card-header { flex-direction: column; align-items: flex-start; }
+        }
 
-            .app-main {
-                margin-left: 0;
-            }
-
-            .app-footer {
-                left: 0;
-            }
-
-            .sidebar-open .app-sidebar {
-                transform: translateX(0);
-            }
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 99;
+        }
+        @@media (max-width: 992px) {
+            .sidebar-open .sidebar-overlay { display: block; }
         }
     </style>
 
@@ -559,14 +1014,20 @@
 <body>
     <div class="app-wrapper" id="appWrapper">
 
+        <!-- Sidebar overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
         <!-- ════════════════════════════
              SIDEBAR
         ════════════════════════════ -->
         <aside class="app-sidebar">
             <div class="sidebar-brand">
                 <a href="@Url.Action("Index", "Home", new { area = "" })" class="brand-link">
-                    <div class="brand-dot"></div>
-                    <span class="brand-text">NEXVOY</span>
+                    <div class="brand-logo"><i class="bi bi-globe2"></i></div>
+                    <div>
+                        <span class="brand-text">NEXVOY</span>
+                        <span class="brand-tag">Admin Panel</span>
+                    </div>
                 </a>
             </div>
 
@@ -575,7 +1036,7 @@
                     <div class="nav-section-label">Overview</div>
                     <ul class="sidebar-nav">
                         <li class="nav-item">
-                            <a href="@Url.Action("Index","Dashboard", new { area = "AdminArea" })"
+                            <a href="@Url.Action("Index","AdminDashboard", new { area = "AdminArea" })"
                                class="nav-link @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
                                 <i class="bi bi-speedometer2 nav-icon"></i>
                                 <span>Dashboard</span>
@@ -617,6 +1078,14 @@
                                 <li class="nav-item">
                                     <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })"
                                        class="nav-link @(ViewBag.ActivePage == "Packages" ? "active" : "")">Packages</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManagePackageImages", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "PackageImages" ? "active" : "")">Package Images</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManagePackageItenirary", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "Itinerary" ? "active" : "")">Itineraries</a>
                                 </li>
                             </ul>
                         </li>
@@ -701,46 +1170,49 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="@Url.Action("Index","ManagePackageImages", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "PackageImages" ? "active" : "")">
-                                <i class="bi bi-card-image nav-icon"></i>
-                                <span>Package Images</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="@Url.Action("Index","ManagePageContent", new { area = "AdminArea" })"
                                class="nav-link @(ViewBag.ActiveMenu == "PageContent" ? "active" : "")">
                                 <i class="bi bi-file-text nav-icon"></i>
                                 <span>Page Content</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageAICommand", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "AICommand" ? "active" : "")">
+                                <i class="bi bi-robot nav-icon"></i>
+                                <span>AI Commands</span>
+                            </a>
+                        </li>
                     </ul>
 
                     <div class="nav-section-label">Accommodation</div>
                     <ul class="sidebar-nav">
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Hotels" ? "active" : "")">
+                        <li class="nav-item @(ViewBag.ActiveMenu == "Hotels" ? "open" : "")" id="menu-hotels">
+                            <a href="#" class="nav-link" onclick="toggleMenu('menu-hotels'); return false;">
                                 <i class="bi bi-building nav-icon"></i>
                                 <span>Hotels</span>
+                                <i class="bi bi-chevron-down nav-arrow"></i>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageHotelImages", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "HotelImages" ? "active" : "")">
-                                <i class="bi bi-image nav-icon"></i>
-                                <span>Hotel Images</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManagePackageItinerary", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Itinerary" ? "active" : "")">
-                                <i class="bi bi-calendar-event nav-icon"></i>
-                                <span>Package Itinerary</span>
-                            </a>
+                            <ul class="nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "Hotels" ? "active" : "")">Hotels</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","ManageHotelImages", new { area = "AdminArea" })"
+                                       class="nav-link @(ViewBag.ActivePage == "HotelImages" ? "active" : "")">Hotel Images</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </nav>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="@Url.Action("Index","Home", new { area = "" })" class="sidebar-footer-link">
+                    <i class="bi bi-house"></i>
+                    <span>Back to Website</span>
+                </a>
             </div>
         </aside>
 
@@ -753,166 +1225,118 @@
                     <i class="bi bi-list"></i>
                 </button>
                 <div class="breadcrumb-wrap">
-                    <span>Admin</span>
+                    <a href="@Url.Action("Index","AdminDashboard", new { area = "AdminArea" })" class="bc-home">Admin</a>
                     <span class="bc-sep"><i class="bi bi-chevron-right"></i></span>
                     <span class="bc-current">@ViewBag.Title</span>
                 </div>
             </div>
 
             <div class="header-right">
-                <!-- Search -->
-                <a href="#" class="header-icon-btn"><i class="bi bi-search"></i></a>
-
-                <!-- Messages -->
-                <div class="hdr-dropdown" id="dd-messages">
-                    <a href="#" class="header-icon-btn" onclick="toggleDd('dd-messages'); return false;">
-                        <i class="bi bi-chat-text"></i>
-                        <span class="nav-badge badge-danger">3</span>
-                    </a>
-                    <div class="hdr-dropdown-menu">
-                        <div class="dd-header">Messages</div>
-                        <a href="#" class="dd-item">
-                            <div class="dd-icon"><i class="bi bi-person"></i></div>
-                            <div>
-                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">Brad Diesel</div>
-                                <div style="font-size:11px;color:var(--text-faint)">Call me whenever you can... · 4h ago</div>
-                            </div>
-                        </a>
-                        <a href="#" class="dd-item">
-                            <div class="dd-icon"><i class="bi bi-person"></i></div>
-                            <div>
-                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">John Pierce</div>
-                                <div style="font-size:11px;color:var(--text-faint)">I got your message bro · 4h ago</div>
-                            </div>
-                        </a>
-                        <a href="#" class="dd-item">
-                            <div class="dd-icon"><i class="bi bi-person"></i></div>
-                            <div>
-                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">Nora Silvester</div>
-                                <div style="font-size:11px;color:var(--text-faint)">The subject goes here · 4h ago</div>
-                            </div>
-                        </a>
-                        <a href="#" class="dd-footer">See All Messages</a>
-                    </div>
-                </div>
-
                 <!-- Notifications -->
                 <div class="hdr-dropdown" id="dd-notifs">
                     <a href="#" class="header-icon-btn" onclick="toggleDd('dd-notifs'); return false;">
-                        <i class="bi bi-bell-fill"></i>
-                        <span class="nav-badge badge-warning">15</span>
+                        <i class="bi bi-bell"></i>
+                        <span class="nav-badge badge-warning">3</span>
                     </a>
                     <div class="hdr-dropdown-menu">
-                        <div class="dd-header">15 Notifications</div>
+                        <div class="dd-header">Notifications</div>
                         <a href="#" class="dd-item">
-                            <div class="dd-icon"><i class="bi bi-envelope"></i></div>
+                            <div class="dd-icon"><i class="bi bi-journal-check"></i></div>
                             <div>
-                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">4 new messages</div>
-                                <div style="font-size:11px;color:var(--text-faint)">3 minutes ago</div>
+                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">New booking received</div>
+                                <div style="font-size:11px;color:var(--text-faint)">2 minutes ago</div>
                             </div>
                         </a>
                         <a href="#" class="dd-item">
-                            <div class="dd-icon"><i class="bi bi-people-fill"></i></div>
+                            <div class="dd-icon"><i class="bi bi-person-plus"></i></div>
                             <div>
-                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">8 friend requests</div>
-                                <div style="font-size:11px;color:var(--text-faint)">12 hours ago</div>
+                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">New user registered</div>
+                                <div style="font-size:11px;color:var(--text-faint)">1 hour ago</div>
                             </div>
                         </a>
                         <a href="#" class="dd-item">
-                            <div class="dd-icon"><i class="bi bi-file-earmark-fill"></i></div>
+                            <div class="dd-icon"><i class="bi bi-credit-card"></i></div>
                             <div>
-                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">3 new reports</div>
-                                <div style="font-size:11px;color:var(--text-faint)">2 days ago</div>
+                                <div style="font-weight:600;color:var(--text-dark);font-size:13px">Payment confirmed</div>
+                                <div style="font-size:11px;color:var(--text-faint)">3 hours ago</div>
                             </div>
                         </a>
-                        <a href="#" class="dd-footer">See All Notifications</a>
+                        <a href="#" class="dd-footer">View All Notifications</a>
                     </div>
                 </div>
-
-                <!-- Fullscreen -->
-                <a href="#" class="header-icon-btn" id="fsBtn" onclick="toggleFullscreen(); return false;">
-                    <i class="bi bi-arrows-fullscreen"></i>
-                </a>
 
                 <div class="header-divider"></div>
 
                 <!-- User -->
                 <div class="hdr-dropdown" id="dd-user">
                     <a href="#" class="user-chip" onclick="toggleDd('dd-user'); return false;">
-                        <div class="user-avatar">AP</div>
-                        <span class="user-name">Alexander Pierce</span>
-                        <i class="bi bi-chevron-down" style="font-size:11px;color:var(--text-faint);margin-left:2px"></i>
+                        <div class="user-avatar">AD</div>
+                        <span class="user-name">Admin</span>
+                        <i class="bi bi-chevron-down" style="font-size:10px;color:var(--text-faint);margin-left:2px"></i>
                     </a>
-                    <div class="hdr-dropdown-menu" style="min-width:220px">
-                        <div style="padding:16px;border-bottom:1px solid var(--border)">
-                            <div style="font-weight:700;font-size:14px;color:var(--text-dark)">Alexander Pierce</div>
-                            <div style="font-size:12px;color:var(--text-faint);margin-top:2px">Web Developer · Member since Nov 2023</div>
+                    <div class="hdr-dropdown-menu" style="min-width:200px">
+                        <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+                            <div style="font-weight:700;font-size:14px;color:var(--text-dark)">Admin User</div>
+                            <div style="font-size:12px;color:var(--text-faint);margin-top:2px">Administrator</div>
                         </div>
-                        <a href="#" class="dd-item"><div class="dd-icon"><i class="bi bi-person"></i></div> Profile</a>
-                        <a href="#" class="dd-item"><div class="dd-icon"><i class="bi bi-gear"></i></div> Settings</a>
-                        <a href="#" class="dd-item" style="color:var(--danger)"><div class="dd-icon" style="color:var(--danger)"><i class="bi bi-box-arrow-right"></i></div> Sign out</a>
+                        <a href="@Url.Action("Index","Home", new { area = "" })" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-house"></i></div> Website
+                        </a>
+                        <a href="@Url.Action("Logout","Account", new { area = "" })" class="dd-item" style="color:var(--danger)">
+                            <div class="dd-icon" style="color:var(--danger)"><i class="bi bi-box-arrow-right"></i></div> Sign out
+                        </a>
                     </div>
                 </div>
             </div>
         </nav>
 
         <!-- ════════════════════════════
-             MAIN BODY — Views render here
+             MAIN BODY
         ════════════════════════════ -->
         <main class="app-main">
             @RenderBody()
         </main>
 
-        <!-- ════════════════════════════
-             FOOTER
-        ════════════════════════════ -->
-        <footer class="app-footer">
-            <span>© 2025 <span class="footer-brand">NEXVOY</span> AI TRAVEL INTELLIGENCE. ALL RIGHTS RESERVED.</span>
-            <span style="letter-spacing:0.06em">FINAL YEAR PROJECT — AI + VR SMART TOUR MANAGEMENT SYSTEM</span>
-        </footer>
+    
 
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        /* Sidebar toggle */
         function toggleSidebar() {
-            document.getElementById('appWrapper').classList.toggle('sidebar-collapsed');
+            var w = document.getElementById('appWrapper');
+            if (window.innerWidth <= 992) {
+                w.classList.toggle('sidebar-open');
+            } else {
+                w.classList.toggle('sidebar-collapsed');
+            }
         }
-
-        /* Treeview */
+        function closeSidebar() {
+            document.getElementById('appWrapper').classList.remove('sidebar-open');
+        }
         function toggleMenu(id) {
             var el = document.getElementById(id);
             if (el) el.classList.toggle('open');
         }
-
-        /* Header dropdowns */
         function toggleDd(id) {
             var el = document.getElementById(id);
             var isOpen = el.classList.contains('open');
-            document.querySelectorAll('.hdr-dropdown.open').forEach(function (d) { d.classList.remove('open'); });
+            document.querySelectorAll('.hdr-dropdown.open').forEach(function(d){ d.classList.remove('open'); });
             if (!isOpen) el.classList.add('open');
         }
-
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             if (!e.target.closest('.hdr-dropdown')) {
-                document.querySelectorAll('.hdr-dropdown.open').forEach(function (d) { d.classList.remove('open'); });
+                document.querySelectorAll('.hdr-dropdown.open').forEach(function(d){ d.classList.remove('open'); });
             }
         });
-
-        /* Fullscreen */
-        function toggleFullscreen() {
-            var btn = document.getElementById('fsBtn');
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-                btn.innerHTML = '<i class="bi bi-fullscreen-exit"></i>';
-            } else {
-                document.exitFullscreen();
-                btn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i>';
-            }
-        }
+        // Auto-dismiss alerts
+        document.querySelectorAll('.alert-close').forEach(function(btn){
+            btn.addEventListener('click', function(){ this.closest('.alert-toast').remove(); });
+        });
+        setTimeout(function(){
+            document.querySelectorAll('.alert-toast').forEach(function(a){ a.style.opacity='0'; a.style.transition='opacity 0.5s'; setTimeout(function(){ a.remove(); },500); });
+        }, 5000);
     </script>
 
     @RenderSection("scripts", required: false)

@@ -1,26 +1,27 @@
-﻿
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Add Payment Type";
+    ViewBag.ActiveMenu = "Payments";
+    ViewBag.ActivePage = "PaymentTypes";
 }
-
-<div class="col-md-12 mt-4">
-    <div class="card shadow-sm rounded-4">
-        <div class="card-header bg-primary text-white">
-            <h5>Add Payment Method</h5>
-        </div>
-
-        <form method="post" action="/AdminArea/ManagePaymentType/Create">
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label">Payment Type Name</label>
-                    <input name="PaymentTypeName" type="text" class="form-control" placeholder="Enter payment type name" required />
+<div class="page-header">
+    <div><div class="page-title">Add Payment Type</div><div class="page-subtitle">Create a new payment method</div></div>
+    <a href="@Url.Action("Index","ManagePaymentType", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-credit-card-2-front"></i> Payment Type Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManagePaymentType", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Type Name <span>*</span></label>
+                    <input type="text" name="PaymentTypeName" class="form-control" placeholder="e.g. Visa, Cash, PayPal" required />
                 </div>
             </div>
-
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-success">Submit</button>
-                <a href="/AdminArea/ManagePaymentType/Index" class="btn btn-danger">Cancel</a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Type</button>
+                <a href="@Url.Action("Index","ManagePaymentType", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-        </form>
+        }
     </div>
 </div>

@@ -1,49 +1,54 @@
-﻿@model TourwebsiteFYP.DB_data_models.Payment
 @{
     ViewBag.Title = "Add Payment";
+    ViewBag.ActiveMenu = "Payments";
+    ViewBag.ActivePage = "PaymentList";
 }
-
-<div class="col-md-12">
-    <div class="card shadow-sm rounded-4 mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Add Payment</h5>
-        </div>
-
-        <form method="post" action="@Url.Action("Create", "ManagePayments", new { area = "AdminArea" })">
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Booking ID</label>
-                        <input type="number" name="BookingId" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Amount</label>
-                        <input type="number" step="0.01" name="Amount" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Payment Method</label>
-                        <input type="text" name="PaymentMethod" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Status</label>
-                        <select name="Status" class="form-control">
-                            <option value="Pending">Pending</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Failed">Failed</option>
-                        </select>
-                    </div>
+<div class="page-header">
+    <div><div class="page-title">Add Payment</div><div class="page-subtitle">Record a new payment transaction</div></div>
+    <a href="@Url.Action("Index","ManagePayments", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-credit-card-2-front"></i> Payment Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManagePayments", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Booking <span>*</span></label>
+                    <select name="BookingId" class="form-control" required>
+                        <option value="">— Select Booking —</option>
+                        @foreach (var b in ViewBag.BookingList) { <option value="@b.BookingId">Booking #@b.BookingId</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Payment Method <span>*</span></label>
+                    <select name="PaymentTypeId" class="form-control" required>
+                        <option value="">— Select Method —</option>
+                        @foreach (var t in ViewBag.PaymentTypeList) { <option value="@t.PaymentTypeId">@t.TypeName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Method Name (Optional)</label>
+                    <input type="text" name="PaymentMethod" class="form-control" placeholder="e.g. Visa, Cash" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount ($) <span>*</span></label>
+                    <input type="number" name="Amount" class="form-control" step="0.01" min="0" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select name="Status" class="form-control">
+                        <option value="Completed">Completed</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Failed">Failed</option>
+                        <option value="Refunded">Refunded</option>
+                    </select>
                 </div>
             </div>
-
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Save
-                </button>
-                <a href="@Url.Action("Index", "ManagePayments", new { area = "AdminArea" })" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Payment</button>
+                <a href="@Url.Action("Index","ManagePayments", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-        </form>
+        }
     </div>
 </div>
-

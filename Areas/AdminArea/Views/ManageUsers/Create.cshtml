@@ -1,80 +1,46 @@
-﻿@model TourwebsiteFYP.DB_data_models.User
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Add User";
+    ViewBag.ActiveMenu = "Users";
+    ViewBag.ActivePage = "Users";
 }
-
-<div class="col-md-12">
-    <!--begin::Carousel Image Card-->
-    @if (ViewBag.Message != null)
-    {
-        <label style="width:100%" class="alert alert-success">Data Inserted Successfully!</label>
-    }
-    <div class="card shadow-sm rounded-4 mb-4">
-        <!--begin::Card Header-->
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Add Users</h5>
-        </div>
-        <!--end::Card Header-->
-        <!--begin::Form-->
-        <form enctype="multipart/form-data" method="post" action="/AdminArea/ManageUsers/Create">
-            <!--begin::Card Body-->
-            <div class="card-body">
-                <div class="row g-3">
-
-
-                    <div class="col-md-6">
-                        <label class="form-label"> Full Name</label>
-                        <input name="FullName" type="text" class="form-control" />
-                    </div>
-
-
-                    <div class="col-md-6">
-                        <label class="form-label">Email</label>
-                        <input name="Email" type="email" class="form-control" />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label"> Address</label>
-                        <input name="Address" type="text" class="form-control" />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label"> Phone</label>
-                        <input name="Phone" type="tel" class="form-control" />
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Password </label>
-                        <input name="PasswordHash" type="password" class="form-control" />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">User Type</label>
-                        <select name="UserTypeId" class="form-select" required>
-                            <option value="">-- Select User Type --</option>
-                            @foreach (var item in ViewBag.UserTypeList)
-                            {
-                                <option value="@item.UserTypeId">@item.TypeName</option>
-                            }
-                        </select>
-                    </div>
-
+<div class="page-header">
+    <div><div class="page-title">Add User</div><div class="page-subtitle">Register a new system user</div></div>
+    <a href="@Url.Action("Index","ManageUsers", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-person-plus"></i> User Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManageUsers", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Full Name <span>*</span></label>
+                    <input type="text" name="FullName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email <span>*</span></label>
+                    <input type="email" name="Email" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password <span>*</span></label>
+                    <input type="password" name="Password" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" name="PhoneNumber" class="form-control" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Role (User Type) <span>*</span></label>
+                    <select name="UserTypeId" class="form-control" required>
+                        <option value="">— Select Role —</option>
+                        @foreach (var t in ViewBag.UserTypeList) { <option value="@t.UserTypeId">@t.TypeName</option> }
+                    </select>
                 </div>
             </div>
-            <!--end::Card Body-->
-            <!--begin::Card Footer-->
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Submit
-                </button>
-                <a href="/AdminArea/ManageUsers/Index" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save User</button>
+                <a href="@Url.Action("Index","ManageUsers", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-            <!--end::Card Footer-->
-        </form>
-        <!--end::Form-->
+        }
     </div>
-    <!--end::Carousel Image Card-->
 </div>
-
-
-
-

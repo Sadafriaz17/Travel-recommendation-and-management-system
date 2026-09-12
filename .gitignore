@@ -1,1 +1,6 @@
 Web.config
+.vs/
+bin/
+obj/
+packages/
+*.user

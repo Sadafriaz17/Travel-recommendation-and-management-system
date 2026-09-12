@@ -1,84 +1,57 @@
-﻿@{
-    ViewBag.Title = "Create Package";
-    var packageTypes = ViewBag.PackageTypes as List<TourwebsiteFYP.DB_data_models.PackageType>;
-    var destinations = ViewBag.Destinations as List<TourwebsiteFYP.DB_data_models.Destination>;
+@{
+    ViewBag.Title = "Add Package";
+    ViewBag.ActiveMenu = "Packages";
+    ViewBag.ActivePage = "Packages";
 }
-
-<div class="col-md-12">
-    <div class="card shadow-sm rounded-4 mb-4">
-        <div class="card-header bg-success text-white">
-            <h5 class="card-title mb-0">Create Package</h5>
-        </div>
-
-        <form enctype="multipart/form-data" method="post" action="/AdminArea/ManagePackages/Create">
-            <div class="card-body">
-                <div class="row g-3">
-
-                    <!-- Package Name -->
-                    <div class="col-md-6">
-                        <label class="form-label">Package Name</label>
-                        <input name="PackageName" type="text" class="form-control" required />
-                    </div>
-
-                    <!-- Description -->
-                    <div class="col-md-6">
-                        <label class="form-label">Description</label>
-                        <textarea name="Description" class="form-control" rows="3" required></textarea>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="col-md-6">
-                        <label class="form-label">Price</label>
-                        <input name="Price" type="number" step="0.01" class="form-control" required />
-                    </div>
-
-                    <!-- Duration -->
-                    <div class="col-md-6">
-                        <label class="form-label">Duration (Days)</label>
-                        <input name="DurationDays" type="number" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">People</label>
-                        <input name="People" type="number" class="form-control" required />
-                    </div>
-
-                    <!-- Package Type from DB -->
-                    <div class="col-md-6">
-                        <label class="form-label">Package Type</label>
-                        <select name="PackageTypeId" class="form-control" required>
-                            <option value="">-- Select Package Type --</option>
-                            @foreach (var type in packageTypes)
-                            {
-                                <option value="@type.PackageTypeId">@type.TypeName</option>
-                            }
-                        </select>
-                    </div>
-
-                    <!-- Destination from DB -->
-                    <div class="col-md-6">
-                        <label class="form-label">Destination</label>
-                        <select name="DestinationId" class="form-control" required>
-                            <option value="">-- Select Destination --</option>
-                            @foreach (var dest in destinations)
-                            {
-                                <option value="@dest.DestinationId">@dest.Name</option>
-                            }
-                        </select>
-                    </div>
-
-
+<div class="page-header">
+    <div><div class="page-title">Add Package</div><div class="page-subtitle">Create a new travel package</div></div>
+    <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-gift"></i> Package Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManagePackages", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Package Name <span>*</span></label>
+                    <input type="text" name="PackageName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select name="PackageTypeId" class="form-control">
+                        <option value="">— Select Type —</option>
+                        @foreach (var t in ViewBag.PackageTypes) { <option value="@t.PackageTypeId">@t.TypeName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <select name="DestinationId" class="form-control">
+                        <option value="">— Select Destination —</option>
+                        @foreach (var d in ViewBag.Destinations) { <option value="@d.DestinationId">@d.Name</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" name="Price" class="form-control" step="0.01" min="0" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (Days)</label>
+                    <input type="number" name="DurationDays" class="form-control" min="1" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">People</label>
+                    <input type="number" name="People" class="form-control" min="1" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4"></textarea>
                 </div>
             </div>
-
-            <!-- Footer -->
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Create
-                </button>
-                <a href="/AdminArea/ManagePackages/Index" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Package</button>
+                <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-        </form>
+        }
     </div>
 </div>

@@ -1,0 +1,42 @@
+@{
+    ViewBag.Title = "Add Itinerary Day";
+    ViewBag.ActiveMenu = "Packages";
+    ViewBag.ActivePage = "Itinerary";
+}
+<div class="page-header">
+    <div><div class="page-title">Add Itinerary Day</div><div class="page-subtitle">Add a daily plan to a package</div></div>
+    <a href="@Url.Action("Index","ManagePackageItenirary", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-calendar-plus"></i> Itinerary Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManagePackageItenirary", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Package <span>*</span></label>
+                    <select name="PackageId" class="form-control" required>
+                        <option value="">— Select Package —</option>
+                        @foreach (var p in ViewBag.PackageList) { <option value="@p.PackageId">@p.PackageName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Day Number <span>*</span></label>
+                    <input type="number" name="DayNumber" class="form-control" min="1" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="Title" class="form-control" placeholder="e.g. Arrival in Paris" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4" placeholder="Activities for the day..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Itinerary Day</button>
+                <a href="@Url.Action("Index","ManagePackageItenirary", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,64 @@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Hotel>
+@{
+    ViewBag.Title = "Manage Hotels";
+    ViewBag.ActiveMenu = "Hotels";
+    ViewBag.ActivePage = "Hotels";
+}
+<div class="page-header">
+    <div><div class="page-title">Hotels</div><div class="page-subtitle">Manage hotel properties</div></div>
+    <a href="@Url.Action("Create","ManageHotels", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Hotel</a>
+</div>
+@if (TempData["SuccessMessage"] != null)
+{ <div class="alert-toast alert-toast-success"><i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+@if (TempData["ErrorMessage"] != null)
+{ <div class="alert-toast alert-toast-error"><i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title"><i class="bi bi-building"></i> All Hotels</div>
+        <span style="font-size:12px;color:var(--text-muted)">@Model.Count() records</span>
+    </div>
+    <div class="admin-card-body-flush">
+        @if (Model.Any())
+        {
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>#</th><th>Hotel Name</th><th>Location</th><th>Rating</th><th>Price/Night</th><th>Package</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td style="font-size:12px;color:var(--text-muted);font-weight:600">#@item.HotelId</td>
+                                <td style="font-weight:700">@(item.HotelName ?? "—")</td>
+                                <td><i class="bi bi-pin-map-fill" style="color:var(--text-muted);font-size:11px;margin-right:4px"></i>@(item.Location ?? "—")</td>
+                                <td>
+                                    @if (item.Rating.HasValue)
+                                    {
+                                        <span class="badge-pill badge-warning"><i class="bi bi-star-fill"></i> @item.Rating?.ToString("F1")</span>
+                                    }
+                                    else { <span style="color:var(--text-faint)">—</span> }
+                                </td>
+                                <td style="font-weight:600">@(item.PricePerNight.HasValue ? "$" + item.PricePerNight?.ToString("N2") : "—")</td>
+                                <td>@(item.Package?.PackageName ?? "—")</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a href="@Url.Action("Edit","ManageHotels", new { area="AdminArea", id=item.HotelId })" class="btn-icon btn-icon-edit"><i class="bi bi-pencil"></i></a>
+                                        <a href="@Url.Action("Delete","ManageHotels", new { area="AdminArea", id=item.HotelId })" class="btn-icon btn-icon-delete" onclick="return confirm('Delete this hotel?')"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-building"></i></div>
+                <h4>No Hotels Found</h4>
+                <p>Add hotel properties to your platform.</p>
+                <a href="@Url.Action("Create","ManageHotels", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Hotel</a>
+            </div>
+        }
+    </div>
+</div>

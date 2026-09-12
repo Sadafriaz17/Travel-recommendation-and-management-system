@@ -1,86 +1,65 @@
-﻿@model TourwebsiteFYP.DB_data_models.Package
-
+@model TourwebsiteFYP.DB_data_models.Package
 @{
     ViewBag.Title = "Edit Package";
-    var packageTypes = ViewBag.PackageTypes as List<TourwebsiteFYP.DB_data_models.PackageType>;
-    var destinations = ViewBag.Destinations as List<TourwebsiteFYP.DB_data_models.Destination>;
+    ViewBag.ActiveMenu = "Packages";
+    ViewBag.ActivePage = "Packages";
 }
-
-<div class="col-md-12">
-    <div class="card shadow-sm rounded-4 mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Edit Package</h5>
-        </div>
-
-        <form enctype="multipart/form-data" method="post" action="/AdminArea/ManagePackages/Edit/@Model.PackageId">
-            <div class="card-body">
-                <div class="row g-3">
-
-                    <!-- Package Name -->
-                    <div class="col-md-6">
-                        <label class="form-label">Package Name</label>
-                        <input name="PackageName" type="text" class="form-control" value="@Model.PackageName" required />
-                    </div>
-
-                    <!-- Description -->
-                    <div class="col-md-6">
-                        <label class="form-label">Description</label>
-                        <textarea name="Description" class="form-control" rows="3" required>@Model.Description</textarea>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="col-md-6">
-                        <label class="form-label">Price</label>
-                        <input name="Price" type="number" step="0.01" class="form-control" value="@Model.Price" required />
-                    </div>
-
-                    <!-- Duration -->
-                    <div class="col-md-6">
-                        <label class="form-label">Duration (Days)</label>
-                        <input name="DurationDays" type="number" class="form-control" value="@Model.DurationDays" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">People</label>
-                        <input name="People" type="number" value="@Model.People" class="form-control" required />
-                    </div>
-
-                    <!-- Package Type from DB -->
-                    <div class="col-md-6">
-                        <label class="form-label">Package Type</label>
-                        <select name="PackageTypeId" class="form-control" required>
-                            <option value="">-- Select Package Type --</option>
-                            @foreach (var type in packageTypes)
-                            {
-                                <option value="@type.PackageTypeId" @(Model.PackageTypeId == type.PackageTypeId ? "selected" : "")>@type.TypeName</option>
-                            }
-                        </select>
-                    </div>
-
-                    <!-- Destination from DB -->
-                    <div class="col-md-6">
-                        <label class="form-label">Destination</label>
-                        <select name="DestinationId" class="form-control" required>
-                            <option value="">-- Select Destination --</option>
-                            @foreach (var dest in destinations)
-                            {
-                                <option value="@dest.DestinationId" @(Model.DestinationId == dest.DestinationId ? "selected" : "")>@dest.Name</option>
-                            }
-                        </select>
-                    </div>
-
-
+<div class="page-header">
+    <div><div class="page-title">Edit Package</div><div class="page-subtitle">Update package #@Model.PackageId</div></div>
+    <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Package Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManagePackages", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <input type="hidden" name="PackageId" value="@Model.PackageId" />
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Package Name <span>*</span></label>
+                    <input type="text" name="PackageName" value="@Model.PackageName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select name="PackageTypeId" class="form-control">
+                        <option value="">— Select Type —</option>
+                        @foreach (var t in ViewBag.PackageTypes) {
+                            string sel = (t.PackageTypeId == Model.PackageTypeId) ? "selected" : "";
+                            <option value="@t.PackageTypeId" @sel>@t.TypeName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <select name="DestinationId" class="form-control">
+                        <option value="">— Select Destination —</option>
+                        @foreach (var d in ViewBag.Destinations) {
+                            string sel = (d.DestinationId == Model.DestinationId) ? "selected" : "";
+                            <option value="@d.DestinationId" @sel>@d.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" name="Price" value="@Model.Price" class="form-control" step="0.01" min="0" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (Days)</label>
+                    <input type="number" name="DurationDays" value="@Model.DurationDays" class="form-control" min="1" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">People</label>
+                    <input type="number" name="People" value="@Model.People" class="form-control" min="1" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
                 </div>
             </div>
-
-            <!-- Footer -->
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle me-1"></i> Save Changes
-                </button>
-                <a href="/AdminArea/ManagePackages/Index" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Package</button>
+                <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-        </form>
+        }
     </div>
 </div>

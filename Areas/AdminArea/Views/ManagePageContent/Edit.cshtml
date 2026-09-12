@@ -1,33 +1,36 @@
-﻿@model TourwebsiteFYP.DB_data_models.PageContent
+@model TourwebsiteFYP.DB_data_models.PageContent
 @{
     ViewBag.Title = "Edit Page Content";
+    ViewBag.ActiveMenu = "PageContent";
 }
-
-<div class="container-fluid mt-4">
-    <div class="card shadow">
-        <div class="card-header bg-warning text-dark">
-            <h4>Edit Page Content</h4>
-        </div>
-        <div class="card-body">
-            <form method="post">
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <div class="mb-3">
-                    <label class="form-label">Page Name</label>
-                    <input type="text" name="PageName" class="form-control" value="@Model.PageName" required />
+<div class="page-header">
+    <div><div class="page-title">Edit Page Content</div><div class="page-subtitle">Update content block #@Model.Id</div></div>
+    <a href="@Url.Action("Index","ManagePageContent", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Content Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManagePageContent", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Page Name <span>*</span></label>
+                    <input type="text" name="PageName" value="@Model.PageName" class="form-control" required />
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Title</label>
-                    <input type="text" name="pageTitle" class="form-control" value="@Model.pageTitle" required />
+                <div class="form-group">
+                    <label class="form-label">Page Title <span>*</span></label>
+                    <input type="text" name="pageTitle" value="@Model.pageTitle" class="form-control" required />
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Subtitle</label>
-                    <textarea name="pageSubtitle" class="form-control">@Model.pageSubtitle</textarea>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Page Subtitle</label>
+                    <textarea name="pageSubtitle" class="form-control" rows="4">@Model.pageSubtitle</textarea>
                 </div>
-                <button type="submit" class="btn btn-success">Update</button>
-                <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
-            </form>
-        </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Content</button>
+                <a href="@Url.Action("Index","ManagePageContent", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
     </div>
 </div>
-
-

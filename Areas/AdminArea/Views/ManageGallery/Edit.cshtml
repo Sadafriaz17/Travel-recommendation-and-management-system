@@ -1,29 +1,61 @@
-﻿@model TourwebsiteFYP.DB_data_models.Gallery
+@model TourwebsiteFYP.DB_data_models.Gallery
 @{
-    ViewBag.Title = "Edit Gallery";
+    ViewBag.Title = "Edit Gallery Image";
+    ViewBag.ActiveMenu = "Gallery";
 }
-
-<div class="card mt-4">
-    <div class="card-header">
-        <span>Edit Gallery Image</span>
-    </div>
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data" action="/AdminArea/ManageGallery/Edit/@Model.GalleryId">
+<div class="page-header">
+    <div><div class="page-title">Edit Gallery Image</div><div class="page-subtitle">Update item #@Model.GalleryId</div></div>
+    <a href="@Url.Action("Index","ManageGallery", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Image Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManageGallery", new { area = "AdminArea" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
             <input type="hidden" name="GalleryId" value="@Model.GalleryId" />
-
-            <div class="mb-3">
-                <label class="form-label">Title</label>
-                <input type="text" name="Title" value="@Model.Title" class="form-control" />
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="Title" value="@Model.Title" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Caption</label>
+                    <input type="text" name="Caption" value="@Model.Caption" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <select name="DestinationId" class="form-control">
+                        <option value="">— None —</option>
+                        @foreach (var d in ViewBag.DestinationList) {
+                            string sel = (d.DestinationId == Model.DestinationId) ? "selected" : "";
+                            <option value="@d.DestinationId" @sel>@d.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product</label>
+                    <select name="ProductId" class="form-control">
+                        <option value="">— None —</option>
+                        @foreach (var p in ViewBag.ProductList) {
+                            string sel = (p.ProductId == Model.ProductId) ? "selected" : "";
+                            <option value="@p.ProductId" @sel>@p.ProductName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">New Image</label>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);margin-bottom:8px" onerror="this.style.display='none'" />
+                    }
+                    <input type="file" name="img" class="form-control" accept="image/*" />
+                    <span class="form-hint">Leave empty to keep current image.</span>
+                </div>
             </div>
-            <div class="col-md-6">
-                <label class="form-label">Upload Image</label>
-                <input type="file" name="img" class="form-control" />
-
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Image</button>
+                <a href="@Url.Action("Index","ManageGallery", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-
-            <button type="submit" class="btn btn-success">Update</button>
-            <a href="/AdminArea/ManageGallery/Index" class="btn btn-secondary">Cancel</a>
-        </form>
+        }
     </div>
 </div>
-

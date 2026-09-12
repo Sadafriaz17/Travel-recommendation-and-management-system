@@ -1,485 +1,54 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.PackageType>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.PackageType>
 @{
-    ViewBag.Title = "Package Types";
+    ViewBag.Title = "Manage Package Types";
+    ViewBag.ActiveMenu = "Packages";
+    ViewBag.ActivePage = "PackageTypes";
 }
-
-<style>
-    /* ============================================
-       NEXVOY ADMIN - COMPLETE FIX FOR TABLE VISIBILITY
-       Version: 6.0 - NO SIDEBAR OVERLAP
-       ============================================ */
-
-    /* OVERRIDE LAYOUT STYLES - Critical fixes */
-    .app-wrapper {
-        display: flex !important;
-        min-height: 100vh !important;
-        position: relative !important;
-    }
-
-    /* Fix sidebar - keep it on left */
-    .app-sidebar {
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: var(--sidebar-width, 260px) !important;
-        height: 100vh !important;
-        z-index: 100 !important;
-        background: var(--bg-deep) !important;
-    }
-
-    /* Fix main content - MUST have margin-left to avoid sidebar */
-    .app-main {
-        margin-left: var(--sidebar-width, 260px) !important;
-        margin-top: var(--header-height, 64px) !important;
-        padding: 0 !important;
-        min-height: calc(100vh - var(--header-height, 64px) - 44px) !important;
-        width: calc(100% - var(--sidebar-width, 260px)) !important;
-        position: relative !important;
-        overflow-x: auto !important;
-        background: var(--bg-void) !important;
-    }
-
-    /* Fix header - align with main content */
-    .app-header {
-        left: var(--sidebar-width, 260px) !important;
-        width: calc(100% - var(--sidebar-width, 260px)) !important;
-        position: fixed !important;
-        top: 0 !important;
-        z-index: 90 !important;
-    }
-
-    /* Fix footer */
-    .app-footer {
-        left: var(--sidebar-width, 260px) !important;
-        width: calc(100% - var(--sidebar-width, 260px)) !important;
-        position: fixed !important;
-        bottom: 0 !important;
-        z-index: 89 !important;
-    }
-
-    /* Header section - Top aligned */
-    .app-content-header {
-        margin: 0 !important;
-        padding: 16px 24px 12px 24px !important;
-        background: var(--bg-deep);
-        border-bottom: 1px solid var(--border);
-        width: 100% !important;
-    }
-
-    .container-fluid {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .row {
-        margin: 0 !important;
-        padding: 0 !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-    }
-
-    [class*="col-"] {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    .app-content-header h3 {
-        font-family: var(--font-display);
-        font-weight: 700;
-        font-size: 1.3rem;
-        background: linear-gradient(135deg, #fff, var(--accent-cyan));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .breadcrumb {
-        background: transparent;
-        padding: 0;
-        margin: 0;
-        justify-content: flex-end;
-    }
-
-    .breadcrumb-item {
-        color: var(--text-muted);
-        font-size: 0.75rem;
-    }
-
-        .breadcrumb-item.active {
-            color: var(--text-secondary);
-        }
-
-    /* Content area */
-    .app-content {
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
-    }
-
-    /* Card styles */
-    .card {
-        background: var(--bg-card) !important;
-        border: none !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        margin: 0 !important;
-        width: 100% !important;
-    }
-
-    .card-header {
-        background: var(--bg-deep) !important;
-        border-bottom: 1px solid var(--border) !important;
-        color: var(--text-primary) !important;
-        font-family: var(--font-display);
-        font-weight: 600;
-        font-size: 0.9rem;
-        padding: 14px 24px !important;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-        .card-header span i {
-            color: var(--accent-cyan);
-            margin-right: 8px;
-        }
-
-    .card-body {
-        background: var(--bg-deep);
-        padding: 20px 24px !important;
-        overflow-x: auto !important;
-    }
-
-    /* TABLE - Horizontal scroll fix */
-    .table-responsive {
-        width: 100%;
-        overflow-x: auto !important;
-        overflow-y: visible !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: block !important;
-    }
-
-    /* Force table to have minimum width to show all columns */
-    .table {
-        width: 100% !important;
-        min-width: 800px !important;
-        margin: 0 !important;
-        border-collapse: collapse;
-        table-layout: auto !important;
-    }
-
-        /* Table Header */
-        .table thead th {
-            background: rgba(13, 24, 37, 0.95);
-            color: var(--accent-cyan);
-            font-family: var(--font-display);
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 12px 12px;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        /* Table Rows */
-        .table tbody tr {
-            background: rgba(6, 12, 20, 0.5);
-            border-bottom: 1px solid rgba(0, 221, 180, 0.05);
-        }
-
-        .table tbody td {
-            padding: 12px 12px;
-            vertical-align: middle;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-    .table-hover tbody tr:hover {
-        background: var(--bg-hover);
-    }
-
-        .table-hover tbody tr:hover td {
-            color: var(--text-primary);
-        }
-
-    /* Image Thumbnails */
-    .package-type-img {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        background: var(--bg-void);
-        display: block;
-    }
-
-    /* Buttons */
-    .btn {
-        border-radius: 20px !important;
-        font-family: var(--font-body);
-        font-size: 0.7rem;
-        font-weight: 600;
-        padding: 5px 12px !important;
-        transition: all 0.2s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        text-decoration: none;
-    }
-
-        .btn i {
-            font-size: 0.75rem;
-        }
-
-    .btn-warning {
-        background: rgba(255, 193, 7, 0.12);
-        color: #ffc107;
-        border: 1px solid rgba(255, 193, 7, 0.3);
-    }
-
-        .btn-warning:hover {
-            background: #ffc107;
-            color: #0a1220;
-        }
-
-    .btn-danger {
-        background: rgba(220, 53, 69, 0.12);
-        color: #ff6b7c;
-        border: 1px solid rgba(220, 53, 69, 0.3);
-    }
-
-        .btn-danger:hover {
-            background: #dc3545;
-            color: #fff;
-        }
-
-    .btn-success {
-        background: linear-gradient(135deg, rgba(0, 221, 180, 0.15), rgba(124, 92, 252, 0.15));
-        color: var(--accent-cyan);
-        border: 1px solid var(--border-glow);
-    }
-
-        .btn-success:hover {
-            background: var(--accent-grad);
-            color: var(--bg-void);
-        }
-
-    /* Alert Messages */
-    .alert {
-        border-radius: 12px;
-        border: none;
-        background: rgba(13, 24, 37, 0.95);
-        padding: 10px 16px;
-        margin-bottom: 16px;
-        border-left: 3px solid;
-        font-size: 0.8rem;
-    }
-
-    .alert-success {
-        border-left-color: var(--accent-cyan);
-        background: rgba(0, 221, 180, 0.1);
-        color: var(--accent-cyan);
-    }
-
-    .alert-danger {
-        border-left-color: #dc3545;
-        background: rgba(220, 53, 69, 0.1);
-        color: #ff8a9a;
-    }
-
-    .alert .btn-close {
-        filter: invert(1) brightness(0.8);
-        opacity: 0.5;
-        font-size: 0.7rem;
-    }
-
-    /* Scrollbar styling */
-    .table-responsive::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    .table-responsive::-webkit-scrollbar-track {
-        background: var(--bg-surface);
-        border-radius: 3px;
-    }
-
-    .table-responsive::-webkit-scrollbar-thumb {
-        background: var(--accent-cyan);
-        border-radius: 3px;
-    }
-
-    /* Responsive */
-    @@media (max-width: 992px) {
-        .app-main {
-            margin-left: 0 !important;
-            width: 100% !important;
-        }
-
-        .app-header {
-            left: 0 !important;
-            width: 100% !important;
-        }
-
-        .app-footer {
-            left: 0 !important;
-            width: 100% !important;
-        }
-
-        .card-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .row {
-            flex-direction: column;
-            align-items: flex-start !important;
-            gap: 8px;
-        }
-
-        .breadcrumb {
-            justify-content: flex-start;
-        }
-    }
-
-    @@media (max-width: 768px) {
-        .app-content-header {
-            padding: 12px 16px !important;
-        }
-
-        .card-body {
-            padding: 12px 16px !important;
-        }
-
-        .card-header {
-            padding: 12px 16px !important;
-        }
-
-        .table thead th {
-            padding: 8px 10px;
-            font-size: 0.65rem;
-        }
-
-        .table tbody td {
-            padding: 8px 10px;
-            font-size: 0.7rem;
-        }
-
-        .btn {
-            padding: 3px 8px !important;
-            font-size: 0.6rem;
-        }
-
-        .package-type-img {
-            width: 32px;
-            height: 32px;
-        }
-    }
-</style>
-
-<!-- Header -->
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3>Package Types Table</h3>
-            </div>
-            <div class="col-sm-6">
-                <div class="breadcrumb">
-                    <span class="breadcrumb-item active">Package Types Table Detail</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="page-header">
+    <div><div class="page-title">Package Types</div><div class="page-subtitle">Manage categories for packages</div></div>
+    <a href="@Url.Action("Create","ManagePackageType", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Type</a>
 </div>
-
-<!-- Content -->
-<div class="app-content">
-    <div class="container-fluid">
-        <div class="card">
-            <div class="card-header">
-                <span><i class="bi bi-table me-2"></i> Manage Package Types</span>
-                <a href="/AdminArea/ManagePackageType/Create" class="btn btn-success">
-                    <i class="bi bi-plus-circle me-1"></i>Create
-                </a>
-            </div>
-            <div class="card-body">
-                <!-- Messages -->
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        @TempData["SuccessMessage"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-                @if (TempData["ErrorMessage"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        @TempData["ErrorMessage"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+@if (TempData["SuccessMessage"] != null)
+{ <div class="alert-toast alert-toast-success"><i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+@if (TempData["ErrorMessage"] != null)
+{ <div class="alert-toast alert-toast-error"><i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title"><i class="bi bi-tags"></i> All Package Types</div>
+        <span style="font-size:12px;color:var(--text-muted)">@Model.Count() records</span>
+    </div>
+    <div class="admin-card-body-flush">
+        @if (Model.Any())
+        {
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>#ID</th><th>Type Name</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
                             <tr>
-                                <th>Type Id</th>
-                                <th>Type Name</th>
-                                <th>Image</th>
-                                <th>Created At</th>
-                                <th style="min-width: 160px;">Actions</th>
+                                <td style="font-size:12px;color:var(--text-muted);font-weight:600">#@item.PackageTypeId</td>
+                                <td style="font-weight:600">@item.TypeName</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a href="@Url.Action("Edit","ManagePackageType", new { area="AdminArea", id=item.PackageTypeId })" class="btn-icon btn-icon-edit"><i class="bi bi-pencil"></i></a>
+                                        <a href="@Url.Action("Delete","ManagePackageType", new { area="AdminArea", id=item.PackageTypeId })" class="btn-icon btn-icon-delete" onclick="return confirm('Delete this package type?')"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.PackageTypeId</td>
-                                    <td>@(item.TypeName ?? "N/A")</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                        {
-                                            <img src="@item.ImageUrl" alt="@item.TypeName" class="package-type-img" />
-                                        }
-                                        else
-                                        {
-                                            <span style="color: var(--text-muted); font-size: 0.7rem;">—</span>
-                                        }
-                                    </td>
-                                
-                                    <td>
-                                        <a href="@Url.Action("Edit", "ManagePackageType", new { id = item.PackageTypeId })"
-                                           class="btn btn-warning btn-sm">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                        </a>
-                                        <a href="@Url.Action("Delete", "ManagePackageType", new { id = item.PackageTypeId })"
-                                           class="btn btn-danger btn-sm"
-                                           onclick="return confirm('Are you sure you want to delete this package type?');">
-                                            <i class="bi bi-trash"></i> Delete
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-tags"></i></div>
+                <h4>No Package Types</h4>
+                <p>Add package categories (e.g. Adventure, Honeymoon).</p>
+                <a href="@Url.Action("Create","ManagePackageType", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Type</a>
+            </div>
+        }
     </div>
 </div>

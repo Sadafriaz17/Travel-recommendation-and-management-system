@@ -1,0 +1,82 @@
+@model TourwebsiteFYP.DB_data_models.Booking
+@{
+    ViewBag.Title = "Edit Booking";
+    ViewBag.ActiveMenu = "Bookings";
+}
+
+<div class="page-header">
+    <div><div class="page-title">Edit Booking</div><div class="page-subtitle">Update booking #@Model.BookingId</div></div>
+    <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Booking Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManageBookings", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
+            <input type="hidden" name="BookingId" value="@Model.BookingId" />
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Customer <span>*</span></label>
+                    <select name="UserId" class="form-control" required>
+                        <option value="">— Select Customer —</option>
+                        @foreach (var u in ViewBag.UserList) {
+                            string sel = (u.UserId == Model.UserId) ? "selected" : "";
+                            <option value="@u.UserId" @sel>@u.FullName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Package</label>
+                    <select name="PackageId" class="form-control">
+                        <option value="">— Select Package —</option>
+                        @foreach (var p in ViewBag.PackageList) {
+                            string sel = (p.PackageId == Model.PackageId) ? "selected" : "";
+                            <option value="@p.PackageId" @sel>@p.PackageName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <select name="DestinationId" class="form-control">
+                        <option value="">— Select Destination —</option>
+                        @foreach (var d in ViewBag.DestinationList) {
+                            string sel = (d.DestinationId == Model.DestinationId) ? "selected" : "";
+                            <option value="@d.DestinationId" @sel>@d.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select name="Status" class="form-control">
+                        @foreach (var s in new[]{"Pending","Approved","Rejected","Cancelled"}) {
+                            string sel = (s == Model.Status) ? "selected" : "";
+                            <option value="@s" @sel>@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="Email" value="@Model.Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Total Amount <span>*</span></label>
+                    <input type="number" name="TotalAmount" value="@Model.TotalAmount" class="form-control" step="0.01" min="0" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Booking Date</label>
+                    <input type="date" name="BookingDate" value="@(Model.BookingDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Special Requests</label>
+                    <textarea name="SpecialRequest" class="form-control" rows="3">@Model.SpecialRequest</textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Booking</button>
+                <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>

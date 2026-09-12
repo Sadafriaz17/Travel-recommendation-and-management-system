@@ -1,0 +1,46 @@
+@{
+    ViewBag.Title = "Add Hotel";
+    ViewBag.ActiveMenu = "Hotels";
+    ViewBag.ActivePage = "Hotels";
+}
+<div class="page-header">
+    <div><div class="page-title">Add Hotel</div><div class="page-subtitle">Register a new hotel property</div></div>
+    <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-building-add"></i> Hotel Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManageHotels", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Hotel Name <span>*</span></label>
+                    <input type="text" name="HotelName" class="form-control" placeholder="e.g. Grand Serena Hotel" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="Location" class="form-control" placeholder="City, Country" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rating (0–5)</label>
+                    <input type="number" name="Rating" class="form-control" step="0.1" min="0" max="5" placeholder="4.5" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price Per Night ($)</label>
+                    <input type="number" name="PricePerNight" class="form-control" step="0.01" min="0" placeholder="0.00" />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Associated Package</label>
+                    <select name="PackageId" class="form-control">
+                        <option value="">— None —</option>
+                        @foreach (var p in ViewBag.PackageList) { <option value="@p.PackageId">@p.PackageName</option> }
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Hotel</button>
+                <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>

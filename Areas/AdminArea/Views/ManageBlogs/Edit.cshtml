@@ -1,36 +1,65 @@
-﻿
 @model TourwebsiteFYP.DB_data_models.Blog
-
 @{
-    ViewBag.Title = "Edit Blog";
+    ViewBag.Title = "Edit Blog Post";
+    ViewBag.ActiveMenu = "Blogs";
 }
 
-<div class="card mt-4">
-    <div class="card-header" style="background-color:paleturquoise">Edit Blog</div>
-    <div class="card-body">
-        @using (Html.BeginForm("Edit", "ManageBlogs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+<div class="page-header">
+    <div>
+        <div class="page-title">Edit Blog Post</div>
+        <div class="page-subtitle">Update blog #@Model.BlogId</div>
+    </div>
+    <a href="@Url.Action("Index","ManageBlogs", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">
+        <i class="bi bi-arrow-left"></i> Back to Blogs
+    </a>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title"><i class="bi bi-pencil-square"></i> Blog Details</div>
+    </div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit", "ManageBlogs", new { area = "AdminArea" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
-            @Html.HiddenFor(m => m.BlogId)
-
-            <div class="form-group">
-                <label>Title</label>
-                @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+            @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
+            <input type="hidden" name="BlogId" value="@Model.BlogId" />
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Title <span>*</span></label>
+                    <input type="text" name="Title" value="@Model.Title" class="form-control" required />
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Content</label>
+                    <textarea name="Content" class="form-control" rows="6">@Model.Content</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Author (User)</label>
+                    <select name="AuthorId" class="form-control">
+                        <option value="">— Select Author —</option>
+                        @if (ViewBag.UserList != null)
+                        {
+                            foreach (var u in ViewBag.UserList)
+                            {
+                                string sel = (u.UserId == Model.AuthorId) ? "selected" : "";
+                                <option value="@u.UserId" @sel>@u.FullName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Featured Image</label>
+                    @if (!string.IsNullOrEmpty(Model.FeaturedImage))
+                    {
+                        <img src="@Model.FeaturedImage" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);margin-bottom:8px" onerror="this.style.display='none'" />
+                    }
+                    <input type="file" name="img" class="form-control" accept="image/*" />
+                    <span class="form-hint">Leave empty to keep current image.</span>
+                </div>
             </div>
-            <div class="form-group mt-2">
-                <label>Content</label>
-                @Html.TextAreaFor(m => m.Content, new { @class = "form-control", rows = 6 })
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Post</button>
+                <a href="@Url.Action("Index","ManageBlogs", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-            <div class="col-md-6">
-                <label class="form-label">Upload Image</label>
-                <input type="file" name="img" class="form-control" />
-
-            </div>
-            <div class="form-group mt-2">
-                <label>Author Id</label>
-                @Html.TextBoxFor(m => m.AuthorId, new { @class = "form-control" })
-            </div>
-            <button type="submit" class="btn btn-success mt-3">Update</button>
-            <a href="/AdminArea/ManageBlogs" class="btn btn-secondary mt-3">Cancel</a>
         }
     </div>
 </div>

@@ -1,48 +1,62 @@
-﻿@model TourwebsiteFYP.DB_data_models.Payment
+@model TourwebsiteFYP.DB_data_models.Payment
 @{
     ViewBag.Title = "Edit Payment";
+    ViewBag.ActiveMenu = "Payments";
+    ViewBag.ActivePage = "PaymentList";
 }
-
-<div class="col-md-12">
-    <div class="card shadow-sm rounded-4 mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Edit Payment</h5>
-        </div>
-
-        <form method="post" action="@Url.Action("Edit", "ManagePayments", new { area = "AdminArea" })">
-            @Html.HiddenFor(m => m.PaymentId)
-
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Booking ID</label>
-                        @Html.TextBoxFor(m => m.BookingId, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Amount</label>
-                        @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", type = "number", step = "0.01" })
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Payment Method</label>
-                        @Html.TextBoxFor(m => m.PaymentMethod, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Status</label>
-                        @Html.DropDownListFor(m => m.Status, new SelectList(new[] { "Pending", "Completed", "Failed" }, Model.Status), new { @class = "form-control" })
-                    </div>
+<div class="page-header">
+    <div><div class="page-title">Edit Payment</div><div class="page-subtitle">Update payment #@Model.PaymentId</div></div>
+    <a href="@Url.Action("Index","ManagePayments", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Payment Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit","ManagePayments", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <input type="hidden" name="PaymentId" value="@Model.PaymentId" />
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Booking <span>*</span></label>
+                    <select name="BookingId" class="form-control" required>
+                        <option value="">— Select Booking —</option>
+                        @foreach (var b in ViewBag.BookingList) {
+                            string sel = (b.BookingId == Model.BookingId) ? "selected" : "";
+                            <option value="@b.BookingId" @sel>Booking #@b.BookingId</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Payment Type <span>*</span></label>
+                    <select name="PaymentTypeId" class="form-control" required>
+                        <option value="">— Select Method —</option>
+                        @foreach (var t in ViewBag.PaymentTypeList) {
+                            string sel = (t.PaymentTypeId == Model.PaymentTypeId) ? "selected" : "";
+                            <option value="@t.PaymentTypeId" @sel>@t.TypeName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Method Name (Optional)</label>
+                    <input type="text" name="PaymentMethod" value="@Model.PaymentMethod" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount ($) <span>*</span></label>
+                    <input type="number" name="Amount" value="@Model.Amount" class="form-control" step="0.01" min="0" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select name="Status" class="form-control">
+                        @foreach (var s in new[]{"Completed","Pending","Failed","Refunded"}) {
+                            string sel = (s == Model.Status) ? "selected" : "";
+                            <option value="@s" @sel>@s</option>
+                        }
+                    </select>
                 </div>
             </div>
-
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Update
-                </button>
-                <a href="@Url.Action("Index", "ManagePayments", new { area = "AdminArea" })" class="btn btn-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                </a>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Payment</button>
+                <a href="@Url.Action("Index","ManagePayments", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
             </div>
-        </form>
+        }
     </div>
 </div>
-
-

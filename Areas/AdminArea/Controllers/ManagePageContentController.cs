@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
 using TourwebsiteFYP.Filter;
@@ -9,73 +8,69 @@ using TourwebsiteFYP.Filter;
 namespace TourwebsiteFYP.Areas.AdminArea.Controllers
 {
     [SessionAuthFilter]
-    public class    ManagePageContentController : Controller
+    public class ManagePageContentController : Controller
     {
         private Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // GET: AdminArea/ManagePageContent
         public ActionResult Index()
         {
-            var contents = _context.PageContents.ToList();
-            return View(contents);
+            ViewBag.ActiveMenu = "PageContent";
+            var content = _context.PageContents.ToList();
+            return View(content);
         }
 
-        // GET: Create
         public ActionResult Create()
         {
+            ViewBag.ActiveMenu = "PageContent";
             return View();
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Create(PageContent model)
         {
             model.CreatedAt = DateTime.Now;
-            if (ModelState.IsValid)
-            {
-                _context.PageContents.Add(model);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(model);
+            _context.PageContents.Add(model);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Page content added successfully!";
+            return RedirectToAction("Index");
         }
 
-        // GET: Edit
         public ActionResult Edit(int id)
         {
-
+            ViewBag.ActiveMenu = "PageContent";
             var content = _context.PageContents.Find(id);
             if (content == null) return HttpNotFound();
             return View(content);
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Edit(PageContent model)
         {
-            if (ModelState.IsValid)
+            var existing = _context.PageContents.Find(model.Id);
+            if (existing != null)
             {
-                var existing = _context.PageContents.Find(model.Id);
-                if (existing == null) return HttpNotFound();
-
                 existing.PageName = model.PageName;
                 existing.pageTitle = model.pageTitle;
                 existing.pageSubtitle = model.pageSubtitle;
+                existing.CreatedAt = DateTime.Now;
                 _context.SaveChanges();
-
-                return RedirectToAction("Index");
+                TempData["SuccessMessage"] = "Page content updated successfully!";
             }
-            return View(model);
+            return RedirectToAction("Index");
         }
 
-        // GET: Delete
         public ActionResult Delete(int id)
         {
-            var data = _context.PageContents.Find(id);
-            _context.PageContents.Remove(data);
-            _context.SaveChanges();
-            ViewBag.Messsage = "Record Delete Successfully";
-            return RedirectToAction("index");
+            var content = _context.PageContents.Find(id);
+            if (content != null)
+            {
+                _context.PageContents.Remove(content);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Page content deleted successfully!";
+            }
+            return RedirectToAction("Index");
         }
-
-       
     }
 }
