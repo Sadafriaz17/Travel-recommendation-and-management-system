@@ -23,8 +23,7 @@ namespace TourwebsiteFYP.DB_data_models
         public string Accommodation { get; set; }
         public string MealsProvided { get; set; }
         public string Location { get; set; }
-
-
+    
         public virtual Package Package { get; set; }
     }
 }

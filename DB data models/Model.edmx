@@ -133,6 +133,11 @@
           <Property Name="PackageId" Type="int" Nullable="false" />
           <Property Name="DayNumber" Type="int" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="200" />
+          <Property Name="ActivityDescription" Type="nvarchar(max)" />
+          <Property Name="Accommodation" Type="nvarchar" MaxLength="200" />
+          <Property Name="MealsProvided" Type="nvarchar" MaxLength="100" />
+          <Property Name="Location" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="PackageType">
           <Key>
@@ -186,6 +191,10 @@
           <Property Name="ImageUrl3" Type="nvarchar(max)" />
           <Property Name="ImageUrl4" Type="nvarchar(max)" />
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="VendorId" Type="int" />
+          <Property Name="Rating" Type="decimal" Precision="2" Scale="1" Nullable="false" />
+          <Property Name="ReviewCount" Type="int" Nullable="false" />
+          <Property Name="StockStatus" Type="nvarchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductType">
           <Key>
@@ -226,6 +235,18 @@
           </Key>
           <Property Name="UserTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TypeName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="VendorId" />
+          </Key>
+          <Property Name="VendorId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VendorName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="150" />
+          <Property Name="LogoIcon" Type="nvarchar" MaxLength="10" />
+          <Property Name="Rating" Type="decimal" Precision="2" Scale="1" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
         </EntityType>
         <Association Name="FK__Blog__AuthorId__60A75C0F">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -547,6 +568,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Product_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="Product" Type="Self.Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="VendorId" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="VendorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="FYP_DatabaseModelStoreContainer">
           <EntitySet Name="Blog" EntityType="Self.Blog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Booking" EntityType="Self.Booking" Schema="dbo" store:Type="Tables" />
@@ -568,6 +601,7 @@
           <EntitySet Name="Review" EntityType="Self.Review" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserType" EntityType="Self.UserType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__Blog__AuthorId__60A75C0F" Association="Self.FK__Blog__AuthorId__60A75C0F">
             <End Role="User" EntitySet="User" />
             <End Role="Blog" EntitySet="Blog" />
@@ -671,6 +705,10 @@
           <AssociationSet Name="FK_Payment_PaymentType" Association="Self.FK_Payment_PaymentType">
             <End Role="PaymentType" EntitySet="PaymentType" />
             <End Role="Payment" EntitySet="Payment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_Vendor" Association="Self.FK_Product_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Product" EntitySet="Product" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -801,6 +839,11 @@
           <AssociationSet Name="FK__PackageIt__Packa__1CBC4616" Association="FYP_DatabaseModel.FK__PackageIt__Packa__1CBC4616">
             <End Role="Package" EntitySet="Packages" />
             <End Role="PackageItinerary" EntitySet="PackageItineraries" />
+          </AssociationSet>
+          <EntitySet Name="Vendors" EntityType="FYP_DatabaseModel.Vendor" />
+          <AssociationSet Name="FK_Product_Vendor" Association="FYP_DatabaseModel.FK_Product_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="Product" EntitySet="Products" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Blog">
@@ -957,6 +1000,11 @@
           <NavigationProperty Name="Galleries" Relationship="FYP_DatabaseModel.FK__Gallery__Product__66603565" FromRole="Product" ToRole="Gallery" />
           <NavigationProperty Name="ProductType" Relationship="FYP_DatabaseModel.FK__Product__Product__6A30C649" FromRole="Product" ToRole="ProductType" />
           <NavigationProperty Name="Reviews" Relationship="FYP_DatabaseModel.FK__Review__ProductI__6C190EBB" FromRole="Product" ToRole="Review" />
+          <Property Name="VendorId" Type="Int32" />
+          <Property Name="Rating" Type="Decimal" Nullable="false" Precision="2" Scale="1" />
+          <Property Name="ReviewCount" Type="Int32" Nullable="false" />
+          <Property Name="StockStatus" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Vendor" Relationship="FYP_DatabaseModel.FK_Product_Vendor" FromRole="Product" ToRole="Vendor" />
         </EntityType>
         <EntityType Name="ProductType">
           <Key>
@@ -1330,6 +1378,11 @@
           <Property Name="DayNumber" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Package" Relationship="FYP_DatabaseModel.FK__PackageIt__Packa__1CBC4616" FromRole="PackageItinerary" ToRole="Package" />
+          <Property Name="Title" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ActivityDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Accommodation" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MealsProvided" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Location" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK__Flights__Package__160F4887">
           <End Type="FYP_DatabaseModel.Package" Role="Package" Multiplicity="1">
@@ -1394,6 +1447,31 @@
             </Principal>
             <Dependent Role="PackageItinerary">
               <PropertyRef Name="PackageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="VendorId" />
+          </Key>
+          <Property Name="VendorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VendorName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Location" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="LogoIcon" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Rating" Type="Decimal" Nullable="false" Precision="2" Scale="1" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Products" Relationship="FYP_DatabaseModel.FK_Product_Vendor" FromRole="Vendor" ToRole="Product" />
+        </EntityType>
+        <Association Name="FK_Product_Vendor">
+          <End Type="FYP_DatabaseModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="FYP_DatabaseModel.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="VendorId" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="VendorId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1525,6 +1603,10 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="FYP_DatabaseModel.Product">
               <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="StockStatus" ColumnName="StockStatus" />
+                <ScalarProperty Name="ReviewCount" ColumnName="ReviewCount" />
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="ImageUrl4" ColumnName="ImageUrl4" />
                 <ScalarProperty Name="ImageUrl3" ColumnName="ImageUrl3" />
@@ -1638,10 +1720,28 @@
           <EntitySetMapping Name="PackageItineraries">
             <EntityTypeMapping TypeName="FYP_DatabaseModel.PackageItinerary">
               <MappingFragment StoreEntitySet="PackageItineraries">
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="MealsProvided" ColumnName="MealsProvided" />
+                <ScalarProperty Name="Accommodation" ColumnName="Accommodation" />
+                <ScalarProperty Name="ActivityDescription" ColumnName="ActivityDescription" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="DayNumber" ColumnName="DayNumber" />
                 <ScalarProperty Name="PackageId" ColumnName="PackageId" />
                 <ScalarProperty Name="ItineraryId" ColumnName="ItineraryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vendors">
+            <EntityTypeMapping TypeName="FYP_DatabaseModel.Vendor">
+              <MappingFragment StoreEntitySet="Vendor">
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="LogoIcon" ColumnName="LogoIcon" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

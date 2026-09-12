@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="8ebddb65269d41ceaa1a8fc3c1ac2eec" Name="Diagram1" ZoomLevel="95" ShowGrid="false">
+      <Diagram DiagramId="8ebddb65269d41ceaa1a8fc3c1ac2eec" Name="Diagram1" ZoomLevel="80" ShowGrid="false">
         <EntityTypeShape EntityType="FYP_DatabaseModel.Blog" Width="1.5" PointX="7.5" PointY="22.5" />
         <EntityTypeShape EntityType="FYP_DatabaseModel.BookingDetail" Width="1.5" PointX="9.75" PointY="10.125" />
         <EntityTypeShape EntityType="FYP_DatabaseModel.Destination" Width="1.5" PointX="3" PointY="14" />
@@ -51,6 +51,8 @@
         <AssociationConnector Association="FYP_DatabaseModel.FK_Hotels_MainImage" />
         <AssociationConnector Association="FYP_DatabaseModel.FK_Hotels_Package" />
         <AssociationConnector Association="FYP_DatabaseModel.FK__PackageIt__Packa__1CBC4616" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Vendor" Width="1.5" PointX="3.75" PointY="0.875" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Product_Vendor" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

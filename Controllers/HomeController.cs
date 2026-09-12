@@ -26,5 +26,12 @@ namespace TourwebsiteFYP.Controllers
 
             return View();
         }
+
+        public ActionResult Services()
+        {
+            ViewBag.Message = "Your application services page.";
+
+            return View();
+        }
     }
 }

@@ -271,11 +271,11 @@
     <Compile Include="Controllers\DestinationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\LogoutController.cs" />
     <Compile Include="Controllers\PackageController.cs" />
     <Compile Include="Controllers\PackingListGeneratorController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\RecommendationAIController.cs" />
-    <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\SignupController.cs" />
     <Compile Include="Controllers\VendorMarketPlaceController.cs" />
     <Compile Include="DB data models\Blog.cs">
@@ -353,10 +353,14 @@
     <Compile Include="DB data models\UserType.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="DB data models\Vendor.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="Filter\SessionAuthFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1156,9 +1160,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\login\Index.cshtml" />
     <Content Include="Views\signup\Index.cshtml" />
-    <Content Include="Views\navbar\Index.cshtml" />
-    <Content Include="Views\navbar\pagecontent.cshtml" />
-    <Content Include="Views\Services\Index.cshtml" />
     <Content Include="Views\Destination\Index.cshtml" />
     <Content Include="Views\Destination\HomepageDestination.cshtml" />
     <Content Include="Views\Package\Index.cshtml" />
@@ -1170,6 +1171,7 @@
     <Content Include="Views\VendorMarketPlace\Index.cshtml" />
     <Content Include="Views\PackingListGenerator\Index.cshtml" />
     <Content Include="Views\RecommendationAI\Index.cshtml" />
+    <Content Include="Views\Home\Services.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1181,6 +1183,7 @@
     <Folder Include="Images\" />
     <Folder Include="Views\Dashborad\" />
     <Folder Include="Views\Default\" />
+    <Folder Include="Views\Logout\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

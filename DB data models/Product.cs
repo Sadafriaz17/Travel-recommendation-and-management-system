@@ -32,6 +32,10 @@ namespace TourwebsiteFYP.DB_data_models
         public string ImageUrl3 { get; set; }
         public string ImageUrl4 { get; set; }
         public System.DateTime CreatedAt { get; set; }
+        public Nullable<int> VendorId { get; set; }
+        public decimal Rating { get; set; }
+        public int ReviewCount { get; set; }
+        public string StockStatus { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
@@ -40,5 +44,6 @@ namespace TourwebsiteFYP.DB_data_models
         public virtual ProductType ProductType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Review> Reviews { get; set; }
+        public virtual Vendor Vendor { get; set; }
     }
 }

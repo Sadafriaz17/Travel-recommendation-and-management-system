@@ -46,8 +46,8 @@
         /* ---------- MAIN CONTAINER ---------- */
         .auth-page {
             display: flex;
-            align-items: stretch; /* Forces both columns to stretch to the exact same height */
-            min-height: calc(100vh - 73px); /* Ensures it fills the screen if content is short */
+            align-items: stretch;
+            min-height: calc(100vh - 73px);
             width: 100%;
         }
 
@@ -55,16 +55,15 @@
         .auth-visual {
             position: relative;
             flex: 1 1 46%;
-            /* Removed hard-coded heights. It will now stretch automatically based on parent min-height or sibling content */
+            padding: 3rem 3rem 0 3rem;
             overflow: hidden;
-            background-image: url('/images/signup.jpg'); /* UPDATE THIS URL FOR SIGNUP PAGE */
+            background-image: url('/images/login.jpg'); /* or signup.jpg */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             display: flex;
-            flex-direction: column; /* Ensures footer stays pushed to the bottom */
-            justify-content: space-between; /* Pushes logo up and footer down */
-            padding: 3rem;
+            flex-direction: column;
+            justify-content: space-between;
             color: #fff;
         }
 
@@ -171,7 +170,6 @@
         .auth-visual-content {
             position: relative;
             z-index: 2;
-            /* margin: auto allows centering if content is short, but flexbox handles most cases */
             margin-top: auto;
             margin-bottom: auto;
         }
@@ -224,8 +222,7 @@
             z-index: 2;
             font-size: 0.78rem;
             color: rgba(255,255,255,0.5);
-            /* Ensures it stays at the very bottom */
-            margin-top: auto;
+            padding-bottom: 3rem;
         }
 
         /* ---------- Right: form panel ---------- */
@@ -236,14 +233,13 @@
             justify-content: center;
             padding: 3rem 2rem;
             background: var(--bg-body);
-            /* Stretches perfectly with the left side */
             overflow-y: auto;
         }
 
         .auth-form-card {
             width: 100%;
             max-width: 400px;
-            margin: auto 0; /* Keeps it vertically centered */
+            margin: auto 0;
         }
 
         .auth-eyebrow {
@@ -465,15 +461,18 @@
         @@media (max-width: 900px) {
             .auth-page {
                 flex-direction: column;
-                min-height: auto; /* Let it flow naturally on mobile */
+                min-height: auto;
             }
 
             .auth-visual {
-                /* On mobile, give it a fixed height so it doesn't get squashed */
                 min-height: 280px;
                 height: 280px;
-                padding: 2rem;
+                padding: 2rem 2rem 0 2rem;
                 flex: none;
+            }
+
+            .auth-visual-foot {
+                padding-bottom: 2rem;
             }
 
             .auth-chip-row {
@@ -494,8 +493,6 @@
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
         <div class="grid-overlay"></div>
-
-        
 
         <div class="auth-visual-content">
             <h2>Create an account,<br />unlock the map.</h2>
@@ -518,6 +515,13 @@
                 <p>Already have one? <a href="@Url.Action("Index", "Login")">Sign in</a></p>
             </div>
 
+            @if (TempData["SignupError"] != null)
+            {
+                <div style="background:#fde8e8;color:#c0392b;padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;margin-bottom:1.2rem;">
+                    @TempData["SignupError"]
+                </div>
+            }
+
             <button type="button" class="btn-google" id="googleSignupBtn">
                 <i class="fab fa-google"></i> Continue with Google
             </button>
@@ -525,6 +529,7 @@
             <div class="divider"><span>or sign up with email</span></div>
 
             <form action="@Url.Action("Index", "Signup")" method="post" id="signupForm" novalidate>
+                @Html.AntiForgeryToken()
 
                 <div class="field-group">
                     <input type="text" id="fullName" name="FullName" placeholder=" " required />
@@ -560,9 +565,11 @@
                 <div class="match-hint" id="matchHint"></div>
 
                 <label class="checkbox">
-                    <input type="checkbox" name="AcceptTerms" required />
+                    <input type="checkbox" name="AcceptTerms" value="true" required />
+                    <input type="hidden" name="AcceptTerms" value="false" />
                     <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
                 </label>
+                </br>
 
                 <button type="submit" class="btn-primary btn-block" id="submitBtn">
                     <span class="btn-text">Create Account</span>

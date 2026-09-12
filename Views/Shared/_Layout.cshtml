@@ -127,7 +127,7 @@
                     color: #fff;
                 }
 
-        /* ── NAV DROPDOWN ── */
+        /* ── NAV DROPDOWN (More menu) ── */
         .nav-dropdown {
             position: relative;
         }
@@ -224,6 +224,78 @@
                     background: #fff;
                     color: #000;
                     border-color: #fff;
+                }
+
+        /* ── USER AVATAR MENU ── */
+        .user-menu {
+            position: relative;
+        }
+
+        .avatar-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+
+        .avatar-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00e5ff, #8b5cf6);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 14px);
+            right: 0;
+            min-width: 180px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            padding: 0.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: 0.2s ease;
+            z-index: 1100;
+        }
+
+            .user-dropdown.open {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .user-dropdown a {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 0.65rem 0.8rem;
+                border-radius: 8px;
+                color: #1a1a1a;
+                font-size: 0.85rem;
+                font-weight: 500;
+            }
+
+                .user-dropdown a i {
+                    width: 16px;
+                    color: #6b7280;
+                    font-size: 0.85rem;
+                }
+
+                .user-dropdown a:hover {
+                    background: #f3f4f6;
+                    color: #111;
                 }
 
         .hero-wrapper {
@@ -360,7 +432,7 @@
 
         .section-padding {
             padding: 6rem 0 0;
-        }
+        }f
 
         .section-header {
             display: flex;
@@ -589,16 +661,17 @@
             <li><a href="@Url.Action("Index", "Destination")">Destinations</a></li>
             <li><a href="@Url.Action("Index", "Package")">Packages</a></li>
             <li><a href="@Url.Action("About", "Home")">About</a></li>
-            <li><a href="@Url.Action("Index", "Services")">Contact</a></li>
+            <li><a href="@Url.Action("Services", "Home")">Services</a></li>
+            <li><a href="@Url.Action("Contact", "Home")">Contact</a></li>
             <li class="nav-dropdown" id="moreDropdown">
                 <button type="button" class="nav-dropdown-toggle" onclick="toggleNavDropdown(event)">
                     More <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="nav-dropdown-menu">
-                    <a href="@Url.Action("Index", "Marketplace")">
+                    <a href="@Url.Action("Index", "VendorMarketPlace")">
                         <i class="fas fa-store"></i> Travel Marketplace
                     </a>
-                    <a href="@Url.Action("Index", "TravelStore")">
+                    <a href="@Url.Action("Index", "Product")">
                         <i class="fas fa-shopping-bag"></i> Travel Store
                     </a>
                     <a href="@Url.Action("Index", "TripAdvisor")">
@@ -613,11 +686,26 @@
         <div class="nav-actions">
             @if (Session["UserId"] != null)
             {
-                <a href="@Url.Action("Index", "Logout")" class="btn-outline-light">Logout</a>
+                var initial = Session["UserName"] != null
+                    ? Session["UserName"].ToString().Substring(0, 1).ToUpper()
+                    : "U";
+
+                <div class="user-menu" id="userMenu">
+                    <button type="button" class="avatar-btn" onclick="toggleUserDropdown(event)">
+                        <span class="avatar-circle">@initial</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="@Url.Action("Index", "AdminDashboard", new { area = "AdminArea" })">
+                            <i class="fas fa-gauge"></i> Dashboard
+                        </a>
+                        <a href="@Url.Action("Index", "Logout")">
+                            <i class="fas fa-right-from-bracket"></i> Logout
+                        </a>
+                    </div>
+                </div>
             }
             else
             {
-
                 <a href="@Url.Action("Index", "Signup")" class="btn-outline-light" style="background:#fff; color:#000; border:none;">Get Started</a>
             }
         </div>
@@ -652,6 +740,7 @@
                         <li><a href="#">Contact Support</a></li>
                         <li><a href="#">Terms of Service</a></li>
                         <li><a href="#">Privacy Policy</a></li>
+
                     </ul>
                 </div>
                 <div class="footer-col newsletter-wrap">
@@ -675,17 +764,30 @@
         </div>
     </footer>
 
-    <script>function toggleNavDropdown(e) {
+    <script>
+        function toggleNavDropdown(e) {
             e.stopPropagation();
             document.getElementById('moreDropdown').classList.toggle('open');
         }
 
+        function toggleUserDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('open');
+        }
+
         document.addEventListener('click', function (e) {
-            var dropdown = document.getElementById('moreDropdown');
-            if (dropdown && !dropdown.contains(e.target)) {
-                dropdown.classList.remove('open');
+            var moreDropdown = document.getElementById('moreDropdown');
+            if (moreDropdown && !moreDropdown.contains(e.target)) {
+                moreDropdown.classList.remove('open');
             }
-        });</script>
+
+            var userMenu = document.getElementById('userMenu');
+            var userDropdown = document.getElementById('userDropdown');
+            if (userMenu && userDropdown && !userMenu.contains(e.target)) {
+                userDropdown.classList.remove('open');
+            }
+        });
+    </script>
 
     @RenderSection("Scripts", required: false)
 </body>

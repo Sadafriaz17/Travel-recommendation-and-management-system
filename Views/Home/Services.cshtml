@@ -1,0 +1,781 @@
+﻿@* =========================================
+    SERVICES PAGE — Views/Services/Index.cshtml
+    ========================================= *@
+@{
+    ViewBag.Title = "Our Services";
+    ViewBag.ActivePage = "Services";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeadStyles {
+    <style>
+        /* ── HERO ── */
+        .svc-hero {
+            position: relative;
+            margin-top: 0;
+            padding: 160px 0 90px;
+            background: linear-gradient(rgba(20,20,20,0.55), rgba(20,20,20,0.65)), url('/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            text-align: center;
+        }
+
+        .svc-hero-badge {
+            display: inline-block;
+            padding: 0.4rem 1.1rem;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .svc-hero h1 {
+            font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        .svc-hero p {
+            max-width: 600px;
+            margin: 0 auto;
+            color: rgba(255,255,255,0.8);
+            font-size: 1.05rem;
+        }
+
+        .svc-hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .svc-btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+            .svc-btn-outline:hover {
+                background: #fff;
+                color: #1a1a1a;
+            }
+
+        /* Quick stats strip under hero */
+        .svc-stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.75rem 1rem;
+            margin-top: -50px;
+            position: relative;
+            z-index: 4;
+        }
+
+        .svc-stat {
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+
+            .svc-stat:last-child {
+                border-right: none;
+            }
+
+            .svc-stat h4 {
+                font-size: 1.6rem;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin-bottom: 0.2rem;
+            }
+
+            .svc-stat p {
+                font-size: 0.78rem;
+                color: var(--text-muted);
+            }
+
+        /* ── FEATURED SERVICE (large) ── */
+        .svc-featured {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .svc-featured-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .svc-featured h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.9rem;
+            line-height: 1.2;
+        }
+
+        .svc-featured p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+
+        .svc-featured-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin-bottom: 1.75rem;
+        }
+
+            .svc-featured-list li {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 0.88rem;
+                color: var(--text-dark);
+            }
+
+                .svc-featured-list li i {
+                    color: #16a34a;
+                    font-size: 0.85rem;
+                }
+
+        .svc-featured-visual {
+            border-radius: 18px;
+            height: 100%;
+            min-height: 260px;
+            overflow: hidden;
+        }
+
+            .svc-featured-visual img {
+                width: 100%;
+                height: 100%;
+                min-height: 260px;
+                object-fit: cover;
+                display: block;
+                border-radius: 18px;
+            }
+
+        /* ── SERVICE CARDS GRID ── */
+        .svc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .svc-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: 0.25s;
+        }
+
+            .svc-card:hover {
+                box-shadow: var(--shadow-hover);
+                transform: translateY(-4px);
+            }
+
+        .svc-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #1a1a1a;
+        }
+
+        .svc-card h3 {
+            font-size: 1.08rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .svc-card p {
+            color: var(--text-muted);
+            font-size: 0.87rem;
+            line-height: 1.65;
+            flex-grow: 1;
+        }
+
+        .svc-card-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+            .svc-card-tag i {
+                font-size: 0.7rem;
+                transition: transform 0.2s;
+            }
+
+        .svc-card:hover .svc-card-tag i {
+            transform: translateX(3px);
+        }
+
+        /* ── PROCESS SECTION ── */
+        .svc-process {
+            background: #f3f4f6;
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            margin-top: 6rem;
+        }
+
+        .svc-process-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-top: 2.75rem;
+            position: relative;
+        }
+
+        .svc-step {
+            text-align: center;
+            position: relative;
+            padding: 0 1rem;
+        }
+
+            .svc-step:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                top: 23px;
+                left: calc(50% + 40px);
+                right: calc(-50% + 40px);
+                height: 2px;
+                background: repeating-linear-gradient(to right, var(--border) 0, var(--border) 6px, transparent 6px, transparent 12px);
+            }
+
+        .svc-step-num {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .svc-step h4 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .svc-step p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* ── PRICING TIERS ── */
+        .svc-pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        .svc-price-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2.4rem 1.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.3rem;
+            position: relative;
+        }
+
+            .svc-price-card.featured {
+                border: 2px solid #1a1a1a;
+                box-shadow: var(--shadow-hover);
+            }
+
+        .svc-price-featured-tag {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+        }
+
+        .svc-price-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .svc-price-desc {
+            font-size: 0.83rem;
+            color: var(--text-muted);
+            margin-top: -0.9rem;
+        }
+
+        .svc-price-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+            .svc-price-value span {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: var(--text-muted);
+            }
+
+        .svc-price-card ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex-grow: 1;
+        }
+
+            .svc-price-card ul li {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 0.86rem;
+                color: var(--text-dark);
+            }
+
+                .svc-price-card ul li i {
+                    color: #16a34a;
+                    font-size: 0.8rem;
+                }
+
+        .svc-price-btn {
+            text-align: center;
+            padding: 0.85rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            border: 1px solid #1a1a1a;
+            background: #fff;
+            color: #1a1a1a;
+            transition: 0.2s;
+        }
+
+        .svc-price-card.featured .svc-price-btn {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .svc-price-btn:hover {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        /* ── CTA BAND ── */
+        .svc-cta {
+            margin-top: 6rem;
+            background: #1a1a1a;
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .svc-cta::before {
+                content: '';
+                position: absolute;
+                top: -100px;
+                right: -100px;
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.04);
+            }
+
+            .svc-cta h2 {
+                font-size: clamp(1.8rem, 3vw, 2.3rem);
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin-bottom: 0.75rem;
+                position: relative;
+            }
+
+            .svc-cta p {
+                color: rgba(255,255,255,0.7);
+                font-size: 0.95rem;
+                max-width: 480px;
+                margin: 0 auto 2rem;
+                position: relative;
+            }
+
+        .svc-cta-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .svc-cta-btn-light {
+            padding: 0.85rem 2.1rem;
+            border-radius: 50px;
+            background: #fff;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+            .svc-cta-btn-light:hover {
+                background: #e5e7eb;
+            }
+
+        .svc-cta-btn-outline {
+            padding: 0.85rem 2.1rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+            .svc-cta-btn-outline:hover {
+                background: rgba(255,255,255,0.1);
+            }
+
+        /* ── RESPONSIVE ── */
+        @@media (max-width: 1024px) {
+            .svc-stats-strip {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem 0;
+            }
+
+            .svc-stat {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 1rem;
+            }
+
+            .svc-featured {
+                grid-template-columns: 1fr;
+                padding: 2.25rem;
+            }
+
+            .svc-featured-visual {
+                min-height: 200px;
+                order: -1;
+            }
+
+                .svc-featured-visual img {
+                    min-height: 200px;
+                }
+
+            .svc-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .svc-process-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2.5rem 0;
+            }
+
+            .svc-step:not(:last-child)::after {
+                display: none;
+            }
+
+            .svc-pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 640px) {
+            .svc-stats-strip {
+                grid-template-columns: 1fr 1fr;
+                margin-top: -30px;
+                padding: 1.25rem;
+            }
+
+            .svc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .svc-process-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .svc-process {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .svc-cta {
+                padding: 2.5rem 1.5rem;
+            }
+        }
+    </style>
+}
+
+<!-- HERO -->
+<section class="svc-hero">
+    <div class="container">
+       
+        <h1>Services Built Around<br />Smarter Travel</h1>
+        <p>From AI-generated itineraries to a full vendor marketplace, NEXVOY brings together everything you need to plan, book, and enjoy your next trip.</p>
+        <div class="svc-hero-actions">
+            <a href="#svcOfferings" class="btn-primary" onclick="document.getElementById('svcOfferings').scrollIntoView({behavior:'smooth'});return false;">
+                Explore Services
+            </a>
+            <a href="@Url.Action("Index", "Services")" class="svc-btn-outline">
+                <i class="fas fa-comment-dots"></i> Talk to Us
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="container">
+    <div class="svc-stats-strip">
+        <div class="svc-stat">
+            <h4>30 sec</h4>
+            <p>Avg. AI itinerary time</p>
+        </div>
+        <div class="svc-stat">
+            <h4>500+</h4>
+            <p>Verified vendors</p>
+        </div>
+        <div class="svc-stat">
+            <h4>24/7</h4>
+            <p>Trip Advisor support</p>
+        </div>
+        <div class="svc-stat">
+            <h4>&lt; 2 hrs</h4>
+            <p>Avg. response time</p>
+        </div>
+    </div>
+</div>
+
+<!-- SERVICES -->
+<div class="container section-padding" id="svcOfferings">
+    <div class="section-header">
+        <div class="section-header-left">
+           
+            <h2>What We Do</h2>
+        </div>
+     
+    </div>
+
+    <!-- Featured service -->
+    <div class="svc-featured">
+        <div>
+            <span class="svc-featured-tag">Flagship Feature</span>
+            <h2>AI Trip Planner</h2>
+            <p>Tell us your budget, dates, and travel style — our AI analyses thousands of data points to generate a fully personalised itinerary in seconds, then keeps refining it as you give feedback.</p>
+            <ul class="svc-featured-list">
+                <li><i class="fas fa-check-circle"></i> Personalised recommendations in under 30 seconds</li>
+                <li><i class="fas fa-check-circle"></i> Learns from your preferences over time</li>
+                <li><i class="fas fa-check-circle"></i> Syncs directly with marketplace bookings</li>
+            </ul>
+            <a href="@Url.Action("Index", "Package")" class="btn-primary">Plan a Trip</a>
+        </div>
+        <div class="svc-featured-visual">
+            <img src="@Url.Content("~/Images/login.jpg")" alt="AI Trip Planner" />
+        </div>
+    </div>
+
+    <!-- Other services -->
+    <div class="svc-grid">
+
+        <div class="svc-card">
+            <div class="svc-card-icon"><i class="fas fa-store"></i></div>
+            <h3>Travel Marketplace</h3>
+            <p>Browse and book directly with verified local vendors — hotels, guides, and experience providers — all in one connected platform.</p>
+            <a href="@Url.Action("Index", "VendorMarketPlace")" class="svc-card-tag">Visit Marketplace <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="svc-card">
+            <div class="svc-card-icon"><i class="fas fa-comment-dots"></i></div>
+            <h3>Trip Advisor</h3>
+            <p>Get tailored recommendations and answers to your travel questions, drawn from real traveller experiences and destination data.</p>
+            <a href="@Url.Action("Index", "TripAdvisor")" class="svc-card-tag">Ask Trip Advisor <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="svc-card">
+            <div class="svc-card-icon"><i class="fas fa-suitcase-rolling"></i></div>
+            <h3>Packing Assistance</h3>
+            <p>Smart, destination-aware packing lists that adapt to your trip length, weather, and planned activities so you never overpack again.</p>
+            <a href="@Url.Action("Index", "PackingAssistant")" class="svc-card-tag">Get Packing List <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="svc-card">
+            <div class="svc-card-icon"><i class="fas fa-users"></i></div>
+            <h3>Group &amp; Corporate Travel</h3>
+            <p>Custom quotes and dedicated account management for group trips and corporate travel programmes, handled by our human travel experts.</p>
+            <a href="@Url.Action("Index", "Services")" class="svc-card-tag">Request a Quote <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="svc-card">
+            <div class="svc-card-icon"><i class="fas fa-map-location-dot"></i></div>
+            <h3>Destination Guides</h3>
+            <p>Curated, up-to-date guides for top destinations — attractions, local tips, and the best times to visit — built into every itinerary.</p>
+            <a href="@Url.Action("Index", "Destination")" class="svc-card-tag">Browse Destinations <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="svc-card">
+            <div class="svc-card-icon"><i class="fas fa-headset"></i></div>
+            <h3>Priority Support</h3>
+            <p>Direct access to our travel experts for anything your AI plan can't cover — booking changes, emergencies, or last-minute questions.</p>
+            <a href="@Url.Action("Index", "Services")" class="svc-card-tag">Contact Support <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+    </div>
+</div>
+
+<!-- PROCESS -->
+<div class="container">
+    <div class="svc-process">
+        <div class="section-header" style="margin-bottom:0;">
+            <div class="section-header-left">
+                <span class="sub-label">How It Works</span>
+                <h2>From Idea to Itinerary</h2>
+            </div>
+           
+        </div>
+
+        <div class="svc-process-grid">
+            <div class="svc-step">
+                <div class="svc-step-num">1</div>
+                <h4>Tell Us Your Plans</h4>
+                <p>Share your destination, budget, dates, and travel style with our AI planner.</p>
+            </div>
+            <div class="svc-step">
+                <div class="svc-step-num">2</div>
+                <h4>Get Your Itinerary</h4>
+                <p>Receive a personalised plan in seconds, refined by your feedback.</p>
+            </div>
+            <div class="svc-step">
+                <div class="svc-step-num">3</div>
+                <h4>Book Through the Marketplace</h4>
+                <p>Compare and book directly with verified vendors — all in one secure checkout.</p>
+            </div>
+            <div class="svc-step">
+                <div class="svc-step-num">4</div>
+                <h4>Travel With Confidence</h4>
+                <p>Get smart packing lists and on-the-go trip advice for the entire journey.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PRICING -->
+<div class="container section-padding">
+    <div class="section-header">
+        <div class="section-header-left">
+            <span class="sub-label">Plans</span>
+            <h2>Choose Your Plan</h2>
+        </div>
+      
+    </div>
+
+    <div class="svc-pricing-grid">
+
+        <div class="svc-price-card">
+            <h3>Explorer</h3>
+            <p class="svc-price-desc">For casual, occasional travellers</p>
+            <div class="svc-price-value">Free<span> / forever</span></div>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> AI Trip Planner (3 itineraries/month)</li>
+                <li><i class="fas fa-check-circle"></i> Marketplace browsing &amp; booking</li>
+                <li><i class="fas fa-check-circle"></i> Basic packing lists</li>
+                <li><i class="fas fa-check-circle"></i> Community trip advice</li>
+            </ul>
+            <a href="@Url.Action("Index", "Signup")" class="svc-price-btn">Get Started</a>
+        </div>
+
+        <div class="svc-price-card featured">
+            <div class="svc-price-featured-tag">Most Popular</div>
+            <h3>Voyager</h3>
+            <p class="svc-price-desc">For frequent, serious travellers</p>
+            <div class="svc-price-value">$9<span> / month</span></div>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Unlimited AI itineraries</li>
+                <li><i class="fas fa-check-circle"></i> Priority marketplace deals</li>
+                <li><i class="fas fa-check-circle"></i> Personalised Trip Advisor</li>
+                <li><i class="fas fa-check-circle"></i> Smart adaptive packing lists</li>
+            </ul>
+            <a href="@Url.Action("Index", "Signup")" class="svc-price-btn">Start Free Trial</a>
+        </div>
+
+        <div class="svc-price-card">
+            <h3>Enterprise</h3>
+            <p class="svc-price-desc">For groups &amp; organisations</p>
+            <div class="svc-price-value">Custom</div>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Group &amp; corporate travel management</li>
+                <li><i class="fas fa-check-circle"></i> Dedicated account manager</li>
+                <li><i class="fas fa-check-circle"></i> Custom vendor agreements</li>
+                <li><i class="fas fa-check-circle"></i> Priority 24/7 support</li>
+            </ul>
+            <a href="@Url.Action("Index", "Services")" class="svc-price-btn">Contact Sales</a>
+        </div>
+
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="container">
+    <div class="svc-cta">
+        <h2>Ready to Plan Your Next Trip?</h2>
+        <p>Let our AI and travel experts build an itinerary that's made for you — start planning in under a minute.</p>
+        <div class="svc-cta-actions">
+            <a href="@Url.Action("Index", "Package")" class="svc-cta-btn-light">Start Planning</a>
+            <a href="@Url.Action("Index", "Services")" class="svc-cta-btn-outline">Contact Us</a>
+        </div>
+    </div>
+</div>

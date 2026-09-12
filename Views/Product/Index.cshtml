@@ -1,6 +1,6 @@
 ﻿@* =========================================
     PRODUCTS INDEX — Views/Product/Index.cshtml
-    Earth 3D hero + scrollable category filters
+    Matches NEXVOY light theme (see _Layout.cshtml)
     ========================================= *@
 @model IEnumerable<TourwebsiteFYP.DB_data_models.Product>
 
@@ -8,203 +8,49 @@
     ViewBag.Title = "Travel Products";
     ViewBag.ActivePage = "Products";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var productTypes = ViewBag.ProductTypes as IEnumerable<TourwebsiteFYP.DB_data_models.ProductType>;
-    var hasProducts = Model != null && Model.Any();
-    var productList = hasProducts ? Model.ToList() : new List<TourwebsiteFYP.DB_data_models.Product>();
-}
 
-@functions {
-    string GetFallbackImageForCategory(string name)
+    var productTypes = ViewBag.ProductTypes as IEnumerable<TourwebsiteFYP.DB_data_models.ProductType>;
+    var productList = Model != null ? Model.ToList() : new List<TourwebsiteFYP.DB_data_models.Product>();
+
+    var productsJson = Newtonsoft.Json.JsonConvert.SerializeObject(productList.Select(p => new
     {
-        if (string.IsNullOrEmpty(name)) return "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&q=60";
-        var n = name.ToLower();
-        if (n.Contains("backpack")) return "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&q=60";
-        if (n.Contains("gps") || n.Contains("navigation")) return "https://images.unsplash.com/photo-1524660988542-c440e0a3b8f8?w=300&q=60";
-        if (n.Contains("clothing")) return "https://images.unsplash.com/photo-1539533113208-f6c13dac0080?w=300&q=60";
-        if (n.Contains("camping")) return "https://images.unsplash.com/photo-1546976975-2b6b4c7c1593?w=300&q=60";
-        if (n.Contains("electronic")) return "https://images.unsplash.com/photo-1617788138017-80ad29151361?w=300&q=60";
-        if (n.Contains("safety") || n.Contains("first aid")) return "https://images.unsplash.com/photo-1603398938378-e54eab446d8f?w=300&q=60";
-        if (n.Contains("accessories")) return "https://images.unsplash.com/photo-1602491453631-e2a5ad90a131?w=300&q=60";
-        return "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&q=60";
-    }
+        id = p.ProductId,
+        name = p.ProductName,
+        typeId = p.ProductTypeId,
+        typeName = p.ProductType != null ? p.ProductType.TypeName : "Uncategorized",
+        price = p.Price,
+        desc = p.Description ?? "",
+        img = !string.IsNullOrEmpty(p.ImageUrl) ? Url.Content(p.ImageUrl) : "",
+        rating = p.Rating,
+        reviewCount = p.ReviewCount,
+        stockStatus = p.StockStatus ?? "",
+        vendorName = p.Vendor != null ? p.Vendor.VendorName : ""
+    }));
 }
 
 @section HeadStyles {
     <style>
-        /* ── ROOT VARIABLES ── */
-        :root {
-            --bg-deep: #0a0a0f;
-            --accent: #4deeEA;
-            --accent2: #a855f7;
-            --purple: #c084fc;
-            --text: #f0f0f4;
-            --sub: #a0a0b0;
-            --font-head: 'Inter', system-ui, sans-serif;
-            --font-mono: 'SF Mono', 'JetBrains Mono', monospace;
-            --font-body: 'Inter', system-ui, sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: var(--bg-deep);
-            color: var(--text);
-            font-family: var(--font-body);
-        }
-
-        #prod-hero {
-            position: relative;
-            height: 100vh;
-            min-height: 720px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: radial-gradient(ellipse at 50% 50%, #0f0f1e 0%, #06060c 50%, #020205 100%);
-        }
-
-        #prod-hero-canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-            z-index: 0;
-        }
-
-        .prod-hero-glow {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 40%, rgba(77,238,234,.09) 0%, transparent 55%), radial-gradient(ellipse at 75% 55%, rgba(168,85,247,.07) 0%, transparent 50%), radial-gradient(ellipse at 25% 65%, rgba(77,238,234,.05) 0%, transparent 45%);
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .prod-hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 1200px;
-            width: 100%;
-            padding: 0 2rem;
-            text-align: center;
-        }
-
-        .prod-hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(77,238,234,.08);
-            border: 1px solid rgba(77,238,234,.22);
-            border-radius: 100px;
-            padding: .5rem 1.2rem;
-            margin-bottom: 2rem;
-            font-family: var(--font-mono);
-            font-size: .7rem;
-            color: var(--accent);
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            opacity: 0;
-            animation: fadeUpP .8s ease .3s forwards;
-        }
-
-        .prod-hero-badge-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @@keyframes pulse {
-            0%, 100% {
-                opacity: .5;
-                transform: scale(1)
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1.5)
-            }
-        }
-
-        .prod-hero-h1 {
-            font-family: var(--font-head);
-            font-size: clamp(2.8rem,7vw,5.5rem);
-            font-weight: 800;
-            letter-spacing: -.04em;
-            line-height: 1.05;
-            margin-bottom: 1.4rem;
-            opacity: 0;
-            animation: fadeUpP .9s ease .5s forwards;
-        }
-
-        .text-gradient {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--purple) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 200% 200%;
-            animation: gradShift 4s ease infinite;
-        }
-
-        @@keyframes gradShift {
-            0%, 100% {
-                background-position: 0% 50%
-            }
-
-            50% {
-                background-position: 100% 50%
-            }
-        }
-
-        .prod-hero-subtitle {
-            font-size: 1.05rem;
-            color: var(--sub);
-            max-width: 500px;
-            margin: 0 auto 3rem;
-            line-height: 1.65;
-            opacity: 0;
-            animation: fadeUpP .9s ease .7s forwards;
-        }
-
-        .prod-hero-filters {
-            opacity: 0;
-            animation: fadeUpP .9s ease .9s forwards;
-            max-width: 860px;
-            margin: 0 auto;
+        .products-hero {
+            background-image: url('/images/background.jpg');
+            min-height: 60vh;
         }
 
         .prod-filter-glass {
-            background: rgba(12,12,22,.65);
-            backdrop-filter: blur(32px);
-            -webkit-backdrop-filter: blur(32px);
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 24px;
-            padding: .45rem .45rem .45rem .6rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
-        }
-
-        .prod-filter-row {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: .4rem;
+            background: #fff;
+            padding: 0.5rem;
+            border-radius: 60px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            gap: 0.5rem;
         }
 
         .prod-filter-scroll {
             display: flex;
             align-items: center;
-            gap: .35rem;
-            flex: 1;
+            gap: 0.35rem;
             overflow-x: auto;
-            scroll-behavior: smooth;
             scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-            padding: .1rem .1rem;
         }
 
             .prod-filter-scroll::-webkit-scrollbar {
@@ -212,331 +58,117 @@
             }
 
         .prod-filter-btn {
-            padding: .58rem 1.25rem;
-            border-radius: 100px;
+            padding: 0.6rem 1.3rem;
+            border-radius: 50px;
             border: none;
             background: transparent;
-            color: rgba(255,255,255,.48);
-            font-size: .78rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
             font-weight: 500;
-            font-family: var(--font-body);
             cursor: pointer;
             white-space: nowrap;
-            transition: all .28s cubic-bezier(.4,0,.2,1);
-            flex-shrink: 0;
         }
-
-            .prod-filter-btn:hover {
-                color: rgba(255,255,255,.82);
-                background: rgba(255,255,255,.06);
-            }
 
             .prod-filter-btn.active {
-                color: #000;
-                background: var(--accent);
-                font-weight: 700;
-                box-shadow: 0 4px 16px rgba(77,238,234,.35), 0 0 28px rgba(77,238,234,.12);
+                background: #1a1a1a;
+                color: #fff;
+                font-weight: 600;
             }
-
-        .filter-arrow {
-            flex-shrink: 0;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,.1);
-            background: rgba(255,255,255,.04);
-            color: var(--sub);
-            font-size: .85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all .25s;
-            user-select: none;
-        }
-
-            .filter-arrow:hover {
-                border-color: rgba(77,238,234,.4);
-                color: var(--accent);
-                background: rgba(77,238,234,.08);
-            }
-
-        .prod-filter-divider {
-            width: 1px;
-            height: 24px;
-            background: rgba(255,255,255,.1);
-            margin: 0 .4rem;
-            flex-shrink: 0;
-        }
 
         .prod-sort-select {
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 100px;
-            padding: .58rem 2rem .58rem 1.1rem;
-            color: var(--text);
-            font-size: .78rem;
-            font-family: var(--font-body);
-            font-weight: 500;
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.6rem 1.1rem;
+            font-size: 0.82rem;
             outline: none;
             cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234deeEA' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right .9rem center;
-            transition: all .3s;
-            flex-shrink: 0;
-        }
-
-            .prod-sort-select:hover {
-                border-color: rgba(77,238,234,.3);
-                background-color: rgba(255,255,255,.08);
-            }
-
-            .prod-sort-select option {
-                background: #1a1a2e;
-                color: var(--text);
-            }
-
-        .hero-scroll-hint {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            z-index: 3;
-            cursor: pointer;
-            opacity: 0;
-            animation: fadeUpP 1s ease 1.3s forwards;
-            transition: opacity .3s;
-        }
-
-            .hero-scroll-hint:hover {
-                opacity: .75;
-            }
-
-            .hero-scroll-hint span {
-                font-family: var(--font-mono);
-                font-size: .62rem;
-                color: var(--sub);
-                letter-spacing: .22em;
-                text-transform: uppercase;
-            }
-
-        .scroll-icon {
-            width: 24px;
-            height: 40px;
-            border: 2px solid rgba(255,255,255,.2);
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            padding-top: 6px;
-        }
-
-        .scroll-dot {
-            width: 4px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 2px;
-            animation: sdot 2s ease-in-out infinite;
-        }
-
-        @@keyframes sdot {
-            0%, 100% {
-                transform: translateY(0);
-                opacity: 1
-            }
-
-            50% {
-                transform: translateY(12px);
-                opacity: .3
-            }
-        }
-
-        @@keyframes fadeUpP {
-            from {
-                opacity: 0;
-                transform: translateY(38px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        #prod-main {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 6rem 2.5rem;
-        }
-
-        .prod-section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .prod-section-label {
-            font-family: var(--font-mono);
-            font-size: .68rem;
-            color: var(--accent);
-            letter-spacing: .22em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .prod-section-title {
-            font-family: var(--font-head);
-            font-size: clamp(2rem,4vw,3rem);
-            font-weight: 800;
-            letter-spacing: -.03em;
-            margin-bottom: .9rem;
-        }
-
-        .prod-section-subtitle {
-            color: var(--sub);
-            font-size: .98rem;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .prod-results-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.8rem;
         }
 
         .prod-results-count {
-            font-family: var(--font-mono);
-            font-size: .73rem;
-            color: var(--sub);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
         }
 
             .prod-results-count span {
-                color: var(--accent);
+                color: var(--text-dark);
                 font-weight: 700;
             }
 
         .prod-cards-grid {
             display: grid;
-            grid-template-columns: repeat(4,1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
+            padding-bottom: 4rem;
         }
 
         .nex-prod-card {
-            background: linear-gradient(180deg,rgba(30,30,45,.6) 0%,rgba(20,20,30,.85) 100%);
-            border: 1px solid rgba(255,255,255,.06);
-            border-radius: 20px;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             overflow: hidden;
             position: relative;
-            transition: all .4s cubic-bezier(.4,0,.2,1);
             cursor: pointer;
-            text-decoration: none;
-            color: inherit;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--shadow);
+            transition: 0.2s;
         }
 
-            .nex-prod-card::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                border-radius: 20px;
-                padding: 1px;
-                background: linear-gradient(135deg,rgba(77,238,234,.12),transparent 50%,rgba(168,85,247,.12));
-                -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-                -webkit-mask-composite: xor;
-                mask-composite: exclude;
-                z-index: 1;
-                pointer-events: none;
-                opacity: 0;
-                transition: opacity .4s;
-            }
-
             .nex-prod-card:hover {
-                transform: translateY(-8px);
-                border-color: rgba(77,238,234,.16);
-                box-shadow: 0 28px 58px rgba(0,0,0,.55),0 0 28px rgba(77,238,234,.06);
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-hover);
             }
-
-                .nex-prod-card:hover::before {
-                    opacity: 1;
-                }
 
         .prod-card-media {
             position: relative;
-            height: 240px;
-            overflow: hidden;
+            height: 220px;
+            background: #f3f4f6;
         }
 
             .prod-card-media img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transition: transform .7s ease;
             }
 
-        .nex-prod-card:hover .prod-card-media img {
-            transform: scale(1.07);
-        }
-
-        .prod-card-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 55%);
-        }
-
-        .prod-card-badge-row {
+        .prod-type-tag {
             position: absolute;
             top: 1rem;
             left: 1rem;
-            right: 1rem;
-            display: flex;
-            justify-content: space-between;
-            z-index: 2;
+            background: #fff;
+            border-radius: 50px;
+            padding: 0.3rem 0.85rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .prod-type-tag {
-            background: rgba(0,0,0,.65);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(77,238,234,.22);
-            border-radius: 100px;
-            padding: .28rem .75rem;
-            font-family: var(--font-mono);
-            font-size: .55rem;
-            color: var(--accent);
-            letter-spacing: .1em;
+        .prod-stock-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 700;
             text-transform: uppercase;
         }
 
-        .prod-quick-view-btn {
-            position: absolute;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: rgba(0,0,0,.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--accent);
-            border-radius: 50px;
-            padding: .42rem 1rem;
-            font-size: .68rem;
-            font-weight: 600;
-            color: var(--accent);
-            cursor: pointer;
-            opacity: 0;
-            transition: all .3s;
-            white-space: nowrap;
-            z-index: 3;
+        .stock-in {
+            background: #e6f7ed;
+            color: #1e8a4c;
         }
 
-        .nex-prod-card:hover .prod-quick-view-btn {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .stock-low {
+            background: #fff4e0;
+            color: #b8720c;
+        }
+
+        .stock-out {
+            background: #fde8e8;
+            color: #c0392b;
         }
 
         .prod-card-body {
@@ -544,812 +176,224 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            position: relative;
-            z-index: 2;
         }
 
         .prod-card-type {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-family: var(--font-mono);
-            font-size: .58rem;
-            color: var(--sub);
+            font-size: 0.72rem;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: .1em;
-            margin-bottom: .75rem;
-        }
-
-        .prod-card-type-dot {
-            width: 4px;
-            height: 4px;
-            background: var(--accent2);
-            border-radius: 50%;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
         }
 
         .prod-card-title {
-            font-family: var(--font-head);
             font-size: 1.05rem;
             font-weight: 700;
-            letter-spacing: -.02em;
-            margin-bottom: .45rem;
-            line-height: 1.3;
+            margin-bottom: 0.4rem;
+            color: var(--text-dark);
+        }
+
+        .prod-rating-row {
+            font-size: 0.82rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .prod-stars {
+            color: #f5a623;
+        }
+
+        .prod-rating-num {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-left: 4px;
+        }
+
+        .prod-review-count {
+            color: var(--text-muted);
+            margin-left: 4px;
         }
 
         .prod-card-desc {
-            font-size: .8rem;
-            color: var(--sub);
-            line-height: 1.6;
-            margin-bottom: 1.4rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 1.2rem;
             flex: 1;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
         .prod-card-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-top: 1.1rem;
-            border-top: 1px solid rgba(255,255,255,.06);
-        }
-
-        .prod-price-block {
-            display: flex;
-            flex-direction: column;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
         }
 
         .prod-price-val {
-            font-family: var(--font-head);
-            font-size: 1.45rem;
+            font-size: 1.3rem;
             font-weight: 800;
-            letter-spacing: -.03em;
-            background: linear-gradient(135deg,var(--accent),var(--accent2));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .prod-price-label {
-            font-size: .58rem;
-            color: var(--sub);
-            font-family: var(--font-mono);
+            color: var(--text-dark);
         }
 
         .prod-details-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: .6rem 1.2rem;
-            border-radius: 100px;
-            font-size: .76rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
             font-weight: 600;
-            font-family: var(--font-body);
-            cursor: pointer;
-            transition: all .3s;
-            border: 1px solid rgba(255,255,255,.1);
-            background: rgba(255,255,255,.05);
-            color: var(--text);
-            position: relative;
-            z-index: 2;
+            border: 1px solid var(--border);
+            background: #f8f9fa;
+            color: var(--text-dark);
             text-decoration: none;
         }
-
-            .prod-details-btn:hover {
-                background: rgba(255,255,255,.1);
-                border-color: rgba(255,255,255,.22);
-                transform: translateY(-2px);
-            }
 
         .prod-empty {
             text-align: center;
             padding: 4rem;
-            color: var(--sub);
+            color: var(--text-muted);
             grid-column: 1/-1;
         }
 
-        .prod-empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: .4;
-        }
-
-        /* Quick View */
-        .qv-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.88);
-            backdrop-filter: blur(14px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .3s;
-        }
-
-            .qv-overlay.open {
-                opacity: 1;
-                pointer-events: all;
-            }
-
-        .qv-modal {
-            background: linear-gradient(180deg,#1a1a28,#0f0f1a);
-            border: 1px solid rgba(77,238,234,.22);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 850px;
-            max-height: 85vh;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            transform: scale(.95);
-            transition: transform .3s;
-            position: relative;
-        }
-
-        .qv-overlay.open .qv-modal {
-            transform: scale(1);
-        }
-
-        .qv-img-side img {
-            width: 100%;
-            height: 100%;
-            min-height: 300px;
-            object-fit: cover;
-            border-radius: 24px 0 0 24px;
-        }
-
-        .qv-info-side {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .qv-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.1);
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            z-index: 10;
-            font-size: 1rem;
-        }
-
-        .qv-type-tag {
-            font-family: var(--font-mono);
-            font-size: .63rem;
-            color: var(--accent);
-            margin-bottom: .5rem;
-        }
-
-        .qv-title {
-            font-size: 1.45rem;
-            font-weight: 800;
-            margin-bottom: .75rem;
-        }
-
-        .qv-desc {
-            font-size: .84rem;
-            color: var(--sub);
-            line-height: 1.65;
-            margin-bottom: 1.4rem;
-            flex: 1;
-        }
-
-        .qv-price {
-            font-size: 1.75rem;
-            font-weight: 800;
-            background: linear-gradient(135deg,var(--accent),var(--accent2));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1.4rem;
-        }
-
-        .qv-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .qv-btn-primary {
-            flex: 1;
-            background: linear-gradient(135deg,var(--accent),var(--accent2));
-            border: none;
-            border-radius: 12px;
-            padding: .8rem;
-            color: #000;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        /* Responsive */
-        @@media (min-width:1600px) {
+        @@media (max-width: 1024px) {
             .prod-cards-grid {
-                grid-template-columns: repeat(5,1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        @@media (max-width:1200px) {
-            .prod-cards-grid {
-                grid-template-columns: repeat(3,1fr);
-            }
-        }
-
-        @@media (max-width:1024px) {
-            .prod-cards-grid {
-                grid-template-columns: repeat(2,1fr);
-            }
-        }
-
-        @@media (max-width:768px) {
+        @@media (max-width: 768px) {
             .prod-cards-grid {
                 grid-template-columns: 1fr;
-                max-width: 450px;
-                margin: 0 auto;
-            }
-
-            .prod-hero-content {
-                padding: 0 1.2rem;
-            }
-
-            .prod-filter-row {
-                flex-direction: column;
-                gap: .45rem;
-            }
-
-            .prod-filter-scroll {
-                width: 100%;
-            }
-
-            .prod-filter-divider, .filter-arrow {
-                display: none;
-            }
-
-            .prod-sort-select {
-                width: 100%;
-            }
-
-            #prod-main {
-                padding: 4rem 1.3rem;
-            }
-
-            .qv-modal {
-                grid-template-columns: 1fr;
-            }
-
-            .qv-img-side img {
-                border-radius: 24px 24px 0 0;
-                min-height: 200px;
             }
         }
     </style>
 }
 
-<!-- ═══════════════════════════════════════════════
-     HERO  –  Earth 3-D + scrollable filter pills
-     ═══════════════════════════════════════════════ -->
-<section id="prod-hero">
-    <canvas id="prod-hero-canvas"></canvas>
-    <div class="prod-hero-glow"></div>
+<section class="hero-wrapper products-hero">
+    <div class="hero-content">
+        <h1>Gear Up for<br />Your Adventure</h1>
+        <p>Premium travel accessories, gear, and essentials curated for the modern explorer.</p>
 
-    <div class="prod-hero-content">
-     
-        <h1 class="prod-hero-h1">
-            Gear Up for<br />
-            <span class="text-gradient">Your Adventure</span>
-        </h1>
-
-        <p class="prod-hero-subtitle">
-            Premium travel accessories, gear, and essentials curated for the modern explorer.
-        </p>
-
-        <div class="prod-hero-filters">
-            <div class="prod-filter-glass">
-                <div class="prod-filter-row">
-                    <button class="filter-arrow" id="filterArrowLeft" onclick="scrollFilters(-200)" aria-label="Scroll left">&#8592;</button>
-
-                    <div class="prod-filter-scroll" id="filterPills">
-                        <button class="prod-filter-btn active" data-type-id="0" onclick="filterByType(this,0)">All Products</button>
-
-                        @if (productTypes != null && productTypes.Any())
-                        {
-                            foreach (var pt in productTypes)
-                            {
-                                <button class="prod-filter-btn" data-type-id="@pt.ProductTypeId"
-                                        onclick="filterByType(this,@pt.ProductTypeId)">
-                                    @pt.TypeName
-                                </button>
-                            }
-                        }
-                        else
-                        {
-                            <button class="prod-filter-btn" data-type-id="1" onclick="filterByType(this,1)">GPS &amp; Navigation</button>
-                            <button class="prod-filter-btn" data-type-id="2" onclick="filterByType(this,2)">Backpacks</button>
-                            <button class="prod-filter-btn" data-type-id="3" onclick="filterByType(this,3)">Clothing</button>
-                            <button class="prod-filter-btn" data-type-id="4" onclick="filterByType(this,4)">Camping Gear</button>
-                            <button class="prod-filter-btn" data-type-id="5" onclick="filterByType(this,5)">Electronics</button>
-                            <button class="prod-filter-btn" data-type-id="6" onclick="filterByType(this,6)">Safety</button>
-                            <button class="prod-filter-btn" data-type-id="7" onclick="filterByType(this,7)">Accessories</button>
-                            <button class="prod-filter-btn" data-type-id="8" onclick="filterByType(this,8)">Footwear</button>
-                            <button class="prod-filter-btn" data-type-id="9" onclick="filterByType(this,9)">Luggage</button>
-                            <button class="prod-filter-btn" data-type-id="10" onclick="filterByType(this,10)">Health &amp; Wellness</button>
-                        }
-                    </div>
-
-                    <button class="filter-arrow" id="filterArrowRight" onclick="scrollFilters(200)" aria-label="Scroll right">&#8594;</button>
-                    <div class="prod-filter-divider"></div>
-
-                    <select class="prod-sort-select" onchange="sortProducts(this.value)">
-                        <option value="default">Default</option>
-                        <option value="price-asc">Price ↑</option>
-                        <option value="price-desc">Price ↓</option>
-                        <option value="name">Name A–Z</option>
-                    </select>
-                </div>
+        <div class="prod-filter-glass">
+            <div class="prod-filter-scroll" id="filterPills">
+                <button class="prod-filter-btn active" data-type-id="0" onclick="filterByType(this,0)">All Products</button>
+                @if (productTypes != null)
+                {
+                    foreach (var pt in productTypes)
+                    {
+                        <button class="prod-filter-btn" data-type-id="@pt.ProductTypeId"
+                                onclick="filterByType(this,@pt.ProductTypeId)">
+                            @pt.TypeName
+                        </button>
+                    }
+                }
             </div>
-        </div>
-    </div>
 
-    <div class="hero-scroll-hint" onclick="document.getElementById('prod-main').scrollIntoView({behavior:'smooth'})">
-        <span>Browse</span>
-        <div class="scroll-icon"><div class="scroll-dot"></div></div>
+            <select class="prod-sort-select" onchange="sortProducts(this.value)">
+                <option value="default">Default</option>
+                <option value="price-asc">Price ↑</option>
+                <option value="price-desc">Price ↓</option>
+                <option value="rating-desc">Top Rated</option>
+                <option value="name">Name A–Z</option>
+            </select>
+        </div>
     </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════
-     PRODUCTS GRID
-     ═══════════════════════════════════════════════ -->
-<div id="prod-main">
-    <div class="prod-section-header">
-        <div class="prod-section-label">OUR COLLECTION</div>
-        <h2 class="prod-section-title">Featured <span class="text-gradient">Products</span></h2>
-        <p class="prod-section-subtitle">Handpicked gear and accessories for every kind of traveler</p>
+<div class="container section-padding">
+    <div class="section-header">
+        <div class="section-header-left">
+            <span class="sub-label">OUR COLLECTION</span>
+            <h2>Featured Products</h2>
+        </div>
     </div>
-    <div class="prod-results-bar">
-        <div class="prod-results-count">Showing <span id="prodCount">0</span> products</div>
-    </div>
+
+    <div class="prod-results-count">Showing <span id="prodCount">0</span> products</div>
+
     <div class="prod-cards-grid" id="prodGrid"></div>
 </div>
 
-<!-- QUICK VIEW MODAL -->
-<div class="qv-overlay" id="qvOverlay" onclick="closeQV(event)">
-    <div class="qv-modal">
-        <button class="qv-close" onclick="closeQuickView()">✕</button>
-        <div class="qv-img-side"><img id="qvImg" src="" alt="" /></div>
-        <div class="qv-info-side">
-            <div class="qv-type-tag" id="qvType"></div>
-            <h2 class="qv-title" id="qvTitle"></h2>
-            <p class="qv-desc" id="qvDesc"></p>
-            <div class="qv-price" id="qvPrice"></div>
-            <div class="qv-actions">
-                <a id="qvDetailsLink" href="#" class="qv-btn-primary">View Full Details →</a>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        const productsData = @Html.Raw(productsJson);
 
-/* ════════════════════════════════════════════════════════════════════
-   PRODUCT DATA
-   ════════════════════════════════════════════════════════════════════
-   When your DB has products, the C# block below auto-generates the
-   data array and you don't need to touch anything here.
+        let currentTypeId = 0;
+        let currentSort = 'default';
 
-   When DB is empty, the fallback list below is used instead.
-   Each product has an  img:  field — put your image URL right there.
-
-   Tips for the img field:
-     • Unsplash URL  → "https://images.unsplash.com/photo-XXXXX?w=600&q=80"
-     • Local file    → "/images/products/my-photo.jpg"
-     • Leave ""      → the auto-fallback picks a matching placeholder
-════════════════════════════════════════════════════════════════════ */
-
-@if (hasProducts) {
-    <text>
-    const productsData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(productList.Select(p => new {
-        id       = p.ProductId,
-        name     = p.ProductName,
-        typeId   = p.ProductTypeId,
-        typeName = p.ProductType != null ? p.ProductType.TypeName : "Uncategorized",
-        price    = p.Price,
-        desc     = p.Description ?? "Premium travel product crafted for explorers.",
-        img      = !string.IsNullOrEmpty(p.ImageUrl) ? Url.Content(p.ImageUrl) : ""
-    })));
-    </text>
-} else {
-    <text>
-        const productsData = [
-
-            // ── GPS & NAVIGATION  (typeId: 1) ──────────────────────────────────
-            {
-                id: 1,
-                name: "Apex Navigator Pro",
-                typeId: 1,
-                typeName: "GPS & Navigation",
-                price: 299,
-                desc: "Advanced GPS with topographic maps and offline support.",
-                img: "/Images/apex navigator.png"
-            },
-
-            // ── BACKPACKS  (typeId: 2) ─────────────────────────────────────────
-            {
-                id: 2,
-                name: "Terra 55L Backpack",
-                typeId: 2,
-                typeName: "Backpacks",
-                price: 189,
-                desc: "Water-resistant ergonomic backpack for long treks.",
-                img: "/Images/backpack.png"
-            },
-
-            // ── CLOTHING  (typeId: 3) ──────────────────────────────────────────
-            {
-                id: 3,
-                name: "UltraLight Down Jacket",
-                typeId: 3,
-                typeName: "Clothing",
-                price: 159,
-                desc: "Packable ultra-light insulated jacket.",
-                img: "/Images/ultralight down jacket.png"
-            },
-            {
-                id: 15,
-                name: "Merino Wool Base Layer",
-                typeId: 3,
-                typeName: "Clothing",
-                price: 89,
-                desc: "Temperature-regulating odor-resistant base layer.",
-                img: "/Images/shirt.png"
-            },
-
-            // ── CAMPING GEAR  (typeId: 4) ──────────────────────────────────────
-            {
-                id: 4,
-                name: "Titanium Camp Cook Set",
-                typeId: 4,
-                typeName: "Camping Gear",
-                price: 89,
-                desc: "Lightweight titanium cookware set.",
-                img: "/Images/cooking set .png"
-            },
-            {
-                id: 11,
-                name: "Portable Water Filter",
-                typeId: 4,
-                typeName: "Camping Gear",
-                price: 49,
-                desc: "Removes 99.9% of bacteria & protozoa.",
-                img: "/Images/portable bottle.png"
-            },
-            {
-                id: 13,
-                name: "Hiking Trekking Poles",
-                typeId: 4,
-                typeName: "Camping Gear",
-                price: 65,
-                desc: "Collapsible lightweight aluminum poles.",
-                img: "/Images/hiking poles.png"
-            },
-
-            // ── ELECTRONICS  (typeId: 5) ───────────────────────────────────────
-            {
-                id: 12,
-                name: "Universal Travel Adapter",
-                typeId: 5,
-                typeName: "Electronics",
-                price: 29,
-                desc: "Works in 150+ countries with USB-C.",
-                img: "/Images/universal adaptor.png"
-            },
-
-            // ── SAFETY  (typeId: 6) ────────────────────────────────────────────
-            {
-                id: 6,
-                name: "Adventure First Aid Kit",
-                typeId: 6,
-                typeName: "Safety",
-                price: 45,
-                desc: "Comprehensive outdoor medical kit.",
-                img: "/Images/aid kit.png"
-            },
-
-            // ── ACCESSORIES  (typeId: 7) ───────────────────────────────────────
-            {
-                id: 8,
-                name: "Travel Steamer & Iron",
-                typeId: 7,
-                typeName: "Accessories",
-                price: 39,
-                desc: "Compact dual-voltage travel steamer.",
-                img: "/Images/iron.png"
-            },
-            {
-                id: 14,
-                name: "Compression Packing Cubes",
-                typeId: 7,
-                typeName: "Accessories",
-                price: 35,
-                desc: "Save 60% luggage space.",
-                img: "/Images/packing cubes.png"
-            },
-            {
-                id: 16,
-                name: "Travel Security Belt",
-                typeId: 7,
-                typeName: "Accessories",
-                price: 19,
-                desc: "Hidden zip pocket with RFID blocking.",
-                img: "/Images/download.jpg"
-            },          // ← added closing } and comma
-
-        ];
-    </text>
-}
-
-/* ════════════════════════════════════════════
-   AUTO IMAGE FALLBACK
-   Runs only when img field is left as ""
-════════════════════════════════════════════ */
-function getFallbackImage(name) {
-    const n = name.toLowerCase();
-    if (n.includes('backpack'))                         return 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80';
-    if (n.includes('headphone'))                        return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80';
-    if (n.includes('camera'))                           return 'https://images.unsplash.com/photo-1575936123452-b67c3203c357?w=600&q=80';
-    if (n.includes('adapter'))                          return 'https://images.unsplash.com/photo-1543512214-318c7553f230?w=600&q=80';
-    if (n.includes('water filter'))                     return 'https://images.unsplash.com/photo-1613246123321-7ab3d3c6e38b?w=600&q=80';
-    if (n.includes('hiking') || n.includes('trekking')) return 'https://images.unsplash.com/photo-1532343774358-870d3d2e9c8a?w=600&q=80';
-    if (n.includes('first aid'))                        return 'https://images.unsplash.com/photo-1603398938378-e54eab446d8f?w=600&q=80';
-    if (n.includes('belt'))                             return 'https://images.unsplash.com/photo-1598620617137-59e55d2a8a2c?w=600&q=80';
-    if (n.includes('cook') || n.includes('camp'))       return 'https://images.unsplash.com/photo-1546976975-2b6b4c7c1593?w=600&q=80';
-    if (n.includes('merino') || n.includes('wool'))     return 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80';
-    if (n.includes('steamer') || n.includes('iron'))    return 'https://images.unsplash.com/photo-1602491453631-e2a5ad90a131?w=600&q=80';
-    if (n.includes('jacket') || n.includes('down'))     return 'https://images.unsplash.com/photo-1539533113208-f6c13dac0080?w=600&q=80';
-    if (n.includes('solar') || n.includes('charger'))   return 'https://images.unsplash.com/photo-1617788138017-80ad29151361?w=600&q=80';
-    if (n.includes('packing cube'))                     return 'https://images.unsplash.com/photo-1557847344-6d7d93e82a5d?w=600&q=80';
-    if (n.includes('gps') || n.includes('navigator'))   return 'https://images.unsplash.com/photo-1524660988542-c440e0a3b8f8?w=600&q=80';
-    if (n.includes('pant') || n.includes('convertible')) return 'https://images.unsplash.com/photo-1556909114-44e7b9f2ae6e?w=600&q=80';
-    if (n.includes('shoe') || n.includes('boot') || n.includes('footwear')) return 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80';
-    if (n.includes('luggage') || n.includes('suitcase')) return 'https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=600&q=80';
-    if (n.includes('health') || n.includes('wellness')) return 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80';
-    return 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80';
-}
-
-productsData.forEach(p => {
-    if (!p.img || !p.img.trim()) p.img = getFallbackImage(p.name);
-});
-
-/* ════════════════════════════════════════════
-   FILTER + SORT
-════════════════════════════════════════════ */
-let currentTypeId = 0;
-let currentSort   = 'default';
-
-function scrollFilters(by) {
-    document.getElementById('filterPills').scrollBy({ left: by, behavior: 'smooth' });
-}
-
-function filterByType(btn, typeId) {
-    currentTypeId = typeId;
-    document.querySelectorAll('.prod-filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderFiltered();
-    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-}
-
-function sortProducts(val) {
-    currentSort = val;
-    renderFiltered();
-}
-
-function renderFiltered() {
-    let list = currentTypeId === 0
-        ? [...productsData]
-        : productsData.filter(p => p.typeId === currentTypeId);
-
-    if (currentSort === 'price-asc')  list.sort((a, b) => a.price - b.price);
-    if (currentSort === 'price-desc') list.sort((a, b) => b.price - a.price);
-    if (currentSort === 'name')       list.sort((a, b) => a.name.localeCompare(b.name));
-
-    document.getElementById('prodCount').textContent = list.length;
-    renderProducts(list);
-}
-
-/* ════════════════════════════════════════════
-   RENDER CARDS
-════════════════════════════════════════════ */
-function renderProducts(list) {
-    const grid = document.getElementById('prodGrid');
-    if (!grid) return;
-    if (!list.length) {
-        grid.innerHTML = `<div class="prod-empty"><div class="prod-empty-icon">🧳</div><h3>No products found</h3><p>Try a different category.</p></div>`;
-        return;
-    }
-    grid.innerHTML = list.map(p => `
-        <div class="nex-prod-card" onclick="window.location.href='/Product/Details/${p.id}'">
-            <div class="prod-card-media">
-                <img src="${p.img}" alt="${esc(p.name)}" data-name="${esc(p.name)}" loading="lazy"
-                     onerror="this.onerror=null;this.src=getFallbackImage(this.dataset.name);" />
-                <div class="prod-card-overlay"></div>
-                <div class="prod-card-badge-row">
-                    <span class="prod-type-tag">${esc(p.typeName)}</span>
-                </div>
-                <button class="prod-quick-view-btn"
-                        onclick="event.stopPropagation();openQuickView(${p.id})">⚡ Quick View</button>
-            </div>
-            <div class="prod-card-body">
-                <div class="prod-card-type"><span class="prod-card-type-dot"></span>${esc(p.typeName)}</div>
-                <h3 class="prod-card-title">${esc(p.name)}</h3>
-                <p class="prod-card-desc">${esc(p.desc.substring(0, 85))}${p.desc.length > 85 ? '…' : ''}</p>
-                <div class="prod-card-footer">
-                    <div class="prod-price-block">
-                        <span class="prod-price-val">$${p.price}</span>
-                        <span class="prod-price-label">Free shipping</span>
-                    </div>
-                    <span class="prod-details-btn"
-                          onclick="event.stopPropagation();window.location.href='/Product/Details/${p.id}'">
-                        View →
-                    </span>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function esc(s) {
-    return String(s).replace(/[&<>"']/g,
-        m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
-}
-
-/* ════════════════════════════════════════════
-   QUICK VIEW MODAL
-════════════════════════════════════════════ */
-function openQuickView(id) {
-    const p = productsData.find(x => x.id === id);
-    if (!p) return;
-    document.getElementById('qvImg').src           = p.img;
-    document.getElementById('qvType').textContent  = p.typeName;
-    document.getElementById('qvTitle').textContent = p.name;
-    document.getElementById('qvDesc').textContent  = p.desc;
-    document.getElementById('qvPrice').textContent = '$' + p.price;
-    document.getElementById('qvDetailsLink').href  = '/Product/Details/' + p.id;
-    document.getElementById('qvOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-function closeQuickView() {
-    document.getElementById('qvOverlay').classList.remove('open');
-    document.body.style.overflow = '';
-}
-function closeQV(e) {
-    if (e.target === document.getElementById('qvOverlay')) closeQuickView();
-}
-
-/* ════════════════════════════════════════════
-   3-D EARTH HERO
-════════════════════════════════════════════ */
-(function () {
-    const canvas = document.getElementById('prod-hero-canvas');
-    if (!canvas) return;
-
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x020205, 0.0006);
-
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0.3, 4.2);
-
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const textureLoader    = new THREE.TextureLoader();
-    const earthMap         = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-    const earthSpecularMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
-    const earthNormalMap   = textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
-    const cloudMap         = textureLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
-
-    const earth = new THREE.Mesh(
-        new THREE.SphereGeometry(1.1, 128, 128),
-        new THREE.MeshPhongMaterial({
-            map: earthMap, specularMap: earthSpecularMap,
-            specular: new THREE.Color('grey'), shininess: 5,
-            normalMap: earthNormalMap, normalScale: new THREE.Vector2(0.8, 0.8)
-        })
-    );
-    scene.add(earth);
-
-    const clouds = new THREE.Mesh(
-        new THREE.SphereGeometry(1.12, 128, 128),
-        new THREE.MeshPhongMaterial({ map: cloudMap, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending })
-    );
-    scene.add(clouds);
-
-    // Stars
-    const starPositions = new Float32Array(4000 * 3);
-    for (let i = 0; i < 4000; i++) {
-        starPositions[i * 3]     = (Math.random() - 0.5) * 2500;
-        starPositions[i * 3 + 1] = (Math.random() - 0.5) * 2500;
-        starPositions[i * 3 + 2] = (Math.random() - 0.5) * 600 - 200;
-    }
-    const starGeo = new THREE.BufferGeometry();
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true, opacity: 0.7 }));
-    scene.add(stars);
-
-    // Orbit Rings
-    const createRing = (radius, color, opacity) => {
-        const pts = [];
-        for (let i = 0; i <= 200; i++) {
-            const a = (i / 200) * Math.PI * 2;
-            pts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+        function filterByType(btn, typeId) {
+            currentTypeId = typeId;
+            document.querySelectorAll('.prod-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderFiltered();
         }
-        return new THREE.LineLoop(
-            new THREE.BufferGeometry().setFromPoints(pts),
-            new THREE.LineBasicMaterial({ color, transparent: true, opacity })
-        );
-    };
-    const ring1 = createRing(1.55, 0x4deeEA, 0.3);
-    const ring2 = createRing(1.75, 0xa855f7, 0.25);
-    scene.add(ring1);
-    scene.add(ring2);
 
-    // Lights
-    scene.add(new THREE.AmbientLight(0x111122));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(5, 3, 5);
-    scene.add(dirLight);
-    scene.add(new THREE.PointLight(0x445566, 0.8, 10, 2));
-    scene.add(new THREE.PointLight(0x4deeEA, 0.4, 5, 2));
+        function sortProducts(val) {
+            currentSort = val;
+            renderFiltered();
+        }
 
-    let targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
-    document.getElementById('prod-hero').addEventListener('mousemove', (e) => {
-        targetRY = (e.clientX / window.innerWidth  - 0.5) * 0.8;
-        targetRX = (e.clientY / window.innerHeight - 0.5) * 0.4;
-    });
+        function renderFiltered() {
+            let list = currentTypeId === 0
+                ? [...productsData]
+                : productsData.filter(p => p.typeId === currentTypeId);
 
-    let time = 0;
-    (function animate() {
-        requestAnimationFrame(animate);
-        time += 0.004;
-        currentRY += (targetRY - currentRY) * 0.04;
-        currentRX += (targetRX - currentRX) * 0.04;
+            if (currentSort === 'price-asc')   list.sort((a, b) => a.price - b.price);
+            if (currentSort === 'price-desc')  list.sort((a, b) => b.price - a.price);
+            if (currentSort === 'rating-desc') list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            if (currentSort === 'name')        list.sort((a, b) => a.name.localeCompare(b.name));
 
-        earth.rotation.y  = currentRY + time * 0.5;
-        earth.rotation.x  = currentRX * 0.2;
-        clouds.rotation.y = currentRY + time * 0.6;
-        clouds.rotation.x = currentRX * 0.2;
-        ring1.rotation.y += 0.0008;
-        ring1.rotation.x  = Math.sin(time * 0.4) * 0.1;
-        ring2.rotation.z += 0.001;
-        ring2.rotation.x  = Math.cos(time * 0.3) * 0.1;
-        stars.rotation.y += 0.0003;
-        stars.rotation.x += 0.0002;
+            document.getElementById('prodCount').textContent = list.length;
+            renderProducts(list);
+        }
 
-        renderer.render(scene, camera);
-    })();
+        function renderProducts(list) {
+            const grid = document.getElementById('prodGrid');
+            if (!list.length) {
+                grid.innerHTML = '<div class="prod-empty">No products found.</div>';
+                return;
+            }
 
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-})();
+            grid.innerHTML = list.map(p => `
+                <div class="nex-prod-card" onclick="window.location.href='/Product/Details/${p.id}'">
+                    <div class="prod-card-media">
+                        <img src="${p.img}" alt="${esc(p.name)}" loading="lazy" />
+                        <span class="prod-type-tag">${esc(p.typeName)}</span>
+                        ${stockBadge(p.stockStatus)}
+                    </div>
+                    <div class="prod-card-body">
+                        <div class="prod-card-type">${esc(p.typeName)}${p.vendorName ? ' · ' + esc(p.vendorName) : ''}</div>
+                        <h3 class="prod-card-title">${esc(p.name)}</h3>
+                        ${ratingRow(p.rating, p.reviewCount)}
+                        <p class="prod-card-desc">${esc(p.desc)}</p>
+                        <div class="prod-card-footer">
+                            <span class="prod-price-val">$${p.price}</span>
+                            <a class="prod-details-btn" href="/Product/Details/${p.id}" onclick="event.stopPropagation()">View →</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-/* ── INIT ── */
-renderFiltered();
+        function ratingRow(rating, reviewCount) {
+            if (!rating) return '';
+            const rounded = Math.round(rating);
+            const stars = '★'.repeat(rounded) + '☆'.repeat(5 - rounded);
+            return `<div class="prod-rating-row">
+                <span class="prod-stars">${stars}</span>
+                <span class="prod-rating-num">${Number(rating).toFixed(1)}</span>
+                ${reviewCount ? `<span class="prod-review-count">(${reviewCount})</span>` : ''}
+            </div>`;
+        }
+
+        function stockBadge(status) {
+            if (!status) return '';
+            const s = status.toLowerCase();
+            const cls = s.includes('out') ? 'stock-out' : s.includes('low') ? 'stock-low' : 'stock-in';
+            return `<span class="prod-stock-badge ${cls}">${esc(status)}</span>`;
+        }
+
+        function esc(s) {
+            return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+        }
+
+        renderFiltered();
     </script>
 }

@@ -17,8 +17,11 @@ namespace TourwebsiteFYP.Controllers
         {
             var products = _context.Products
                 .Include("ProductType")
+                .Include("Vendor")
                 .OrderBy(p => Guid.NewGuid())
                 .ToList();
+
+            ViewBag.ProductTypes = _context.ProductTypes.ToList();
 
             return View(products);
         }
@@ -28,6 +31,7 @@ namespace TourwebsiteFYP.Controllers
         {
             var products = _context.Products
                 .Include("ProductType")
+                .Include("Vendor")
                 .OrderBy(p => Guid.NewGuid())
                 .Take(4)
                 .ToList();
@@ -40,6 +44,7 @@ namespace TourwebsiteFYP.Controllers
         {
             var product = _context.Products
                 .Include("ProductType")
+                .Include("Vendor")
                 .FirstOrDefault(p => p.ProductId == id);
 
             if (product == null)
@@ -66,6 +71,7 @@ namespace TourwebsiteFYP.Controllers
         {
             var products = _context.Products
                 .Include("ProductType")
+                .Include("Vendor")
                 .Where(p => p.ProductTypeId == productTypeId &&
                             p.ProductId != productId)
                 .OrderBy(p => Guid.NewGuid())
@@ -87,6 +93,7 @@ namespace TourwebsiteFYP.Controllers
         {
             var products = _context.Products
                 .Include("ProductType")
+                .Include("Vendor")
                 .Where(p => p.ProductTypeId == id)
                 .ToList();
 
@@ -107,6 +114,7 @@ namespace TourwebsiteFYP.Controllers
         {
             var products = _context.Products
                 .Include("ProductType")
+                .Include("Vendor")
                 .Where(p =>
                     (string.IsNullOrEmpty(Search) ||
                      p.ProductName.ToLower().Contains(Search.ToLower()))
