@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,6 +12,13 @@ namespace TourwebsiteFYP
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            routes.MapRoute(
+                name: "DestinationRegion",
+                url: "Destination/{region}",
+                defaults: new { controller = "Destination", action = "Details" },
+                constraints: new { region = @"^[a-zA-Z0-9\s%-]+$" }
+            );
 
             routes.MapRoute(
                 name: "Default",

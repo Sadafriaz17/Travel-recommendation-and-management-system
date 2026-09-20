@@ -51,10 +51,21 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
         [HttpPost]
         public ActionResult Edit(User model)
         {
-            _context.Entry(model).State = EntityState.Modified;
-            _context.SaveChanges();
-            TempData["SuccessMessage"] = "User updated successfully!";
-            return RedirectToAction("Index");
+            var existingUser = _context.Users.Find(model.UserId);
+            if (existingUser != null)
+            {
+                existingUser.FullName = model.FullName;
+                existingUser.Email = model.Email;
+                existingUser.PasswordHash = model.PasswordHash;
+                existingUser.Phone = model.Phone;
+                existingUser.UserTypeId = model.UserTypeId;
+                
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "User updated successfully!";
+                return RedirectToAction("Index");
+            }
+            
+            return HttpNotFound();
         }
 
         public ActionResult Delete(int id)

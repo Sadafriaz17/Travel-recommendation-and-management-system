@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -71,10 +71,5 @@ namespace TourwebsiteFYP.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult GoogleLogin()
-        {
-            TempData["SignupError"] = "Google sign-up isn't configured yet.";
-            return RedirectToAction("Index");
-        }
     }
 }

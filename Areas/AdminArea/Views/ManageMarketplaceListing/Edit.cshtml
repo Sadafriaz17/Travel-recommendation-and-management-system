@@ -1,0 +1,87 @@
+@model TourwebsiteFYP.DB_data_models.Vendor
+@{
+    ViewBag.Title = "Edit Vendor";
+    ViewBag.ActiveMenu = "Marketplace";
+}
+<div class="page-header">
+    <div>
+        <div class="page-title">Edit Vendor</div>
+        <div class="page-subtitle">Update vendor profile details</div>
+    </div>
+    <a href="@Url.Action("Index", "ManageMarketplaceListing", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert-toast alert-toast-error" style="margin-bottom:16px;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        Please fix the errors below before saving.
+    </div>
+}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title"><i class="bi bi-pencil-square"></i> Edit Vendor — @Model.VendorName</div>
+    </div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Edit", "ManageMarketplaceListing", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            @Html.HiddenFor(m => m.VendorId)
+
+            <div class="form-grid">
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Vendor Name <span>*</span></label>
+                    <input type="text" name="VendorName" class="form-control" required value="@Model.VendorName" />
+                    @Html.ValidationMessage("VendorName", new { @class = "field-validation-error" })
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="Location" class="form-control" value="@Model.Location" placeholder="e.g. Cusco, Peru" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Logo / Icon (emoji or text)</label>
+                    <input type="text" name="LogoIcon" class="form-control" value="@Model.LogoIcon" placeholder="e.g. 🏪" />
+                    <span class="form-hint">Paste an emoji to use as the vendor icon.</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Rating (0 – 5)</label>
+                    <input type="number" name="Rating" class="form-control" step="0.1" min="0" max="5"
+                           value="@Model.Rating.ToString("0.0")" />
+                </div>
+
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+                </div>
+            </div>
+
+            @* Read-only product summary *@
+            if (Model.Products != null && Model.Products.Any())
+            {
+                var products = Model.Products.ToList();
+                <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+                    <div style="font-size:13px;font-weight:700;color:var(--text-dark);margin-bottom:12px;">
+                        <i class="bi bi-bag" style="margin-right:6px;color:var(--text-muted);"></i>
+                        Products (@products.Count) — managed via Products section
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        @foreach (var p in products)
+                        {
+                            <span class="badge-pill badge-neutral">@p.ProductName — @p.Price.ToString("C")</span>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="form-actions" style="margin-top:24px;">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Vendor</button>
+                <a href="@Url.Action("Index", "ManageMarketplaceListing", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>

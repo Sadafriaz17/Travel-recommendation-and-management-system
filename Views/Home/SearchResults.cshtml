@@ -1,0 +1,590 @@
+@{
+    ViewBag.Title = "Search Results";
+    ViewBag.ActivePage = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string searchQuery = ViewBag.SearchQuery as string ?? "";
+    string budgetParam = ViewBag.Budget as string ?? "";
+    string guestsParam = ViewBag.Guests as string ?? "";
+    int totalCount = ViewBag.TotalCount is int tc ? tc : 0;
+
+    var destinations = ViewBag.Destinations as IEnumerable<TourwebsiteFYP.DB_data_models.Destination>
+                        ?? Enumerable.Empty<TourwebsiteFYP.DB_data_models.Destination>();
+    var packages = ViewBag.Packages as IEnumerable<TourwebsiteFYP.DB_data_models.Package>
+                        ?? Enumerable.Empty<TourwebsiteFYP.DB_data_models.Package>();
+    var products = ViewBag.Products as IEnumerable<TourwebsiteFYP.DB_data_models.Product>
+                        ?? Enumerable.Empty<TourwebsiteFYP.DB_data_models.Product>();
+
+    string budgetLabel = "";
+    switch (budgetParam)
+    {
+        case "under500": budgetLabel = "Under $500"; break;
+        case "500-2000": budgetLabel = "$500 – $2,000"; break;
+        case "2000-5000": budgetLabel = "$2,000 – $5,000"; break;
+        case "5000plus": budgetLabel = "$5,000+"; break;
+    }
+
+    string guestsLabel = "";
+    if (guestsParam == "6plus")
+    {
+        guestsLabel = "6+ Guests";
+    }
+    else if (!string.IsNullOrEmpty(guestsParam) && guestsParam != "any")
+    {
+        guestsLabel = guestsParam + (guestsParam == "1" ? " Guest" : " Guests");
+    }
+}
+
+<style>
+    /* ── Hero ─────────────────────────────────────────────────────────── */
+    .hero-wrapper .sr-breadcrumb {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.55);
+        margin-bottom: 1rem;
+    }
+
+        .hero-wrapper .sr-breadcrumb a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+            .hero-wrapper .sr-breadcrumb a:hover {
+                color: #fff;
+            }
+
+    .hero-wrapper h1 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-wrapper .sr-meta {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .hero-wrapper .sr-tag {
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 50px;
+        padding: 0.2rem 0.8rem;
+        font-size: 0.78rem;
+    }
+
+    /* ── Sticky refine bar ────────────────────────────────────────────── */
+    .sr-refine-bar {
+        background: #fff;
+        border-bottom: 1px solid #f0f0f0;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+
+    .sr-refine-inner {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+        .sr-refine-inner input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            max-width: 360px;
+            border: 1px solid #e5e7eb;
+            border-radius: 50px;
+            padding: 0.55rem 1.2rem;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: var(--font-main);
+            color: #1a1a1a;
+            background: #f9fafb;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+            .sr-refine-inner input[type="text"]:focus {
+                border-color: #1a1a1a;
+                background: #fff;
+            }
+
+        .sr-refine-inner select {
+            border: 1px solid #e5e7eb;
+            border-radius: 50px;
+            padding: 0.55rem 1.1rem;
+            font-size: 0.85rem;
+            outline: none;
+            font-family: var(--font-main);
+            color: #1a1a1a;
+            background: #f9fafb;
+            cursor: pointer;
+        }
+
+        .sr-refine-inner .btn-refine {
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 0.55rem 1.5rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font-main);
+            transition: background 0.2s;
+        }
+
+            .sr-refine-inner .btn-refine:hover {
+                background: #333;
+            }
+
+    /* ── Results container ───────────────────────────────────────────── */
+    .sr-container {
+        padding: 3.5rem 0 5rem;
+    }
+
+    .sr-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+        .sr-section-title h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            color: #1a1a1a;
+        }
+
+        .sr-section-title .sr-count-pill {
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.7rem;
+            border-radius: 50px;
+        }
+
+        .sr-section-title .sr-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a1a1a;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+    /* ── Destination cards ────────────────────────────────────────────── */
+    .sr-dest-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 3.5rem;
+    }
+
+    .sr-dest-card {
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        height: 240px;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        transition: 0.3s;
+    }
+
+        .sr-dest-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .sr-dest-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .sr-dest-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .sr-dest-card .sr-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+            color: #fff;
+        }
+
+            .sr-dest-card .sr-overlay h4 {
+                font-size: 1.05rem;
+                font-weight: 700;
+                margin-bottom: 0.15rem;
+            }
+
+            .sr-dest-card .sr-overlay span {
+                font-size: 0.82rem;
+                opacity: 0.85;
+            }
+
+    /* ── Package / Product cards ─────────────────────────────────────── */
+    .sr-pkg-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 3.5rem;
+    }
+
+    .pkg-card {
+        display: block;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #f3f4f6;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        transition: 0.3s;
+    }
+
+        .pkg-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .pkg-card .img-wrap {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .pkg-card .img-wrap img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.4s;
+            }
+
+        .pkg-card:hover .img-wrap img {
+            transform: scale(1.06);
+        }
+
+        .pkg-card .pkg-body {
+            padding: 1.25rem;
+        }
+
+            .pkg-card .pkg-body h4 {
+                font-size: 1.05rem;
+                font-weight: 700;
+                margin-bottom: 0.4rem;
+                color: #1a1a1a;
+            }
+
+            .pkg-card .pkg-body p {
+                font-size: 0.85rem;
+                color: #6b7280;
+                line-height: 1.5;
+                margin: 0 0 0.9rem;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+        .pkg-card .pkg-footer {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+    /* ── Empty / no-results ───────────────────────────────────────────── */
+    .sr-empty {
+        text-align: center;
+        padding: 5rem 0;
+    }
+
+        .sr-empty .sr-empty-icon {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .sr-empty h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .sr-empty p {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sr-empty .sr-empty-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+    /* ── Product badges ───────────────────────────────────────────────── */
+    .prod-hp-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: .25rem .7rem;
+        border-radius: 50px;
+        font-size: .65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .prod-hp-badge-in {
+        background: #e6f7ed;
+        color: #1e8a4c;
+    }
+
+    .prod-hp-badge-low {
+        background: #fff4e0;
+        color: #b8720c;
+    }
+
+    .prod-hp-badge-out {
+        background: #fde8e8;
+        color: #c0392b;
+    }
+
+    .prod-hp-type {
+        display: block;
+        font-size: .72rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        margin-bottom: .3rem;
+    }
+
+    /* ── Responsive ───────────────────────────────────────────────────── */
+    @@media (max-width: 1024px) {
+        .sr-dest-grid, .sr-pkg-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .sr-dest-grid, .sr-pkg-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-wrapper h1 {
+            font-size: 1.6rem;
+        }
+
+        .sr-refine-inner {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .sr-refine-inner input[type="text"] {
+                max-width: none;
+            }
+
+            .sr-refine-inner .btn-refine {
+                width: 100%;
+            }
+    }
+</style>
+
+<!-- ═══ HERO / HEADER ═══ -->
+<section class="hero-wrapper">
+    <div class="hero-content" style="max-width: 1000px;">
+        <div class="sr-breadcrumb">
+            <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Home</a>
+        </div>
+
+        @if (!string.IsNullOrEmpty(searchQuery))
+        {
+            <h1>Results for &ldquo;@searchQuery&rdquo;</h1>
+        }
+        else
+        {
+            <h1>All Results</h1>
+        }
+
+        <div class="sr-meta">
+            <span>@totalCount result@(totalCount == 1 ? "" : "s") found</span>
+            @if (!string.IsNullOrEmpty(budgetLabel))
+            {
+                <span class="sr-tag"><i class="fas fa-wallet"></i> @budgetLabel</span>
+            }
+            @if (!string.IsNullOrEmpty(guestsLabel))
+            {
+                <span class="sr-tag"><i class="fas fa-users"></i> @guestsLabel</span>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ═══ STICKY REFINE BAR ═══ -->
+<div class="sr-refine-bar">
+    <div class="container">
+        <form class="sr-refine-inner" method="get" action="@Url.Action("Search", "Home")" id="refine-form">
+            <i class="fas fa-search" style="color:#9ca3af; margin-right:-0.25rem;"></i>
+            <input type="text" name="query" id="refine-query"
+                   value="@searchQuery"
+                   placeholder="Refine your search..." />
+
+            <select name="budget" id="refine-budget">
+                <option value="" @(string.IsNullOrEmpty(budgetParam) ? "selected" : "")>Any Budget</option>
+                <option value="under500" @(budgetParam == "under500" ? "selected" : "")>Under $500</option>
+                <option value="500-2000" @(budgetParam == "500-2000" ? "selected" : "")>$500 – $2,000</option>
+                <option value="2000-5000" @(budgetParam == "2000-5000" ? "selected" : "")>$2,000 – $5,000</option>
+                <option value="5000plus" @(budgetParam == "5000plus" ? "selected" : "")>$5,000+</option>
+            </select>
+
+            <select name="guests" id="refine-guests">
+                <option value="" @(string.IsNullOrEmpty(guestsParam) || guestsParam == "any" ? "selected" : "")>Any Guests</option>
+                <option value="1" @(guestsParam == "1" ? "selected" : "")>1 Guest</option>
+                <option value="2" @(guestsParam == "2" ? "selected" : "")>2 Guests</option>
+                <option value="3" @(guestsParam == "3" ? "selected" : "")>3 Guests</option>
+                <option value="4" @(guestsParam == "4" ? "selected" : "")>4 Guests</option>
+                <option value="5" @(guestsParam == "5" ? "selected" : "")>5 Guests</option>
+                <option value="6plus" @(guestsParam == "6plus" ? "selected" : "")>6+ Guests</option>
+            </select>
+
+            <button type="submit" class="btn-refine" id="refine-submit">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ═══ RESULTS BODY ═══ -->
+<div class="container sr-container">
+
+    @if (totalCount == 0)
+    {
+        <div class="sr-empty">
+            <div class="sr-empty-icon"><i class="fas fa-search"></i></div>
+            <h3>No results found@(!string.IsNullOrEmpty(searchQuery) ? " for \u201c" + searchQuery + "\u201d" : "")</h3>
+            <p>Try a different keyword, relax your budget filter, or browse all destinations and packages below.</p>
+            <div class="sr-empty-actions">
+                <a href="@Url.Action("Index", "Home")" class="btn-primary">← Back to Home</a>
+                <a href="@Url.Action("Index", "Package")" class="btn-primary" style="background:#f3f4f6; color:#1a1a1a; border:1px solid #e5e7eb;">Browse Packages</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        if (destinations.Any())
+        {
+            <div class="sr-section-title">
+                <div class="sr-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <h2>Destinations</h2>
+                <span class="sr-count-pill">@destinations.Count()</span>
+            </div>
+            <div class="sr-dest-grid">
+                @foreach (var dest in destinations)
+                {
+                    var destImg = !string.IsNullOrEmpty(dest.Image) ? Url.Content(dest.Image) : "/images/no-image.jpg";
+                    <a href="@Url.Action("Details", "Destination", new { id = dest.DestinationId })" class="sr-dest-card">
+                        <img src="@destImg" alt="@dest.Name" loading="lazy" />
+                        <div class="sr-overlay">
+                            <h4>@dest.Name</h4>
+                            <span>@(!string.IsNullOrEmpty(dest.Location) ? dest.Location : "Explore this destination")</span>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+
+        if (packages.Any())
+        {
+            <div class="sr-section-title">
+                <div class="sr-icon"><i class="fas fa-suitcase-rolling"></i></div>
+                <h2>Travel Packages</h2>
+                <span class="sr-count-pill">@packages.Count()</span>
+            </div>
+            <div class="sr-pkg-grid">
+                @foreach (var pkg in packages)
+                {
+                    var pkgImages = pkg.PackageImages?.ToList() ?? new List<TourwebsiteFYP.DB_data_models.PackageImage>();
+                    var pkgImg = pkgImages.FirstOrDefault()?.ImageUrl;
+                    var pkgImgUrl = !string.IsNullOrEmpty(pkgImg) ? Url.Content(pkgImg) : "/images/no-image.jpg";
+
+                    <a href="@Url.Action("Details", "Package", new { id = pkg.PackageId })" class="pkg-card">
+                        <div class="img-wrap">
+                            <img src="@pkgImgUrl" alt="@pkg.PackageName" loading="lazy" />
+                        </div>
+                        <div class="pkg-body">
+                            <h4>@pkg.PackageName</h4>
+                            <p>@pkg.Description</p>
+                            <div class="pkg-footer">$@pkg.Price.ToString("N0") &middot; @pkg.DurationDays days</div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+
+        if (products.Any())
+        {
+            <div class="sr-section-title">
+                <div class="sr-icon"><i class="fas fa-shopping-bag"></i></div>
+                <h2>Products</h2>
+                <span class="sr-count-pill">@products.Count()</span>
+            </div>
+            <div class="sr-pkg-grid">
+                @foreach (var prod in products)
+                {
+                    var prodImg = !string.IsNullOrEmpty(prod.ImageUrl) ? Url.Content(prod.ImageUrl) : "/images/no-image.jpg";
+
+                    <a href="@Url.Action("Details", "Product", new { id = prod.ProductId })" class="pkg-card">
+                        <div class="img-wrap" style="position:relative;">
+                            <img src="@prodImg" alt="@prod.ProductName" loading="lazy" />
+                            @if (!string.IsNullOrEmpty(prod.StockStatus))
+                            {
+                                var sl = prod.StockStatus.ToLower();
+                                var sc = sl.Contains("out") ? "prod-hp-badge-out" : sl.Contains("low") ? "prod-hp-badge-low" : "prod-hp-badge-in";
+                                <span class="prod-hp-badge @sc">@prod.StockStatus</span>
+                            }
+                        </div>
+                        <div class="pkg-body">
+                            @if (prod.ProductType != null)
+                            {
+                                <span class="prod-hp-type">@prod.ProductType.TypeName</span>
+                            }
+                            <h4>@prod.ProductName</h4>
+                            <p>@prod.Description</p>
+                            <div class="pkg-footer">$@prod.Price.ToString("N2")</div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    }
+
+</div>

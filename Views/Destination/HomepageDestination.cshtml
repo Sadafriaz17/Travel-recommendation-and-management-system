@@ -11,10 +11,10 @@
     }
 
     .dest-card-v2 {
-        border-radius: 20px;
+        border-radius: 24px;
         overflow: hidden;
         position: relative;
-        height: 280px;
+        height: 300px;
         width: 100%;
         display: block;
         text-decoration: none;
@@ -25,35 +25,47 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.4s;
+            transition: transform 0.5s ease;
         }
 
         .dest-card-v2:hover img {
-            transform: scale(1.05);
+            transform: scale(1.06);
         }
 
-        /* Black text overlay at bottom-left */
         .dest-card-v2 .overlay-v2 {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem;
-            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+            inset: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 1.75rem;
+            background: linear-gradient(to top, rgba(10,20,15,0.75) 0%, rgba(10,20,15,0.15) 45%, transparent 70%);
             color: #fff;
         }
 
-            .dest-card-v2 .overlay-v2 h4 {
+            .dest-card-v2 .overlay-v2 .dest-label h4 {
                 font-weight: 600;
-                font-size: 1.2rem;
-                margin-bottom: 0.2rem;
+                font-size: 1.35rem;
+                margin: 0;
             }
 
-            .dest-card-v2 .overlay-v2 span {
-                font-size: 0.9rem;
-                opacity: 0.9;
-                display: block;
+            .dest-card-v2 .overlay-v2 .btn-see-details {
+                flex-shrink: 0;
+                background: #fff;
+                color: #14301f;
+                border: none;
+                padding: 0.55rem 1.3rem;
+                border-radius: 50px;
+                font-size: 0.82rem;
+                font-weight: 700;
+                white-space: nowrap;
+                transition: background 0.2s, transform 0.2s;
             }
+
+        .dest-card-v2:hover .btn-see-details {
+            background: #14301f;
+            color: #fff;
+        }
 
     @@media (max-width: 768px) {
         .dest-grid-2x2 {
@@ -61,7 +73,7 @@
         }
 
         .dest-card-v2 {
-            height: 220px;
+            height: 240px;
         }
     }
 </style>
@@ -71,11 +83,13 @@
     {
         foreach (var item in Model.Take(4))
         {
-            <a href="@Url.Action("Details", "Destination", new { id = item.DestinationId })" class="dest-card-v2">
+            <a href="@Url.Action("index", "Destination", new { id = item.DestinationId })" class="dest-card-v2">
                 <img src="@Url.Content(item.Image)" alt="@item.Name" loading="lazy" />
                 <div class="overlay-v2">
-                    <h4>@item.Name</h4>
-                    <span>Explore this beautiful destination</span>
+                    <div class="dest-label">
+                        <h4>@item.Name</h4>
+                    </div>
+                    <span class="btn-see-details">See More</span>
                 </div>
             </a>
         }

@@ -1,70 +1,224 @@
-﻿@{
+@{
     ViewBag.Title = "Home";
     ViewBag.ActivePage = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- ═══ HERO SECTION ═══ -->
-<section class="hero-wrapper">
-    <div class="hero-content">
-        <h1>Extraordinary natural and<br />cultural charm</h1>
-        <p>Exploring Indonesia is an unforgettable adventure.</p>
-        <div class="hero-search">
-            <div class="search-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Dunia</span>
-            </div>
-            <div class="search-item">
-                <i class="fas fa-calendar-alt"></i>
-                <select><option>By Budget</option></select>
-            </div>
-            <div class="search-item">
-                <i class="fas fa-users"></i>
-                <select><option>2 Guest</option></select>
-            </div>
-            <button class="btn-search">Search</button>
-        </div>
-    </div>
-    <div class="stats-wrapper">
-        <div class="stats-grid">
-            <div class="stat-item"><h4>10M+</h4><p>Total Visitors</p></div>
-            <div class="stat-item"><h4>09+</h4><p>Year of Experience</p></div>
-            <div class="stat-item"><h4>12K</h4><p>Total Destination</p></div>
-            <div class="stat-item"><h4>5.0</h4><p>User Rating</p></div>
-        </div>
-    </div>
-</section>
-
-<!-- ═══ DESTINATIONS (2x2 Grid) ═══ -->
-<section class="container section-padding" id="destinations-section">
-    <div class="section-header" data-reveal>
-        <div class="section-header-left">
-            <span class="sub-label">Explore the World</span>
-            <h2>Popular destinations</h2>
-        </div>
-        <div class="section-header-right">
-            Discover breathtaking landscapes, rich cultural heritage, and unforgettable experiences in every corner of the globe.
-        </div>
-    </div>
-    <div data-reveal>
-        @Html.Action("HomepageDestination", "Destination")
-    </div>
-</section>
-
-<!-- ═══ SPLIT SECTION (Image Left, Steps Right) ═══ -->
 <style>
+    /* ────────────────────────────────────────────────────────────────
+       DESIGN TOKENS — original teal palette, kept exactly as before.
+       Layout below is restructured; colors are not.
+    ── ─────────────────────────────────────────────────────────────── */
+
+    :root {
+        --ink: #1a1a1a;
+        --ink-soft: #6b7280;
+        --paper: #ffffff;
+        --paper-tint: #f8f9fb;
+        --accent: #0d9488;
+        --accent-dark: #0f766e;
+        --accent-tint: #e6f5f3;
+        --accent-soft: #5eead4;
+        --line: #e5e7eb;
+    }
+
+    .bg-tint {
+        background: var(--paper-tint);
+    }
+
+    .section-padding {
+        padding: 6rem 0;
+    }
+
+    /* ── Section header — a lede line, not a tracked-out badge ─────── */
+    .section-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        width: 100%;
+        margin: 0 0 3rem;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 1.5rem;
+    }
+
+        .section-head .kicker {
+            font-family: var(--font-main);
+            font-style: italic;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: var(--ink-soft); /* was: var(--accent) */
+            display: block;
+            margin-bottom: 0.35rem;
+        }
+
+        .section-head h2 {
+            font-family: var(--font-main);
+            font-size: 2.1rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        .section-head .section-link {
+            flex-shrink: 0;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--ink);
+            text-decoration: none;
+            border-bottom: 1px solid var(--ink);
+            padding-bottom: 2px;
+            white-space: nowrap;
+        }
+
+            .section-head .section-link:hover {
+                color: var(--accent);
+                border-color: var(--accent);
+            }
+
+    @@media (max-width: 640px) {
+        .section-head {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+    }
+
+    /* ── Hero search bar ─────────────────────────────────────────── */
+    .hero-trust-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.22);
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.35rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-search {
+        display: flex;
+        align-items: stretch;
+        flex-wrap: wrap;
+        background: #fff;
+        border-radius: 10px;
+        padding: 0.35rem;
+        max-width: 700px;
+        margin: 2rem auto 0;
+        box-shadow: 0 20px 50px rgba(24, 38, 32, 0.22);
+    }
+
+        .hero-search .search-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.7rem 1.1rem;
+            flex: 1 1 0;
+            min-width: 140px;
+            position: relative;
+        }
+
+            .hero-search .search-item:not(:last-of-type)::after {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 22%;
+                bottom: 22%;
+                width: 1px;
+                background: var(--line);
+            }
+
+            .hero-search .search-item i {
+                color: var(--accent);
+                font-size: 0.85rem;
+                flex-shrink: 0;
+            }
+
+    #hero-query {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 100%;
+        min-width: 0;
+        font-size: 0.9rem;
+        color: var(--ink);
+        font-family: var(--font-main);
+    }
+
+        #hero-query::placeholder {
+            color: #9ca3af;
+        }
+
+    .hero-search select {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 100%;
+        min-width: 0;
+        font-size: 0.9rem;
+        color: var(--ink);
+        font-family: var(--font-main);
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .btn-search {
+        flex-shrink: 0;
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        padding: 0.85rem 2rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        font-family: var(--font-main);
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s;
+    }
+
+        .btn-search:hover {
+            background: var(--accent-dark);
+        }
+
+    /* ── Trust strip: plain, factual, no icon-badge kit ────────────── */
+    .trust-strip {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        column-gap: 3rem;
+        row-gap: 1rem;
+        padding: 2.25rem 0;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--font-main);
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+    }
+
+    .trust-item strong {
+        color: var(--ink);
+        font-weight: 600;
+    }
+
+    /* ── Plan your journey — a real process gets a timeline,
+         not a stack of identical shadowed cards ────────────────────── */
     .split-section-custom {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 4.5rem;
         align-items: center;
     }
 
     .split-image-wrapper-custom {
         position: relative;
-        border-radius: 20px;
+        border-radius: 6px;
         overflow: hidden;
-        height: 600px;
+        height: 560px;
         width: 100%;
     }
 
@@ -76,14 +230,12 @@
 
     .split-image-overlay {
         position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(4px);
-        padding: 0.8rem 1.5rem;
-        border-radius: 40px;
+        bottom: 18px;
+        left: 18px;
+        right: 18px;
+        background: rgba(24, 38, 32, 0.82);
+        padding: 0.85rem 1.25rem;
+        border-radius: 6px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -99,466 +251,537 @@
 
         .split-image-overlay button {
             background: #fff;
-            color: #000;
+            color: var(--ink);
             border: none;
-            padding: 0.4rem 1.5rem;
-            border-radius: 40px;
+            padding: 0.4rem 1.3rem;
+            border-radius: 5px;
             font-weight: 600;
             cursor: pointer;
         }
 
-    .steps-list-custom {
+    .journey-copy .kicker {
+        font-family: var(--font-main);
+        font-style: italic;
+        font-weight: 500;
+        font-size: 1.1rem;
+        color: var(--ink-soft);
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+
+    .journey-copy h2 {
+        font-family: var(--font-main);
+        font-size: 2.3rem;
+        font-weight: 600;
+        margin: 0 0 2.25rem;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+    }
+
+    .timeline {
+        position: relative;
+    }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 20px;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: var(--line);
+        }
+
+    .timeline-step {
+        position: relative;
         display: flex;
-        flex-direction: column;
         gap: 1.5rem;
+        padding-bottom: 2.25rem;
     }
 
-        .steps-list-custom h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
+        .timeline-step:last-child {
+            padding-bottom: 0;
         }
 
-    .step-item-custom {
-        background: #fff;
-        padding: 1.5rem;
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        transition: 0.3s;
-        border: 1px solid transparent;
-    }
-
-        .step-item-custom:hover {
-            border-color: #e5e7eb;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-        }
-
-        .step-item-custom .step-icon {
-            width: 44px;
-            height: 44px;
+        .timeline-step .step-number {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            width: 41px;
+            height: 41px;
             border-radius: 50%;
-            background: #f3f4f6;
+            background: var(--paper);
+            border: 1px solid var(--ink);
+            color: var(--ink);
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 1.05rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #1a1a1a;
-            flex-shrink: 0;
         }
 
-        .step-item-custom h5 {
-            font-weight: 600;
-            margin-bottom: 0.3rem;
+        .timeline-step:hover .step-number {
+            background: var(--ink);
+            color: var(--paper);
+        }
+
+        .timeline-step h5 {
+            font-weight: 700;
+            margin: 0.35rem 0 0.3rem;
             font-size: 1.05rem;
+            color: var(--ink);
         }
 
-        .step-item-custom p {
-            font-size: 0.9rem;
-            color: #6b7280;
+        .timeline-step p {
+            font-size: 0.92rem;
+            color: var(--ink-soft);
             margin: 0;
-            line-height: 1.5;
+            line-height: 1.55;
+            max-width: 38ch;
         }
 
     @@media (max-width: 768px) {
         .split-section-custom {
             grid-template-columns: 1fr;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .split-image-wrapper-custom {
-            height: 350px;
-        }
-    }
-</style>
-
-<section class="container section-padding" id="ai-generator">
-    <div class="split-section-custom" data-reveal>
-        <div class="split-image-wrapper-custom">
-            <img src="/images/sideimage.jpg" alt="Traveler exploring" loading="lazy" />
-            <div class="split-image-overlay">
-                <span><i class="fas fa-map-marker-alt"></i> Date</span>
-                <span><i class="fas fa-calendar-alt"></i> Budget</span>
-                <span><i class="fas fa-users"></i> Guest</span>
-                <button>Search</button>
-            </div>
-        </div>
-        <div class="steps-list-custom">
-            <h2>Plan your next journey</h2>
-            <div class="step-item-custom">
-                <div class="step-icon"><i class="fas fa-search"></i></div>
-                <div><h5>Find your destination</h5><p>Browse our exclusive destinations perfectly matched to your travel style.</p></div>
-            </div>
-            <div class="step-item-custom">
-                <div class="step-icon"><i class="fas fa-ticket-alt"></i></div>
-                <div><h5>Book a ticket</h5><p>Secure, seamless flight and accommodation bookings for your entire trip.</p></div>
-            </div>
-            <div class="step-item-custom">
-                <div class="step-icon"><i class="fas fa-credit-card"></i></div>
-                <div><h5>Make payment</h5><p>Safe and encrypted payment processing with multiple global gateways.</p></div>
-            </div>
-            <div class="step-item-custom">
-                <div class="step-icon"><i class="fas fa-hiking"></i></div>
-                <div><h5>Explore destination</h5><p>Enjoy a hassle-free vacation with local support included in every package.</p></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ═══ PACKAGES (3-column Grid) ═══ -->
-<section class="container section-padding" id="packages-section">
-    <div class="section-header" data-reveal>
-        <div class="section-header-left">
-            <span class="sub-label">Unforgettable Experiences</span>
-            <h2>Featured travel packages</h2>
-        </div>
-      
-    </div>
-    <div data-reveal>
-        @Html.Action("Homepagepackage", "Package")
-    </div>
-    <div class="text-center-btn">
-        <a href="@Url.Action("Index", "Package")" class="btn-primary">See More</a>
-    </div>
-</section>
-
-<!-- ═══ AI TRIP GENERATOR (MATCHED TO WEBSITE COLORS) ═══ -->
-<style>
-    .ai-generator-wrapper {
-        padding: 3rem 0 0;
-        margin-top: 1rem;
-        position: relative;
-    }
-
-    .ai-generator-header {
-        text-align: center;
-        margin-bottom: 2.5rem;
-    }
-
-        .ai-generator-header h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
+            height: 320px;
         }
 
-        .ai-generator-header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
+        .section-head h2, .journey-copy h2 {
+            font-size: 1.7rem;
         }
+    }
 
-    .ai-badge {
-        display: inline-block;
-        background: #f3f4f6;
-        color: #1a1a1a;
-        padding: 0.3rem 1rem;
-        border-radius: 50px;
-        font-size: 0.7rem;
+    /* ── AI trip planner — an asymmetric working panel, not a
+         centered hero-in-a-hero with a decorative gradient blob ──── */
+    .ai-band {
+        background: var(--ink);
+        padding: 5.5rem 0;
+    }
+
+    .ai-layout {
+        display: grid;
+        grid-template-columns: 0.85fr 1.15fr;
+        gap: 4rem;
+        align-items: start;
+    }
+
+    .ai-intro .kicker {
+        font-family: var(--font-main);
+        font-style: italic;
+        font-weight: 500;
+        font-size: 1.1rem;
+        color: var(--ink-soft);
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+
+    .ai-intro h2 {
+        font-family: var(--font-main);
+        font-size: 2.15rem;
         font-weight: 600;
-        margin-bottom: 1rem;
-        border: 1px solid var(--border);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        color: #fff;
+        margin: 0 0 1rem;
+        letter-spacing: -0.01em;
+    }
+
+    .ai-intro p {
+        color: rgba(255,255,255,0.62);
+        font-size: 0.98rem;
+        line-height: 1.65;
+        max-width: 34ch;
+        margin: 0;
     }
 
     .ai-form-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        margin-top: 1.5rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem 1.25rem;
+        margin-bottom: 1.75rem;
     }
 
     .ai-form-group {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.18);
+        padding-bottom: 0.6rem;
     }
 
         .ai-form-group label {
             font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            color: rgba(255,255,255,0.5);
         }
 
-        /* MATCHED YOUR SEARCH BAR & HERO INPUTS */
         .ai-form-group select,
         .ai-form-group input {
-            background: var(--bg-body);
-            border: 1px solid var(--border);
-            border-radius: 60px;
-            padding: 0.8rem 1.2rem;
-            color: var(--text-dark);
+            background: transparent;
+            border: none;
+            padding: 0.2rem 0;
+            color: #fff;
             font-family: var(--font-main);
-            font-size: 0.9rem;
+            font-size: 0.98rem;
             outline: none;
-            transition: border-color 0.3s;
             width: 100%;
             -webkit-appearance: none;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235eead4' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 1.2rem center;
+            background-position: right center;
         }
 
             .ai-form-group select option {
-                background: #fff;
-                color: #1a1a1a;
-            }
-
-            .ai-form-group select:focus,
-            .ai-form-group input:focus {
-                border-color: #1a1a1a;
-                background: #fff;
+                background: var(--ink);
+                color: #fff;
             }
 
             .ai-form-group input::placeholder {
-                color: #9ca3af;
+                color: rgba(255,255,255,0.35);
             }
 
-    /* BUTTON MATCHES YOUR WEBSITE THEME (PURE BLACK) */
     .btn-ai-generate {
-        width: 100%;
-        padding: 0.9rem;
-        border-radius: 60px;
+        padding: 0.9rem 2.25rem;
+        border-radius: 7px;
         border: none;
-        background: #1a1a1a;
-        color: #fff;
-        font-weight: 600;
-        font-size: 1rem;
+        background: var(--accent-soft);
+        color: var(--ink);
+        font-weight: 700;
+        font-size: 0.95rem;
         cursor: pointer;
-        transition: transform 0.2s, background 0.2s;
+        transition: background 0.2s;
         font-family: var(--font-main);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.8rem;
-        margin-top: 1rem;
     }
 
         .btn-ai-generate:hover {
-            background: #333;
-            transform: translateY(-2px);
+            background: #99f6e4;
         }
 
-    @@media (max-width: 1024px) {
-        .ai-form-grid {
-            grid-template-columns: 1fr 1fr;
+    @@media (max-width: 900px) {
+        .ai-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .ai-intro p {
+            max-width: none;
         }
     }
 
-    @@media (max-width: 768px) {
-        .ai-generator-wrapper {
-            padding: 2rem 0 0;
-        }
-
+    @@media (max-width: 560px) {
         .ai-form-grid {
             grid-template-columns: 1fr;
         }
+    }
 
-        .ai-generator-header h2 {
-            font-size: 1.8rem;
+    /* ── Blog — an editorial list, not a pair of identical cards
+         with an overlay pill and a middle-dot meta string ──────────── */
+    .blog-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .blog-row {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 2.25rem;
+        padding: 2.25rem 0;
+        border-top: 1px solid var(--line);
+        text-decoration: none;
+    }
+
+        .blog-row:last-child {
+            border-bottom: 1px solid var(--line);
         }
+
+        .blog-row .blog-img-wrap {
+            border-radius: 5px;
+            overflow: hidden;
+            height: 170px;
+        }
+
+        .blog-row img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .blog-row:hover img {
+            transform: scale(1.04);
+        }
+
+        .blog-row .blog-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+            .blog-row .blog-body .blog-meta {
+                font-size: 0.82rem;
+                color: var(--ink-soft);
+                font-weight: 600;
+                margin-bottom: 0.6rem;
+            }
+
+            .blog-row .blog-body h4 {
+                font-family: var(--font-main);
+                font-weight: 600;
+                font-size: 1.35rem;
+                line-height: 1.3;
+                margin: 0 0 0.6rem;
+                color: var(--ink);
+            }
+
+            .blog-row .blog-body p {
+                font-size: 0.92rem;
+                color: var(--ink-soft);
+                line-height: 1.6;
+                margin: 0;
+                max-width: 60ch;
+            }
+
+    @@media (max-width: 700px) {
+        .blog-row {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+            .blog-row .blog-img-wrap {
+                height: 200px;
+            }
     }
 </style>
 
-<section class="container" id="ai-trip-generator">
-    <div class="ai-generator-wrapper" data-reveal>
+<!-- ═══ HERO SECTION ═══ -->
+<section class="hero-wrapper">
+    <div class="hero-content">
 
-        <div class="ai-generator-header">
-            
-            <h2>Plan your perfect trip</h2>
-            <p>Tell our AI your preferences. Get a bespoke travel plan in seconds.</p>
-        </div>
-
-        <form action="@Url.Action("Index", "AI")" method="GET">
-            <div class="ai-form-grid">
-                <div class="ai-form-group">
-                    <label>Destination</label>
-                    <select name="destination">
-                        <option value="">Select Region</option>
-                        <option value="Europe">Europe</option>
-                        <option value="Asia">Asia</option>
-                        <option value="America">America</option>
-                        <option value="Africa">Africa</option>
-                        <option value="Oceania">Oceania</option>
-                    </select>
-                </div>
-
-                <div class="ai-form-group">
-                    <label>Temperature</label>
-                    <input type="text" name="temperature" placeholder="e.g. 20°C, warm, tropical..." />
-                </div>
-
-                <div class="ai-form-group">
-                    <label>Duration</label>
-                    <select name="duration">
-                        <option value="3">3 Days</option>
-                        <option value="5" selected>5 Days</option>
-                        <option value="7">7 Days</option>
-                        <option value="10">10 Days</option>
-                        <option value="14">14 Days</option>
-                    </select>
-                </div>
-
-                <div class="ai-form-group">
-                    <label>Travel Style</label>
-                    <select name="style">
-                        <option value="Luxury">Luxury</option>
-                        <option value="Budget">Budget</option>
-                        <option value="Adventure">Adventure</option>
-                        <option value="Family">Family</option>
-                        <option value="Romantic">Romantic</option>
-                    </select>
-                </div>
-
-                <div class="ai-form-group">
-                    <label>Budget Range</label>
-                    <select name="budget">
-                        <option value="1000">Under $1,000</option>
-                        <option value="3000">$1,000 - $3,000</option>
-                        <option value="5000">$3,000 - $5,000</option>
-                        <option value="10000">$5,000+</option>
-                    </select>
-                </div>
+        <h1>Extraordinary natural and<br />cultural charm</h1>
+        <p>Exploring Indonesia is an unforgettable adventure.</p>
+        <form class="hero-search" method="get" action="@Url.Action("Search", "Home")" id="hero-search-form">
+            <div class="search-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <input type="text" name="query" id="hero-query"
+                       placeholder="Destination, package, product..."
+                       autocomplete="off" />
             </div>
-
-            <button type="submit" class="btn-ai-generate">
-                <i class="fas fa-layer-group"></i> Generate AI Trip
-            </button>
+            <div class="search-item">
+                <i class="fas fa-wallet"></i>
+                <select name="budget" id="hero-budget">
+                    <option value="">Any Budget</option>
+                    <option value="under500">Under $500</option>
+                    <option value="500-2000">$500 – $2,000</option>
+                    <option value="2000-5000">$2,000 – $5,000</option>
+                    <option value="5000plus">$5,000+</option>
+                </select>
+            </div>
+            <div class="search-item">
+                <i class="fas fa-users"></i>
+                <select name="guests" id="hero-guests">
+                    <option value="">Any Guests</option>
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                    <option value="5">5 Guests</option>
+                    <option value="6plus">6+ Guests</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-search" id="hero-search-btn">Search</button>
         </form>
-
+    </div>
+    <div class="stats-wrapper">
+        <div class="stats-grid">
+            <div class="stat-item"><h4>10M+</h4><p>Total Visitors</p></div>
+            <div class="stat-item"><h4>09+</h4><p>Year of Experience</p></div>
+            <div class="stat-item"><h4>12K</h4><p>Total Destination</p></div>
+            <div class="stat-item"><h4>5.0</h4><p>User Rating</p></div>
+        </div>
     </div>
 </section>
 
-<!-- ═══ BLOG (2-column Grid) ═══ -->
-<style>
-    .blog-header {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-
-        .blog-header .sub-label {
-            color: #6b7280;
-            font-size: 0.9rem;
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .blog-header h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-        }
-
-    .blog-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
-
-    .blog-card {
-        border-radius: 20px;
-        overflow: hidden;
-        background: #fff;
-        transition: 0.3s;
-        border: 1px solid #f3f4f6;
-    }
-
-        .blog-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-        }
-
-        .blog-card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .blog-card .blog-body {
-            padding: 1.5rem;
-        }
-
-            .blog-card .blog-body .date {
-                font-size: 0.8rem;
-                color: #6b7280;
-                display: block;
-                margin-bottom: 0.5rem;
-            }
-
-            .blog-card .blog-body h4 {
-                font-weight: 700;
-                font-size: 1.1rem;
-                line-height: 1.3;
-                margin-bottom: 0.5rem;
-            }
-
-            .blog-card .blog-body p {
-                font-size: 0.9rem;
-                color: #6b7280;
-                line-height: 1.5;
-                margin: 0;
-            }
-
-    @@media (max-width: 768px) {
-        .blog-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-<section class="container section-padding" id="blog-section">
-    <div class="blog-header" data-reveal>
-        <span class="sub-label">Travel Inspiration</span>
-        <h2>Latest travel stories</h2>
+<!-- ═══ DESTINATIONS ═══ -->
+<section class="section-padding" id="destinations-section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <span class="kicker">Where the trip begins</span>
+                <h2>Popular destinations</h2>
+            </div>
+            <a href="@Url.Action("Index", "Destination")" class="section-link">All destinations</a>
+        </div>
+        @Html.Action("HomepageDestination", "Destination")
     </div>
-    <div class="blog-grid" data-reveal>
+</section>
+
+<!-- ═══ PLAN YOUR JOURNEY ═══ -->
+<section class="bg-tint section-padding" id="ai-generator">
+    <div class="container">
+        <div class="split-section-custom">
+            <div class="split-image-wrapper-custom">
+                <img src="/images/sideimage.jpg" alt="Traveler exploring" loading="lazy" />
+                <div class="split-image-overlay">
+                    <span><i class="fas fa-map-marker-alt"></i> Date</span>
+                    <span><i class="fas fa-calendar-alt"></i> Budget</span>
+                    <span><i class="fas fa-users"></i> Guest</span>
+                    <button>Search</button>
+                </div>
+            </div>
+            <div class="journey-copy">
+                <span class="kicker">Four steps, start to finish</span>
+                <h2>Plan your next journey</h2>
+                <div class="timeline">
+                    <div class="timeline-step">
+                        <div class="step-number">1</div>
+                        <div><h5>Find your destination</h5><p>Browse destinations matched to your travel style, from quiet coastlines to volcanic highlands.</p></div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-number">2</div>
+                        <div><h5>Book a ticket</h5><p>Reserve flights and stays together, held under one confirmation for the whole trip.</p></div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-number">3</div>
+                        <div><h5>Make payment</h5><p>Pay securely through any major card or wallet, with encryption on every transaction.</p></div>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-number">4</div>
+                        <div><h5>Explore destination</h5><p>Arrive to local support already arranged, so the only thing left to do is explore.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ PACKAGES ═══ -->
+<section class="section-padding" id="packages-section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <span class="kicker">Priced, planned, ready to book</span>
+                <h2>Featured travel packages</h2>
+            </div>
+            <a href="@Url.Action("Index", "Package")" class="section-link">All packages</a>
+        </div>
+        @Html.Action("Homepagepackage", "Package")
+    </div>
+</section>
+
+<!-- ═══ FEATURED PRODUCTS ═══ -->
+<section class="bg-tint section-padding" id="products-section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <span class="kicker">Gear up before you go</span>
+                <h2>Featured products</h2>
+            </div>
+            <a href="@Url.Action("Index", "Product")" class="section-link">All products</a>
+        </div>
+        @Html.Action("HomepageProducts", "Product")
+    </div>
+</section>
+
+<!-- ═══ AI TRIP GENERATOR ═══ -->
+<section class="ai-band" id="ai-trip-generator">
+    <div class="container">
+        <div class="ai-layout">
+            <div class="ai-intro">
+                <span class="kicker">Built with AI, tuned by you</span>
+                <h2>Plan your perfect trip</h2>
+                <p>Set a region, a climate, a style and a budget. We'll draft a day-by-day plan you can still change your mind about.</p>
+            </div>
+            <form action="@Url.Action("Index", "AI")" method="GET">
+                <div class="ai-form-grid">
+                    <div class="ai-form-group">
+                        <label>Destination</label>
+                        <select name="destination">
+                            <option value="">Select region</option>
+                            <option value="Europe">Europe</option>
+                            <option value="Asia">Asia</option>
+                            <option value="America">America</option>
+                            <option value="Africa">Africa</option>
+                            <option value="Oceania">Oceania</option>
+                        </select>
+                    </div>
+
+                    <div class="ai-form-group">
+                        <label>Temperature</label>
+                        <input type="text" name="temperature" placeholder="e.g. warm, tropical, 20°C" />
+                    </div>
+
+                    <div class="ai-form-group">
+                        <label>Duration</label>
+                        <select name="duration">
+                            <option value="3">3 days</option>
+                            <option value="5" selected>5 days</option>
+                            <option value="7">7 days</option>
+                            <option value="10">10 days</option>
+                            <option value="14">14 days</option>
+                        </select>
+                    </div>
+
+                    <div class="ai-form-group">
+                        <label>Travel style</label>
+                        <select name="style">
+                            <option value="Luxury">Luxury</option>
+                            <option value="Budget">Budget</option>
+                            <option value="Adventure">Adventure</option>
+                            <option value="Family">Family</option>
+                            <option value="Romantic">Romantic</option>
+                        </select>
+                    </div>
+
+                    <div class="ai-form-group" style="grid-column: span 2;">
+                        <label>Budget range</label>
+                        <select name="budget">
+                            <option value="1000">Under $1,000</option>
+                            <option value="3000">$1,000 – $3,000</option>
+                            <option value="5000">$3,000 – $5,000</option>
+                            <option value="10000">$5,000+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-ai-generate">Generate my trip</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ BLOG ═══ -->
+<section class="section-padding" id="blog-section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <span class="kicker">Notes from the road</span>
+                <h2>Latest travel stories</h2>
+            </div>
+            <a href="@Url.Action("Index", "Blog")" class="section-link">All stories</a>
+        </div>
         @{
             var blogPosts = new[] {
-                new { Date = "Nov 14, 2022", Title = "2023 Travel Trends – what you need to know", Desc = "2023 is shaping up to be the year of experiential travel. From AI-driven itineraries to eco-conscious getaways...", Img = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600" },
-                new { Date = "Nov 16, 2022", Title = "Jeep Adventure is a new attraction for tourists visiting Garut", Desc = "Garut has just launched a new jeep trail through the mountains, offering tourists a heart-pounding 4x4 experience...", Img = "https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600" }
+                new { Tag = "Trends", Date = "Nov 14, 2022", ReadTime = "4 min read", Title = "2023 travel trends — what you need to know", Desc = "2023 is shaping up to be the year of experiential travel. From AI-driven itineraries to eco-conscious getaways...", Img = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600" },
+                new { Tag = "Adventure", Date = "Nov 16, 2022", ReadTime = "3 min read", Title = "Jeep adventure is a new attraction for tourists visiting Garut", Desc = "Garut has just launched a new jeep trail through the mountains, offering tourists a heart-pounding 4x4 experience...", Img = "https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600" }
             };
         }
-        @foreach (var post in blogPosts)
-        {
-            <div class="blog-card">
-                <img src="@post.Img" alt="Blog Post" loading="lazy" />
-                <div class="blog-body">
-                    <span class="date">@post.Date</span>
-                    <h4>@post.Title</h4>
-                    <p>@post.Desc</p>
-                </div>
-            </div>
-        }
-    </div>
-    <div class="text-center-btn">
-        <a href="@Url.Action("Index", "Blog")" class="btn-primary">See More</a>
+        <div class="blog-list">
+            @foreach (var post in blogPosts)
+            {
+                <a href="@Url.Action("Index", "Blog")" class="blog-row">
+                    <div class="blog-img-wrap">
+                        <img src="@post.Img" alt="@post.Title" loading="lazy" />
+                    </div>
+                    <div class="blog-body">
+                        <div class="blog-meta">@post.Tag &nbsp;&nbsp;@post.Date &nbsp;&nbsp;@post.ReadTime</div>
+                        <h4>@post.Title</h4>
+                        <p>@post.Desc</p>
+                    </div>
+                </a>
+            }
+        </div>
     </div>
 </section>
-
-@section Scripts {
-    <script>
-        var revealObserver = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add('revealed');
-                revealObserver.unobserve(entry.target);
-            });
-        }, { threshold: 0.15 });
-        document.querySelectorAll('[data-reveal]').forEach(function (el) {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1)';
-            revealObserver.observe(el);
-        });
-        document.addEventListener('DOMContentLoaded', function () {
-            var style = document.createElement('style');
-            style.textContent = '[data-reveal].revealed{opacity:1 !important;transform:translateY(0) !important;}';
-            document.head.appendChild(style);
-        });
-    </script>
-}

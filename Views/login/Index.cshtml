@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Sign In";
     ViewBag.ActivePage = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -593,7 +593,7 @@
             });
 
             document.getElementById('googleLoginBtn').addEventListener('click', function () {
-                window.location.href = '@Url.Action("GoogleLogin", "Login")';
+                window.location.href = '@Url.Action("ExternalLogin", "GoogleAuth", new { provider = "Google" })';
             });
         })();
     </script>

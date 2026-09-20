@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -87,15 +87,29 @@ public ActionResult Index()
         {
             if (ModelState.IsValid)
             {
-                _context.Entry(package).State = EntityState.Modified;
-                package.UpdatedDate = DateTime.Now;
-                _context.SaveChanges();
+                var existingPackage = _context.Packages.Find(package.PackageId);
+                if (existingPackage != null)
+                {
+                    existingPackage.PackageName = package.PackageName;
+                    existingPackage.PackageTypeId = package.PackageTypeId;
+                    existingPackage.DestinationId = package.DestinationId;
+                    existingPackage.Price = package.Price;
+                    existingPackage.DurationDays = package.DurationDays;
+                    existingPackage.People = package.People;
+                    existingPackage.Description = package.Description;
+                    existingPackage.UpdatedDate = DateTime.Now;
 
-              
+                    _context.SaveChanges();
 
-                TempData["SuccessMessage"] = "Package updated successfully!";
-                return RedirectToAction("Index");
+                    TempData["SuccessMessage"] = "Package updated successfully!";
+                    return RedirectToAction("Index");
+                }
+                return HttpNotFound();
             }
+
+            // Populate package types and destinations for view if validation fails
+            ViewBag.PackageTypes = _context.PackageTypes.ToList();
+            ViewBag.Destinations = _context.Destinations.ToList();
 
             return View(package);
         }

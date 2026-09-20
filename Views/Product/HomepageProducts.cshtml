@@ -1,0 +1,80 @@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Product>
+@{
+    Layout = null;
+}
+
+<div class="pkg-grid">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            var img = !string.IsNullOrEmpty(item.ImageUrl)
+                        ? Url.Content(item.ImageUrl)
+                        : "/images/no-image.jpg";
+
+            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="pkg-card">
+                <div class="img-wrap">
+                    <img src="@img" alt="@item.ProductName" loading="lazy" />
+                    @if (!string.IsNullOrEmpty(item.StockStatus))
+                    {
+                        var statusLower = item.StockStatus.ToLower();
+                        var badgeClass  = statusLower.Contains("out") ? "prod-hp-badge-out"
+                                        : statusLower.Contains("low") ? "prod-hp-badge-low"
+                                        : "prod-hp-badge-in";
+                        <span class="prod-hp-badge @badgeClass">@item.StockStatus</span>
+                    }
+                </div>
+                <div class="pkg-body">
+                    @if (item.ProductType != null)
+                    {
+                        <span class="prod-hp-type">@item.ProductType.TypeName</span>
+                    }
+                    <h4>@item.ProductName</h4>
+                    <p>@item.Description</p>
+                    <div class="pkg-footer">$@item.Price.ToString("N2")</div>
+                </div>
+            </a>
+        }
+    }
+    else
+    {
+        <div style="grid-column: span 3; text-align: center; padding: 3rem; color: #6b7280;">
+            <p>No products available at the moment.</p>
+        </div>
+    }
+</div>
+
+<style>
+    /* Stock badge overlaid on the product image */
+    .prod-hp-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .prod-hp-badge-in  { background: #e6f7ed; color: #1e8a4c; }
+    .prod-hp-badge-low { background: #fff4e0; color: #b8720c; }
+    .prod-hp-badge-out { background: #fde8e8; color: #c0392b; }
+
+    /* Category label above the product name */
+    .prod-hp-type {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.3rem;
+    }
+
+    /* Ensure the image wrapper is positioned so the badge can be absolute */
+    .pkg-card .img-wrap {
+        position: relative;
+    }
+</style>

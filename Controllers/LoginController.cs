@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -27,6 +27,15 @@ namespace TourwebsiteFYP.Controllers
 
             var user = _context.Users.FirstOrDefault(u => u.Email.ToLower() == Email.Trim().ToLower());
 
+            // Clarification #5: Google-only accounts have PasswordHash == null.
+            // Show a friendly message instead of letting VerifyPassword return false
+            // (which would show the generic "Invalid email or password" message).
+            if (user != null && user.PasswordHash == null)
+            {
+                TempData["LoginError"] = "This account uses Google Sign-In — please use the \"Continue with Google\" button instead.";
+                return RedirectToAction("Index");
+            }
+
             if (user == null || !PasswordHelper.VerifyPassword(Password, user.PasswordHash))
             {
                 TempData["LoginError"] = "Invalid email or password.";
@@ -48,10 +57,5 @@ namespace TourwebsiteFYP.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult GoogleLogin()
-        {
-            TempData["LoginError"] = "Google sign-in isn't configured yet.";
-            return RedirectToAction("Index");
-        }
     }
 }

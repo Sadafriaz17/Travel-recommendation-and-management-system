@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -23,6 +23,25 @@ namespace TourwebsiteFYP.Controllers
                 .Take(6)
                 .ToList();
 
+            return View(destinations);
+        }
+
+        public ActionResult Details(string region)
+        {
+            if (string.IsNullOrWhiteSpace(region))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Optional: Url decoding if needed, but MVC usually handles it.
+            // Replace dashes with spaces if you want to support slug-like URLs, e.g., "Southeast-Asia" -> "Southeast Asia"
+            string searchRegion = region.Replace("-", " ");
+
+            var destinations = _context.Destinations
+                .Where(d => d.Location.Equals(searchRegion, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            ViewBag.RegionName = searchRegion;
             return View(destinations);
         }
 
