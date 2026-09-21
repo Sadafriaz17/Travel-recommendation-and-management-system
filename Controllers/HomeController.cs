@@ -120,6 +120,20 @@ namespace TourwebsiteFYP.Controllers
             return View("SearchResults");
         }
 
+        // ── HOMEPAGE REVIEWS PARTIAL ───────────────────────────────────────────
+        public ActionResult HomepageReviews()
+        {
+            var reviews = _context.Reviews
+                .Include("User")
+                .Include("Package")
+                .Include("Product")
+                .Where(r => r.Rating != null && r.Rating >= 4)
+                .OrderByDescending(r => r.CreatedAt)
+                .Take(5)
+                .ToList();
+            return View(reviews);
+        }
+
         // ── OTHER PAGES ────────────────────────────────────────────────────────
         public ActionResult About()
         {

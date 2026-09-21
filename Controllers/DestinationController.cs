@@ -19,30 +19,28 @@ namespace TourwebsiteFYP.Controllers
         public ActionResult HomepageDestination()
         {
             var destinations = _context.Destinations
-                .OrderBy(d => Guid.NewGuid())
+                .OrderByDescending(d => d.DestinationId)
                 .Take(6)
                 .ToList();
 
             return View(destinations);
         }
 
-        public ActionResult Details(string region)
+        public ActionResult Details(int id)
         {
-            if (string.IsNullOrWhiteSpace(region))
+            var destination = _context.Destinations.FirstOrDefault(d => d.DestinationId == id);
+            if (destination == null)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            // Optional: Url decoding if needed, but MVC usually handles it.
-            // Replace dashes with spaces if you want to support slug-like URLs, e.g., "Southeast-Asia" -> "Southeast Asia"
-            string searchRegion = region.Replace("-", " ");
-
-            var destinations = _context.Destinations
-                .Where(d => d.Location.Equals(searchRegion, StringComparison.OrdinalIgnoreCase))
+            var packages = _context.Packages
+                .Where(p => p.DestinationId == id)
+                .OrderByDescending(p => p.CreatedDate)
                 .ToList();
 
-            ViewBag.RegionName = searchRegion;
-            return View(destinations);
+            ViewBag.Packages = packages;
+            return View(destination);
         }
 
         protected override void Dispose(bool disposing)

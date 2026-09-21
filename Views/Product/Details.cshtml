@@ -1,0 +1,389 @@
+@* PRODUCT DETAILS - Views/Product/Details.cshtml *@
+@model TourwebsiteFYP.DB_data_models.Product
+
+@{
+    ViewBag.Title = Model.ProductName;
+    ViewBag.ActivePage = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var galleryImages = new[] { Model.ImageUrl, Model.ImageUrl2, Model.ImageUrl3, Model.ImageUrl4 }
+        .Where(s => !string.IsNullOrEmpty(s))
+        .Select(s => Url.Content(s))
+        .ToList();
+
+    var stockClass = "";
+    if (!string.IsNullOrEmpty(Model.StockStatus))
+    {
+        var sl = Model.StockStatus.ToLower();
+        stockClass = sl.Contains("out") ? "stock-out" : sl.Contains("low") ? "stock-low" : "stock-in";
+    }
+}
+
+@section HeadStyles {
+    <style>
+        .products-hero {
+            background-image: url('/images/background.jpg');
+            min-height: 60vh;
+        }
+
+        .pd-hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #fff;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #111;
+        }
+
+            .pd-hero-pill a {
+                color: #6b7280;
+                text-decoration: none;
+            }
+
+                .pd-hero-pill a:hover {
+                    color: #111;
+                }
+
+            .pd-hero-pill i {
+                font-size: 0.6rem;
+                color: #9ca3af;
+            }
+
+        .pd-page {
+            padding-top: 3rem;
+            padding-bottom: 5rem;
+        }
+
+        .pd-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        /* GALLERY */
+        .pd-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pd-main-img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            cursor: zoom-in;
+        }
+
+        .pd-thumbs {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .pd-thumb {
+            width: 72px;
+            height: 72px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            opacity: 0.65;
+            transition: border-color 0.15s, opacity 0.15s;
+        }
+
+            .pd-thumb.active, .pd-thumb:hover {
+                border-color: #111;
+                opacity: 1;
+            }
+
+        /* PANEL */
+        .pd-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .pd-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            width: fit-content;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+
+        .pd-title {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #111;
+            margin: 0;
+        }
+
+        .pd-rating-row {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+            .pd-rating-row strong {
+                color: #111;
+            }
+
+        .pd-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #111;
+            letter-spacing: -0.02em;
+        }
+
+        .pd-divider {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 0;
+        }
+
+        .pd-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .pd-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+            color: #111;
+        }
+
+            .pd-meta-item i {
+                width: 16px;
+                color: #6b7280;
+                font-size: 0.85rem;
+            }
+
+            .pd-meta-item strong {
+                font-weight: 600;
+                margin-right: 4px;
+            }
+
+        .pd-stock-pill {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .stock-in {
+            background: #e6f7ed;
+            color: #1e8a4c;
+        }
+
+        .stock-low {
+            background: #fff4e0;
+            color: #b8720c;
+        }
+
+        .stock-out {
+            background: #fde8e8;
+            color: #c0392b;
+        }
+
+        .pd-desc-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+            margin-bottom: 0.4rem;
+        }
+
+        .pd-desc {
+            font-size: 0.95rem;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        .pd-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #111;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+            .pd-back-btn:hover {
+                background: #111;
+                color: #fff;
+                border-color: #111;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+        @@media (max-width: 768px) {
+            .pd-page {
+                padding-top: 2rem;
+            }
+
+            .pd-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .pd-price {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+}
+
+<section class="hero-wrapper products-hero">
+    <div class="hero-content">
+        <h1>Gear Up for<br />Your Adventure</h1>
+        <p>Premium travel accessories, gear, and essentials curated for the modern explorer.</p>
+
+        <div class="pd-hero-pill">
+            <a href="/Product/Index">Products</a>
+            @if (Model.ProductType != null)
+            {
+                <i class="fas fa-chevron-right"></i>
+                <span>@Model.ProductType.TypeName</span>
+            }
+        </div>
+    </div>
+</section>
+
+<div class="container pd-page">
+    <div class="pd-grid">
+
+        <div class="pd-gallery">
+            @if (galleryImages.Any())
+            {
+                <img id="pdMainImg" class="pd-main-img" src="@galleryImages[0]" alt="@Model.ProductName" />
+
+                if (galleryImages.Count > 1)
+                {
+                    <div class="pd-thumbs">
+                        @for (int i = 0; i < galleryImages.Count; i++)
+                        {
+                            <img class="pd-thumb @(i == 0 ? "active" : "")"
+                                 src="@galleryImages[i]"
+                                 alt="@Model.ProductName view @(i + 1)"
+                                 onclick="swapImage(this)" />
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="width:100%;aspect-ratio:4/3;background:#f3f4f6;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:0.9rem;">
+                    No image available
+                </div>
+            }
+        </div>
+
+        <div class="pd-panel">
+
+            @if (Model.ProductType != null)
+            {
+                <div class="pd-type-badge">
+                    <i class="fas fa-tag"></i>
+                    @Model.ProductType.TypeName
+                </div>
+            }
+
+            <h1 class="pd-title">@Model.ProductName</h1>
+
+            @if (Model.Rating > 0)
+            {
+                <div class="pd-rating-row">
+                    <strong>&#9733; @Model.Rating.ToString("F1")</strong>
+                    @if (Model.ReviewCount > 0)
+                    {
+                        <span>(@Model.ReviewCount @(Model.ReviewCount == 1 ? "review" : "reviews"))</span>
+                    }
+                </div>
+            }
+
+            <div class="pd-price">$@Model.Price.ToString("N2")</div>
+
+            <hr class="pd-divider" />
+
+            <div class="pd-meta">
+                @if (!string.IsNullOrEmpty(Model.StockStatus))
+                {
+                    <div class="pd-meta-item">
+                        <i class="fas fa-circle-check"></i>
+                        <strong>Stock:</strong>
+                        <span class="pd-stock-pill @stockClass">@Model.StockStatus</span>
+                    </div>
+                }
+
+                @if (Model.Vendor != null)
+                {
+                    <div class="pd-meta-item">
+                        <i class="fas fa-store"></i>
+                        <strong>Vendor:</strong>
+                        <span>@Model.Vendor.VendorName</span>
+                    </div>
+                }
+
+                @if (Model.ProductType != null)
+                {
+                    <div class="pd-meta-item">
+                        <i class="fas fa-layer-group"></i>
+                        <strong>Category:</strong>
+                        <span>@Model.ProductType.TypeName</span>
+                    </div>
+                }
+            </div>
+
+            <hr class="pd-divider" />
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div>
+                    <p class="pd-desc-label">About this product</p>
+                    <p class="pd-desc">@Model.Description</p>
+                </div>
+            }
+
+            <div>
+                <a href="/Product/Index" class="pd-back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Products
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function swapImage(thumb) {
+            document.getElementById('pdMainImg').src = thumb.src;
+            document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+        }
+    </script>
+}

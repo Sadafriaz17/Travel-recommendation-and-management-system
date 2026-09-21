@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Add Payment";
     ViewBag.ActiveMenu = "Payments";
     ViewBag.ActivePage = "PaymentList";
@@ -16,14 +16,14 @@
                 <div class="form-group">
                     <label class="form-label">Booking <span>*</span></label>
                     <select name="BookingId" class="form-control" required>
-                        <option value="">— Select Booking —</option>
+                        <option value="">- Select Booking -</option>
                         @foreach (var b in ViewBag.BookingList) { <option value="@b.BookingId">Booking #@b.BookingId</option> }
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Payment Method <span>*</span></label>
                     <select name="PaymentTypeId" class="form-control" required>
-                        <option value="">— Select Method —</option>
+                        <option value="">- Select Method -</option>
                         @foreach (var t in ViewBag.PaymentTypeList) { <option value="@t.PaymentTypeId">@t.TypeName</option> }
                     </select>
                 </div>
@@ -52,3 +52,4 @@
         }
     </div>
 </div>
+

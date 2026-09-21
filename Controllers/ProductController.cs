@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,7 +18,7 @@ namespace TourwebsiteFYP.Controllers
             var products = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")
-                .OrderBy(p => Guid.NewGuid())
+                .OrderByDescending(p => p.ProductId)
                 .ToList();
 
             ViewBag.ProductTypes = _context.ProductTypes.ToList();
@@ -32,7 +32,7 @@ namespace TourwebsiteFYP.Controllers
             var products = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")
-                .OrderBy(p => Guid.NewGuid())
+                .OrderByDescending(p => p.ProductId)
                 .Take(4)
                 .ToList();
 
@@ -74,7 +74,7 @@ namespace TourwebsiteFYP.Controllers
                 .Include("Vendor")
                 .Where(p => p.ProductTypeId == productTypeId &&
                             p.ProductId != productId)
-                .OrderBy(p => Guid.NewGuid())
+                .OrderByDescending(p => p.ProductId)
                 .Take(4)
                 .ToList();
 

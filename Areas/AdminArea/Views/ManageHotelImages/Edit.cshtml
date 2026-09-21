@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.HotelImage
+﻿@model TourwebsiteFYP.DB_data_models.HotelImage
 @{
     ViewBag.Title = "Edit Hotel Image";
     ViewBag.ActiveMenu = "Hotels";
@@ -18,7 +18,7 @@
                 <div class="form-group">
                     <label class="form-label">Hotel <span>*</span></label>
                     <select name="HotelId" class="form-control" required>
-                        <option value="">— Select Hotel —</option>
+                        <option value="">- Select Hotel -</option>
                         @foreach (var h in ViewBag.HotelList) {
                             string sel = (h.HotelId == Model.HotelId) ? "selected" : "";
                             <option value="@h.HotelId" @sel>@h.HotelName</option>
@@ -44,3 +44,4 @@
         }
     </div>
 </div>
+

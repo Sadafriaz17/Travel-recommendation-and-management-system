@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -48,7 +48,7 @@ namespace TourwebsiteFYP.Controllers
 
             if (defaultUserType == null)
             {
-                TempData["SignupError"] = "Signup is temporarily unavailable — no user type is configured.";
+                TempData["SignupError"] = "Signup is temporarily unavailable - no user type is configured.";
                 return RedirectToAction("Index");
             }
 

@@ -1,5 +1,5 @@
 ﻿@* =========================================
-    CONTACT PAGE — Views/Contact/Index.cshtml
+    CONTACT PAGE - Views/Contact/Index.cshtml
     ========================================= *@
 @{
     ViewBag.Title = "Contact Us";
@@ -694,7 +694,7 @@
             @{
                 var faqs = new[] {
                     new { q = "How does the AI Trip Planner work?", a = "Our AI analyses your preferences, budget, travel dates, and style to generate a fully personalised itinerary in seconds. It learns from your feedback and continuously improves your recommendations over time." },
-                    new { q = "Can I book vendors through the Travel Marketplace directly?", a = "Yes! Our Travel Marketplace connects you with verified local vendors — hotels, guides, and experience providers — so you can browse, compare, and book everything in one place." },
+                    new { q = "Can I book vendors through the Travel Marketplace directly?", a = "Yes! Our Travel Marketplace connects you with verified local vendors - hotels, guides, and experience providers - so you can browse, compare, and book everything in one place." },
                     new { q = "Is my payment information secure?", a = "Absolutely. We use industry-standard SSL encryption and PCI-DSS compliant payment processing. Your financial data is never stored on our servers." },
                     new { q = "What is your cancellation policy?", a = "Cancellation policies vary by package type. Most of our packages offer flexible cancellation up to 72 hours before departure with a full refund. Check individual package terms for details." },
                     new { q = "Do you offer group or corporate travel packages?", a = "Yes, we specialise in group bookings and corporate travel programmes. Contact us directly for custom quotes and dedicated account management for your organisation." },
@@ -738,7 +738,7 @@
             btn.disabled = true;
             btn.style.opacity = '0.7';
 
-            // Simulate async send — replace with real $.ajax / fetch to your controller
+            // Simulate async send - replace with real $.ajax / fetch to your controller
             setTimeout(() => {
                 document.getElementById('conForm').style.display = 'none';
                 document.getElementById('conSuccess').style.display = 'flex';

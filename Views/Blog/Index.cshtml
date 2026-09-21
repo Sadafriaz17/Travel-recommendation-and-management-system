@@ -1,0 +1,136 @@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Blog>
+@{
+    ViewBag.Title = "Travel Blog";
+    ViewBag.ActivePage = "Blog";
+}
+@section HeadStyles {
+    <style>
+        .blog-page-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding-bottom: 4rem;
+        }
+        .blog-card {
+            border: 1px solid var(--line, #e5e7eb);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-white, #fff);
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+        .blog-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
+        .blog-card-img {
+            height: 200px;
+            overflow: hidden;
+        }
+        .blog-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+        .blog-card:hover .blog-card-img img { transform: scale(1.05); }
+        .blog-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .blog-card-meta {
+            font-size: 0.75rem;
+            color: var(--ink-soft, #6b7280);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .blog-card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--ink, #1a1a1a);
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+            text-decoration: none;
+            display: block;
+        }
+        .blog-card-title:hover { color: var(--accent, #0d9488); }
+        .blog-card-desc {
+            font-size: 0.92rem;
+            color: var(--ink-soft, #6b7280);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+        .blog-card-footer {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-top: 1px solid var(--line, #e5e7eb);
+            padding-top: 1.25rem;
+        }
+        .blog-card-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: var(--ink, #1a1a1a);
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .blog-card-author { font-size: 0.85rem; font-weight: 600; color: var(--ink, #1a1a1a); }
+
+        @@media (max-width: 900px) { .blog-page-grid { grid-template-columns: repeat(2, 1fr); } }
+        @@media (max-width: 600px) { .blog-page-grid { grid-template-columns: 1fr; } }
+    </style>
+}
+
+<section class="hero-wrapper">
+    <div class="hero-content">
+        <h1>Travel Stories &amp; Tips</h1>
+        <p>Expert guides, destination inspiration, and stories from the road.</p>
+    </div>
+</section>
+
+<div class="container section-padding">
+    <div class="blog-page-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var post in Model)
+            {
+                var img = !string.IsNullOrEmpty(post.FeaturedImage) ? post.FeaturedImage : "/images/default-blog.jpg";
+                var date = post.CreatedDate?.ToString("MMM dd, yyyy") ?? "";
+                var author = post.User?.FullName ?? "NEXVOY Editor";
+                var initial = author.Substring(0, 1).ToUpper();
+                var excerpt = !string.IsNullOrEmpty(post.Content) && post.Content.Length > 120
+                                ? post.Content.Substring(0, 120) + "..."
+                                : post.Content;
+
+                <div class="blog-card">
+                    <a href="@Url.Action("Details", "Blog", new { id = post.BlogId })" class="blog-card-img">
+                        <img src="@img" alt="@post.Title" onerror="this.src='/images/default-blog.jpg'" loading="lazy" />
+                    </a>
+                    <div class="blog-card-body">
+                        <div class="blog-card-meta">@date</div>
+                        <a href="@Url.Action("Details", "Blog", new { id = post.BlogId })" class="blog-card-title">@post.Title</a>
+                        <p class="blog-card-desc">@excerpt</p>
+                        <div class="blog-card-footer">
+                            <div class="blog-card-avatar">@initial</div>
+                            <div class="blog-card-author">@author</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div style="grid-column: 1/-1; text-align:center; padding: 4rem; color: var(--ink-soft);">
+                No blog posts available at the moment.
+            </div>
+        }
+    </div>
+</div>

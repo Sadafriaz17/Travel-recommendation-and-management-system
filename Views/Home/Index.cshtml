@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Home";
     ViewBag.ActivePage = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,7 +6,7 @@
 
 <style>
     /* ────────────────────────────────────────────────────────────────
-       DESIGN TOKENS — original teal palette, kept exactly as before.
+       DESIGN TOKENS - original teal palette, kept exactly as before.
        Layout below is restructured; colors are not.
     ── ─────────────────────────────────────────────────────────────── */
 
@@ -30,7 +30,7 @@
         padding: 6rem 0;
     }
 
-    /* ── Section header — a lede line, not a tracked-out badge ─────── */
+    /* ── Section header - a lede line, not a tracked-out badge ─────── */
     .section-head {
         display: flex;
         align-items: flex-end;
@@ -205,7 +205,7 @@
         font-weight: 600;
     }
 
-    /* ── Plan your journey — a real process gets a timeline,
+    /* ── Plan your journey - a real process gets a timeline,
          not a stack of identical shadowed cards ────────────────────── */
     .split-section-custom {
         display: grid;
@@ -356,7 +356,7 @@
         }
     }
 
-    /* ── AI trip planner — an asymmetric working panel, not a
+    /* ── AI trip planner - an asymmetric working panel, not a
          centered hero-in-a-hero with a decorative gradient blob ──── */
     .ai-band {
         background: var(--ink);
@@ -477,7 +477,7 @@
         }
     }
 
-    /* ── Blog — an editorial list, not a pair of identical cards
+    /* ── Blog - an editorial list, not a pair of identical cards
          with an overlay pill and a middle-dot meta string ──────────── */
     .blog-list {
         display: flex;
@@ -752,8 +752,21 @@
     </div>
 </section>
 
+<!-- ═══ REVIEWS ═══ -->
+<section class="section-padding" id="reviews-section" style="background: var(--bg-white);">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <span class="kicker">Real experiences</span>
+                <h2>What our travelers say</h2>
+            </div>
+        </div>
+        @Html.Action("HomepageReviews", "Home")
+    </div>
+</section>
+
 <!-- ═══ BLOG ═══ -->
-<section class="section-padding" id="blog-section">
+<section class="bg-tint section-padding" id="blog-section">
     <div class="container">
         <div class="section-head">
             <div>
@@ -762,26 +775,7 @@
             </div>
             <a href="@Url.Action("Index", "Blog")" class="section-link">All stories</a>
         </div>
-        @{
-            var blogPosts = new[] {
-                new { Tag = "Trends", Date = "Nov 14, 2022", ReadTime = "4 min read", Title = "2023 travel trends — what you need to know", Desc = "2023 is shaping up to be the year of experiential travel. From AI-driven itineraries to eco-conscious getaways...", Img = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600" },
-                new { Tag = "Adventure", Date = "Nov 16, 2022", ReadTime = "3 min read", Title = "Jeep adventure is a new attraction for tourists visiting Garut", Desc = "Garut has just launched a new jeep trail through the mountains, offering tourists a heart-pounding 4x4 experience...", Img = "https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600" }
-            };
-        }
-        <div class="blog-list">
-            @foreach (var post in blogPosts)
-            {
-                <a href="@Url.Action("Index", "Blog")" class="blog-row">
-                    <div class="blog-img-wrap">
-                        <img src="@post.Img" alt="@post.Title" loading="lazy" />
-                    </div>
-                    <div class="blog-body">
-                        <div class="blog-meta">@post.Tag &nbsp;&nbsp;@post.Date &nbsp;&nbsp;@post.ReadTime</div>
-                        <h4>@post.Title</h4>
-                        <p>@post.Desc</p>
-                    </div>
-                </a>
-            }
-        </div>
+        @Html.Action("HomepageBlogs", "Blog")
     </div>
 </section>
+

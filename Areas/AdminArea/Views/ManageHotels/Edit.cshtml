@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.Hotel
+﻿@model TourwebsiteFYP.DB_data_models.Hotel
 @{
     ViewBag.Title = "Edit Hotel";
     ViewBag.ActiveMenu = "Hotels";
@@ -34,7 +34,7 @@
                 <div class="form-group form-grid-1">
                     <label class="form-label">Associated Package</label>
                     <select name="PackageId" class="form-control">
-                        <option value="">— None —</option>
+                        <option value="">- None -</option>
                         @foreach (var p in ViewBag.PackageList) {
                             string sel = (p.PackageId == Model.PackageId) ? "selected" : "";
                             <option value="@p.PackageId" @sel>@p.PackageName</option>
@@ -49,3 +49,4 @@
         }
     </div>
 </div>
+

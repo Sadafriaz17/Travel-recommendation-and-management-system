@@ -1,238 +1,118 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Destination>
+@model TourwebsiteFYP.DB_data_models.Destination
 @{
-    ViewBag.Title = ViewBag.RegionName + " Destinations";
-    ViewBag.ActivePage = "Destination";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = Model.Name;
+    ViewBag.ActivePage = "Destinations";
+
+    var img = !string.IsNullOrEmpty(Model.Image) ? Url.Content(Model.Image) : "/images/no-image.jpg";
+    var packages = ViewBag.Packages as IList<TourwebsiteFYP.DB_data_models.Package>;
 }
 
 @section HeadStyles {
     <style>
-        :root {
-            --accent-cyan: #00e5ff;
-            --accent-purple: #8b5cf6;
-            --accent-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            --page-dark: #07070c;
-        }
-
-        /* Override header for this page to make it transparent over the hero */
-        #site-header {
-            position: absolute;
-            background: transparent;
-            border-bottom: none;
-            padding: 1.5rem 2rem;
-            max-width: 1200px;
-        }
-        #site-header .logo, #site-header .nav-links a { color: #fff; }
-        #site-header .nav-actions .btn-outline-light {
-            background: transparent;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        /* ── HERO SECTION ── */
-        .details-hero {
-            position: relative;
-            width: 100%;
-            min-height: 400px;
+        .dest-detail-hero {
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6)), url('@img');
+            background-size: cover;
+            background-position: center;
+            min-height: 50vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-top: 80px; /* offset for header */
-            background-color: var(--page-dark);
-            overflow: hidden;
             color: #fff;
             text-align: center;
+            padding: 2rem;
+            position: relative;
         }
 
-        .details-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(0,229,255,0.12), rgba(139,92,246,0.15));
-            pointer-events: none;
-        }
-
-        .details-hero .grid-overlay {
-            position: absolute;
-            inset: 0;
-            background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-            background-size: 40px 40px;
-            mask-image: radial-gradient(ellipse at 50% 50%, #000 10%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.35;
-            pointer-events: none;
-            mix-blend-mode: screen;
-        }
-
-        .orb-1 { width: 340px; height: 340px; background: var(--accent-cyan); top: -80px; left: -60px; }
-        .orb-2 { width: 280px; height: 280px; background: var(--accent-purple); bottom: -60px; right: -40px; }
-
-        .hero-content {
+        .dest-detail-hero-content {
             position: relative;
             z-index: 2;
-            max-width: 800px;
-            padding: 0 2rem;
+            margin-top: 3rem;
         }
 
-        .hero-content h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            line-height: 1.1;
-        }
-
-        .hero-content p {
-            font-size: 1.15rem;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 0;
-        }
-
-        /* ── GRID SECTION ── */
-        .page-content {
-            background-color: var(--page-dark);
-            min-height: 50vh;
-            padding: 4rem 2rem 6rem;
-        }
-
-        .dest-grid-3x3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .dest-card-v2 {
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            height: 340px;
-            display: block;
-            text-decoration: none;
-            color: inherit;
-            background: #111;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .dest-card-v2 img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease, filter 0.5s ease;
-            filter: brightness(0.9);
-        }
-
-        .dest-card-v2:hover {
-            transform: translateY(-8px);
-        }
-
-        .dest-card-v2:hover img {
-            transform: scale(1.05);
-            filter: brightness(1);
-        }
-
-        .dest-card-v2 .overlay-v2 {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            padding: 1.75rem;
-            background: linear-gradient(to top, rgba(7,7,12,0.85) 0%, rgba(7,7,12,0.2) 50%, transparent 100%);
-            color: #fff;
-        }
-
-        .dest-label h4 {
-            font-weight: 700;
-            font-size: 1.4rem;
-            margin: 0 0 4px 0;
-        }
-        
-        .dest-label p {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.7);
-            margin: 0;
-        }
-
-        .btn-see-details {
-            flex-shrink: 0;
-            background: rgba(255,255,255,0.1);
+        .dest-detail-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.15);
             backdrop-filter: blur(8px);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 0.55rem 1.3rem;
+            padding: 0.5rem 1rem;
             border-radius: 50px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        .dest-card-v2:hover .btn-see-details {
-            background: #fff;
-            color: var(--page-dark);
-            border-color: #fff;
-        }
-
-        /* ── EMPTY STATE ── */
-        .empty-state {
-            text-align: center;
-            padding: 6rem 2rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .empty-state i {
-            font-size: 4rem;
-            color: rgba(255,255,255,0.2);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-bottom: 1.5rem;
         }
-        
-        .empty-state h3 {
-            font-size: 1.8rem;
-            color: #fff;
+
+        .dest-detail-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
             margin-bottom: 1rem;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .dest-detail-desc {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .pkg-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
         }
         
-        .empty-state p {
-            color: rgba(255,255,255,0.6);
-            font-size: 1.1rem;
+        @@media (max-width: 900px) {
+            .pkg-grid { grid-template-columns: repeat(2, 1fr); }
+            .dest-detail-hero h1 { font-size: 2.8rem; }
+        }
+        @@media (max-width: 600px) {
+            .pkg-grid { grid-template-columns: 1fr; }
+            .dest-detail-hero h1 { font-size: 2.2rem; }
         }
     </style>
 }
 
-<div class="details-hero">
-    <div class="grid-overlay"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="hero-content">
-        <h1>Explore @ViewBag.RegionName</h1>
-        <p>Discover breathtaking destinations, unique experiences, and unforgettable journeys in @ViewBag.RegionName.</p>
+<section class="dest-detail-hero">
+    <div class="dest-detail-hero-content">
+        <div class="dest-detail-meta">
+            <i class="fas fa-map-marker-alt"></i> @Model.Location
+        </div>
+        <h1>@Model.Name</h1>
+        <p class="dest-detail-desc">@Model.Description</p>
     </div>
-</div>
+</section>
 
-<div class="page-content">
-    @if (Model != null && Model.Any())
+<div class="container section-padding">
+    <div class="section-header" style="margin-bottom: 3rem;">
+        <div class="section-header-left">
+            <span class="sub-label">EXPLORE PACKAGES</span>
+            <h2>Tours in @Model.Name</h2>
+        </div>
+    </div>
+
+    @if (packages != null && packages.Any())
     {
-        <div class="dest-grid-3x3">
-            @foreach (var item in Model)
+        <div class="pkg-grid">
+            @foreach (var pkg in packages)
             {
-                <a href="@Url.Action("index", "Destination", new { id = item.DestinationId })" class="dest-card-v2">
-                    <img src="@Url.Content(item.Image)" alt="@item.Name" loading="lazy" onerror="this.src='/images/placeholder.jpg';" />
-                    <div class="overlay-v2">
-                        <div class="dest-label">
-                            <h4>@item.Name</h4>
-                            <p>@(item.Price.HasValue ? "From " + item.Price.Value.ToString("C") : "Explore packages")</p>
+                var pkgImg = pkg.PackageImages.FirstOrDefault()?.ImageUrl ?? "/images/no-image.jpg";
+                <a href="@Url.Action("Details", "Package", new { id = pkg.PackageId })" class="pkg-card">
+                    <div class="img-wrap">
+                        <img src="@Url.Content(pkgImg)" alt="@pkg.PackageName" loading="lazy" onerror="this.src='/images/no-image.jpg'" />
+                        <span class="pkg-badge">@(pkg.PackageType?.TypeName ?? "Tour")</span>
+                    </div>
+                    <div class="pkg-body">
+                        <h4>@pkg.PackageName</h4>
+                        <div class="pkg-meta">
+                            <span><i class="fas fa-clock"></i> @pkg.DurationDays Days</span>
                         </div>
-                        <span class="btn-see-details">View Details</span>
+                        <div class="pkg-footer">$@pkg.Price.ToString("N0")</div>
                     </div>
                 </a>
             }
@@ -240,10 +120,10 @@
     }
     else
     {
-        <div class="empty-state">
-            <i class="bi bi-compass"></i>
-            <h3>No Destinations Yet</h3>
-            <p>We are currently exploring and curating new experiences in @ViewBag.RegionName. Check back soon for amazing travel packages!</p>
+        <div style="text-align:center; padding: 4rem; color: var(--text-muted); background: var(--bg-white); border-radius: 12px; border: 1px solid var(--border);">
+            <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+            <h3>No packages available right now.</h3>
+            <p>Please check back later for exciting tours in @Model.Name.</p>
         </div>
     }
 </div>

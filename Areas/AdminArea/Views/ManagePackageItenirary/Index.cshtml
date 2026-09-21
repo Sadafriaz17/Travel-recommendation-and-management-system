@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.PackageItinerary>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.PackageItinerary>
 @{
     ViewBag.Title = "Manage Itineraries";
     ViewBag.ActiveMenu = "Packages";
@@ -28,7 +28,7 @@
                         {
                             <tr>
                                 <td style="font-size:12px;color:var(--text-muted);font-weight:600">#@item.ItineraryId</td>
-                                <td style="font-weight:600">@(item.Package?.PackageName ?? "—")</td>
+                                <td style="font-weight:600">@(item.Package?.PackageName ?? "-")</td>
                                 <td>Day @item.DayNumber</td>
                                 <td>@item.Title</td>
                                 <td>
@@ -54,3 +54,4 @@
         }
     </div>
 </div>
+

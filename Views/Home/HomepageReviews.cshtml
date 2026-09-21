@@ -1,0 +1,110 @@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Review>
+@{
+    Layout = null;
+}
+
+<style>
+    .home-reviews-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+
+    .home-review-card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .home-review-stars {
+        color: #f59e0b;
+        font-size: 1rem;
+        letter-spacing: 2px;
+    }
+
+    .home-review-comment {
+        font-size: 0.92rem;
+        color: var(--ink-soft);
+        line-height: 1.65;
+        flex: 1;
+        margin: 0;
+    }
+
+    .home-review-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+    }
+
+    .home-review-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .home-review-name {
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--ink);
+    }
+
+    .home-review-subject {
+        font-size: 0.75rem;
+        color: var(--ink-soft);
+    }
+
+    @@media (max-width: 900px) {
+        .home-reviews-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 600px) {
+        .home-reviews-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="home-reviews-grid">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var review in Model)
+        {
+            int rating = review.Rating ?? 0;
+            string subject = review.Package != null ? review.Package.PackageName
+                           : review.Product != null ? review.Product.ProductName
+                           : "Tour Experience";
+            string initial = review.User?.FullName?.Substring(0, 1).ToUpper() ?? "?";
+            <div class="home-review-card">
+                <div class="home-review-stars">
+                    @for (int i = 0; i < rating; i++) { <text>&#9733;</text> }
+                    @for (int i = rating; i < 5; i++) { <text>&#9734;</text> }
+                </div>
+                <p class="home-review-comment">"@(review.Comment ?? "Great experience overall!")"</p>
+                <div class="home-review-meta">
+                    <div class="home-review-avatar">@initial</div>
+                    <div>
+                        <div class="home-review-name">@(review.User?.FullName ?? "Anonymous")</div>
+                        <div class="home-review-subject">@subject</div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="grid-column: span 3; text-align: center; color: var(--ink-soft); padding: 2rem;">
+            No reviews yet. Be the first to share your experience!
+        </p>
+    }
+</div>

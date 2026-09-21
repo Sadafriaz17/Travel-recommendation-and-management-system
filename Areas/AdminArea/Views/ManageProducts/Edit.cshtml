@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.Product
+﻿@model TourwebsiteFYP.DB_data_models.Product
 @{
     ViewBag.Title = "Edit Product";
     ViewBag.ActiveMenu = "Products";
@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label class="form-label">Product Type</label>
                     <select name="ProductTypeId" class="form-control">
-                        <option value="">— Select Type —</option>
+                        <option value="">- Select Type -</option>
                         @foreach (var t in ViewBag.ProductTypeList) {
                             string sel = (t.ProductTypeId == Model.ProductTypeId) ? "selected" : "";
                             <option value="@t.ProductTypeId" @sel>@t.TypeName</option>
@@ -54,3 +54,4 @@
         }
     </div>
 </div>
+

@@ -355,7 +355,7 @@
                 <input type="text" placeholder="Search gallery…" oninput="searchGallery(this.value)" />
             </div>
 
-            <span class="count-label" id="img-count">— images</span>
+            <span class="count-label" id="img-count">- images</span>
         </div>
     </div>
 </section>
@@ -401,7 +401,7 @@
                  data-img="@item.img"
                  data-index="@i"
                  onclick="openLightbox(@i)">
-                <img src="@item.img" alt="@item.title — @item.location" loading="lazy" />
+                <img src="@item.img" alt="@item.title - @item.location" loading="lazy" />
                 <div class="gal-item-overlay">
                     <div class="gal-item-category">@item.cat</div>
                     <div class="gal-item-title">@item.title</div>

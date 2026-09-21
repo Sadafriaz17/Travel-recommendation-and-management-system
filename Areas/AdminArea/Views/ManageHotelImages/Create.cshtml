@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Add Hotel Image";
     ViewBag.ActiveMenu = "Hotels";
     ViewBag.ActivePage = "HotelImages";
@@ -16,7 +16,7 @@
                 <div class="form-group">
                     <label class="form-label">Hotel <span>*</span></label>
                     <select name="HotelId" class="form-control" required>
-                        <option value="">— Select Hotel —</option>
+                        <option value="">- Select Hotel -</option>
                         @foreach (var h in ViewBag.HotelList) { <option value="@h.HotelId">@h.HotelName</option> }
                     </select>
                 </div>
@@ -41,3 +41,4 @@
         }
     </div>
 </div>
+

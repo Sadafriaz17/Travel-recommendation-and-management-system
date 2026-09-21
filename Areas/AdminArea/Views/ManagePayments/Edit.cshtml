@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.Payment
+﻿@model TourwebsiteFYP.DB_data_models.Payment
 @{
     ViewBag.Title = "Edit Payment";
     ViewBag.ActiveMenu = "Payments";
@@ -18,7 +18,7 @@
                 <div class="form-group">
                     <label class="form-label">Booking <span>*</span></label>
                     <select name="BookingId" class="form-control" required>
-                        <option value="">— Select Booking —</option>
+                        <option value="">- Select Booking -</option>
                         @foreach (var b in ViewBag.BookingList) {
                             string sel = (b.BookingId == Model.BookingId) ? "selected" : "";
                             <option value="@b.BookingId" @sel>Booking #@b.BookingId</option>
@@ -28,7 +28,7 @@
                 <div class="form-group">
                     <label class="form-label">Payment Type <span>*</span></label>
                     <select name="PaymentTypeId" class="form-control" required>
-                        <option value="">— Select Method —</option>
+                        <option value="">- Select Method -</option>
                         @foreach (var t in ViewBag.PaymentTypeList) {
                             string sel = (t.PaymentTypeId == Model.PaymentTypeId) ? "selected" : "";
                             <option value="@t.PaymentTypeId" @sel>@t.TypeName</option>
@@ -60,3 +60,4 @@
         }
     </div>
 </div>
+

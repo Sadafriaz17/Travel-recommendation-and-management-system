@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
                 /* ═══════════════════════════════════════════════
-           AI PACKING GENERATOR — NEXVOY
+           AI PACKING GENERATOR - NEXVOY
            Strict design system match with homepage
         ═══════════════════════════════════════════════ */
                 :root {
@@ -1194,7 +1194,7 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>/* ═══════════════════════════════════════════
-   3D EARTH — exact copy from homepage
+   3D EARTH - exact copy from homepage
 ═══════════════════════════════════════════ */
 (function () {
     var canvas = document.getElementById('hero-3d-canvas');
@@ -1274,10 +1274,10 @@
 
 // ── Weather intelligence data ──
 var weatherProfiles = {
-    'Europe':     { icon:'🌤️', season:'Temperate', temp:'10–22°C', desc:'European climate varies significantly by season. Layering is key — mornings can be brisk while afternoons warm considerably. Pack versatile, moisture-wicking fabrics that transition between indoor and outdoor settings.', chips:['Layering Essential','Rain Possible','Mild Days'] },
+    'Europe':     { icon:'🌤️', season:'Temperate', temp:'10–22°C', desc:'European climate varies significantly by season. Layering is key - mornings can be brisk while afternoons warm considerably. Pack versatile, moisture-wicking fabrics that transition between indoor and outdoor settings.', chips:['Layering Essential','Rain Possible','Mild Days'] },
     'Asia':       { icon:'🌏', season:'Tropical',  temp:'25–35°C', desc:'Asian destinations typically feature high humidity and warmth. Breathable, quick-dry fabrics are critical. Many cultural sites require conservative coverage, so pack lightweight cover-ups alongside your casual wear.', chips:['High Humidity','Sun Protection','Modest Dress'] },
     'USA':        { icon:'🗽', season:'Varied',    temp:'15–28°C', desc:'The USA spans multiple climate zones. Urban environments require smart-casual options while outdoor regions demand activity-ready gear. Air conditioning is ubiquitous indoors, so carry a light layer even in summer.', chips:['Climate Varies','AC Indoors','Versatile Pack'] },
-    'South-Asia': { icon:'🕌', season:'Hot & Dry', temp:'28–42°C', desc:'South Asian travel demands heat management above all else. Ultra-light, loose fabrics in natural fibers work best. Cultural and religious sites are numerous — respectful dress (arms, legs covered) is a must. Hydration accessories are critical.', chips:['Extreme Heat','Conservative Dress','UV Protection'] },
+    'South-Asia': { icon:'🕌', season:'Hot & Dry', temp:'28–42°C', desc:'South Asian travel demands heat management above all else. Ultra-light, loose fabrics in natural fibers work best. Cultural and religious sites are numerous - respectful dress (arms, legs covered) is a must. Hydration accessories are critical.', chips:['Extreme Heat','Conservative Dress','UV Protection'] },
     'Africa':     { icon:'🌍', season:'Varied',    temp:'20–38°C', desc:'African destinations range from savannah heat to coastal humidity. Safari packing emphasizes neutral colors and functionality. Urban centers are increasingly cosmopolitan, but rural and adventure regions demand rugged, dust-resistant gear.', chips:['Safari Neutral Colors','Dust Resistant','Varied Climate'] }
 };
 
@@ -1440,7 +1440,7 @@ function generateAITips(data) {
     var pref = (data.packingPreference || 'balanced').toLowerCase();
 
     if (pref === 'minimal') {
-        tips.push({ icon:'⚡', text:'Pack only multi-use items — a navy blazer works for dinners, day tours, and cool evenings.' });
+        tips.push({ icon:'⚡', text:'Pack only multi-use items - a navy blazer works for dinners, day tours, and cool evenings.' });
         tips.push({ icon:'🔄', text:'Plan to do laundry every 4–5 days to stay minimal while staying fresh.' });
     } else if (pref === 'full') {
         tips.push({ icon:'🎯', text:'With a full pack, use packing cubes to compress and organize by category.' });
@@ -1450,15 +1450,15 @@ function generateAITips(data) {
 
     var dest = (data.destination || '').toLowerCase();
     if (dest.includes('asia') || dest.includes('south-asia')) {
-        tips.push({ icon:'🕌', text:'Many temples require covered shoulders and knees — keep a lightweight scarf handy at all times.' });
+        tips.push({ icon:'🕌', text:'Many temples require covered shoulders and knees - keep a lightweight scarf handy at all times.' });
     }
     if (dest.includes('europe')) {
-        tips.push({ icon:'🚶', text:'European cities involve a lot of walking on cobblestones — prioritize comfort over style for footwear.' });
+        tips.push({ icon:'🚶', text:'European cities involve a lot of walking on cobblestones - prioritize comfort over style for footwear.' });
     }
 
     var transport = (data.transport || '').toLowerCase();
     if (transport.includes('airplane')) {
-        tips.push({ icon:'✈️', text:'Roll clothes instead of folding — saves 30% bag space and reduces creases for airplane travel.' });
+        tips.push({ icon:'✈️', text:'Roll clothes instead of folding - saves 30% bag space and reduces creases for airplane travel.' });
         tips.push({ icon:'🛡️', text:'Pack a neck pillow, eye mask, and noise-cancelling earphones in your carry-on for the flight.' });
     }
 
@@ -1627,16 +1627,16 @@ function updateSectionProgress(sectionEl) {
 function renderSummary(data) {
     var grid = document.getElementById('summary-grid');
     var fields = [
-        { label: 'Destination',  value: data.destination || '—' },
-        { label: 'Duration',     value: data.duration || '—' },
-        { label: 'Trip Type',    value: data.tripType || '—' },
-        { label: 'Activities',   value: (data.activities || []).join(', ') || '—' },
-        { label: 'Traveler',     value: data.travelerType || '—' },
-        { label: 'Transport',    value: data.transport || '—' },
-        { label: 'Accommodation',value: data.accommodation || '—' },
-        { label: 'Budget',       value: data.budget || '—' },
-        { label: 'Travel Dates', value: data.travelDates || '—' },
-        { label: 'Packing Pref',value: data.packingPreference || '—', accent: true }
+        { label: 'Destination',  value: data.destination || '-' },
+        { label: 'Duration',     value: data.duration || '-' },
+        { label: 'Trip Type',    value: data.tripType || '-' },
+        { label: 'Activities',   value: (data.activities || []).join(', ') || '-' },
+        { label: 'Traveler',     value: data.travelerType || '-' },
+        { label: 'Transport',    value: data.transport || '-' },
+        { label: 'Accommodation',value: data.accommodation || '-' },
+        { label: 'Budget',       value: data.budget || '-' },
+        { label: 'Travel Dates', value: data.travelDates || '-' },
+        { label: 'Packing Pref',value: data.packingPreference || '-', accent: true }
     ];
     grid.innerHTML = fields.map(function(f) {
         return '<div class="summary-item">' +
@@ -1750,3 +1750,4 @@ function regeneratePacking() {
 // Init on load
 window.addEventListener('DOMContentLoaded', initPackingPage);</script>
 }
+

@@ -1,0 +1,35 @@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Blog>
+@{
+    Layout = null;
+}
+<div class="blog-list">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var post in Model)
+        {
+            var img = !string.IsNullOrEmpty(post.FeaturedImage) ? post.FeaturedImage : "/images/default-blog.jpg";
+            var date = post.CreatedDate?.ToString("MMM dd, yyyy") ?? "";
+            var author = post.User?.FullName ?? "NEXVOY Editor";
+            var excerpt = !string.IsNullOrEmpty(post.Content) && post.Content.Length > 100
+                            ? post.Content.Substring(0, 100) + "..."
+                            : post.Content;
+
+            <a href="@Url.Action("Details", "Blog", new { id = post.BlogId })" class="blog-row">
+                <div class="blog-img-wrap">
+                    <img src="@img" alt="@post.Title" loading="lazy" onerror="this.src='/images/default-blog.jpg'" />
+                </div>
+                <div class="blog-body">
+                    <div class="blog-meta">@author &nbsp;&nbsp;@date</div>
+                    <h4>@post.Title</h4>
+                    <p>@excerpt</p>
+                </div>
+            </a>
+        }
+    }
+    else
+    {
+        <div style="grid-column: 1/-1; text-align: center; color: var(--ink-soft); padding: 2rem;">
+            No stories published yet.
+        </div>
+    }
+</div>

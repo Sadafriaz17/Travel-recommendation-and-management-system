@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.Vendor
+﻿@model TourwebsiteFYP.DB_data_models.Vendor
 @{
     ViewBag.Title = "Edit Vendor";
     ViewBag.ActiveMenu = "Marketplace";
@@ -23,7 +23,7 @@
 
 <div class="admin-card">
     <div class="admin-card-header">
-        <div class="admin-card-title"><i class="bi bi-pencil-square"></i> Edit Vendor — @Model.VendorName</div>
+        <div class="admin-card-title"><i class="bi bi-pencil-square"></i> Edit Vendor - @Model.VendorName</div>
     </div>
     <div class="admin-card-body">
         @using (Html.BeginForm("Edit", "ManageMarketplaceListing", new { area = "AdminArea" }, FormMethod.Post))
@@ -67,12 +67,12 @@
                 <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
                     <div style="font-size:13px;font-weight:700;color:var(--text-dark);margin-bottom:12px;">
                         <i class="bi bi-bag" style="margin-right:6px;color:var(--text-muted);"></i>
-                        Products (@products.Count) — managed via Products section
+                        Products (@products.Count) - managed via Products section
                     </div>
                     <div style="display:flex;flex-wrap:wrap;gap:8px;">
                         @foreach (var p in products)
                         {
-                            <span class="badge-pill badge-neutral">@p.ProductName — @p.Price.ToString("C")</span>
+                            <span class="badge-pill badge-neutral">@p.ProductName - @p.Price.ToString("C")</span>
                         }
                     </div>
                 </div>
@@ -85,3 +85,4 @@
         }
     </div>
 </div>
+

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,6 +45,7 @@ namespace TourwebsiteFYP.Controllers
                     .Include(p => p.PackageType)
                     .Include(p => p.PackageImages)
                     .Include(p => p.PackageItineraries)
+                    .Include(p => p.Reviews)
                     .FirstOrDefault(p => p.PackageId == id);
 
                 if (package == null)
@@ -67,6 +68,14 @@ namespace TourwebsiteFYP.Controllers
                 }
                 ViewBag.User = user;
                 ViewBag.Destinations = _context.Destinations.AsNoTracking().ToList();
+
+                // Load reviews with user info for the details page
+                var reviews = _context.Reviews
+                    .Include(r => r.User)
+                    .Where(r => r.PackageId == id)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToList();
+                ViewBag.Reviews = reviews;
 
                 return View(package);
             }

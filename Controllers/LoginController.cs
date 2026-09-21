@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -32,7 +32,7 @@ namespace TourwebsiteFYP.Controllers
             // (which would show the generic "Invalid email or password" message).
             if (user != null && user.PasswordHash == null)
             {
-                TempData["LoginError"] = "This account uses Google Sign-In — please use the \"Continue with Google\" button instead.";
+                TempData["LoginError"] = "This account uses Google Sign-In - please use the \"Continue with Google\" button instead.";
                 return RedirectToAction("Index");
             }
 

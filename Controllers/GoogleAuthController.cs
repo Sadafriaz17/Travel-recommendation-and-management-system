@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -65,14 +65,14 @@ namespace TourwebsiteFYP.Controllers
 
             if (loginInfo == null)
             {
-                // OWIN could not read the external cookie — user may have
+                // OWIN could not read the external cookie - user may have
                 // cancelled, or the external cookie expired.
                 TempData["LoginError"] = "Google sign-in was cancelled or failed. Please try again.";
                 return RedirectToAction("Index", "Login");
             }
 
             // ----------------------------------------------------------
-            // Clarification #3: Robust claim retrieval — loginInfo.Email
+            // Clarification #3: Robust claim retrieval - loginInfo.Email
             // can be null depending on the OWIN Google provider version.
             // Fall back to reading the email claim explicitly.
             // ----------------------------------------------------------
@@ -85,8 +85,8 @@ namespace TourwebsiteFYP.Controllers
 
             if (string.IsNullOrWhiteSpace(email))
             {
-                // Cannot proceed without an email — show a friendly message.
-                TempData["LoginError"] = "Could not retrieve your email from Google — " +
+                // Cannot proceed without an email - show a friendly message.
+                TempData["LoginError"] = "Could not retrieve your email from Google - " +
                                          "please try again or use the email/password login.";
                 return RedirectToAction("Index", "Login");
             }
@@ -97,7 +97,7 @@ namespace TourwebsiteFYP.Controllers
             // ----------------------------------------------------------
             // Find existing user by email, OR create a new one.
             //
-            // Clarification #4: Account linking — if a row already exists
+            // Clarification #4: Account linking - if a row already exists
             // with a PasswordHash (password-signup account), we deliberately
             // link the Google login to that account by email and sign them
             // in. No duplicate row is created.
@@ -107,7 +107,7 @@ namespace TourwebsiteFYP.Controllers
 
             if (user == null)
             {
-                // New user — auto-register as Customer.
+                // New user - auto-register as Customer.
                 // Look up the Customer UserType dynamically (same pattern as SignupController).
                 var customerType = _context.UserTypes
                                            .FirstOrDefault(t => t.TypeName == "Customer")
@@ -115,7 +115,7 @@ namespace TourwebsiteFYP.Controllers
 
                 if (customerType == null)
                 {
-                    TempData["LoginError"] = "Registration is temporarily unavailable — " +
+                    TempData["LoginError"] = "Registration is temporarily unavailable - " +
                                              "no user type is configured. Please contact support.";
                     return RedirectToAction("Index", "Login");
                 }
@@ -124,7 +124,7 @@ namespace TourwebsiteFYP.Controllers
                 {
                     FullName     = name.Trim(),
                     Email        = email,
-                    PasswordHash = null,          // Google-only account — no password
+                    PasswordHash = null,          // Google-only account - no password
                     UserTypeId   = customerType.UserTypeId,
                     CreatedAt    = DateTime.Now
                 };
@@ -135,13 +135,13 @@ namespace TourwebsiteFYP.Controllers
 
             // ----------------------------------------------------------
             // Establish the session exactly as LoginController.Index(POST)
-            // does — same three session keys, same values.
+            // does - same three session keys, same values.
             // ----------------------------------------------------------
             Session["UserId"]     = user.UserId;
             Session["UserName"]   = user.FullName;
             Session["UserTypeId"] = user.UserTypeId;
 
-            // Sign out of the transient external cookie — we're now using
+            // Sign out of the transient external cookie - we're now using
             // the application's own session mechanism.
             HttpContext.GetOwinContext().Authentication
                        .SignOut(DefaultAuthenticationTypes.ExternalCookie);
@@ -149,10 +149,11 @@ namespace TourwebsiteFYP.Controllers
             // ----------------------------------------------------------
             // Clarification #6: Post-login redirect matches LoginController.
             // LoginController always redirects to Home/Index regardless of
-            // role — replicate exactly.  If LoginController ever gains
+            // role - replicate exactly.  If LoginController ever gains
             // role-based branching, update both places in sync.
             // ----------------------------------------------------------
             return RedirectToAction("Index", "Home");
         }
     }
 }
+

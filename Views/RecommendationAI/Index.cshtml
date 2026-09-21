@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ═══════════════════════════════════════════════
-           AI DREAM TRIP GENERATOR — NEXVOY
+           AI DREAM TRIP GENERATOR - NEXVOY
            Strict design system match with homepage & packing list
         ═══════════════════════════════════════════════ */
         :root {
@@ -1038,7 +1038,7 @@
             AI<br /><span class="text-gradient">Dream Trip</span><br />Generator
         </h1>
         <p class="hero-sub">
-            Our AI analyzes your preferences, budget, and travel style to curate the perfect destination matches — personalized just for you.
+            Our AI analyzes your preferences, budget, and travel style to curate the perfect destination matches - personalized just for you.
         </p>
         <div class="hero-ctas">
             <button class="btn-hero-primary" onclick="regenerateTrip()">
@@ -1163,7 +1163,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         /* ═══════════════════════════════════════════
-           3D EARTH — exact copy from homepage
+           3D EARTH - exact copy from homepage
         ═══════════════════════════════════════════ */
         (function () {
             var canvas = document.getElementById('hero-3d-canvas');
@@ -1266,7 +1266,7 @@
                 idealTripLabels: ['Short trip', 'One week', 'Long trip'],
                 matchScore: 89,
                 image: 'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?w=600&q=80&fit=crop',
-                description: 'Rolling hills, Renaissance art, and exceptional wine country — Tuscany is the heart of Italian culture.',
+                description: 'Rolling hills, Renaissance art, and exceptional wine country - Tuscany is the heart of Italian culture.',
                 highlights: ['Wine', 'Art', 'Countryside', 'Food']
             },
             {
@@ -1315,7 +1315,7 @@
             'Europe': {
                 icon: '🧠',
                 title: 'European Travel Intelligence',
-                desc: 'European destinations offer incredible diversity within short distances. Your mid-range budget opens doors to authentic experiences — from Mediterranean coastlines to Alpine retreats. Spring and fall provide the best balance of pleasant weather and fewer crowds.',
+                desc: 'European destinations offer incredible diversity within short distances. Your mid-range budget opens doors to authentic experiences - from Mediterranean coastlines to Alpine retreats. Spring and fall provide the best balance of pleasant weather and fewer crowds.',
                 chips: ['Diverse Cultures', 'Excellent Rail Network', 'Rich History', 'World-Class Cuisine']
             },
             'Asia': {
@@ -1339,7 +1339,7 @@
             'Africa': {
                 icon: '🌍',
                 title: 'African Travel Intelligence',
-                desc: 'Africa offers the ultimate adventure — from Sahara dunes to Serengeti safaris. Your budget goes far here, with mid-range options delivering luxury-level experiences by Western standards.',
+                desc: 'Africa offers the ultimate adventure - from Sahara dunes to Serengeti safaris. Your budget goes far here, with mid-range options delivering luxury-level experiences by Western standards.',
                 chips: ['Safari Adventures', 'Natural Wonders', 'Tribal Cultures', 'Diverse Ecosystems']
             }
         };
@@ -1358,15 +1358,15 @@
 
             if (dest.includes('europe')) {
                 tips.push({ icon: '🚄', text: 'European rail passes can save you up to 40% on inter-city travel compared to booking individually.' });
-                tips.push({ icon: '🏛️', text: 'Book museum tickets online in advance — skip the queues at major attractions like the Vatican and Louvre.' });
+                tips.push({ icon: '🏛️', text: 'Book museum tickets online in advance - skip the queues at major attractions like the Vatican and Louvre.' });
             } else if (dest.includes('asia')) {
-                tips.push({ icon: '🍜', text: 'Street food is not just budget-friendly — it\'s often the most authentic culinary experience.' });
+                tips.push({ icon: '🍜', text: 'Street food is not just budget-friendly - it\'s often the most authentic culinary experience.' });
             }
 
-            tips.push({ icon: '📱', text: 'Download offline maps and translation apps before departure — connectivity can be unpredictable.' });
-            tips.push({ icon: '🛡️', text: 'Always purchase comprehensive travel insurance — medical emergencies abroad can be extremely costly.' });
+            tips.push({ icon: '📱', text: 'Download offline maps and translation apps before departure - connectivity can be unpredictable.' });
+            tips.push({ icon: '🛡️', text: 'Always purchase comprehensive travel insurance - medical emergencies abroad can be extremely costly.' });
             tips.push({ icon: '💳', text: 'Notify your bank of international travel dates to avoid card blocks and check foreign transaction fees.' });
-            tips.push({ icon: '📸', text: 'Pack a portable charger — you\'ll use your phone for navigation, photos, and reservations constantly.' });
+            tips.push({ icon: '📸', text: 'Pack a portable charger - you\'ll use your phone for navigation, photos, and reservations constantly.' });
 
             return tips.slice(0, 5);
         }
@@ -1376,7 +1376,7 @@
             var grid = document.getElementById('params-grid');
             var fields = [
                 { label: 'Destination',  value: data.destination || 'Europe' },
-                { label: 'Temperature',   value: data.temperature || '—' },
+                { label: 'Temperature',   value: data.temperature || '-' },
                 { label: 'Duration',      value: data.duration || '7 Days' },
                 { label: 'Travel Style',  value: data.style || 'Adventure' },
                 { label: 'Budget Range',  value: data.budget || 'Mid-range', accent: true }

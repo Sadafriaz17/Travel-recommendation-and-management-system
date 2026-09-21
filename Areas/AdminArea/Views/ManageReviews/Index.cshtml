@@ -1,0 +1,67 @@
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Review>
+@{
+    ViewBag.Title = "Manage Reviews";
+    ViewBag.ActiveMenu = "Reviews";
+    ViewBag.ActivePage = "Reviews";
+}
+<div class="page-header">
+    <div><div class="page-title">Reviews</div><div class="page-subtitle">Manage customer reviews and ratings</div></div>
+    <a href="@Url.Action("Create","ManageReviews", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Review</a>
+</div>
+@if (TempData["SuccessMessage"] != null)
+{ <div class="alert-toast alert-toast-success"><i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+@if (TempData["ErrorMessage"] != null)
+{ <div class="alert-toast alert-toast-error"><i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"] <button class="alert-close"><i class="bi bi-x"></i></button></div> }
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title"><i class="bi bi-star-half"></i> All Reviews</div>
+        <span style="font-size:12px;color:var(--text-muted)">@Model.Count() records</span>
+    </div>
+    <div class="admin-card-body-flush">
+        @if (Model.Any())
+        {
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr><th>#ID</th><th>Reviewer</th><th>Package / Product</th><th>Rating</th><th>Comment</th><th>Date</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            string subject = item.Package != null ? "📦 " + item.Package.PackageName
+                                           : item.Product != null ? "🛍 " + item.Product.ProductName
+                                           : "-";
+                            int rating = item.Rating ?? 0;
+                            string stars = new string('\u2605', rating) + new string('\u2606', 5 - rating);
+                            <tr>
+                                <td style="font-size:12px;color:var(--text-muted);font-weight:600">#@item.ReviewId</td>
+                                <td style="font-weight:600">@(item.User?.FullName ?? "-")</td>
+                                <td style="font-size:12px;max-width:180px"><span class="text-truncate-cell">@subject</span></td>
+                                <td>
+                                    <span style="color:#f59e0b;letter-spacing:1px;font-size:14px">@stars</span>
+                                    <span style="font-size:11px;color:var(--text-muted);margin-left:4px">@rating/5</span>
+                                </td>
+                                <td style="max-width:220px"><span class="text-truncate-cell">@(item.Comment ?? "-")</span></td>
+                                <td style="color:var(--text-muted)">@(item.CreatedAt?.ToString("MMM d, yyyy") ?? "-")</td>
+                                <td>
+                                    <div class="action-group">
+                                        <a href="@Url.Action("Edit","ManageReviews", new { area="AdminArea", id=item.ReviewId })" class="btn-icon btn-icon-edit"><i class="bi bi-pencil"></i></a>
+                                        <a href="@Url.Action("Delete","ManageReviews", new { area="AdminArea", id=item.ReviewId })" class="btn-icon btn-icon-delete" onclick="return confirm('Delete this review?')"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-star"></i></div>
+                <h4>No Reviews Found</h4>
+                <p>Customer reviews will appear here once they are submitted.</p>
+                <a href="@Url.Action("Create","ManageReviews", new { area = "AdminArea" })" class="btn-admin btn-admin-primary"><i class="bi bi-plus-circle"></i> Add Review</a>
+            </div>
+        }
+    </div>
+</div>
+

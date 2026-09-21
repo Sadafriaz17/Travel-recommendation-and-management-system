@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.PackageImage
+﻿@model TourwebsiteFYP.DB_data_models.PackageImage
 @{
     ViewBag.Title = "Edit Package Image";
     ViewBag.ActiveMenu = "Packages";
@@ -18,7 +18,7 @@
                 <div class="form-group form-grid-1">
                     <label class="form-label">Package <span>*</span></label>
                     <select name="PackageId" class="form-control" required>
-                        <option value="">— Select Package —</option>
+                        <option value="">- Select Package -</option>
                         @foreach (var p in ViewBag.Packages) {
                             string sel = (p.PackageId == Model.PackageId) ? "selected" : "";
                             <option value="@p.PackageId" @sel>@p.PackageName</option>
@@ -40,3 +40,4 @@
         }
     </div>
 </div>
+

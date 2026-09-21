@@ -1,5 +1,5 @@
-// ============================================================
-// OWIN STARTUP — Google OAuth configuration
+﻿// ============================================================
+// OWIN STARTUP - Google OAuth configuration
 // ============================================================
 // SETUP INSTRUCTIONS (Google Cloud Console):
 //   1. Go to https://console.cloud.google.com → APIs & Services → Credentials
@@ -46,3 +46,4 @@ namespace TourwebsiteFYP
         }
     }
 }
+

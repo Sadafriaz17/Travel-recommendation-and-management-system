@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.Gallery
+﻿@model TourwebsiteFYP.DB_data_models.Gallery
 @{
     ViewBag.Title = "Edit Gallery Image";
     ViewBag.ActiveMenu = "Gallery";
@@ -25,7 +25,7 @@
                 <div class="form-group">
                     <label class="form-label">Destination</label>
                     <select name="DestinationId" class="form-control">
-                        <option value="">— None —</option>
+                        <option value="">- None -</option>
                         @foreach (var d in ViewBag.DestinationList) {
                             string sel = (d.DestinationId == Model.DestinationId) ? "selected" : "";
                             <option value="@d.DestinationId" @sel>@d.Name</option>
@@ -35,7 +35,7 @@
                 <div class="form-group">
                     <label class="form-label">Product</label>
                     <select name="ProductId" class="form-control">
-                        <option value="">— None —</option>
+                        <option value="">- None -</option>
                         @foreach (var p in ViewBag.ProductList) {
                             string sel = (p.ProductId == Model.ProductId) ? "selected" : "";
                             <option value="@p.ProductId" @sel>@p.ProductName</option>
@@ -59,3 +59,4 @@
         }
     </div>
 </div>
+

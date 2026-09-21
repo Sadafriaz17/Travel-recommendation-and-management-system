@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Blog>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Blog>
 @{
     ViewBag.Title = "Manage Blogs";
     ViewBag.ActiveMenu = "Blogs";
@@ -61,8 +61,8 @@
                                 <td style="font-weight:600;max-width:260px">
                                     <span class="text-truncate-cell">@item.Title</span>
                                 </td>
-                                <td>@(item.User?.FullName ?? "—")</td>
-                                <td style="color:var(--text-muted)">@(item.CreatedDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                <td>@(item.User?.FullName ?? "-")</td>
+                                <td style="color:var(--text-muted)">@(item.CreatedDate?.ToString("MMM d, yyyy") ?? "-")</td>
                                 <td>
                                     <div class="action-group">
                                         <a href="@Url.Action("Edit","ManageBlogs", new { area = "AdminArea", id = item.BlogId })" class="btn-icon btn-icon-edit" title="Edit">
@@ -94,3 +94,4 @@
         }
     </div>
 </div>
+

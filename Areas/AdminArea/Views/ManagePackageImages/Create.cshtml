@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Add Package Image";
     ViewBag.ActiveMenu = "Packages";
     ViewBag.ActivePage = "PackageImages";
@@ -16,7 +16,7 @@
                 <div class="form-group form-grid-1">
                     <label class="form-label">Package <span>*</span></label>
                     <select name="PackageId" class="form-control" required>
-                        <option value="">— Select Package —</option>
+                        <option value="">- Select Package -</option>
                         @foreach (var p in ViewBag.Packages) { <option value="@p.PackageId">@p.PackageName</option> }
                     </select>
                 </div>
@@ -33,3 +33,4 @@
         }
     </div>
 </div>
+

@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Add Blog Post";
     ViewBag.ActiveMenu = "Blogs";
 }
@@ -33,7 +33,7 @@
                 <div class="form-group">
                     <label class="form-label">Author (User)</label>
                     <select name="AuthorId" class="form-control">
-                        <option value="">— Select Author —</option>
+                        <option value="">- Select Author -</option>
                         @if (ViewBag.UserList != null)
                         {
                             foreach (var u in ViewBag.UserList)
@@ -56,3 +56,4 @@
         }
     </div>
 </div>
+

@@ -1,5 +1,5 @@
 ﻿@* =========================================
-    PACKAGES INDEX — Views/Package/Index.cshtml
+    PACKAGES INDEX - Views/Package/Index.cshtml
     ========================================= *@
 @model IEnumerable<TourwebsiteFYP.DB_data_models.Package>
 
@@ -474,7 +474,7 @@
                                 <span class="pkg-type-tag">@(p.PackageType != null ? p.PackageType.TypeName : "N/A")</span>
                                 @if (isPopular)
                                 {
-                                    <span class="pkg-popular-tag">★ POPULAR</span>
+                                    <span class="pkg-popular-tag">&#9733; POPULAR</span>
                                 }
                             </div>
                         </div>
@@ -495,7 +495,7 @@
                                     <div class="pkg-spec-key">Guests</div>
                                 </div>
                                 <div class="pkg-spec">
-                                    <div class="pkg-spec-val">★ 4.8</div>
+                                    <div class="pkg-spec-val">&#9733; 4.8</div>
                                     <div class="pkg-spec-key">Rating</div>
                                 </div>
                             </div>
@@ -555,3 +555,5 @@
         }
     </script>
 }
+
+

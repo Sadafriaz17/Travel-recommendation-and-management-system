@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.PackageImage>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.PackageImage>
 @{
     ViewBag.Title = "Manage Package Images";
     ViewBag.ActiveMenu = "Packages";
@@ -30,7 +30,7 @@
                             <tr>
                                 <td style="font-size:12px;color:var(--text-muted);font-weight:600">#@item.ImageId</td>
                                 <td><img src="@imgSrc" class="tbl-img" onerror="this.src='/images/default-package.jpg'" /></td>
-                                <td style="font-weight:600">@(item.Package?.PackageName ?? "—")</td>
+                                <td style="font-weight:600">@(item.Package?.PackageName ?? "-")</td>
                                 <td>
                                     <div class="action-group">
                                         <a href="@Url.Action("Edit","ManagePackageImages", new { area="AdminArea", id=item.ImageId })" class="btn-icon btn-icon-edit"><i class="bi bi-pencil"></i></a>
@@ -54,3 +54,4 @@
         }
     </div>
 </div>
+

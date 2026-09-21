@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Add User";
     ViewBag.ActiveMenu = "Users";
     ViewBag.ActivePage = "Users";
@@ -32,7 +32,7 @@
                 <div class="form-group form-grid-1">
                     <label class="form-label">Role (User Type) <span>*</span></label>
                     <select name="UserTypeId" class="form-control" required>
-                        <option value="">— Select Role —</option>
+                        <option value="">- Select Role -</option>
                         @foreach (var t in ViewBag.UserTypeList) { <option value="@t.UserTypeId">@t.TypeName</option> }
                     </select>
                 </div>
@@ -44,3 +44,4 @@
         }
     </div>
 </div>
+

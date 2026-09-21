@@ -1170,6 +1170,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="@Url.Action("Index","ManageReviews", new { area = "AdminArea" })"
+                               class="nav-link @(ViewBag.ActiveMenu == "Reviews" ? "active" : "")">
+                                <i class="bi bi-star-half nav-icon"></i>
+                                <span>Reviews</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="@Url.Action("Index","ManagePageContent", new { area = "AdminArea" })"
                                class="nav-link @(ViewBag.ActiveMenu == "PageContent" ? "active" : "")">
                                 <i class="bi bi-file-text nav-icon"></i>

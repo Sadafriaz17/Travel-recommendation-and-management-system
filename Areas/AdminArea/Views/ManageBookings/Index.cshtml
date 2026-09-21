@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
 @{
     ViewBag.Title = "Manage Bookings";
     ViewBag.ActiveMenu = "Bookings";
@@ -31,13 +31,13 @@
                             else if (item.Status == "Pending") { statusClass = "badge-warning"; }
                             <tr>
                                 <td style="font-weight:600;color:var(--text-muted);font-size:12px">#@item.BookingId</td>
-                                <td style="font-weight:700">@(item.User?.FullName ?? item.Email ?? "—")</td>
+                                <td style="font-weight:700">@(item.User?.FullName ?? item.Email ?? "-")</td>
                                 <td>
                                     @if(item.Package != null) { <span><i class="bi bi-gift"></i> @item.Package.PackageName</span> }
                                     else if(item.Destination != null) { <span><i class="bi bi-geo-alt"></i> @item.Destination.Name</span> }
-                                    else { <span>—</span> }
+                                    else { <span>-</span> }
                                 </td>
-                                <td style="color:var(--text-muted)">@(item.BookingDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                <td style="color:var(--text-muted)">@(item.BookingDate?.ToString("MMM d, yyyy") ?? "-")</td>
                                 <td style="font-weight:600">$@item.TotalAmount.ToString("N2")</td>
                                 <td><span class="badge-pill @statusClass">@(item.Status ?? "Pending")</span></td>
                                 <td>

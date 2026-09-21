@@ -33,7 +33,7 @@ namespace TourwebsiteFYP.Controllers
                 .OrderByDescending(v => v.Rating)
                 .ToList();
 
-            // Best sellers / trending strip — top 6 by review count
+            // Best sellers / trending strip - top 6 by review count
             var trending = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")

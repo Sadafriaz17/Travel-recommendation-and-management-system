@@ -752,7 +752,7 @@
                                     @foreach (var pkg in ViewBag.Packages as IEnumerable<TourwebsiteFYP.DB_data_models.Package>)
                                     {
                                         <option value="@pkg.PackageId" data-price="@pkg.Price" data-name="@pkg.PackageName">
-                                            @pkg.PackageName — $@pkg.Price
+                                            @pkg.PackageName - $@pkg.Price
                                         </option>
                                     }
                                 </select>

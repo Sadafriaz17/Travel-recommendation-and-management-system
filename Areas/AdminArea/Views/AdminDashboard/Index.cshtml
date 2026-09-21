@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
 @{
     ViewBag.Title = "Dashboard";
     ViewBag.ActiveMenu = "Dashboard";
@@ -129,10 +129,10 @@
                                 }
                                 <tr>
                                     <td style="font-weight:600;color:var(--text-muted);font-size:12px">#@b.BookingId</td>
-                                    <td>@(b.Email ?? "—")</td>
+                                    <td>@(b.Email ?? "-")</td>
                                     <td style="font-weight:600">$@b.TotalAmount.ToString("N2")</td>
                                     <td><span class="badge-pill @statusClass">@(b.Status ?? "Pending")</span></td>
-                                    <td style="color:var(--text-muted)">@(b.BookingDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                    <td style="color:var(--text-muted)">@(b.BookingDate?.ToString("MMM d, yyyy") ?? "-")</td>
                                 </tr>
                             }
                         </tbody>
@@ -160,3 +160,4 @@
         }
     </style>
 }
+

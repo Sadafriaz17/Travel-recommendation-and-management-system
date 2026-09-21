@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Payment>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Payment>
 @{
     ViewBag.Title = "Manage Payments";
     ViewBag.ActiveMenu = "Payments";
@@ -32,12 +32,12 @@
                             else if(item.Status == "Failed" || item.Status == "Refunded") { statusClass = "badge-danger"; }
                             <tr>
                                 <td style="font-size:12px;color:var(--text-muted);font-weight:600">#@item.PaymentId</td>
-                                <td style="font-weight:600">@(item.Booking?.User?.FullName ?? "—")</td>
+                                <td style="font-weight:600">@(item.Booking?.User?.FullName ?? "-")</td>
                                 <td>#@item.BookingId</td>
                                 <td style="font-weight:700">$@item.Amount.ToString("N2")</td>
-                                <td>@(item.PaymentType?.PaymentTypeName ?? item.PaymentMethod ?? "—")</td>
+                                <td>@(item.PaymentType?.PaymentTypeName ?? item.PaymentMethod ?? "-")</td>
                                 <td><span class="badge-pill @statusClass">@(item.Status ?? "Completed")</span></td>
-                                <td style="color:var(--text-muted)">@(item.PaymentDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                <td style="color:var(--text-muted)">@(item.PaymentDate?.ToString("MMM d, yyyy") ?? "-")</td>
                                 <td>
                                     <div class="action-group">
                                         <a href="@Url.Action("Edit","ManagePayments", new { area="AdminArea", id=item.PaymentId })" class="btn-icon btn-icon-edit"><i class="bi bi-pencil"></i></a>
@@ -61,3 +61,4 @@
         }
     </div>
 </div>
+

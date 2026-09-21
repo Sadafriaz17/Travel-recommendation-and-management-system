@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Vendor>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Vendor>
 @{
     ViewBag.Title = "Marketplace Vendors";
     ViewBag.ActiveMenu = "Marketplace";
@@ -45,7 +45,7 @@
         <div class="stat-card">
             <div class="stat-icon stat-icon-orange"><i class="bi bi-star-fill"></i></div>
             <div>
-                <div class="stat-value">@(Model.Any() ? Model.Average(v => v.Rating).ToString("0.0") : "—")</div>
+                <div class="stat-value">@(Model.Any() ? Model.Average(v => v.Rating).ToString("0.0") : "-")</div>
                 <div class="stat-label">Avg. Vendor Rating</div>
             </div>
         </div>
@@ -121,7 +121,7 @@
                                     }
                                     else
                                     {
-                                        <span>—</span>
+                                        <span>-</span>
                                     }
                                 </td>
                                 <td>
@@ -185,7 +185,7 @@
                                                                 @product.ProductName
                                                             </td>
                                                             <td style="padding:8px 12px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border);">
-                                                                @(product.ProductType != null ? product.ProductType.TypeName : "—")
+                                                                @(product.ProductType != null ? product.ProductType.TypeName : "-")
                                                             </td>
                                                             <td style="padding:8px 12px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border);">
                                                                 @product.Price.ToString("C")

@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Add Package";
     ViewBag.ActiveMenu = "Packages";
     ViewBag.ActivePage = "Packages";
@@ -20,14 +20,14 @@
                 <div class="form-group">
                     <label class="form-label">Type</label>
                     <select name="PackageTypeId" class="form-control">
-                        <option value="">— Select Type —</option>
+                        <option value="">- Select Type -</option>
                         @foreach (var t in ViewBag.PackageTypes) { <option value="@t.PackageTypeId">@t.TypeName</option> }
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Destination</label>
                     <select name="DestinationId" class="form-control">
-                        <option value="">— Select Destination —</option>
+                        <option value="">- Select Destination -</option>
                         @foreach (var d in ViewBag.Destinations) { <option value="@d.DestinationId">@d.Name</option> }
                     </select>
                 </div>
@@ -55,3 +55,4 @@
         }
     </div>
 </div>
+

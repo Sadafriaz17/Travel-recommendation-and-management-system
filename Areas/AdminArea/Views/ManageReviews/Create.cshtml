@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Add Review";
+    ViewBag.ActiveMenu = "Reviews";
+    ViewBag.ActivePage = "Reviews";
+}
+<div class="page-header">
+    <div><div class="page-title">Add Review</div><div class="page-subtitle">Create a new customer review</div></div>
+    <a href="@Url.Action("Index","ManageReviews", new { area = "AdminArea" })" class="btn-admin btn-admin-outline"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="admin-card">
+    <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-star"></i> Review Details</div></div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("Create","ManageReviews", new { area = "AdminArea" }, FormMethod.Post))
+        {
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Reviewer (User) <span>*</span></label>
+                    <select name="UserId" class="form-control" required>
+                        <option value="">- Select User -</option>
+                        @foreach (var u in ViewBag.UserList) { <option value="@u.UserId">@u.FullName (@u.Email)</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rating (1–5) <span>*</span></label>
+                    <select name="Rating" class="form-control" required>
+                        <option value="">- Select Rating -</option>
+                        @for (int i = 1; i <= 5; i++) { <option value="@i">@i star@(i > 1 ? "s" : "") - @(new string('\u2605', i))</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Package (optional)</label>
+                    <select name="PackageId" class="form-control">
+                        <option value="">- None -</option>
+                        @foreach (var p in ViewBag.PackageList) { <option value="@p.PackageId">@p.PackageName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product (optional)</label>
+                    <select name="ProductId" class="form-control">
+                        <option value="">- None -</option>
+                        @foreach (var p in ViewBag.ProductList) { <option value="@p.ProductId">@p.ProductName</option> }
+                    </select>
+                </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Comment</label>
+                    <textarea name="Comment" class="form-control" rows="5" placeholder="Enter review comment..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Review</button>
+                <a href="@Url.Action("Index","ManageReviews", new { area = "AdminArea" })" class="btn-admin btn-admin-outline">Cancel</a>
+            </div>
+        }
+    </div>
+</div>
+

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Destination>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Destination>
 @{
     Layout = null;
 }
@@ -83,7 +83,7 @@
     {
         foreach (var item in Model.Take(4))
         {
-            <a href="@Url.Action("index", "Destination", new { id = item.DestinationId })" class="dest-card-v2">
+            <a href="@Url.Action("Details", "Destination", new { id = item.DestinationId })" class="dest-card-v2">
                 <img src="@Url.Content(item.Image)" alt="@item.Name" loading="lazy" />
                 <div class="overlay-v2">
                     <div class="dest-label">

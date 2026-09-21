@@ -7,7 +7,7 @@
 @section HeadStyles {
     <style>
                 /* ═══════════════════════════════════════════
-           USER DASHBOARD — AI COMMAND CENTER
+           USER DASHBOARD - AI COMMAND CENTER
         ═══════════════════════════════════════════ */
                 #udash-wrap {
                     padding-top: 72px;
@@ -693,7 +693,7 @@
                 Good @(DateTime.Now.Hour < 12 ? "Morning" : DateTime.Now.Hour < 17 ? "Afternoon" : "Evening"),<br />
                 <span class="text-gradient">@(Session["UserName"] ?? "Traveler")</span> ✦
             </div>
-            <p class="udash-sub">Your personalized travel intelligence hub — @DateTime.Now.ToString("dddd, MMMM dd")</p>
+            <p class="udash-sub">Your personalized travel intelligence hub - @DateTime.Now.ToString("dddd, MMMM dd")</p>
         </div>
         <div class="udash-user-card" data-reveal data-delay="100">
             <div class="udash-avatar">@((Session["UserName"] ?? "T").ToString()[0])</div>
@@ -811,7 +811,7 @@
                             <div class="history-dest-name">@h.name</div>
                             <div class="history-dest-date">@h.date</div>
                         </div>
-                        <div class="history-dest-rating">★ @h.rating</div>
+                        <div class="history-dest-rating">&#9733; @h.rating</div>
                     </div>
                 }
             </div>
@@ -957,3 +957,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });</script>
 }
+
+
