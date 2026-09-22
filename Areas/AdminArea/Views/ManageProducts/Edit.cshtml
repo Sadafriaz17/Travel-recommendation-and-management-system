@@ -1,4 +1,4 @@
-﻿@model TourwebsiteFYP.DB_data_models.Product
+@model TourwebsiteFYP.DB_data_models.Product
 @{
     ViewBag.Title = "Edit Product";
     ViewBag.ActiveMenu = "Products";
@@ -11,7 +11,7 @@
 <div class="admin-card">
     <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-pencil-square"></i> Product Details</div></div>
     <div class="admin-card-body">
-        @using (Html.BeginForm("Edit","ManageProducts", new { area = "AdminArea" }, FormMethod.Post))
+        @using (Html.BeginForm("Edit","ManageProducts", new { area = "AdminArea" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             <input type="hidden" name="ProductId" value="@Model.ProductId" />
             <div class="form-grid">
@@ -30,12 +30,26 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Vendor</label>
+                    <select name="VendorId" class="form-control">
+                        <option value="">- Select Vendor -</option>
+                        @foreach (var v in ViewBag.VendorList) {
+                            string sel = (v.VendorId == Model.VendorId) ? "selected" : "";
+                            <option value="@v.VendorId" @sel>@v.VendorName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Price ($) <span>*</span></label>
                     <input type="number" name="Price" value="@Model.Price" class="form-control" step="0.01" min="0" required />
                 </div>
-                <div class="form-group form-grid-1">
-                    <label class="form-label">Description</label>
-                    <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+                <div class="form-group">
+                    <label class="form-label">Rating</label>
+                    <input type="number" name="Rating" value="@Model.Rating" class="form-control" step="0.1" min="0" max="5" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Review Count</label>
+                    <input type="number" name="ReviewCount" value="@Model.ReviewCount" class="form-control" min="0" />
                 </div>
                 <div class="form-group">
                     <label class="form-label">Stock Status</label>
@@ -46,6 +60,34 @@
                         }
                     </select>
                 </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+                </div>
+                
+                <div class="form-group form-grid-1" style="margin-top: 15px;">
+                    <h5 style="margin-bottom: 10px;">Images</h5>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Main Image (Leave empty to keep current)</label>
+                    <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+                    @if(!string.IsNullOrEmpty(Model.ImageUrl)){ <small>Current: @Model.ImageUrl</small> }
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Image 2</label>
+                    <input type="file" name="ImageFile2" class="form-control" accept="image/*" />
+                    @if(!string.IsNullOrEmpty(Model.ImageUrl2)){ <small>Current: @Model.ImageUrl2</small> }
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Image 3</label>
+                    <input type="file" name="ImageFile3" class="form-control" accept="image/*" />
+                    @if(!string.IsNullOrEmpty(Model.ImageUrl3)){ <small>Current: @Model.ImageUrl3</small> }
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Image 4</label>
+                    <input type="file" name="ImageFile4" class="form-control" accept="image/*" />
+                    @if(!string.IsNullOrEmpty(Model.ImageUrl4)){ <small>Current: @Model.ImageUrl4</small> }
+                </div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Update Product</button>
@@ -54,4 +96,3 @@
         }
     </div>
 </div>
-

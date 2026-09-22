@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Add Product";
     ViewBag.ActiveMenu = "Products";
     ViewBag.ActivePage = "Products";
@@ -10,7 +10,7 @@
 <div class="admin-card">
     <div class="admin-card-header"><div class="admin-card-title"><i class="bi bi-box-seam"></i> Product Details</div></div>
     <div class="admin-card-body">
-        @using (Html.BeginForm("Create","ManageProducts", new { area = "AdminArea" }, FormMethod.Post))
+        @using (Html.BeginForm("Create","ManageProducts", new { area = "AdminArea" }, FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             <div class="form-grid">
                 <div class="form-group form-grid-1">
@@ -25,12 +25,23 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Vendor</label>
+                    <select name="VendorId" class="form-control">
+                        <option value="">- Select Vendor -</option>
+                        @foreach (var v in ViewBag.VendorList) { <option value="@v.VendorId">@v.VendorName</option> }
+                    </select>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Price ($) <span>*</span></label>
                     <input type="number" name="Price" class="form-control" step="0.01" min="0" required />
                 </div>
-                <div class="form-group form-grid-1">
-                    <label class="form-label">Description</label>
-                    <textarea name="Description" class="form-control" rows="4"></textarea>
+                <div class="form-group">
+                    <label class="form-label">Rating</label>
+                    <input type="number" name="Rating" class="form-control" step="0.1" min="0" max="5" value="0" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Review Count</label>
+                    <input type="number" name="ReviewCount" class="form-control" min="0" value="0" />
                 </div>
                 <div class="form-group">
                     <label class="form-label">Stock Status</label>
@@ -40,6 +51,30 @@
                         <option value="Out of Stock">Out of Stock</option>
                     </select>
                 </div>
+                <div class="form-group form-grid-1">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="form-group form-grid-1" style="margin-top: 15px;">
+                    <h5 style="margin-bottom: 10px;">Images</h5>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Main Image <span>*</span></label>
+                    <input type="file" name="ImageFile" class="form-control" accept="image/*" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Image 2</label>
+                    <input type="file" name="ImageFile2" class="form-control" accept="image/*" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Image 3</label>
+                    <input type="file" name="ImageFile3" class="form-control" accept="image/*" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Additional Image 4</label>
+                    <input type="file" name="ImageFile4" class="form-control" accept="image/*" />
+                </div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn-admin btn-admin-primary"><i class="bi bi-floppy"></i> Save Product</button>
@@ -48,4 +83,3 @@
         }
     </div>
 </div>
-
