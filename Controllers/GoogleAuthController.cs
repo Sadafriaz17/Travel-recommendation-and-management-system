@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -124,7 +124,7 @@ namespace TourwebsiteFYP.Controllers
                 {
                     FullName     = name.Trim(),
                     Email        = email,
-                    PasswordHash = null,          // Google-only account - no password
+                    PasswordHash = "",            // Google-only account - no password, but DB requires non-null
                     UserTypeId   = customerType.UserTypeId,
                     CreatedAt    = DateTime.Now
                 };
