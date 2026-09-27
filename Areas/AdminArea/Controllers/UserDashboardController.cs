@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using TourwebsiteFYP.Filter;
 
 namespace TourwebsiteFYP.Areas.AdminArea.Controllers
 {
+    /// <summary>
+    /// Legacy stub - redirects to DashboardRouter so existing links are not broken.
+    /// </summary>
+    [SessionAuthFilter]
     public class UserDashboardController : Controller
     {
-        // GET: AdminArea/UserDashboard
         public ActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "DashboardRouter", new { area = "AdminArea" });
         }
     }
 }

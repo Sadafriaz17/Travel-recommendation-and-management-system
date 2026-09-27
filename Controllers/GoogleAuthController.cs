@@ -72,8 +72,8 @@ namespace TourwebsiteFYP.Controllers
             }
 
             // ----------------------------------------------------------
-            // Clarification #3: Robust claim retrieval - loginInfo.Email
-            // can be null depending on the OWIN Google provider version.
+            // Robust claim retrieval - loginInfo.Email can be null
+            // depending on the OWIN Google provider version.
             // Fall back to reading the email claim explicitly.
             // ----------------------------------------------------------
             string email = loginInfo.Email
@@ -85,7 +85,6 @@ namespace TourwebsiteFYP.Controllers
 
             if (string.IsNullOrWhiteSpace(email))
             {
-                // Cannot proceed without an email - show a friendly message.
                 TempData["LoginError"] = "Could not retrieve your email from Google - " +
                                          "please try again or use the email/password login.";
                 return RedirectToAction("Index", "Login");
@@ -97,18 +96,16 @@ namespace TourwebsiteFYP.Controllers
             // ----------------------------------------------------------
             // Find existing user by email, OR create a new one.
             //
-            // Clarification #4: Account linking - if a row already exists
-            // with a PasswordHash (password-signup account), we deliberately
-            // link the Google login to that account by email and sign them
-            // in. No duplicate row is created.
+            // If a row already exists with a PasswordHash (password-signup
+            // account), we link the Google login to that account by email
+            // and sign them in. No duplicate row is created.
             // ----------------------------------------------------------
             var user = _context.Users
                                .FirstOrDefault(u => u.Email.ToLower() == email);
 
             if (user == null)
             {
-                // New user - auto-register as Customer.
-                // Look up the Customer UserType dynamically (same pattern as SignupController).
+                // New user - auto-register as Customer (TypeId 2).
                 var customerType = _context.UserTypes
                                            .FirstOrDefault(t => t.TypeName == "Customer")
                                    ?? _context.UserTypes.FirstOrDefault();
@@ -124,7 +121,7 @@ namespace TourwebsiteFYP.Controllers
                 {
                     FullName     = name.Trim(),
                     Email        = email,
-                    PasswordHash = "",            // Google-only account - no password, but DB requires non-null
+                    PasswordHash = "",           // Google-only account - no password
                     UserTypeId   = customerType.UserTypeId,
                     CreatedAt    = DateTime.Now
                 };
@@ -134,26 +131,18 @@ namespace TourwebsiteFYP.Controllers
             }
 
             // ----------------------------------------------------------
-            // Establish the session exactly as LoginController.Index(POST)
-            // does - same three session keys, same values.
+            // Establish the session exactly as LoginController does.
             // ----------------------------------------------------------
             Session["UserId"]     = user.UserId;
             Session["UserName"]   = user.FullName;
             Session["UserTypeId"] = user.UserTypeId;
 
-            // Sign out of the transient external cookie - we're now using
-            // the application's own session mechanism.
+            // Sign out of the transient external cookie.
             HttpContext.GetOwinContext().Authentication
                        .SignOut(DefaultAuthenticationTypes.ExternalCookie);
 
-            // ----------------------------------------------------------
-            // Clarification #6: Post-login redirect matches LoginController.
-            // LoginController always redirects to Home/Index regardless of
-            // role - replicate exactly.  If LoginController ever gains
-            // role-based branching, update both places in sync.
-            // ----------------------------------------------------------
-            return RedirectToAction("Index", "Home");
+            // Route to the role-specific dashboard (same as LoginController).
+            return RedirectToAction("Index", "DashboardRouter", new { area = "AdminArea" });
         }
     }
 }
-

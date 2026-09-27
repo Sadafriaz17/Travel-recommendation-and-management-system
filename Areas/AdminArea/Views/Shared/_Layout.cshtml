@@ -134,6 +134,22 @@
             margin-top: -3px;
         }
 
+        /* Role badge in sidebar brand */
+        .role-badge {
+            margin-left: auto;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .role-badge-admin    { background: rgba(26,26,26,0.08);   color: #1a1a1a; }
+        .role-badge-manager  { background: rgba(59,130,246,0.12); color: #2563eb; }
+        .role-badge-vendor   { background: rgba(16,185,129,0.12); color: #059669; }
+        .role-badge-customer { background: rgba(139,92,246,0.12); color: #7c3aed; }
+
         .sidebar-wrapper {
             flex: 1;
             overflow-y: auto;
@@ -1012,6 +1028,36 @@
     @RenderSection("styles", required: false)
 </head>
 <body>
+@{
+    // ── Role detection from session (available in every layout render) ──
+    int _typeId = 0;
+    if (Session["UserTypeId"] != null)
+    {
+        int.TryParse(Session["UserTypeId"].ToString(), out _typeId);
+    }
+
+    bool isAdmin    = (_typeId == 1);
+    bool isVendor   = (_typeId == 3);
+    bool isManager  = (_typeId == 4);
+    bool isCustomer = (_typeId == 2 || _typeId == 5);
+
+    string _displayName = Session["UserName"]?.ToString() ?? "User";
+    string _initials    = _displayName.Length >= 2
+                          ? (_displayName[0].ToString() + _displayName[1].ToString()).ToUpper()
+                          : _displayName.ToUpper();
+
+    // Role label and CSS class for the sidebar badge.
+    string roleName      = isAdmin ? "Admin" : isManager ? "Manager" : isVendor ? "Vendor" : "Customer";
+    string roleBadgeCss  = isAdmin ? "role-badge-admin" : isManager ? "role-badge-manager"
+                                   : isVendor ? "role-badge-vendor" : "role-badge-customer";
+
+    // Dashboard home URL (role-specific).
+    string dashHomeUrl = isAdmin   ? Url.Action("Index","AdminDashboard",   new { area = "AdminArea" })
+                       : isVendor  ? Url.Action("Index","VendorDashboard",  new { area = "AdminArea" })
+                       : isManager ? Url.Action("Index","ManagerDashboard", new { area = "AdminArea" })
+                                   : Url.Action("Index","CustomerDashboard",new { area = "AdminArea" });
+}
+
     <div class="app-wrapper" id="appWrapper">
 
         <!-- Sidebar overlay (mobile) -->
@@ -1022,196 +1068,323 @@
         ════════════════════════════ -->
         <aside class="app-sidebar">
             <div class="sidebar-brand">
-                <a href="@Url.Action("Index", "Home", new { area = "" })" class="brand-link">
+                <a href="@dashHomeUrl" class="brand-link">
                     <div class="brand-logo"><i class="bi bi-globe2"></i></div>
                     <div>
                         <span class="brand-text">NEXVOY</span>
                         <span class="brand-tag">Admin Panel</span>
                     </div>
                 </a>
+                <span class="role-badge @roleBadgeCss" style="margin-left:auto">@roleName</span>
             </div>
 
             <div class="sidebar-wrapper">
                 <nav>
+
+                    <!-- ── OVERVIEW (all roles) ── -->
                     <div class="nav-section-label">Overview</div>
                     <ul class="sidebar-nav">
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","AdminDashboard", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
-                                <i class="bi bi-speedometer2 nav-icon"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","AdminDashboard", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Dashboard" ? "active" : "")">
+                                    <i class="bi bi-speedometer2 nav-icon"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                        }
+                        @if (isManager)
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManagerDashboard", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "ManagerDashboard" ? "active" : "")">
+                                    <i class="bi bi-bar-chart-line nav-icon"></i>
+                                    <span>Analytics</span>
+                                </a>
+                            </li>
+                        }
+                        @if (isVendor)
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","VendorDashboard", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "VendorDashboard" ? "active" : "")">
+                                    <i class="bi bi-shop nav-icon"></i>
+                                    <span>My Dashboard</span>
+                                </a>
+                            </li>
+                        }
+                        @if (isCustomer)
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","CustomerDashboard", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "CustomerDashboard" ? "active" : "")">
+                                    <i class="bi bi-grid nav-icon"></i>
+                                    <span>My Dashboard</span>
+                                </a>
+                            </li>
+                        }
                     </ul>
 
-                    <div class="nav-section-label">Catalog</div>
-                    <ul class="sidebar-nav">
-                        <li class="nav-item @(ViewBag.ActiveMenu == "Products" ? "open" : "")" id="menu-products">
-                            <a href="#" class="nav-link" onclick="toggleMenu('menu-products'); return false;">
-                                <i class="bi bi-box-seam nav-icon"></i>
-                                <span>Products</span>
-                                <i class="bi bi-chevron-down nav-arrow"></i>
-                            </a>
-                            <ul class="nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManageProductType", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "ProductTypes" ? "active" : "")">Product Types</a>
+                    <!-- ── CATALOG (Admin + Manager + Vendor) ── -->
+                    @if (isAdmin || isManager || isVendor)
+                    {
+                        <div class="nav-section-label">Catalog</div>
+                        <ul class="sidebar-nav">
+                            @if (isAdmin)
+                            {
+                                <li class="nav-item @(ViewBag.ActiveMenu == "Products" ? "open" : "")" id="menu-products">
+                                    <a href="#" class="nav-link" onclick="toggleMenu('menu-products'); return false;">
+                                        <i class="bi bi-box-seam nav-icon"></i>
+                                        <span>Products</span>
+                                        <i class="bi bi-chevron-down nav-arrow"></i>
+                                    </a>
+                                    <ul class="nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManageProductType", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "ProductTypes" ? "active" : "")">Product Types</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManageProducts", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "Products" ? "active" : "")">Products</a>
+                                        </li>
+                                    </ul>
                                 </li>
+                                <li class="nav-item @(ViewBag.ActiveMenu == "Packages" ? "open" : "")" id="menu-packages">
+                                    <a href="#" class="nav-link" onclick="toggleMenu('menu-packages'); return false;">
+                                        <i class="bi bi-gift nav-icon"></i>
+                                        <span>Packages</span>
+                                        <i class="bi bi-chevron-down nav-arrow"></i>
+                                    </a>
+                                    <ul class="nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManagePackageType", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "PackageTypes" ? "active" : "")">Package Types</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "Packages" ? "active" : "")">Packages</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManagePackageImages", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "PackageImages" ? "active" : "")">Package Images</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManagePackageItenirary", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "Itinerary" ? "active" : "")">Itineraries</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            @* Vendor and Manager see marketplace listings *@
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index", "ManageMarketplaceListing", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Marketplace" ? "active" : "")">
+                                    <i class="bi bi-shop nav-icon"></i>
+                                    <span>Marketplace</span>
+                                </a>
+                            </li>
+                            @if (isVendor)
+                            {
                                 <li class="nav-item">
                                     <a href="@Url.Action("Index","ManageProducts", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "Products" ? "active" : "")">Products</a>
+                                       class="nav-link @(ViewBag.ActivePage == "Products" ? "active" : "")">
+                                        <i class="bi bi-box-seam nav-icon"></i>
+                                        <span>My Products</span>
+                                    </a>
                                 </li>
-                            </ul>
-                        </li>
+                            }
+                        </ul>
+                    }
 
-                        <li class="nav-item @(ViewBag.ActiveMenu == "Packages" ? "open" : "")" id="menu-packages">
-                            <a href="#" class="nav-link" onclick="toggleMenu('menu-packages'); return false;">
-                                <i class="bi bi-gift nav-icon"></i>
-                                <span>Packages</span>
-                                <i class="bi bi-chevron-down nav-arrow"></i>
-                            </a>
-                            <ul class="nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManagePackageType", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "PackageTypes" ? "active" : "")">Package Types</a>
+                    <!-- ── OPERATIONS (Admin + Manager) ── -->
+                    @if (isAdmin || isManager)
+                    {
+                        <div class="nav-section-label">Operations</div>
+                        <ul class="sidebar-nav">
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Bookings" ? "active" : "")">
+                                    <i class="bi bi-journal-check nav-icon"></i>
+                                    <span>Bookings</span>
+                                </a>
+                            </li>
+                            @if (isAdmin)
+                            {
+                                <li class="nav-item @(ViewBag.ActiveMenu == "Payments" ? "open" : "")" id="menu-payments">
+                                    <a href="#" class="nav-link" onclick="toggleMenu('menu-payments'); return false;">
+                                        <i class="bi bi-credit-card nav-icon"></i>
+                                        <span>Payments</span>
+                                        <i class="bi bi-chevron-down nav-arrow"></i>
+                                    </a>
+                                    <ul class="nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManagePayments", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "PaymentList" ? "active" : "")">Payment List</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManagePaymentType", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "PaymentTypes" ? "active" : "")">Payment Types</a>
+                                        </li>
+                                    </ul>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManagePackages", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "Packages" ? "active" : "")">Packages</a>
+                                @* Admin-only: User management *@
+                                <li class="nav-item @(ViewBag.ActiveMenu == "Users" ? "open" : "")" id="menu-users">
+                                    <a href="#" class="nav-link" onclick="toggleMenu('menu-users'); return false;">
+                                        <i class="bi bi-people nav-icon"></i>
+                                        <span>Users</span>
+                                        <i class="bi bi-chevron-down nav-arrow"></i>
+                                    </a>
+                                    <ul class="nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManageUserType", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "UserTypes" ? "active" : "")">User Types</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index","ManageUsers", new { area = "AdminArea" })"
+                                               class="nav-link @(ViewBag.ActivePage == "Users" ? "active" : "")">Users</a>
+                                        </li>
+                                    </ul>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManagePackageImages", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "PackageImages" ? "active" : "")">Package Images</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManagePackageItenirary", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "Itinerary" ? "active" : "")">Itineraries</a>
-                                </li>
-                            </ul>
-                        </li>
+                            }
+                        </ul>
+                    }
 
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index", "ManageMarketplaceListing", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Marketplace" ? "active" : "")">
-                                <i class="bi bi-shop nav-icon"></i>
-                                <span>Marketplace</span>
-                            </a>
-                        </li>
-                    </ul>
+                    <!-- ── CUSTOMER SECTION ── -->
+                    @if (isCustomer)
+                    {
+                        <div class="nav-section-label">My Travel</div>
+                        <ul class="sidebar-nav">
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","CustomerDashboard", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "CustomerDashboard" ? "active" : "")">
+                                    <i class="bi bi-journal-check nav-icon"></i>
+                                    <span>Booking History</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/Package" class="nav-link">
+                                    <i class="bi bi-search nav-icon"></i>
+                                    <span>Browse Packages</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/Product" class="nav-link">
+                                    <i class="bi bi-box-seam nav-icon"></i>
+                                    <span>Shop Products</span>
+                                </a>
+                            </li>
+                        </ul>
+                    }
 
-                    <div class="nav-section-label">Operations</div>
+                    <!-- ── CONTENT (Admin only) ── -->
+                    @if (isAdmin)
+                    {
+                        <div class="nav-section-label">Content</div>
+                        <ul class="sidebar-nav">
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageDestination", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Destinations" ? "active" : "")">
+                                    <i class="bi bi-geo-alt nav-icon"></i>
+                                    <span>Destinations</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageBlogs", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Blogs" ? "active" : "")">
+                                    <i class="bi bi-pencil-square nav-icon"></i>
+                                    <span>Blogs</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageGallery", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Gallery" ? "active" : "")">
+                                    <i class="bi bi-images nav-icon"></i>
+                                    <span>Gallery</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageReviews", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Reviews" ? "active" : "")">
+                                    <i class="bi bi-star-half nav-icon"></i>
+                                    <span>Reviews</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManagePageContent", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "PageContent" ? "active" : "")">
+                                    <i class="bi bi-file-text nav-icon"></i>
+                                    <span>Page Content</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageAICommand", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "AICommand" ? "active" : "")">
+                                    <i class="bi bi-robot nav-icon"></i>
+                                    <span>AI Commands</span>
+                                </a>
+                            </li>
+                        </ul>
+                    }
+
+                    <!-- ── CONTENT (Manager: read-only subset) ── -->
+                    @if (isManager)
+                    {
+                        <div class="nav-section-label">Content</div>
+                        <ul class="sidebar-nav">
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageReviews", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Reviews" ? "active" : "")">
+                                    <i class="bi bi-star-half nav-icon"></i>
+                                    <span>Reviews</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index","ManageDestination", new { area = "AdminArea" })"
+                                   class="nav-link @(ViewBag.ActiveMenu == "Destinations" ? "active" : "")">
+                                    <i class="bi bi-geo-alt nav-icon"></i>
+                                    <span>Destinations</span>
+                                </a>
+                            </li>
+                        </ul>
+                    }
+
+                    <!-- ── ACCOMMODATION (Admin only) ── -->
+                    @if (isAdmin)
+                    {
+                        <div class="nav-section-label">Accommodation</div>
+                        <ul class="sidebar-nav">
+                            <li class="nav-item @(ViewBag.ActiveMenu == "Hotels" ? "open" : "")" id="menu-hotels">
+                                <a href="#" class="nav-link" onclick="toggleMenu('menu-hotels'); return false;">
+                                    <i class="bi bi-building nav-icon"></i>
+                                    <span>Hotels</span>
+                                    <i class="bi bi-chevron-down nav-arrow"></i>
+                                </a>
+                                <ul class="nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })"
+                                           class="nav-link @(ViewBag.ActivePage == "Hotels" ? "active" : "")">Hotels</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("Index","ManageHotelImages", new { area = "AdminArea" })"
+                                           class="nav-link @(ViewBag.ActivePage == "HotelImages" ? "active" : "")">Hotel Images</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+
+                    <!-- ── ACCOUNT (all roles) ── -->
+                    <div class="nav-section-label">Account</div>
                     <ul class="sidebar-nav">
                         <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageBookings", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Bookings" ? "active" : "")">
-                                <i class="bi bi-journal-check nav-icon"></i>
-                                <span>Bookings</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item @(ViewBag.ActiveMenu == "Payments" ? "open" : "")" id="menu-payments">
-                            <a href="#" class="nav-link" onclick="toggleMenu('menu-payments'); return false;">
-                                <i class="bi bi-credit-card nav-icon"></i>
-                                <span>Payments</span>
-                                <i class="bi bi-chevron-down nav-arrow"></i>
-                            </a>
-                            <ul class="nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManagePayments", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "PaymentList" ? "active" : "")">Payment List</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManagePaymentType", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "PaymentTypes" ? "active" : "")">Payment Types</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item @(ViewBag.ActiveMenu == "Users" ? "open" : "")" id="menu-users">
-                            <a href="#" class="nav-link" onclick="toggleMenu('menu-users'); return false;">
-                                <i class="bi bi-people nav-icon"></i>
-                                <span>Users</span>
-                                <i class="bi bi-chevron-down nav-arrow"></i>
-                            </a>
-                            <ul class="nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManageUserType", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "UserTypes" ? "active" : "")">User Types</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManageUsers", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "Users" ? "active" : "")">Users</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <div class="nav-section-label">Content</div>
-                    <ul class="sidebar-nav">
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageDestination", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Destinations" ? "active" : "")">
-                                <i class="bi bi-geo-alt nav-icon"></i>
-                                <span>Destinations</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageBlogs", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Blogs" ? "active" : "")">
-                                <i class="bi bi-pencil-square nav-icon"></i>
-                                <span>Blogs</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageGallery", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Gallery" ? "active" : "")">
-                                <i class="bi bi-images nav-icon"></i>
-                                <span>Gallery</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageReviews", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "Reviews" ? "active" : "")">
-                                <i class="bi bi-star-half nav-icon"></i>
-                                <span>Reviews</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManagePageContent", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "PageContent" ? "active" : "")">
-                                <i class="bi bi-file-text nav-icon"></i>
-                                <span>Page Content</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index","ManageAICommand", new { area = "AdminArea" })"
-                               class="nav-link @(ViewBag.ActiveMenu == "AICommand" ? "active" : "")">
-                                <i class="bi bi-robot nav-icon"></i>
-                                <span>AI Commands</span>
+                            <a href="@dashHomeUrl#profile-section" class="nav-link">
+                                <i class="bi bi-person-gear nav-icon"></i>
+                                <span>Profile Settings</span>
                             </a>
                         </li>
                     </ul>
 
-                    <div class="nav-section-label">Accommodation</div>
-                    <ul class="sidebar-nav">
-                        <li class="nav-item @(ViewBag.ActiveMenu == "Hotels" ? "open" : "")" id="menu-hotels">
-                            <a href="#" class="nav-link" onclick="toggleMenu('menu-hotels'); return false;">
-                                <i class="bi bi-building nav-icon"></i>
-                                <span>Hotels</span>
-                                <i class="bi bi-chevron-down nav-arrow"></i>
-                            </a>
-                            <ul class="nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManageHotels", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "Hotels" ? "active" : "")">Hotels</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","ManageHotelImages", new { area = "AdminArea" })"
-                                       class="nav-link @(ViewBag.ActivePage == "HotelImages" ? "active" : "")">Hotel Images</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
                 </nav>
             </div>
 
@@ -1232,7 +1405,7 @@
                     <i class="bi bi-list"></i>
                 </button>
                 <div class="breadcrumb-wrap">
-                    <a href="@Url.Action("Index","AdminDashboard", new { area = "AdminArea" })" class="bc-home">Admin</a>
+                    <a href="@dashHomeUrl" class="bc-home">@roleName</a>
                     <span class="bc-sep"><i class="bi bi-chevron-right"></i></span>
                     <span class="bc-current">@ViewBag.Title</span>
                 </div>
@@ -1274,22 +1447,25 @@
 
                 <div class="header-divider"></div>
 
-                <!-- User -->
+                <!-- User chip -->
                 <div class="hdr-dropdown" id="dd-user">
                     <a href="#" class="user-chip" onclick="toggleDd('dd-user'); return false;">
-                        <div class="user-avatar">AD</div>
-                        <span class="user-name">Admin</span>
+                        <div class="user-avatar">@_initials</div>
+                        <span class="user-name">@_displayName</span>
                         <i class="bi bi-chevron-down" style="font-size:10px;color:var(--text-faint);margin-left:2px"></i>
                     </a>
                     <div class="hdr-dropdown-menu" style="min-width:200px">
                         <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
-                            <div style="font-weight:700;font-size:14px;color:var(--text-dark)">Admin User</div>
-                            <div style="font-size:12px;color:var(--text-faint);margin-top:2px">Administrator</div>
+                            <div style="font-weight:700;font-size:14px;color:var(--text-dark)">@_displayName</div>
+                            <div style="font-size:12px;color:var(--text-faint);margin-top:2px">@roleName</div>
                         </div>
+                        <a href="@dashHomeUrl#profile-section" class="dd-item">
+                            <div class="dd-icon"><i class="bi bi-person-gear"></i></div> Profile Settings
+                        </a>
                         <a href="@Url.Action("Index","Home", new { area = "" })" class="dd-item">
                             <div class="dd-icon"><i class="bi bi-house"></i></div> Website
                         </a>
-                        <a href="@Url.Action("Logout","Account", new { area = "" })" class="dd-item" style="color:var(--danger)">
+                        <a href="@Url.Action("Index","Logout", new { area = "" })" class="dd-item" style="color:var(--danger)">
                             <div class="dd-icon" style="color:var(--danger)"><i class="bi bi-box-arrow-right"></i></div> Sign out
                         </a>
                     </div>
@@ -1301,10 +1477,26 @@
              MAIN BODY
         ════════════════════════════ -->
         <main class="app-main">
+            @* Success / Error flash messages from TempData *@
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert-toast alert-toast-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="alert-close"><i class="bi bi-x"></i></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert-toast alert-toast-error">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="alert-close"><i class="bi bi-x"></i></button>
+                </div>
+            }
+
             @RenderBody()
         </main>
-
-    
 
     </div>
 
@@ -1342,8 +1534,63 @@
             btn.addEventListener('click', function(){ this.closest('.alert-toast').remove(); });
         });
         setTimeout(function(){
-            document.querySelectorAll('.alert-toast').forEach(function(a){ a.style.opacity='0'; a.style.transition='opacity 0.5s'; setTimeout(function(){ a.remove(); },500); });
+            document.querySelectorAll('.alert-toast').forEach(function(a){
+                a.style.opacity='0';
+                a.style.transition='opacity 0.5s';
+                setTimeout(function(){ a.remove(); }, 500);
+            });
         }, 5000);
+
+        // ── Smooth scroll with fixed-header offset for all on-page anchor links ──
+        // The fixed header is 64px tall. Without this, jumping to #profile-section
+        // would place the target element behind the header, making it look like
+        // nothing happened.
+        document.addEventListener('click', function(e) {
+            var link = e.target.closest('a[href]');
+            if (!link) return;
+
+            var href = link.getAttribute('href');
+
+            // Handle pure hash links (#profile-section) AND
+            // full-URL hash links (same page + hash, e.g. /AdminArea/CustomerDashboard#profile-section)
+            var hashIndex = href ? href.indexOf('#') : -1;
+            if (hashIndex === -1) return;                       // no hash → normal navigation
+
+            var hash   = href.substring(hashIndex);             // e.g. "#profile-section"
+            var target = document.querySelector(hash);
+
+            // If the target element exists on the current page, scroll smoothly
+            if (target) {
+                e.preventDefault();
+
+                var HEADER_HEIGHT = 64 + 16; // header height + a little breathing room
+                var targetTop = target.getBoundingClientRect().top + window.pageYOffset - HEADER_HEIGHT;
+
+                window.scrollTo({ top: targetTop, behavior: 'smooth' });
+
+                // Flash a subtle highlight on the profile card so the user sees it
+                target.style.transition = 'box-shadow 0.4s';
+                target.style.boxShadow  = '0 0 0 3px rgba(59,130,246,0.35)';
+                setTimeout(function() {
+                    target.style.boxShadow = '';
+                }, 1800);
+
+                // Update browser URL bar without triggering a jump
+                history.pushState(null, '', hash);
+            }
+        });
+
+        // If the page was loaded with a hash in the URL, apply offset after load
+        if (window.location.hash) {
+            var initTarget = document.querySelector(window.location.hash);
+            if (initTarget) {
+                setTimeout(function() {
+                    var HEADER_HEIGHT = 64 + 16;
+                    var top = initTarget.getBoundingClientRect().top + window.pageYOffset - HEADER_HEIGHT;
+                    window.scrollTo({ top: top, behavior: 'smooth' });
+                }, 300); // short delay so page layout has settled
+            }
+        }
     </script>
 
     @RenderSection("scripts", required: false)

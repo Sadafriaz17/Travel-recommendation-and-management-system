@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -27,10 +27,9 @@ namespace TourwebsiteFYP.Controllers
 
             var user = _context.Users.FirstOrDefault(u => u.Email.ToLower() == Email.Trim().ToLower());
 
-            // Clarification #5: Google-only accounts have PasswordHash == null.
-            // Show a friendly message instead of letting VerifyPassword return false
-            // (which would show the generic "Invalid email or password" message).
-            if (user != null && user.PasswordHash == null)
+            // Google-only accounts have PasswordHash == null or empty.
+            // Show a friendly message instead of the generic failure.
+            if (user != null && string.IsNullOrEmpty(user.PasswordHash))
             {
                 TempData["LoginError"] = "This account uses Google Sign-In - please use the \"Continue with Google\" button instead.";
                 return RedirectToAction("Index");
@@ -42,8 +41,9 @@ namespace TourwebsiteFYP.Controllers
                 return RedirectToAction("Index");
             }
 
-            Session["UserId"] = user.UserId;
-            Session["UserName"] = user.FullName;
+            // Establish the session (same three keys used throughout the app).
+            Session["UserId"]     = user.UserId;
+            Session["UserName"]   = user.FullName;
             Session["UserTypeId"] = user.UserTypeId;
 
             if (RememberMe)
@@ -54,8 +54,8 @@ namespace TourwebsiteFYP.Controllers
                 });
             }
 
-            return RedirectToAction("Index", "Home");
+            // Route to the role-specific dashboard instead of the public Home page.
+            return RedirectToAction("Index", "DashboardRouter", new { area = "AdminArea" });
         }
-
     }
 }

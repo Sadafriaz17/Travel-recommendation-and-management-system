@@ -1,0 +1,174 @@
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+@{
+    ViewBag.Title      = "My Dashboard";
+    ViewBag.ActiveMenu = "CustomerDashboard";
+    string userName  = ViewBag.SessionUserName ?? "Customer";
+    decimal spent    = ViewBag.TotalSpent ?? 0m;
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Welcome back, @userName <span style="font-weight:400;color:var(--text-muted)">👋</span></div>
+        <div class="page-subtitle">Here's an overview of your travel activity.</div>
+    </div>
+    <div style="font-size:12px;color:var(--text-faint)">
+        <i class="bi bi-calendar3"></i> @DateTime.Now.ToString("dddd, MMMM d yyyy")
+    </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-blue"><i class="bi bi-journal-check"></i></div>
+        <div>
+            <div class="stat-value">@ViewBag.TotalBookings</div>
+            <div class="stat-label">Total Bookings</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-green"><i class="bi bi-check-circle"></i></div>
+        <div>
+            <div class="stat-value">@ViewBag.ActiveBookings</div>
+            <div class="stat-label">Confirmed Trips</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-orange"><i class="bi bi-hourglass-split"></i></div>
+        <div>
+            <div class="stat-value">@ViewBag.PendingBookings</div>
+            <div class="stat-label">Pending</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-purple"><i class="bi bi-currency-dollar"></i></div>
+        <div>
+            <div class="stat-value">$@spent.ToString("N0")</div>
+            <div class="stat-label">Total Spent</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions + Booking History -->
+<div style="display:grid;grid-template-columns:1fr 2.2fr;gap:20px;align-items:start" class="cust-grid">
+
+    <!-- Quick Links -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Quick Actions Card -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <div class="admin-card-title"><i class="bi bi-lightning-charge"></i> Quick Actions</div>
+            </div>
+            <div class="admin-card-body" style="display:flex;flex-direction:column;gap:8px;padding:16px">
+                <a href="/Package" class="btn-admin btn-admin-primary" style="width:100%;justify-content:center">
+                    <i class="bi bi-search"></i> Browse Packages
+                </a>
+                <a href="/Product" class="btn-admin btn-admin-outline" style="width:100%;justify-content:center">
+                    <i class="bi bi-box-seam"></i> Shop Products
+                </a>
+                <a href="/Destination" class="btn-admin btn-admin-outline" style="width:100%;justify-content:center">
+                    <i class="bi bi-geo-alt"></i> Explore Destinations
+                </a>
+                <a href="#profile-section" class="btn-admin btn-admin-outline" style="width:100%;justify-content:center">
+                    <i class="bi bi-person-gear"></i> Edit Profile
+                </a>
+                <a href="@Url.Action("Index","Logout", new { area = "" })" class="btn-admin btn-admin-outline"
+                   style="width:100%;justify-content:center;color:var(--danger);border-color:rgba(239,68,68,0.25)">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                </a>
+            </div>
+        </div>
+
+        <!-- Info card -->
+        <div class="admin-card" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0">
+            <div class="admin-card-body" style="padding:18px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                    <div style="width:36px;height:36px;border-radius:10px;background:#10b981;display:flex;align-items:center;justify-content:center">
+                        <i class="bi bi-shield-check" style="color:#fff;font-size:16px"></i>
+                    </div>
+                    <div style="font-weight:700;font-size:13px;color:#065f46">Your Account is Secure</div>
+                </div>
+                <p style="font-size:12px;color:#047857;line-height:1.6;margin:0">
+                    All your booking data and personal information is encrypted and safe with NEXVOY.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking History -->
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <div class="admin-card-title"><i class="bi bi-clock-history"></i> Booking History</div>
+        </div>
+        <div class="admin-card-body-flush">
+            @if (Model != null && Model.Any())
+            {
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>Package / Trip</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var b in Model)
+                            {
+                                string statusClass = "badge-neutral";
+                                if (b.Status == "Approved" || b.Status == "Confirmed") { statusClass = "badge-success"; }
+                                else if (b.Status == "Rejected" || b.Status == "Cancelled") { statusClass = "badge-danger"; }
+                                else if (b.Status == "Pending") { statusClass = "badge-warning"; }
+                                <tr>
+                                    <td style="font-weight:600;color:var(--text-muted);font-size:12px">#@b.BookingId</td>
+                                    <td>
+                                        @if (b.Package != null)
+                                        {
+                                            <span>@b.Package.PackageName</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:var(--text-faint)">—</span>
+                                        }
+                                    </td>
+                                    <td style="font-weight:600">$@b.TotalAmount.ToString("N2")</td>
+                                    <td><span class="badge-pill @statusClass">@(b.Status ?? "Pending")</span></td>
+                                    <td style="color:var(--text-muted)">@(b.BookingDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="bi bi-journal-x"></i></div>
+                    <h4>No bookings yet</h4>
+                    <p>Start exploring packages and destinations to make your first booking.</p>
+                    <a href="/Package" class="btn-admin btn-admin-primary"><i class="bi bi-search"></i> Browse Packages</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Profile Settings Section -->
+<div id="profile-section" style="margin-top:24px">
+    @{
+        var profileUser = ViewBag.ProfileUser as TourwebsiteFYP.DB_data_models.User
+                          ?? new TourwebsiteFYP.DB_data_models.User();
+    }
+    @Html.Partial("~/Areas/AdminArea/Views/Shared/_ProfileSettings.cshtml", profileUser)
+</div>
+
+@section scripts {
+    <style>
+        @@media (max-width: 900px) {
+            .cust-grid { grid-template-columns: 1fr !important; }
+        }
+    </style>
+}

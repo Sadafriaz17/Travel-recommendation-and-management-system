@@ -1331,4 +1331,15 @@
   <ItemGroup>
     <Content Include="Views\Product\Details.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Filter\RoleAuthFilter.cs" />
+    <Compile Include="Areas\AdminArea\Controllers\DashboardRouterController.cs" />
+    <Compile Include="Areas\AdminArea\Controllers\CustomerDashboardController.cs" />
+    <Compile Include="Areas\AdminArea\Controllers\VendorDashboardController.cs" />
+    <Compile Include="Areas\AdminArea\Controllers\ManagerDashboardController.cs" />
+    <Content Include="Areas\AdminArea\Views\Shared\_ProfileSettings.cshtml" />
+    <Content Include="Areas\AdminArea\Views\CustomerDashboard\Index.cshtml" />
+    <Content Include="Areas\AdminArea\Views\VendorDashboard\Index.cshtml" />
+    <Content Include="Areas\AdminArea\Views\ManagerDashboard\Index.cshtml" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,82 @@
+@model TourwebsiteFYP.DB_data_models.User
+@*
+    Shared partial view: _ProfileSettings.cshtml
+    Used by CustomerDashboard, VendorDashboard, and ManagerDashboard.
+    The form posts to SaveProfile on whichever controller is currently active,
+    so the route stays inside the AdminArea automatically.
+*@
+@{
+    // Detect the current controller name so the form posts to the right SaveProfile action.
+    // e.g. "CustomerDashboard", "VendorDashboard", "ManagerDashboard"
+    string currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "CustomerDashboard";
+    string currentArea       = ViewContext.RouteData.Values["area"]?.ToString()       ?? "AdminArea";
+}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <div class="admin-card-title">
+            <i class="bi bi-person-gear"></i> Profile Settings
+        </div>
+    </div>
+    <div class="admin-card-body">
+        @using (Html.BeginForm("SaveProfile", currentController,
+                    new { area = currentArea }, FormMethod.Post,
+                    new { id = "profileForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert-toast alert-toast-success" style="margin-bottom:20px">
+                    <i class="bi bi-check-circle-fill"></i>
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="alert-close"><i class="bi bi-x"></i></button>
+                </div>
+            }
+
+            if (Model == null || Model.UserId == 0)
+            {
+                <div class="alert-toast alert-toast-error" style="margin-bottom:20px">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    Could not load your profile. Please log out and log back in.
+                </div>
+            }
+            else
+            {
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="prof-name">Full Name <span>*</span></label>
+                        <input id="prof-name" name="FullName" type="text" class="form-control"
+                               value="@Model.FullName" required placeholder="Your full name" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prof-email">Email Address</label>
+                        <input id="prof-email" type="email" class="form-control"
+                               value="@Model.Email" disabled
+                               style="background:#f8fafc;color:var(--text-muted);cursor:not-allowed" />
+                        <span class="form-hint">Email cannot be changed here.</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prof-phone">Phone</label>
+                        <input id="prof-phone" name="Phone" type="tel" class="form-control"
+                               value="@Model.Phone" placeholder="+1 (555) 000-0000" />
+                    </div>
+                    <div class="form-group form-grid-1">
+                        <label class="form-label" for="prof-address">Address</label>
+                        <textarea id="prof-address" name="Address" class="form-control"
+                                  rows="3" placeholder="Your address">@Model.Address</textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top:16px">
+                    <button type="submit" class="btn-admin btn-admin-primary">
+                        <i class="bi bi-check-lg"></i> Save Changes
+                    </button>
+                    <button type="reset" class="btn-admin btn-admin-outline">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                </div>
+            }
+        }
+    </div>
+</div>
