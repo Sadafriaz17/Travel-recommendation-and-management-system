@@ -7,7 +7,13 @@ using TourwebsiteFYP.Filter;
 
 namespace TourwebsiteFYP.Areas.AdminArea.Controllers
 {
+    /// <summary>
+    /// User management CRUD. Full access is Admin-only (TypeId 1).
+    /// The Delete action carries an extra RoleAuthFilter so that even if
+    /// someone navigates directly to the URL they are bounced away.
+    /// </summary>
     [SessionAuthFilter]
+    [RoleAuthFilter(1)]
     public class ManageUsersController : Controller
     {
         private Demo_DevDBEntities _context = new Demo_DevDBEntities();
@@ -22,8 +28,8 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
 
         public ActionResult Create()
         {
-            ViewBag.ActiveMenu = "Users";
-            ViewBag.ActivePage = "Users";
+            ViewBag.ActiveMenu   = "Users";
+            ViewBag.ActivePage   = "Users";
             ViewBag.UserTypeList = _context.UserTypes.ToList();
             return View();
         }
@@ -40,8 +46,8 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
 
         public ActionResult Edit(int id)
         {
-            ViewBag.ActiveMenu = "Users";
-            ViewBag.ActivePage = "Users";
+            ViewBag.ActiveMenu   = "Users";
+            ViewBag.ActivePage   = "Users";
             var user = _context.Users.Find(id);
             if (user == null) return HttpNotFound();
             ViewBag.UserTypeList = _context.UserTypes.ToList();
@@ -54,20 +60,22 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
             var existingUser = _context.Users.Find(model.UserId);
             if (existingUser != null)
             {
-                existingUser.FullName = model.FullName;
-                existingUser.Email = model.Email;
+                existingUser.FullName    = model.FullName;
+                existingUser.Email       = model.Email;
                 existingUser.PasswordHash = model.PasswordHash;
-                existingUser.Phone = model.Phone;
-                existingUser.UserTypeId = model.UserTypeId;
-                
+                existingUser.Phone       = model.Phone;
+                existingUser.UserTypeId  = model.UserTypeId;
                 _context.SaveChanges();
                 TempData["SuccessMessage"] = "User updated successfully!";
                 return RedirectToAction("Index");
             }
-            
             return HttpNotFound();
         }
 
+        /// <summary>
+        /// Delete is additionally protected by RoleAuthFilter(1) at the
+        /// controller level, so Managers and others cannot delete users.
+        /// </summary>
         public ActionResult Delete(int id)
         {
             var user = _context.Users.Find(id);
@@ -77,7 +85,10 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
                 _context.SaveChanges();
                 TempData["SuccessMessage"] = "User deleted successfully!";
             }
-            else { TempData["ErrorMessage"] = "User not found!"; }
+            else
+            {
+                TempData["ErrorMessage"] = "User not found!";
+            }
             return RedirectToAction("Index");
         }
     }
