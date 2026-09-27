@@ -26,8 +26,8 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            string subject = item.Package != null ? "📦 " + item.Package.PackageName
-                                           : item.Product != null ? "🛍 " + item.Product.ProductName
+                            string subject = item.Package != null ? " " + item.Package.PackageName
+                                           : item.Product != null ? " " + item.Product.ProductName
                                            : "-";
                             int rating = item.Rating ?? 0;
                             string stars = new string('\u2605', rating) + new string('\u2606', 5 - rating);
