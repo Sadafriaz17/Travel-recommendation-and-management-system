@@ -73,6 +73,41 @@ function Add-FileToCsproj {
     }
 }
 
+# ── Helper: remove a single file path from the .csproj if present ────────
+function Remove-FileFromCsproj {
+    param([string]$absoluteFilePath)
+
+    $relativePath = $absoluteFilePath.Substring($projectRoot.Length).TrimStart('\')
+    
+    if ($relativePath -match '^(obj|bin|\.git|\.vs)\\') { return }
+
+    [xml]$proj = Get-Content -Raw $csprojPath
+    $nsUri     = $proj.Project.NamespaceURI
+
+    $ext = [System.IO.Path]::GetExtension($absoluteFilePath).ToLower()
+    $removed = $false
+
+    if ($ext -eq ".cs") {
+        $nodes = $proj.Project.ItemGroup.Compile | Where-Object { $_.Include -eq $relativePath }
+        foreach ($node in $nodes) {
+            $node.ParentNode.RemoveChild($node) | Out-Null
+            $removed = $true
+        }
+    }
+    elseif ($ext -in @(".cshtml", ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".json", ".html")) {
+        $nodes = $proj.Project.ItemGroup.Content | Where-Object { $_.Include -eq $relativePath }
+        foreach ($node in $nodes) {
+            $node.ParentNode.RemoveChild($node) | Out-Null
+            $removed = $true
+        }
+    }
+
+    if ($removed) {
+        $proj.Save($csprojPath)
+        Write-Host "[AutoSync] Removed from project: $relativePath" -ForegroundColor Magenta
+    }
+}
+
 # ── Set up the FileSystemWatcher ──────────────────────────────────────────
 $watcher                     = New-Object System.IO.FileSystemWatcher
 $watcher.Path                = $projectRoot
@@ -94,16 +129,17 @@ Write-Host ""
 # Event handler: fires when a new file is created
 $onCreated = Register-ObjectEvent $watcher Created -Action {
     $filePath = $Event.SourceEventArgs.FullPath
-
-    # Small delay to let the file be fully written before we read the .csproj
     Start-Sleep -Milliseconds 800
+    try { Add-FileToCsproj -absoluteFilePath $filePath }
+    catch { Write-Host "[AutoSync] ERROR processing $filePath : $_" -ForegroundColor Red }
+}
 
-    try {
-        Add-FileToCsproj -absoluteFilePath $filePath
-    }
-    catch {
-        Write-Host "[AutoSync] ERROR processing $filePath : $_" -ForegroundColor Red
-    }
+# Event handler: fires when a file is deleted
+$onDeleted = Register-ObjectEvent $watcher Deleted -Action {
+    $filePath = $Event.SourceEventArgs.FullPath
+    Start-Sleep -Milliseconds 800
+    try { Remove-FileFromCsproj -absoluteFilePath $filePath }
+    catch { Write-Host "[AutoSync] ERROR processing $filePath : $_" -ForegroundColor Red }
 }
 
 # Keep the script alive until the user presses Ctrl+C
@@ -112,6 +148,7 @@ try {
 }
 finally {
     Unregister-Event -SourceIdentifier $onCreated.Name
+    Unregister-Event -SourceIdentifier $onDeleted.Name
     $watcher.Dispose()
     Write-Host "`n[AutoSync] Stopped." -ForegroundColor Yellow
 }
