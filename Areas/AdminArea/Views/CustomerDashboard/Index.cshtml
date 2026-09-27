@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
 @{
     ViewBag.Title      = "My Dashboard";
     ViewBag.ActiveMenu = "CustomerDashboard";
@@ -9,7 +9,7 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <div class="page-title">Welcome back, @userName <span style="font-weight:400;color:var(--text-muted)">👋</span></div>
+        <div class="page-title">Welcome back, @userName <span style="font-weight:400;color:var(--text-muted)"></span></div>
         <div class="page-subtitle">Here's an overview of your travel activity.</div>
     </div>
     <div style="font-size:12px;color:var(--text-faint)">
@@ -131,12 +131,12 @@
                                         }
                                         else
                                         {
-                                            <span style="color:var(--text-faint)">—</span>
+                                            <span style="color:var(--text-faint)"></span>
                                         }
                                     </td>
                                     <td style="font-weight:600">$@b.TotalAmount.ToString("N2")</td>
                                     <td><span class="badge-pill @statusClass">@(b.Status ?? "Pending")</span></td>
-                                    <td style="color:var(--text-muted)">@(b.BookingDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                    <td style="color:var(--text-muted)">@(b.BookingDate?.ToString("MMM d, yyyy") ?? "")</td>
                                 </tr>
                             }
                         </tbody>
