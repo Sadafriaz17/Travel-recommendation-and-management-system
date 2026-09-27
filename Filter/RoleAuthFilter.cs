@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -29,7 +29,7 @@ namespace TourwebsiteFYP.Filter
         {
             var session = HttpContext.Current.Session;
 
-            // Not logged in → handled by SessionAuthFilter; redirect to login.
+            // Not logged in  handled by SessionAuthFilter; redirect to login.
             if (session["UserId"] == null)
             {
                 filterContext.Result = new RedirectResult("/Login/Index");

@@ -9,10 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ═══════════════════════════════════════════════
+        /* 
            AI DREAM TRIP GENERATOR - NEXVOY
            Strict design system match with homepage & packing list
-        ═══════════════════════════════════════════════ */
+         */
         :root {
             --bg-deep: #020205;
             --bg-surface: rgba(15,15,20,0.85);
@@ -49,7 +49,7 @@
             overflow-x: hidden;
         }
 
-        /* ─── SHARED UTILITIES ─── */
+        /*  SHARED UTILITIES  */
         .text-gradient {
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--purple) 100%);
             -webkit-background-clip: text;
@@ -102,7 +102,7 @@
             }
         }
 
-        /* ─── HERO (EXACT MATCH) ─── */
+        /*  HERO (EXACT MATCH)  */
         #hero {
             position: relative;
             height: 100vh;
@@ -291,7 +291,7 @@
             }
         }
 
-        /* ─── MAIN CONTENT AREA ─── */
+        /*  MAIN CONTENT AREA  */
         #trip-content {
             position: relative;
             z-index: 5;
@@ -304,7 +304,7 @@
             padding: 0 2.5rem;
         }
 
-        /* ─── TRIP PARAMETERS CARD ─── */
+        /*  TRIP PARAMETERS CARD  */
         .params-card {
             background: var(--glass);
             border: 1px solid var(--border-hi);
@@ -376,7 +376,7 @@
                 color: var(--accent)
             }
 
-        /* ─── AI INSIGHT BANNER ─── */
+        /*  AI INSIGHT BANNER  */
         .insight-banner {
             background: linear-gradient(135deg, rgba(168,85,247,0.05) 0%, rgba(77,238,234,0.05) 100%);
             border: 1px solid rgba(168,85,247,0.2);
@@ -448,7 +448,7 @@
             letter-spacing: 0.08em;
         }
 
-        /* ─── TWO COLUMN LAYOUT ─── */
+        /*  TWO COLUMN LAYOUT  */
         .trip-layout {
             display: grid;
             grid-template-columns: 1fr 340px;
@@ -456,7 +456,7 @@
             align-items: start;
         }
 
-        /* ─── DESTINATION CARDS ─── */
+        /*  DESTINATION CARDS  */
         .destinations-list {
             display: flex;
             flex-direction: column;
@@ -674,7 +674,7 @@
                 background: rgba(77,238,234,0.06);
             }
 
-        /* ─── SIDEBAR ─── */
+        /*  SIDEBAR  */
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -874,7 +874,7 @@
                 background: rgba(77,238,234,0.06);
             }
 
-        /* ─── LOADING OVERLAY ─── */
+        /*  LOADING OVERLAY  */
         #loading-overlay {
             position: fixed;
             inset: 0;
@@ -941,7 +941,7 @@
                 color: var(--text);
             }
 
-        /* ─── SECTION HEADING ─── */
+        /*  SECTION HEADING  */
         .section-head-block {
             margin-bottom: 3rem;
             text-align: center;
@@ -960,7 +960,7 @@
                 font-size: 0.95rem;
             }
 
-        /* ─── RESPONSIVE ─── */
+        /*  RESPONSIVE  */
         @@media(max-width:1024px) {
             .trip-layout {
                 grid-template-columns: 1fr;
@@ -1011,7 +1011,7 @@
     </style>
 }
 
-<!-- ═══════════════════════ LOADING OVERLAY ═══════════════════════ -->
+<!--  LOADING OVERLAY  -->
 <div id="loading-overlay">
     <div class="loading-orb"></div>
     <div class="loading-steps">
@@ -1023,7 +1023,7 @@
     <div class="loading-text">AI Processing</div>
 </div>
 
-<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<!--  HERO  -->
 <section id="hero">
     <canvas id="hero-3d-canvas"></canvas>
     <div class="hero-glow"></div>
@@ -1060,7 +1060,7 @@
     </div>
 </section>
 
-<!-- ═══════════════════════ TRIP CONTENT ═══════════════════════ -->
+<!--  TRIP CONTENT  -->
 <section id="trip-content">
     <div class="content-wrapper">
 
@@ -1078,7 +1078,7 @@
                     <div class="params-title" id="params-headline">Trip Parameters</div>
                 </div>
                 <a href="/" class="btn-hero-secondary" style="padding:0.6rem 1.25rem;font-size:0.82rem">
-                    ← Edit Preferences
+                     Edit Preferences
                 </a>
             </div>
             <div class="params-grid" id="params-grid">
@@ -1088,7 +1088,7 @@
 
         <!-- AI Insight Banner -->
         <div class="insight-banner" data-reveal id="insight-banner">
-            <div class="insight-icon" id="insight-icon">🧠</div>
+            <div class="insight-icon" id="insight-icon"></div>
             <div class="insight-content">
                 <div class="insight-label">AI Travel Intelligence</div>
                 <div class="insight-title" id="insight-title">Trip Analysis</div>
@@ -1131,7 +1131,7 @@
 
                 <!-- AI Tips Card -->
                 <div class="ai-tips-card" data-reveal>
-                    <div class="nex-badge" style="margin-bottom:0.75rem">✦ AI Tips</div>
+                    <div class="nex-badge" style="margin-bottom:0.75rem"> AI Tips</div>
                     <div class="ai-tips-title">Travel Recommendations</div>
                     <div id="ai-tips-list">
                         <!-- Populated by JS -->
@@ -1162,9 +1162,9 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        /* ═══════════════════════════════════════════
+        /* 
            3D EARTH - exact copy from homepage
-        ═══════════════════════════════════════════ */
+         */
         (function () {
             var canvas = document.getElementById('hero-3d-canvas');
             if (!canvas || typeof THREE === 'undefined') return;
@@ -1237,11 +1237,11 @@
             });
         })();
 
-        /* ═══════════════════════════════════════════
+        /* 
            AI DREAM TRIP ENGINE
-        ═══════════════════════════════════════════ */
+         */
 
-        // ── Static Destination Database ──
+        //  Static Destination Database 
         var destinationsDB = [
             {
                 name: 'Crete, Greece',
@@ -1249,7 +1249,7 @@
                 budget: 'Mid-range',
                 costPerNight: 206,
                 avgTemp: 18.8,
-                idealTripSegments: ['3–5 days', '5–7 days', '1–2+ weeks'],
+                idealTripSegments: ['35 days', '57 days', '12+ weeks'],
                 idealTripLabels: ['Short trip', 'One week', 'Long trip'],
                 matchScore: 99,
                 image: 'https://images.unsplash.com/photo-1604577464266-3c4e3e3e3e3e?w=600&q=80&fit=crop',
@@ -1262,7 +1262,7 @@
                 budget: 'Mid-range',
                 costPerNight: 155,
                 avgTemp: 15.2,
-                idealTripSegments: ['3–5 days', '5–7 days', '1–2+ weeks'],
+                idealTripSegments: ['35 days', '57 days', '12+ weeks'],
                 idealTripLabels: ['Short trip', 'One week', 'Long trip'],
                 matchScore: 89,
                 image: 'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?w=600&q=80&fit=crop',
@@ -1275,11 +1275,11 @@
                 budget: 'Mid-range',
                 costPerNight: 200,
                 avgTemp: 16.9,
-                idealTripSegments: ['3–5 days', '5–7 days'],
+                idealTripSegments: ['35 days', '57 days'],
                 idealTripLabels: ['Short trip', 'One week'],
                 matchScore: 85,
                 image: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&q=80&fit=crop',
-                description: 'Gothic architecture meets Mediterranean beaches. Gaudí masterpieces and vibrant tapas culture await.',
+                description: 'Gothic architecture meets Mediterranean beaches. Gaud masterpieces and vibrant tapas culture await.',
                 highlights: ['Architecture', 'Beaches', 'Nightlife', 'Food']
             },
             {
@@ -1288,7 +1288,7 @@
                 budget: 'Mid-range',
                 costPerNight: 100,
                 avgTemp: 11.9,
-                idealTripSegments: ['2–3 days', '3–5 days'],
+                idealTripSegments: ['23 days', '35 days'],
                 idealTripLabels: ['Weekend', 'Short trip'],
                 matchScore: 72,
                 image: 'https://images.unsplash.com/photo-1591287083773-9a52d818e9be?w=600&q=80&fit=crop',
@@ -1301,7 +1301,7 @@
                 budget: 'Mid-range',
                 costPerNight: 90,
                 avgTemp: 7.6,
-                idealTripSegments: ['2–3 days', '3–5 days', '5–7 days'],
+                idealTripSegments: ['23 days', '35 days', '57 days'],
                 idealTripLabels: ['Weekend', 'Short trip', 'One week'],
                 matchScore: 60,
                 image: 'https://images.unsplash.com/photo-1548585744-4e0e0e0e0e0e?w=600&q=80&fit=crop',
@@ -1310,68 +1310,68 @@
             }
         ];
 
-        // ── Region-specific insights ──
+        //  Region-specific insights 
         var regionInsights = {
             'Europe': {
-                icon: '🧠',
+                icon: '',
                 title: 'European Travel Intelligence',
                 desc: 'European destinations offer incredible diversity within short distances. Your mid-range budget opens doors to authentic experiences - from Mediterranean coastlines to Alpine retreats. Spring and fall provide the best balance of pleasant weather and fewer crowds.',
                 chips: ['Diverse Cultures', 'Excellent Rail Network', 'Rich History', 'World-Class Cuisine']
             },
             'Asia': {
-                icon: '🌏',
+                icon: '',
                 title: 'Asian Travel Intelligence',
                 desc: 'Asia offers extraordinary value for mid-range budgets. From tropical beaches to ancient temples, the region delivers immersive cultural experiences. Consider shoulder seasons for optimal weather and pricing.',
                 chips: ['Cultural Immersion', 'Budget-Friendly', 'Exotic Cuisine', 'Tropical Climate']
             },
             'USA': {
-                icon: '🗽',
+                icon: '',
                 title: 'USA Travel Intelligence',
                 desc: 'The USA spans multiple climate zones and experiences. Urban hubs offer world-class entertainment while national parks deliver unparalleled natural beauty. Domestic flights are often necessary for multi-destination trips.',
                 chips: ['Diverse Landscapes', 'National Parks', 'Urban Adventures', 'Road Trip Culture']
             },
             'South-Asia': {
-                icon: '🕌',
+                icon: '',
                 title: 'South Asian Travel Intelligence',
                 desc: 'South Asia delivers incredible cultural depth at very accessible price points. Ancient civilizations, spiritual traditions, and vibrant festivals create unforgettable journeys.',
                 chips: ['Budget Friendly', 'Ancient History', 'Spiritual Sites', 'Vibrant Markets']
             },
             'Africa': {
-                icon: '🌍',
+                icon: '',
                 title: 'African Travel Intelligence',
                 desc: 'Africa offers the ultimate adventure - from Sahara dunes to Serengeti safaris. Your budget goes far here, with mid-range options delivering luxury-level experiences by Western standards.',
                 chips: ['Safari Adventures', 'Natural Wonders', 'Tribal Cultures', 'Diverse Ecosystems']
             }
         };
 
-        // ── AI Tips Engine ──
+        //  AI Tips Engine 
         function generateAITips(data) {
             var tips = [];
             var dest = (data.destination || 'Europe').toLowerCase();
             var budget = (data.budget || '').toLowerCase();
 
             if (budget.includes('under') || budget.includes('1,000')) {
-                tips.push({ icon: '💰', text: 'Budget-friendly tip: Book flights 6-8 weeks in advance and consider shoulder season for best rates.' });
+                tips.push({ icon: '', text: 'Budget-friendly tip: Book flights 6-8 weeks in advance and consider shoulder season for best rates.' });
             } else if (budget.includes('5,000')) {
-                tips.push({ icon: '✨', text: 'Premium tip: Consider upgrading to boutique hotels for unique, immersive experiences.' });
+                tips.push({ icon: '', text: 'Premium tip: Consider upgrading to boutique hotels for unique, immersive experiences.' });
             }
 
             if (dest.includes('europe')) {
-                tips.push({ icon: '🚄', text: 'European rail passes can save you up to 40% on inter-city travel compared to booking individually.' });
-                tips.push({ icon: '🏛️', text: 'Book museum tickets online in advance - skip the queues at major attractions like the Vatican and Louvre.' });
+                tips.push({ icon: '', text: 'European rail passes can save you up to 40% on inter-city travel compared to booking individually.' });
+                tips.push({ icon: '', text: 'Book museum tickets online in advance - skip the queues at major attractions like the Vatican and Louvre.' });
             } else if (dest.includes('asia')) {
-                tips.push({ icon: '🍜', text: 'Street food is not just budget-friendly - it\'s often the most authentic culinary experience.' });
+                tips.push({ icon: '', text: 'Street food is not just budget-friendly - it\'s often the most authentic culinary experience.' });
             }
 
-            tips.push({ icon: '📱', text: 'Download offline maps and translation apps before departure - connectivity can be unpredictable.' });
-            tips.push({ icon: '🛡️', text: 'Always purchase comprehensive travel insurance - medical emergencies abroad can be extremely costly.' });
-            tips.push({ icon: '💳', text: 'Notify your bank of international travel dates to avoid card blocks and check foreign transaction fees.' });
-            tips.push({ icon: '📸', text: 'Pack a portable charger - you\'ll use your phone for navigation, photos, and reservations constantly.' });
+            tips.push({ icon: '', text: 'Download offline maps and translation apps before departure - connectivity can be unpredictable.' });
+            tips.push({ icon: '', text: 'Always purchase comprehensive travel insurance - medical emergencies abroad can be extremely costly.' });
+            tips.push({ icon: '', text: 'Notify your bank of international travel dates to avoid card blocks and check foreign transaction fees.' });
+            tips.push({ icon: '', text: 'Pack a portable charger - you\'ll use your phone for navigation, photos, and reservations constantly.' });
 
             return tips.slice(0, 5);
         }
 
-        // ── Render Functions ──
+        //  Render Functions 
         function renderParams(data) {
             var grid = document.getElementById('params-grid');
             var fields = [
@@ -1389,7 +1389,7 @@
             }).join('');
 
             document.getElementById('params-headline').textContent =
-                (data.destination || 'Europe') + ' · ' + (data.duration || '') + ' · ' + (data.style || '');
+                (data.destination || 'Europe') + '  ' + (data.duration || '') + '  ' + (data.style || '');
         }
 
         function renderInsight(data) {
@@ -1416,9 +1416,9 @@
             var daysNum = parseInt(durationText) || 7;
 
             function getHighlightKeyword(totalDays) {
-                if (totalDays >= 14) return '1–2+ weeks';
-                if (totalDays >= 7) return '5–7 days';
-                return '3–5 days';
+                if (totalDays >= 14) return '12+ weeks';
+                if (totalDays >= 7) return '57 days';
+                return '35 days';
             }
 
             var highlightKw = getHighlightKeyword(daysNum);
@@ -1446,10 +1446,10 @@
                 html += '<div class="dest-card-name">' + d.name + '</div>';
                 html += '<p style="font-size:0.82rem;color:var(--sub);line-height:1.6;margin-bottom:1rem;">' + d.description + '</p>';
                 html += '<div class="dest-card-specs">';
-                html += '<div class="dest-spec"><span style="color:var(--sub);">🌡️</span> <span class="dest-spec-val">' + d.avgTemp.toFixed(1) + '°C avg</span></div>';
-                html += '<div class="dest-spec"><span style="color:var(--sub);">💰</span> <span class="dest-spec-val">~$' + d.costPerNight + '/night</span></div>';
-                html += '<div class="dest-spec"><span style="color:var(--sub);">📅</span> ' + tripParts.join(' / ') + '</div>';
-                html += '<div class="dest-spec"><span style="color:var(--sub);">⭐</span> <span class="dest-spec-val">' + d.highlights.join(', ') + '</span></div>';
+                html += '<div class="dest-spec"><span style="color:var(--sub);"></span> <span class="dest-spec-val">' + d.avgTemp.toFixed(1) + 'C avg</span></div>';
+                html += '<div class="dest-spec"><span style="color:var(--sub);"></span> <span class="dest-spec-val">~$' + d.costPerNight + '/night</span></div>';
+                html += '<div class="dest-spec"><span style="color:var(--sub);"></span> ' + tripParts.join(' / ') + '</div>';
+                html += '<div class="dest-spec"><span style="color:var(--sub);"></span> <span class="dest-spec-val">' + d.highlights.join(', ') + '</span></div>';
                 html += '</div>';
                 html += '<div class="dest-card-match">';
                 html += '<div class="match-score-ring">';
@@ -1488,7 +1488,7 @@
 
         function renderBudgetSummary(data) {
             var container = document.getElementById('budget-breakdown');
-            var budgetText = data.budget || '$1,000 – $2,500';
+            var budgetText = data.budget || '$1,000  $2,500';
             var totalEstimate = '';
 
             if (budgetText.includes('Under')) totalEstimate = '$800';
@@ -1519,7 +1519,7 @@
                 }).join('');
         }
 
-        // ── Loading Animation ──
+        //  Loading Animation 
         function runLoadingAnimation(callback) {
             var steps = ['ls1','ls2','ls3','ls4'];
             var i = 0;
@@ -1542,15 +1542,15 @@
             next();
         }
 
-        // ── Main Init ──
+        //  Main Init 
         function initTripPage() {
             var raw = sessionStorage.getItem('nexvoy_dreamtrip_data');
             var data = raw ? JSON.parse(raw) : {
                 destination: 'Europe',
-                temperature: '20°C, warm',
+                temperature: '20C, warm',
                 duration: '7 Days',
                 style: 'Adventure',
-                budget: '$1,000 – $2,500'
+                budget: '$1,000  $2,500'
             };
 
             runLoadingAnimation(function() {
@@ -1584,7 +1584,7 @@
             document.getElementById('trip-content').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ── Scroll Reveal ──
+        //  Scroll Reveal 
         (function() {
             var observer = new IntersectionObserver(function(entries) {
                 entries.forEach(function(e) {

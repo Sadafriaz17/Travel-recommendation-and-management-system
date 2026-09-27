@@ -6,9 +6,9 @@
 
 @section HeadStyles {
     <style>
-                /* ═══════════════════════════════════════════
+                /* 
            USER DASHBOARD - AI COMMAND CENTER
-        ═══════════════════════════════════════════ */
+         */
                 #udash-wrap {
                     padding-top: 72px;
                     min-height: 100vh;
@@ -23,7 +23,7 @@
                     background: radial-gradient(ellipse at 10% 20%, rgba(77,238,234,0.04), transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(168,85,247,0.04), transparent 50%);
                 }
 
-                /* ── DASH HEADER ────────────────────── */
+                /*  DASH HEADER  */
                 .udash-header {
                     position: relative;
                     z-index: 1;
@@ -94,7 +94,7 @@
                     text-transform: uppercase;
                 }
 
-                /* ── MAIN LAYOUT ────────────────────── */
+                /*  MAIN LAYOUT  */
                 .udash-content {
                     position: relative;
                     z-index: 1;
@@ -107,7 +107,7 @@
                     align-items: start;
                 }
 
-                /* ── STAT CARDS ─────────────────────── */
+                /*  STAT CARDS  */
                 .udash-stats {
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
@@ -174,7 +174,7 @@
                     opacity: 0.4;
                 }
 
-                /* ── UPCOMING BOOKINGS ──────────────── */
+                /*  UPCOMING BOOKINGS  */
                 .dash-section-title {
                     font-family: var(--font-head);
                     font-size: 1rem;
@@ -315,7 +315,7 @@
                         background: #fbbf24;
                     }
 
-                /* ── AI RECOMMENDATIONS ──────────────── */
+                /*  AI RECOMMENDATIONS  */
                 .ai-recs-grid {
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
@@ -388,7 +388,7 @@
                     margin-top: 2px;
                 }
 
-                /* ── TRAVEL HISTORY ─────────────────── */
+                /*  TRAVEL HISTORY  */
                 .history-item {
                     display: flex;
                     align-items: center;
@@ -432,7 +432,7 @@
                     font-size: 0.75rem;
                 }
 
-                /* ── SIDEBAR ─────────────────────────── */
+                /*  SIDEBAR  */
                 .udash-sidebar {
                     display: flex;
                     flex-direction: column;
@@ -691,7 +691,7 @@
             <div class="nex-badge" style="margin-bottom:0.75rem;">AI Command Center</div>
             <div class="udash-greeting">
                 Good @(DateTime.Now.Hour < 12 ? "Morning" : DateTime.Now.Hour < 17 ? "Afternoon" : "Evening"),<br />
-                <span class="text-gradient">@(Session["UserName"] ?? "Traveler")</span> ✦
+                <span class="text-gradient">@(Session["UserName"] ?? "Traveler")</span> 
             </div>
             <p class="udash-sub">Your personalized travel intelligence hub - @DateTime.Now.ToString("dddd, MMMM dd")</p>
         </div>
@@ -699,7 +699,7 @@
             <div class="udash-avatar">@((Session["UserName"] ?? "T").ToString()[0])</div>
             <div class="udash-user-info">
                 <div class="udash-user-name">@(Session["UserName"] ?? "Traveler")</div>
-                <div class="udash-user-level">✦ Gold Explorer</div>
+                <div class="udash-user-level"> Gold Explorer</div>
             </div>
         </div>
     </div>
@@ -711,17 +711,17 @@
             <!-- Stats -->
             <div class="udash-stats" style="margin-bottom:2rem;">
                 <div class="udash-stat" data-reveal style="color:var(--accent);">
-                    <div class="udash-stat-icon" style="background:rgba(77,238,234,0.1);">✈️</div>
+                    <div class="udash-stat-icon" style="background:rgba(77,238,234,0.1);"></div>
                     <div class="udash-stat-num text-gradient">7</div>
                     <div class="udash-stat-label">Trips Completed</div>
                 </div>
                 <div class="udash-stat" data-reveal data-delay="80" style="color:var(--purple);">
-                    <div class="udash-stat-icon" style="background:rgba(168,85,247,0.1);">🌍</div>
+                    <div class="udash-stat-icon" style="background:rgba(168,85,247,0.1);"></div>
                     <div class="udash-stat-num text-gradient-purple">14</div>
                     <div class="udash-stat-label">Countries Visited</div>
                 </div>
                 <div class="udash-stat" data-reveal data-delay="160" style="color:#34d399;">
-                    <div class="udash-stat-icon" style="background:rgba(52,211,153,0.1);">⭐</div>
+                    <div class="udash-stat-icon" style="background:rgba(52,211,153,0.1);"></div>
                     <div class="udash-stat-num" style="color:#34d399;">2,840</div>
                     <div class="udash-stat-label">Reward Points</div>
                 </div>
@@ -735,9 +735,9 @@
 
             @{
                 var myBookings = new[] {
-                    new { dest="Santorini, Greece", pkg="Azure Escape · Luxury", dep="Jun 12, 2025", ret="Jun 19, 2025", status="confirmed", img="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=200&q=60&fit=crop" },
-                    new { dest="Kyoto, Japan", pkg="Kyoto Odyssey · Cultural", dep="Aug 3, 2025", ret="Aug 13, 2025", status="upcoming", img="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=200&q=60&fit=crop" },
-                    new { dest="Maldives", pkg="Island Luxe · Premium", dep="Dec 20, 2025", ret="Dec 27, 2025", status="pending", img="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=200&q=60&fit=crop" },
+                    new { dest="Santorini, Greece", pkg="Azure Escape  Luxury", dep="Jun 12, 2025", ret="Jun 19, 2025", status="confirmed", img="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=200&q=60&fit=crop" },
+                    new { dest="Kyoto, Japan", pkg="Kyoto Odyssey  Cultural", dep="Aug 3, 2025", ret="Aug 13, 2025", status="upcoming", img="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=200&q=60&fit=crop" },
+                    new { dest="Maldives", pkg="Island Luxe  Premium", dep="Dec 20, 2025", ret="Dec 27, 2025", status="pending", img="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=200&q=60&fit=crop" },
                 };
             }
             @foreach (var b in myBookings)
@@ -750,8 +750,8 @@
                         <div class="booking-item-dest">@b.dest</div>
                         <div class="booking-item-pkg">@b.pkg</div>
                         <div class="booking-item-dates">
-                            <span>✈ @b.dep</span>
-                            <span>→</span>
+                            <span> @b.dep</span>
+                            <span></span>
                             <span>@b.ret</span>
                         </div>
                     </div>
@@ -763,7 +763,7 @@
 
             <!-- AI Recommendations -->
             <div class="dash-section-title" style="margin-top:2.5rem;" data-reveal>
-                <span>✦ AI Recommends for You</span>
+                <span> AI Recommends for You</span>
                 <a href="~/Destinations/Index">View All</a>
             </div>
             <div class="ai-recs-grid" data-reveal>
@@ -823,7 +823,7 @@
             <!-- AI Travel Assistant -->
             <div class="sidebar-widget" data-reveal>
                 <div class="widget-title">
-                    <span class="widget-title-icon">✦</span> AI Travel Assistant
+                    <span class="widget-title-icon"></span> AI Travel Assistant
                 </div>
                 <div class="ai-chat-window" id="chatWindow">
                     <div class="chat-msg bot">Hello! I'm your NEXVOY AI assistant. Ask me anything about destinations, packages, or trip planning.</div>
@@ -841,7 +841,7 @@
             <!-- Loyalty Progress -->
             <div class="sidebar-widget" data-reveal data-delay="100">
                 <div class="widget-title">
-                    <span class="widget-title-icon">⭐</span> Loyalty Status
+                    <span class="widget-title-icon"></span> Loyalty Status
                 </div>
                 <div class="progress-ring-wrap">
                     <div class="progress-ring">
@@ -860,7 +860,7 @@
                     <div>
                         <div style="font-family:var(--font-head);font-weight:700;font-size:0.9rem;">Gold Explorer</div>
                         <div style="font-size:0.75rem;color:var(--sub);margin-top:3px;">2,840 / 4,000 points</div>
-                        <div style="font-size:0.7rem;color:var(--accent);font-family:var(--font-mono);margin-top:4px;">1,160 pts to Platinum ✦</div>
+                        <div style="font-size:0.7rem;color:var(--accent);font-family:var(--font-mono);margin-top:4px;">1,160 pts to Platinum </div>
                     </div>
                 </div>
                 <div style="background:var(--border);border-radius:4px;height:4px;overflow:hidden;">
@@ -871,7 +871,7 @@
             <!-- Quick Actions -->
             <div class="sidebar-widget" data-reveal data-delay="150">
                 <div class="widget-title">
-                    <span class="widget-title-icon">⚡</span> Quick Actions
+                    <span class="widget-title-icon"></span> Quick Actions
                 </div>
                 <div class="quick-actions">
                     <a href="~/Bookings/Index" class="quick-action-btn">
@@ -903,12 +903,12 @@
 </div>
 
 @section Scripts {
-    <script>// ── AI Chat ──
+    <script>//  AI Chat 
 const chatResponses = {
-    'santorini': 'Santorini is perfect May–June! Book Oia 3 months ahead. I can generate a full 7-day itinerary for you.',
-    'maldives':  'For Maldives, November–April is ideal. Your Gold status gets you 15% off luxury water villa packages!',
-    'bali':      'Bali in May–September is peak season. Canggu or Seminyak for surf vibes, Ubud for cultural immersion.',
-    'japan':     'Cherry blossom season (late March – early April) books out fast. Want me to check availability for Kyoto?',
+    'santorini': 'Santorini is perfect MayJune! Book Oia 3 months ahead. I can generate a full 7-day itinerary for you.',
+    'maldives':  'For Maldives, NovemberApril is ideal. Your Gold status gets you 15% off luxury water villa packages!',
+    'bali':      'Bali in MaySeptember is peak season. Canggu or Seminyak for surf vibes, Ubud for cultural immersion.',
+    'japan':     'Cherry blossom season (late March  early April) books out fast. Want me to check availability for Kyoto?',
     'budget':    'Based on your profile, Bali, Vietnam, or Morocco offer 10-day trips from $700 all-inclusive.',
     'recommend': 'Based on your travel history, I recommend Amalfi Coast (95% match) or Bali (98% match). Want details?',
     'reward':    'You have 2,840 Gold points. Just 1,160 more to reach Platinum status with exclusive lounge access!',
@@ -942,7 +942,7 @@ function sendChat() {
 }
 
 function generatePlan() {
-    window.nexToast && window.nexToast('✦ Opening AI Trip Planner...');
+    window.nexToast && window.nexToast(' Opening AI Trip Planner...');
     setTimeout(() => window.location.href = '/#ai-generator', 500);
 }
 

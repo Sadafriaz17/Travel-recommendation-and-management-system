@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.Blog
+﻿@model TourwebsiteFYP.DB_data_models.Blog
 @{
     ViewBag.Title = Model.Title;
     ViewBag.ActivePage = "Blog";
@@ -12,7 +12,7 @@
 
 @section HeadStyles {
     <style>
-        /* ── Hero (same proportions as layout hero-wrapper) ── */
+        /*  Hero (same proportions as layout hero-wrapper)  */
         .blog-detail-hero {
             position: relative;
             width: 100%;
@@ -106,7 +106,7 @@
             font-size: 1rem;
         }
 
-        /* ── Content Card ── */
+        /*  Content Card  */
         .blog-content-outer {
             background: var(--bg-body, #f8f9fa);
             padding-bottom: 6rem;
@@ -154,7 +154,7 @@
             color: #374151;
         }
 
-        /* ── Footer bar ── */
+        /*  Footer bar  */
         .blog-post-footer {
             margin-top: 3.5rem;
             padding-top: 2rem;
@@ -206,7 +206,7 @@
         }
         .share-icon:hover { background: #111; color: #fff; }
 
-        /* ── Author box ── */
+        /*  Author box  */
         .blog-author-box {
             margin-top: 3rem;
             background: #f8f9fb;
@@ -232,7 +232,7 @@
         .blog-author-box h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; color: #111; }
         .blog-author-box p { font-size: 0.88rem; color: #6b7280; margin: 0; }
 
-        /* ── Related posts ── */
+        /*  Related posts  */
         .related-section {
             max-width: 1100px;
             margin: 4rem auto 0;
@@ -292,7 +292,7 @@
     </style>
 }
 
-<!-- ═══ HERO ═══ -->
+<!--  HERO  -->
 <section class="blog-detail-hero">
     <div class="blog-detail-hero-content">
         <div class="blog-detail-tag">
@@ -309,7 +309,7 @@
     </div>
 </section>
 
-<!-- ═══ CONTENT ═══ -->
+<!--  CONTENT  -->
 <div class="blog-content-outer">
     <div class="container">
         <article class="blog-content-card">
@@ -343,7 +343,7 @@
     </div>
 </div>
 
-<!-- ═══ RELATED POSTS ═══ -->
+<!--  RELATED POSTS  -->
 @if (relatedBlogs != null && relatedBlogs.Any())
 {
     <div class="related-section">

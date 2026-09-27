@@ -2,8 +2,8 @@
 // OWIN STARTUP - Google OAuth configuration
 // ============================================================
 // SETUP INSTRUCTIONS (Google Cloud Console):
-//   1. Go to https://console.cloud.google.com → APIs & Services → Credentials
-//   2. Click "Create Credentials" → "OAuth 2.0 Client ID"
+//   1. Go to https://console.cloud.google.com  APIs & Services  Credentials
+//   2. Click "Create Credentials"  "OAuth 2.0 Client ID"
 //   3. Application type: Web application
 //   4. Add Authorized redirect URI:
 //        https://localhost:{port}/signin-google

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -42,7 +42,7 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
             ViewBag.TotalDestinations = _context.Destinations.Count();
             ViewBag.TotalProducts     = _context.Products.Count();
 
-            // Pending vendor approvals — pre-compute threshold so EF6 can translate to SQL.
+            // Pending vendor approvals  pre-compute threshold so EF6 can translate to SQL.
             var sevenDaysAgo       = DateTime.Now.AddDays(-7);
             ViewBag.PendingVendors = _context.Vendors.Count(v => v.CreatedAt >= sevenDaysAgo);
 
@@ -54,7 +54,7 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
             return View(recentBookings);
         }
 
-        // POST: Save profile — called by the shared _ProfileSettings partial.
+        // POST: Save profile  called by the shared _ProfileSettings partial.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SaveProfile(string FullName, string Phone, string Address)

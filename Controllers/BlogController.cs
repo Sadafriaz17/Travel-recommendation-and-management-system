@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Web.Mvc;
 using TourwebsiteFYP.DB_data_models;
@@ -9,7 +9,7 @@ namespace TourwebsiteFYP.Controllers
     {
         private Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // ── BLOG INDEX (Dynamic List) ──────────────────────────────────────
+        //  BLOG INDEX (Dynamic List) 
         public ActionResult Index()
         {
             var blogs = _context.Blogs
@@ -19,7 +19,7 @@ namespace TourwebsiteFYP.Controllers
             return View(blogs);
         }
 
-        // ── BLOG DETAILS ───────────────────────────────────────────────────
+        //  BLOG DETAILS 
         public ActionResult Details(int id)
         {
             var blog = _context.Blogs
@@ -38,7 +38,7 @@ namespace TourwebsiteFYP.Controllers
             return View(blog);
         }
 
-        // ── HOMEPAGE BLOGS PARTIAL ─────────────────────────────────────────
+        //  HOMEPAGE BLOGS PARTIAL 
         public ActionResult HomepageBlogs()
         {
             var blogs = _context.Blogs

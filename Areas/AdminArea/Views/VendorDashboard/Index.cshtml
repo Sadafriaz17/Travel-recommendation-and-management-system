@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.BookingDetail>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.BookingDetail>
 @{
     ViewBag.Title      = "Vendor Dashboard";
     ViewBag.ActiveMenu = "VendorDashboard";
@@ -11,7 +11,7 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <div class="page-title">Welcome, @vendorName <span style="font-weight:400;color:var(--text-muted)">🏪</span></div>
+        <div class="page-title">Welcome, @vendorName <span style="font-weight:400;color:var(--text-muted)"></span></div>
         <div class="page-subtitle">Manage your listings and track your performance.</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
@@ -129,17 +129,17 @@
                             @foreach (var bd in Model)
                             {
                                 string statusClass = "badge-neutral";
-                                string status = bd.Booking?.Status ?? "—";
+                                string status = bd.Booking?.Status ?? "";
                                 if (status == "Approved" || status == "Confirmed") { statusClass = "badge-success"; }
                                 else if (status == "Rejected" || status == "Cancelled") { statusClass = "badge-danger"; }
                                 else if (status == "Pending") { statusClass = "badge-warning"; }
                                 <tr>
                                     <td style="font-weight:600;color:var(--text-muted);font-size:12px">#@bd.BookingId</td>
-                                    <td>@(bd.Product?.ProductName ?? "—")</td>
+                                    <td>@(bd.Product?.ProductName ?? "")</td>
                                     <td>@(bd.Quantity ?? 1)</td>
                                     <td style="font-weight:600">$@bd.Price.ToString("N2")</td>
                                     <td><span class="badge-pill @statusClass">@status</span></td>
-                                    <td style="color:var(--text-muted)">@(bd.Booking?.BookingDate?.ToString("MMM d, yyyy") ?? "—")</td>
+                                    <td style="color:var(--text-muted)">@(bd.Booking?.BookingDate?.ToString("MMM d, yyyy") ?? "")</td>
                                 </tr>
                             }
                         </tbody>

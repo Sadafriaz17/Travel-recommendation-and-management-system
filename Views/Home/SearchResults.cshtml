@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Search Results";
     ViewBag.ActivePage = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -19,8 +19,8 @@
     switch (budgetParam)
     {
         case "under500": budgetLabel = "Under $500"; break;
-        case "500-2000": budgetLabel = "$500 – $2,000"; break;
-        case "2000-5000": budgetLabel = "$2,000 – $5,000"; break;
+        case "500-2000": budgetLabel = "$500  $2,000"; break;
+        case "2000-5000": budgetLabel = "$2,000  $5,000"; break;
         case "5000plus": budgetLabel = "$5,000+"; break;
     }
 
@@ -36,7 +36,7 @@
 }
 
 <style>
-    /* ── Hero ─────────────────────────────────────────────────────────── */
+    /*  Hero  */
     .hero-wrapper .sr-breadcrumb {
         font-size: 0.82rem;
         color: rgba(255,255,255,0.55);
@@ -79,7 +79,7 @@
         font-size: 0.78rem;
     }
 
-    /* ── Sticky refine bar ────────────────────────────────────────────── */
+    /*  Sticky refine bar  */
     .sr-refine-bar {
         background: #fff;
         border-bottom: 1px solid #f0f0f0;
@@ -146,7 +146,7 @@
                 background: #333;
             }
 
-    /* ── Results container ───────────────────────────────────────────── */
+    /*  Results container  */
     .sr-container {
         padding: 3.5rem 0 5rem;
     }
@@ -189,7 +189,7 @@
             flex-shrink: 0;
         }
 
-    /* ── Destination cards ────────────────────────────────────────────── */
+    /*  Destination cards  */
     .sr-dest-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -244,7 +244,7 @@
                 opacity: 0.85;
             }
 
-    /* ── Package / Product cards ─────────────────────────────────────── */
+    /*  Package / Product cards  */
     .sr-pkg-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -318,7 +318,7 @@
             border-top: 1px solid #f3f4f6;
         }
 
-    /* ── Empty / no-results ───────────────────────────────────────────── */
+    /*  Empty / no-results  */
     .sr-empty {
         text-align: center;
         padding: 5rem 0;
@@ -351,7 +351,7 @@
             flex-wrap: wrap;
         }
 
-    /* ── Product badges ───────────────────────────────────────────────── */
+    /*  Product badges  */
     .prod-hp-badge {
         position: absolute;
         top: 1rem;
@@ -388,7 +388,7 @@
         margin-bottom: .3rem;
     }
 
-    /* ── Responsive ───────────────────────────────────────────────────── */
+    /*  Responsive  */
     @@media (max-width: 1024px) {
         .sr-dest-grid, .sr-pkg-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -419,7 +419,7 @@
     }
 </style>
 
-<!-- ═══ HERO / HEADER ═══ -->
+<!--  HERO / HEADER  -->
 <section class="hero-wrapper">
     <div class="hero-content" style="max-width: 1000px;">
         <div class="sr-breadcrumb">
@@ -449,7 +449,7 @@
     </div>
 </section>
 
-<!-- ═══ STICKY REFINE BAR ═══ -->
+<!--  STICKY REFINE BAR  -->
 <div class="sr-refine-bar">
     <div class="container">
         <form class="sr-refine-inner" method="get" action="@Url.Action("Search", "Home")" id="refine-form">
@@ -461,8 +461,8 @@
             <select name="budget" id="refine-budget">
                 <option value="" @(string.IsNullOrEmpty(budgetParam) ? "selected" : "")>Any Budget</option>
                 <option value="under500" @(budgetParam == "under500" ? "selected" : "")>Under $500</option>
-                <option value="500-2000" @(budgetParam == "500-2000" ? "selected" : "")>$500 – $2,000</option>
-                <option value="2000-5000" @(budgetParam == "2000-5000" ? "selected" : "")>$2,000 – $5,000</option>
+                <option value="500-2000" @(budgetParam == "500-2000" ? "selected" : "")>$500  $2,000</option>
+                <option value="2000-5000" @(budgetParam == "2000-5000" ? "selected" : "")>$2,000  $5,000</option>
                 <option value="5000plus" @(budgetParam == "5000plus" ? "selected" : "")>$5,000+</option>
             </select>
 
@@ -483,7 +483,7 @@
     </div>
 </div>
 
-<!-- ═══ RESULTS BODY ═══ -->
+<!--  RESULTS BODY  -->
 <div class="container sr-container">
 
     @if (totalCount == 0)
@@ -493,7 +493,7 @@
             <h3>No results found@(!string.IsNullOrEmpty(searchQuery) ? " for \u201c" + searchQuery + "\u201d" : "")</h3>
             <p>Try a different keyword, relax your budget filter, or browse all destinations and packages below.</p>
             <div class="sr-empty-actions">
-                <a href="@Url.Action("Index", "Home")" class="btn-primary">← Back to Home</a>
+                <a href="@Url.Action("Index", "Home")" class="btn-primary"> Back to Home</a>
                 <a href="@Url.Action("Index", "Package")" class="btn-primary" style="background:#f3f4f6; color:#1a1a1a; border:1px solid #e5e7eb;">Browse Packages</a>
             </div>
         </div>

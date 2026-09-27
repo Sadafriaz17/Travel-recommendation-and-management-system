@@ -44,12 +44,12 @@
 
                 <div class="form-group">
                     <label class="form-label">Logo / Icon (emoji or text)</label>
-                    <input type="text" name="LogoIcon" class="form-control" value="@Model.LogoIcon" placeholder="e.g. 🏪" />
+                    <input type="text" name="LogoIcon" class="form-control" value="@Model.LogoIcon" placeholder="e.g. " />
                     <span class="form-hint">Paste an emoji to use as the vendor icon.</span>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Rating (0 – 5)</label>
+                    <label class="form-label">Rating (0  5)</label>
                     <input type="number" name="Rating" class="form-control" step="0.1" min="0" max="5"
                            value="@Model.Rating.ToString("0.0")" />
                 </div>

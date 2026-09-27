@@ -9,7 +9,7 @@
 
 @section HeadStyles {
     <style>
-        /* ── CONTACT HERO ── */
+        /*  CONTACT HERO  */
         .con-hero {
             position: relative;
             margin-top: 0;
@@ -75,7 +75,7 @@
                 color: #1a1a1a;
             }
 
-        /* ── MAIN LAYOUT ── */
+        /*  MAIN LAYOUT  */
         .con-layout {
             display: grid;
             grid-template-columns: 0.9fr 1.5fr;
@@ -83,7 +83,7 @@
             align-items: start;
         }
 
-        /* ── LEFT: INFO PANEL ── */
+        /*  LEFT: INFO PANEL  */
         .con-info-panel {
             display: flex;
             flex-direction: column;
@@ -202,7 +202,7 @@
                 border-color: #1a1a1a;
             }
 
-        /* ── RIGHT: FORM PANEL ── */
+        /*  RIGHT: FORM PANEL  */
         .con-form-panel {
             background: var(--bg-white);
             border: 1px solid var(--border);
@@ -414,7 +414,7 @@
                 border-color: #1a1a1a;
             }
 
-        /* ── FAQ ── */
+        /*  FAQ  */
         .con-faq {
             margin-top: 5rem;
             padding-top: 4rem;
@@ -499,7 +499,7 @@
             padding: 0 1.4rem 1.2rem;
         }
 
-        /* ── RESPONSIVE ── */
+        /*  RESPONSIVE  */
         @@media (max-width: 900px) {
             .con-layout {
                 grid-template-columns: 1fr;
@@ -589,7 +589,7 @@
                 <div class="con-detail-icon"><i class="fas fa-clock"></i></div>
                 <div class="con-detail-text">
                     <strong>Working Hours</strong>
-                    <span>Mon–Sat, 9:00 AM – 8:00 PM PKT</span>
+                    <span>MonSat, 9:00 AM  8:00 PM PKT</span>
                 </div>
             </div>
 
@@ -670,11 +670,11 @@
 
                 <div class="con-submit-row">
                     <p class="con-submit-note">
-                        🔒 Your details are safe with us.<br />We never share personal information.
+                         Your details are safe with us.<br />We never share personal information.
                     </p>
                     <button type="submit" class="con-submit-btn" id="conSubmitBtn">
                         Send Message
-                        <span class="btn-arrow">→</span>
+                        <span class="btn-arrow"></span>
                     </button>
                 </div>
 
@@ -706,7 +706,7 @@
                 <div class="con-faq-item">
                     <button type="button" class="con-faq-q" onclick="toggleFaq(this)">
                         @faq.q
-                        <span class="con-faq-arrow">▼</span>
+                        <span class="con-faq-arrow"></span>
                     </button>
                     <div class="con-faq-a">@faq.a</div>
                 </div>
@@ -717,7 +717,7 @@
 
 @section Scripts {
     <script>
-        // ── FORM INTERACTIONS ──
+        //  FORM INTERACTIONS 
         function selectChip(el, value) {
             document.querySelectorAll('.con-chip').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
@@ -734,7 +734,7 @@
         function handleSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('conSubmitBtn');
-            btn.textContent = 'Sending…';
+            btn.textContent = 'Sending';
             btn.disabled = true;
             btn.style.opacity = '0.7';
 
@@ -751,14 +751,14 @@
             document.querySelectorAll('.con-chip').forEach(c => c.classList.remove('selected'));
             document.getElementById('con-topic-input').value = '';
             const btn = document.getElementById('conSubmitBtn');
-            btn.innerHTML = 'Send Message <span class="btn-arrow">→</span>';
+            btn.innerHTML = 'Send Message <span class="btn-arrow"></span>';
             btn.disabled = false;
             btn.style.opacity = '1';
             document.getElementById('conForm').style.display = 'flex';
             document.getElementById('conSuccess').style.display = 'none';
         }
 
-        // ── FAQ ACCORDION ──
+        //  FAQ ACCORDION 
         function toggleFaq(btn) {
             const item = btn.closest('.con-faq-item');
             const isOpen = item.classList.contains('open');

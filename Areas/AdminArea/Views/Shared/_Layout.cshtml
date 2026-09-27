@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -62,9 +62,9 @@
             min-height: 100vh;
         }
 
-        /* ══════════════════════════════════
+        /* 
            SIDEBAR
-        ══════════════════════════════════ */
+         */
         .app-sidebar {
             width: var(--sidebar-width);
             background: var(--bg-sidebar);
@@ -309,9 +309,9 @@
             color: var(--danger);
         }
 
-        /* ══════════════════════════════════
+        /* 
            HEADER
-        ══════════════════════════════════ */
+         */
         .app-header {
             position: fixed;
             top: 0;
@@ -466,9 +466,9 @@
             color: var(--text-dark);
         }
 
-        /* ══════════════════════════════════
+        /* 
            DROPDOWNS
-        ══════════════════════════════════ */
+         */
         .hdr-dropdown { position: relative; }
 
         .hdr-dropdown-menu {
@@ -542,9 +542,9 @@
         }
             .dd-footer:hover { background: var(--border); }
 
-        /* ══════════════════════════════════
+        /* 
            MAIN CONTENT
-        ══════════════════════════════════ */
+         */
         .app-main {
             margin-left: var(--sidebar-width);
             margin-top: var(--header-height);
@@ -555,9 +555,9 @@
             transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
-        /* ══════════════════════════════════
+        /* 
            GLOBAL ADMIN CONTENT STYLES
-        ══════════════════════════════════ */
+         */
 
         /* Page header */
         .page-header {
@@ -962,9 +962,9 @@
             padding-top: 8px;
         }
 
-        /* ══════════════════════════════════
+        /* 
            FOOTER
-        ══════════════════════════════════ */
+         */
         .app-footer {
             position: fixed;
             bottom: 0;
@@ -991,9 +991,9 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
 
-        /* ══════════════════════════════════
+        /* 
            SIDEBAR COLLAPSED
-        ══════════════════════════════════ */
+         */
         .sidebar-collapsed .app-sidebar  { transform: translateX(-100%); }
         .sidebar-collapsed .app-header   { left: 0; }
         .sidebar-collapsed .app-main     { margin-left: 0; width: 100%; }
@@ -1029,7 +1029,7 @@
 </head>
 <body>
 @{
-    // ── Role detection from session (available in every layout render) ──
+    //  Role detection from session (available in every layout render) 
     int _typeId = 0;
     if (Session["UserTypeId"] != null)
     {
@@ -1063,9 +1063,9 @@
         <!-- Sidebar overlay (mobile) -->
         <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-        <!-- ════════════════════════════
+        <!-- 
              SIDEBAR
-        ════════════════════════════ -->
+         -->
         <aside class="app-sidebar">
             <div class="sidebar-brand">
                 <a href="@dashHomeUrl" class="brand-link">
@@ -1081,7 +1081,7 @@
             <div class="sidebar-wrapper">
                 <nav>
 
-                    <!-- ── OVERVIEW (all roles) ── -->
+                    <!--  OVERVIEW (all roles)  -->
                     <div class="nav-section-label">Overview</div>
                     <ul class="sidebar-nav">
                         @if (isAdmin)
@@ -1126,7 +1126,7 @@
                         }
                     </ul>
 
-                    <!-- ── CATALOG (Admin + Manager + Vendor) ── -->
+                    <!--  CATALOG (Admin + Manager + Vendor)  -->
                     @if (isAdmin || isManager || isVendor)
                     {
                         <div class="nav-section-label">Catalog</div>
@@ -1197,7 +1197,7 @@
                         </ul>
                     }
 
-                    <!-- ── OPERATIONS (Admin + Manager) ── -->
+                    <!--  OPERATIONS (Admin + Manager)  -->
                     @if (isAdmin || isManager)
                     {
                         <div class="nav-section-label">Operations</div>
@@ -1250,7 +1250,7 @@
                         </ul>
                     }
 
-                    <!-- ── CUSTOMER SECTION ── -->
+                    <!--  CUSTOMER SECTION  -->
                     @if (isCustomer)
                     {
                         <div class="nav-section-label">My Travel</div>
@@ -1277,7 +1277,7 @@
                         </ul>
                     }
 
-                    <!-- ── CONTENT (Admin only) ── -->
+                    <!--  CONTENT (Admin only)  -->
                     @if (isAdmin)
                     {
                         <div class="nav-section-label">Content</div>
@@ -1327,7 +1327,7 @@
                         </ul>
                     }
 
-                    <!-- ── CONTENT (Manager: read-only subset) ── -->
+                    <!--  CONTENT (Manager: read-only subset)  -->
                     @if (isManager)
                     {
                         <div class="nav-section-label">Content</div>
@@ -1349,7 +1349,7 @@
                         </ul>
                     }
 
-                    <!-- ── ACCOMMODATION (Admin only) ── -->
+                    <!--  ACCOMMODATION (Admin only)  -->
                     @if (isAdmin)
                     {
                         <div class="nav-section-label">Accommodation</div>
@@ -1374,7 +1374,7 @@
                         </ul>
                     }
 
-                    <!-- ── ACCOUNT (all roles) ── -->
+                    <!--  ACCOUNT (all roles)  -->
                     <div class="nav-section-label">Account</div>
                     <ul class="sidebar-nav">
                         <li class="nav-item">
@@ -1396,9 +1396,9 @@
             </div>
         </aside>
 
-        <!-- ════════════════════════════
+        <!-- 
              HEADER
-        ════════════════════════════ -->
+         -->
         <nav class="app-header">
             <div class="header-left">
                 <button class="header-toggle" id="sidebarToggle" onclick="toggleSidebar()">
@@ -1473,9 +1473,9 @@
             </div>
         </nav>
 
-        <!-- ════════════════════════════
+        <!-- 
              MAIN BODY
-        ════════════════════════════ -->
+         -->
         <main class="app-main">
             @* Success / Error flash messages from TempData *@
             @if (TempData["SuccessMessage"] != null)
@@ -1541,7 +1541,7 @@
             });
         }, 5000);
 
-        // ── Smooth scroll with fixed-header offset for all on-page anchor links ──
+        //  Smooth scroll with fixed-header offset for all on-page anchor links 
         // The fixed header is 64px tall. Without this, jumping to #profile-section
         // would place the target element behind the header, making it look like
         // nothing happened.
@@ -1554,7 +1554,7 @@
             // Handle pure hash links (#profile-section) AND
             // full-URL hash links (same page + hash, e.g. /AdminArea/CustomerDashboard#profile-section)
             var hashIndex = href ? href.indexOf('#') : -1;
-            if (hashIndex === -1) return;                       // no hash → normal navigation
+            if (hashIndex === -1) return;                       // no hash  normal navigation
 
             var hash   = href.substring(hashIndex);             // e.g. "#profile-section"
             var target = document.querySelector(hash);

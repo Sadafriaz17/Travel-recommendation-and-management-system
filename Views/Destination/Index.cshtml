@@ -34,7 +34,7 @@
 
 @section HeadStyles {
     <style>
-        /* ─── HERO SECTION ─── */
+        /*  HERO SECTION  */
         #dest-hero {
             position: relative;
             width: 100%;
@@ -83,7 +83,7 @@
                 font-weight: 300;
             }
 
-        /* ─── FILTER BAR ─── */
+        /*  FILTER BAR  */
         .dest-filter-wrapper {
             position: relative;
             z-index: 2;
@@ -151,7 +151,7 @@
                 width: 140px;
             }
 
-        /* ─── GRID SECTION ─── */
+        /*  GRID SECTION  */
         #dest-main {
             max-width: 1200px;
             margin: 0 auto;
@@ -170,7 +170,7 @@
             color: #111;
         }
 
-        /* ─── DESTINATION CARDS ─── */
+        /*  DESTINATION CARDS  */
         .dest-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -250,7 +250,7 @@
             text-decoration: none;
         }
 
-        /* ─── RESPONSIVE ─── */
+        /*  RESPONSIVE  */
         @@media (max-width: 1024px) {
             .dest-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -299,7 +299,7 @@
                 }
             </div>
             <div class="dest-search-wrap">
-                <input type="text" placeholder="Search destinations…" oninput="searchDests(this.value)" />
+                <input type="text" placeholder="Search destinations" oninput="searchDests(this.value)" />
             </div>
         </div>
     </div>

@@ -6,7 +6,7 @@
 
 @section HeadStyles {
     <style>
-        /* ── HERO SECTION ── */
+        /*  HERO SECTION  */
         #gallery-hero {
             position: relative;
             width: 100%;
@@ -56,7 +56,7 @@
                 font-weight: 300;
             }
 
-        /* ── FILTER BAR ── */
+        /*  FILTER BAR  */
         #gallery-filters {
             position: relative;
             z-index: 2;
@@ -162,7 +162,7 @@
             padding-right: 1rem;
         }
 
-        /* ── MAIN CONTENT ── */
+        /*  MAIN CONTENT  */
         #gallery-main {
             max-width: 1200px;
             margin: 0 auto;
@@ -200,7 +200,7 @@
             font-weight: 400;
         }
 
-        /* ── MASONRY GALLERY ── */
+        /*  MASONRY GALLERY  */
         .gallery-masonry {
             column-count: 4;
             column-gap: 1.5rem;
@@ -272,7 +272,7 @@
             margin-top: 0.2rem;
         }
 
-        /* ── RESPONSIVE ── */
+        /*  RESPONSIVE  */
         @@media (max-width: 1024px) {
             .gallery-masonry {
                 column-count: 3;
@@ -325,14 +325,14 @@
     </style>
 }
 
-<!-- ── HERO ──────────────────────────────── -->
+<!--  HERO  -->
 <section id="gallery-hero">
     <div class="gallery-hero-content">
         <h1>Visual <br />Gallery</h1>
         <p>Moments captured from around the world, curated just for you.</p>
     </div>
 
-    <!-- ── FILTERS ── -->
+    <!--  FILTERS  -->
     <div id="gallery-filters">
         <div class="gal-filters-inner">
             <div class="gal-filter-scroll">
@@ -352,7 +352,7 @@
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <input type="text" placeholder="Search gallery…" oninput="searchGallery(this.value)" />
+                <input type="text" placeholder="Search gallery" oninput="searchGallery(this.value)" />
             </div>
 
             <span class="count-label" id="img-count">- images</span>
@@ -360,7 +360,7 @@
     </div>
 </section>
 
-<!-- ── GALLERY MAIN ────────────────────── -->
+<!--  GALLERY MAIN  -->
 <div id="gallery-main">
     <div class="gallery-section-head">
         <span class="gallery-section-eyebrow">Curated Moments</span>
@@ -381,7 +381,7 @@
             new { title="Kyoto Temple", location="Kyoto, Japan", cat="culture", img="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=85&fit=crop" },
             new { title="Desert Safari", location="Dubai, UAE", cat="adventure", img="https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=85&fit=crop" },
             new { title="Street Food", location="Bangkok, Thailand", cat="food", img="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=85&fit=crop" },
-            new { title="Northern Lights", location="Tromsø, Norway", cat="nature", img="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=85&fit=crop" },
+            new { title="Northern Lights", location="Troms, Norway", cat="nature", img="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=85&fit=crop" },
             new { title="Ancient Medina", location="Marrakech, Morocco", cat="culture", img="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800&q=85&fit=crop" },
             new { title="Swiss Alps", location="Interlaken, Switzerland", cat="adventure", img="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85&fit=crop" },
             new { title="Italian Cuisine", location="Rome, Italy", cat="food", img="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85&fit=crop" },
@@ -414,7 +414,7 @@
 
 @section Scripts {
     <script>
-        // ── Gallery data ──
+        //  Gallery data 
         const galleryData = Array.from(document.querySelectorAll('.gal-item')).map(el => ({
             img: el.dataset.img,
             title: el.dataset.title,
@@ -430,7 +430,7 @@
         }
         updateCount();
 
-        // ── Filter ──
+        //  Filter 
         function filterGallery(btn, cat) {
             document.querySelectorAll('.gal-filter').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -441,7 +441,7 @@
             updateCount();
         }
 
-        // ── Search ──
+        //  Search 
         function searchGallery(val) {
             const q = val.toLowerCase().trim();
             document.querySelectorAll('.gal-item').forEach(item => {
@@ -453,7 +453,7 @@
             updateCount();
         }
 
-        // ── Lightbox ──
+        //  Lightbox 
         function openLightbox(index) {
             currentIndex = index;
             const d = galleryData[currentIndex];
@@ -471,7 +471,7 @@
                 `;
 
             lb.innerHTML = `
-                    <button onclick="closeLightbox()" style="position:absolute; top:1.5rem; right:1.5rem; width:44px; height:44px; border:1px solid #e5e7eb; border-radius:50%; background:#fff; color:#1a1a1a; font-size:1.2rem; cursor:pointer;">✕</button>
+                    <button onclick="closeLightbox()" style="position:absolute; top:1.5rem; right:1.5rem; width:44px; height:44px; border:1px solid #e5e7eb; border-radius:50%; background:#fff; color:#1a1a1a; font-size:1.2rem; cursor:pointer;"></button>
                     <div style="max-width:1000px; width:100%; text-align:center;">
                         <img src="${d.img}" alt="${d.title}" style="width:100%; max-height:80vh; object-fit:contain; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.1);" />
                         <div style="margin-top:1.5rem;">

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;              // FIX: required for string-based .Include("...") on IQueryable<T>
 using System.Linq;
@@ -11,13 +11,13 @@ namespace TourwebsiteFYP.Controllers
     {
         private Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // ── INDEX ──────────────────────────────────────────────────────────────
+        //  INDEX 
         public ActionResult Index()
         {
             return View();
         }
 
-        // ── SEARCH ─────────────────────────────────────────────────────────────
+        //  SEARCH 
         // GET: /Home/Search?query=...&budget=...&guests=...
         [HttpGet]
         public ActionResult Search(string query, string budget, string guests)
@@ -51,7 +51,7 @@ namespace TourwebsiteFYP.Controllers
                     int.TryParse(guests, out guestCount);
             }
 
-            // ── Query Destinations ─────────────────────────────────────────────
+            //  Query Destinations 
             var destQuery = _context.Destinations.AsQueryable();
 
             if (!string.IsNullOrEmpty(q))
@@ -69,7 +69,7 @@ namespace TourwebsiteFYP.Controllers
 
             var destinations = destQuery.Take(12).ToList();
 
-            // ── Query Packages ─────────────────────────────────────────────────
+            //  Query Packages 
             var pkgQuery = _context.Packages
                 .Include("PackageImages")
                 .Include("Destination")
@@ -92,7 +92,7 @@ namespace TourwebsiteFYP.Controllers
 
             var packages = pkgQuery.Take(12).ToList();
 
-            // ── Query Products ─────────────────────────────────────────────────
+            //  Query Products 
             var prodQuery = _context.Products
                 .Include("ProductType")
                 .AsQueryable();
@@ -106,7 +106,7 @@ namespace TourwebsiteFYP.Controllers
 
             var products = prodQuery.Take(12).ToList();
 
-            // ── Pass to view ───────────────────────────────────────────────────
+            //  Pass to view 
             ViewBag.SearchQuery = query;
             ViewBag.Budget = budget;
             ViewBag.Guests = guests;
@@ -120,7 +120,7 @@ namespace TourwebsiteFYP.Controllers
             return View("SearchResults");
         }
 
-        // ── HOMEPAGE REVIEWS PARTIAL ───────────────────────────────────────────
+        //  HOMEPAGE REVIEWS PARTIAL 
         public ActionResult HomepageReviews()
         {
             var reviews = _context.Reviews
@@ -134,7 +134,7 @@ namespace TourwebsiteFYP.Controllers
             return View(reviews);
         }
 
-        // ── OTHER PAGES ────────────────────────────────────────────────────────
+        //  OTHER PAGES 
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

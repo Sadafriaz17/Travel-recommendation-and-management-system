@@ -1,4 +1,4 @@
-@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
 @{
     ViewBag.Title = "Dashboard";
     ViewBag.ActiveMenu = "Dashboard";
@@ -8,7 +8,7 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <div class="page-title">Welcome back, @(ViewBag.SessionUserName ?? "Admin") <span style="font-weight:400;color:var(--text-muted)">👋</span></div>
+        <div class="page-title">Welcome back, @(ViewBag.SessionUserName ?? "Admin") <span style="font-weight:400;color:var(--text-muted)"></span></div>
         <div class="page-subtitle">Here's what's happening with your travel platform today.</div>
     </div>
     <div style="font-size:12px;color:var(--text-faint)">
@@ -159,6 +159,7 @@
     }
     @Html.Partial("~/Areas/AdminArea/Views/Shared/_ProfileSettings.cshtml", profileUser)
 </div>
+
 
 @section scripts {
     <style>

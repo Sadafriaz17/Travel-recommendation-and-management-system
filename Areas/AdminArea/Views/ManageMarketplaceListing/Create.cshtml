@@ -1,4 +1,4 @@
-@model TourwebsiteFYP.DB_data_models.Vendor
+﻿@model TourwebsiteFYP.DB_data_models.Vendor
 @{
     ViewBag.Title = "Add Vendor";
     ViewBag.ActiveMenu = "Marketplace";
@@ -44,13 +44,13 @@
 
                 <div class="form-group">
                     <label class="form-label">Logo / Icon (emoji or text)</label>
-                    <input type="text" name="LogoIcon" class="form-control" placeholder="e.g. 🏪 or ⛰️"
+                    <input type="text" name="LogoIcon" class="form-control" placeholder="e.g.  or "
                            value="@(Model != null ? Model.LogoIcon : "")" />
                     <span class="form-hint">You can paste an emoji here to use as the vendor icon.</span>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Rating (0 – 5)</label>
+                    <label class="form-label">Rating (0  5)</label>
                     <input type="number" name="Rating" class="form-control" step="0.1" min="0" max="5" placeholder="e.g. 4.8"
                            value="@(Model != null ? Model.Rating.ToString("0.0") : "0.0")" />
                 </div>
@@ -58,7 +58,7 @@
                 <div class="form-group form-grid-1">
                     <label class="form-label">Description</label>
                     <textarea name="Description" class="form-control" rows="4"
-                              placeholder="Brief description of what this vendor offers…">@(Model != null ? Model.Description : "")</textarea>
+                              placeholder="Brief description of what this vendor offers">@(Model != null ? Model.Description : "")</textarea>
                 </div>
             </div>
             <div class="form-actions">

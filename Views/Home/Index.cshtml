@@ -5,10 +5,10 @@
 }
 
 <style>
-    /* ────────────────────────────────────────────────────────────────
+    /* 
        DESIGN TOKENS - original teal palette, kept exactly as before.
        Layout below is restructured; colors are not.
-    ── ─────────────────────────────────────────────────────────────── */
+      */
 
     :root {
         --ink: #1a1a1a;
@@ -30,7 +30,7 @@
         padding: 6rem 0;
     }
 
-    /* ── Section header - a lede line, not a tracked-out badge ─────── */
+    /*  Section header - a lede line, not a tracked-out badge  */
     .section-head {
         display: flex;
         align-items: flex-end;
@@ -85,7 +85,7 @@
         }
     }
 
-    /* ── Hero search bar ─────────────────────────────────────────── */
+    /*  Hero search bar  */
     .hero-trust-line {
         display: inline-flex;
         align-items: center;
@@ -186,7 +186,7 @@
             background: var(--accent-dark);
         }
 
-    /* ── Trust strip: plain, factual, no icon-badge kit ────────────── */
+    /*  Trust strip: plain, factual, no icon-badge kit  */
     .trust-strip {
         display: flex;
         justify-content: center;
@@ -205,8 +205,8 @@
         font-weight: 600;
     }
 
-    /* ── Plan your journey - a real process gets a timeline,
-         not a stack of identical shadowed cards ────────────────────── */
+    /*  Plan your journey - a real process gets a timeline,
+         not a stack of identical shadowed cards  */
     .split-section-custom {
         display: grid;
         grid-template-columns: 1.05fr 0.95fr;
@@ -356,8 +356,8 @@
         }
     }
 
-    /* ── AI trip planner - an asymmetric working panel, not a
-         centered hero-in-a-hero with a decorative gradient blob ──── */
+    /*  AI trip planner - an asymmetric working panel, not a
+         centered hero-in-a-hero with a decorative gradient blob  */
     .ai-band {
         background: var(--ink);
         padding: 5.5rem 0;
@@ -477,8 +477,8 @@
         }
     }
 
-    /* ── Blog - an editorial list, not a pair of identical cards
-         with an overlay pill and a middle-dot meta string ──────────── */
+    /*  Blog - an editorial list, not a pair of identical cards
+         with an overlay pill and a middle-dot meta string  */
     .blog-list {
         display: flex;
         flex-direction: column;
@@ -556,7 +556,7 @@
     }
 </style>
 
-<!-- ═══ HERO SECTION ═══ -->
+<!--  HERO SECTION  -->
 <section class="hero-wrapper">
     <div class="hero-content">
 
@@ -574,8 +574,8 @@
                 <select name="budget" id="hero-budget">
                     <option value="">Any Budget</option>
                     <option value="under500">Under $500</option>
-                    <option value="500-2000">$500 – $2,000</option>
-                    <option value="2000-5000">$2,000 – $5,000</option>
+                    <option value="500-2000">$500  $2,000</option>
+                    <option value="2000-5000">$2,000  $5,000</option>
                     <option value="5000plus">$5,000+</option>
                 </select>
             </div>
@@ -604,7 +604,7 @@
     </div>
 </section>
 
-<!-- ═══ DESTINATIONS ═══ -->
+<!--  DESTINATIONS  -->
 <section class="section-padding" id="destinations-section">
     <div class="container">
         <div class="section-head">
@@ -618,7 +618,7 @@
     </div>
 </section>
 
-<!-- ═══ PLAN YOUR JOURNEY ═══ -->
+<!--  PLAN YOUR JOURNEY  -->
 <section class="bg-tint section-padding" id="ai-generator">
     <div class="container">
         <div class="split-section-custom">
@@ -657,7 +657,7 @@
     </div>
 </section>
 
-<!-- ═══ PACKAGES ═══ -->
+<!--  PACKAGES  -->
 <section class="section-padding" id="packages-section">
     <div class="container">
         <div class="section-head">
@@ -671,7 +671,7 @@
     </div>
 </section>
 
-<!-- ═══ FEATURED PRODUCTS ═══ -->
+<!--  FEATURED PRODUCTS  -->
 <section class="bg-tint section-padding" id="products-section">
     <div class="container">
         <div class="section-head">
@@ -685,7 +685,7 @@
     </div>
 </section>
 
-<!-- ═══ AI TRIP GENERATOR ═══ -->
+<!--  AI TRIP GENERATOR  -->
 <section class="ai-band" id="ai-trip-generator">
     <div class="container">
         <div class="ai-layout">
@@ -710,7 +710,7 @@
 
                     <div class="ai-form-group">
                         <label>Temperature</label>
-                        <input type="text" name="temperature" placeholder="e.g. warm, tropical, 20°C" />
+                        <input type="text" name="temperature" placeholder="e.g. warm, tropical, 20C" />
                     </div>
 
                     <div class="ai-form-group">
@@ -739,8 +739,8 @@
                         <label>Budget range</label>
                         <select name="budget">
                             <option value="1000">Under $1,000</option>
-                            <option value="3000">$1,000 – $3,000</option>
-                            <option value="5000">$3,000 – $5,000</option>
+                            <option value="3000">$1,000  $3,000</option>
+                            <option value="5000">$3,000  $5,000</option>
                             <option value="10000">$5,000+</option>
                         </select>
                     </div>
@@ -752,7 +752,7 @@
     </div>
 </section>
 
-<!-- ═══ REVIEWS ═══ -->
+<!--  REVIEWS  -->
 <section class="section-padding" id="reviews-section" style="background: var(--bg-white);">
     <div class="container">
         <div class="section-head">
@@ -765,7 +765,7 @@
     </div>
 </section>
 
-<!-- ═══ BLOG ═══ -->
+<!--  BLOG  -->
 <section class="bg-tint section-padding" id="blog-section">
     <div class="container">
         <div class="section-head">

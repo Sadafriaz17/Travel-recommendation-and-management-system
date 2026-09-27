@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Data.Entity;
 using System.Web.Mvc;
@@ -31,13 +31,31 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
             ViewBag.SessionUserName = user?.FullName ?? Session["UserName"]?.ToString() ?? "Vendor";
             ViewBag.ProfileUser     = user;
 
-            // Look up vendor associated with this user's name.
-            // (The current schema has no direct UserId FK on Vendor.)
-            string userName = ViewBag.SessionUserName as string ?? "";
-            var vendor = _context.Vendors
+            //  Reliable vendor lookup: prefer Session["VendorId"] set at login.
+            // Falls back to name-match for Google-authenticated vendors.
+            Vendor vendor = null;
+            int sessionVendorId = 0;
+            if (Session["VendorId"] != null &&
+                int.TryParse(Session["VendorId"].ToString(), out sessionVendorId) &&
+                sessionVendorId > 0)
+            {
+                vendor = _context.Vendors
                              .Include(v => v.Products)
-                             .FirstOrDefault(v => v.VendorName.Contains(userName))
-                         ?? _context.Vendors.Include(v => v.Products).FirstOrDefault();
+                             .FirstOrDefault(v => v.VendorId == sessionVendorId);
+            }
+
+            if (vendor == null)
+            {
+                // Fallback: name-match (used when VendorId was not set in session)
+                string userName = ViewBag.SessionUserName as string ?? "";
+                vendor = _context.Vendors
+                             .Include(v => v.Products)
+                             .FirstOrDefault(v => v.VendorName.Contains(userName));
+
+                // If found via fallback, persist it for future requests.
+                if (vendor != null)
+                    Session["VendorId"] = vendor.VendorId;
+            }
 
             if (vendor != null)
             {
@@ -64,7 +82,7 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
                 return View(recentOrders);
             }
 
-            ViewBag.VendorName    = userName;
+            ViewBag.VendorName    = ViewBag.SessionUserName;
             ViewBag.TotalProducts = 0;
             ViewBag.TotalOrders   = 0;
             ViewBag.TotalEarnings = 0m;

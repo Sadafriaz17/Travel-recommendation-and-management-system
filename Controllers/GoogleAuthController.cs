@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -32,7 +32,7 @@ namespace TourwebsiteFYP.Controllers
         }
 
         // ------------------------------------------------------------------
-        // STEP 1: Issue the OAuth challenge → redirects browser to Google
+        // STEP 1: Issue the OAuth challenge  redirects browser to Google
         // ------------------------------------------------------------------
         [AllowAnonymous]
         public ActionResult ExternalLogin(string provider, string returnUrl)

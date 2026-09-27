@@ -9,10 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-                /* ═══════════════════════════════════════════════
+                /* 
            AI PACKING GENERATOR - NEXVOY
            Strict design system match with homepage
-        ═══════════════════════════════════════════════ */
+         */
                 :root {
                     --bg-deep: #020205;
                     --bg-surface: rgba(15,15,20,0.85);
@@ -49,7 +49,7 @@
                     overflow-x: hidden;
                 }
 
-                /* ─── SHARED UTILITIES ─── */
+                /*  SHARED UTILITIES  */
                 .text-gradient {
                     background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--purple) 100%);
                     -webkit-background-clip: text;
@@ -102,7 +102,7 @@
                     }
                 }
 
-                /* ─── HERO (EXACT HOMEPAGE MATCH) ─── */
+                /*  HERO (EXACT HOMEPAGE MATCH)  */
                 #hero {
                     position: relative;
                     height: 100vh;
@@ -323,7 +323,7 @@
                     }
                 }
 
-                /* ─── MAIN CONTENT AREA ─── */
+                /*  MAIN CONTENT AREA  */
                 #packing-content {
                     position: relative;
                     z-index: 5;
@@ -336,7 +336,7 @@
                     padding: 0 2.5rem;
                 }
 
-                /* ─── INPUT SUMMARY CARD ─── */
+                /*  INPUT SUMMARY CARD  */
                 .summary-card {
                     background: var(--glass);
                     border: 1px solid var(--border-hi);
@@ -408,7 +408,7 @@
                         color: var(--accent)
                     }
 
-                /* ─── WEATHER INSIGHT CARD ─── */
+                /*  WEATHER INSIGHT CARD  */
                 .weather-card {
                     background: linear-gradient(135deg, rgba(77,238,234,0.05) 0%, rgba(168,85,247,0.05) 100%);
                     border: 1px solid rgba(77,238,234,0.2);
@@ -480,7 +480,7 @@
                     letter-spacing: 0.08em;
                 }
 
-                /* ─── TWO COLUMN LAYOUT ─── */
+                /*  TWO COLUMN LAYOUT  */
                 .packing-layout {
                     display: grid;
                     grid-template-columns: 1fr 340px;
@@ -488,7 +488,7 @@
                     align-items: start;
                 }
 
-                /* ─── PACKING SECTIONS ─── */
+                /*  PACKING SECTIONS  */
                 .packing-sections {
                     display: flex;
                     flex-direction: column;
@@ -671,7 +671,7 @@
                     border: 1px solid rgba(255,255,255,0.06);
                 }
 
-                /* ─── PROGRESS BAR IN SECTION HEADER ─── */
+                /*  PROGRESS BAR IN SECTION HEADER  */
                 .pack-section-progress {
                     height: 2px;
                     background: rgba(255,255,255,0.06);
@@ -688,7 +688,7 @@
                     width: 0%;
                 }
 
-                /* ─── SIDEBAR ─── */
+                /*  SIDEBAR  */
                 .sidebar {
                     display: flex;
                     flex-direction: column;
@@ -890,7 +890,7 @@
                         background: rgba(77,238,234,0.06)
                     }
 
-                /* ─── LOADING OVERLAY ─── */
+                /*  LOADING OVERLAY  */
                 #loading-overlay {
                     position: fixed;
                     inset: 0;
@@ -957,7 +957,7 @@
                         color: var(--text)
                     }
 
-                /* ─── SECTION HEADING ─── */
+                /*  SECTION HEADING  */
                 .section-head-block {
                     margin-bottom: 3rem;
                     text-align: center;
@@ -976,7 +976,7 @@
                         font-size: 0.95rem;
                     }
 
-                /* ─── RESPONSIVE ─── */
+                /*  RESPONSIVE  */
                 @@media(max-width:1024px) {
                     .packing-layout {
                         grid-template-columns: 1fr
@@ -1017,7 +1017,7 @@
     </style>
 }
 
-<!-- ═══════════════════════ LOADING OVERLAY ═══════════════════════ -->
+<!--  LOADING OVERLAY  -->
 <div id="loading-overlay">
     <div class="loading-orb"></div>
     <div class="loading-steps">
@@ -1029,7 +1029,7 @@
     <div class="loading-text">AI Processing</div>
 </div>
 
-<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<!--  HERO  -->
 <section id="hero">
     <canvas id="hero-3d-canvas"></canvas>
     <div class="hero-glow"></div>
@@ -1052,7 +1052,7 @@
                 <div class="hero-stat-label">Packing Accuracy</div>
             </div>
             <div class="hero-stat">
-                <div class="hero-stat-val text-gradient">✦</div>
+                <div class="hero-stat-val text-gradient"></div>
                 <div class="hero-stat-label">Weather Optimized</div>
             </div>
             <div class="hero-stat">
@@ -1080,7 +1080,7 @@
     </div>*@
 </section>
 
-<!-- ═══════════════════════ PACKING CONTENT ═══════════════════════ -->
+<!--  PACKING CONTENT  -->
 <section id="packing-content">
     <div class="content-wrapper">
 
@@ -1098,7 +1098,7 @@
                     <div class="summary-title" id="summary-headline">Your Trip Overview</div>
                 </div>
                 <a href="/" class="btn-hero-secondary" style="padding:0.6rem 1.25rem;font-size:0.82rem">
-                    ← Edit Trip
+                     Edit Trip
                 </a>
             </div>
             <div class="summary-grid" id="summary-grid">
@@ -1108,7 +1108,7 @@
 
         <!-- Weather Insight Card -->
         <div class="weather-card" data-reveal id="weather-card">
-            <div class="weather-icon" id="weather-icon">🌤️</div>
+            <div class="weather-icon" id="weather-icon"></div>
             <div class="weather-content">
                 <div class="weather-label">AI Weather Intelligence</div>
                 <div class="weather-title" id="weather-title">Climate Analysis</div>
@@ -1163,7 +1163,7 @@
 
                 <!-- AI Tips Card -->
                 <div class="ai-tips-card" data-reveal>
-                    <div class="nex-badge" style="margin-bottom:0.75rem">✦ AI Tips</div>
+                    <div class="nex-badge" style="margin-bottom:0.75rem"> AI Tips</div>
                     <div class="ai-tips-title">Smart Recommendations</div>
                     <div id="ai-tips-list">
                         <!-- Populated by JS -->
@@ -1193,9 +1193,9 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>/* ═══════════════════════════════════════════
+    <script>/* 
    3D EARTH - exact copy from homepage
-═══════════════════════════════════════════ */
+ */
 (function () {
     var canvas = document.getElementById('hero-3d-canvas');
     if (!canvas || typeof THREE === 'undefined') return;
@@ -1268,68 +1268,68 @@
     });
 })();
 
-/* ═══════════════════════════════════════════
+/* 
    AI PACKING ENGINE
-═══════════════════════════════════════════ */
+ */
 
-// ── Weather intelligence data ──
+//  Weather intelligence data 
 var weatherProfiles = {
-    'Europe':     { icon:'🌤️', season:'Temperate', temp:'10–22°C', desc:'European climate varies significantly by season. Layering is key - mornings can be brisk while afternoons warm considerably. Pack versatile, moisture-wicking fabrics that transition between indoor and outdoor settings.', chips:['Layering Essential','Rain Possible','Mild Days'] },
-    'Asia':       { icon:'🌏', season:'Tropical',  temp:'25–35°C', desc:'Asian destinations typically feature high humidity and warmth. Breathable, quick-dry fabrics are critical. Many cultural sites require conservative coverage, so pack lightweight cover-ups alongside your casual wear.', chips:['High Humidity','Sun Protection','Modest Dress'] },
-    'USA':        { icon:'🗽', season:'Varied',    temp:'15–28°C', desc:'The USA spans multiple climate zones. Urban environments require smart-casual options while outdoor regions demand activity-ready gear. Air conditioning is ubiquitous indoors, so carry a light layer even in summer.', chips:['Climate Varies','AC Indoors','Versatile Pack'] },
-    'South-Asia': { icon:'🕌', season:'Hot & Dry', temp:'28–42°C', desc:'South Asian travel demands heat management above all else. Ultra-light, loose fabrics in natural fibers work best. Cultural and religious sites are numerous - respectful dress (arms, legs covered) is a must. Hydration accessories are critical.', chips:['Extreme Heat','Conservative Dress','UV Protection'] },
-    'Africa':     { icon:'🌍', season:'Varied',    temp:'20–38°C', desc:'African destinations range from savannah heat to coastal humidity. Safari packing emphasizes neutral colors and functionality. Urban centers are increasingly cosmopolitan, but rural and adventure regions demand rugged, dust-resistant gear.', chips:['Safari Neutral Colors','Dust Resistant','Varied Climate'] }
+    'Europe':     { icon:'', season:'Temperate', temp:'1022C', desc:'European climate varies significantly by season. Layering is key - mornings can be brisk while afternoons warm considerably. Pack versatile, moisture-wicking fabrics that transition between indoor and outdoor settings.', chips:['Layering Essential','Rain Possible','Mild Days'] },
+    'Asia':       { icon:'', season:'Tropical',  temp:'2535C', desc:'Asian destinations typically feature high humidity and warmth. Breathable, quick-dry fabrics are critical. Many cultural sites require conservative coverage, so pack lightweight cover-ups alongside your casual wear.', chips:['High Humidity','Sun Protection','Modest Dress'] },
+    'USA':        { icon:'', season:'Varied',    temp:'1528C', desc:'The USA spans multiple climate zones. Urban environments require smart-casual options while outdoor regions demand activity-ready gear. Air conditioning is ubiquitous indoors, so carry a light layer even in summer.', chips:['Climate Varies','AC Indoors','Versatile Pack'] },
+    'South-Asia': { icon:'', season:'Hot & Dry', temp:'2842C', desc:'South Asian travel demands heat management above all else. Ultra-light, loose fabrics in natural fibers work best. Cultural and religious sites are numerous - respectful dress (arms, legs covered) is a must. Hydration accessories are critical.', chips:['Extreme Heat','Conservative Dress','UV Protection'] },
+    'Africa':     { icon:'', season:'Varied',    temp:'2038C', desc:'African destinations range from savannah heat to coastal humidity. Safari packing emphasizes neutral colors and functionality. Urban centers are increasingly cosmopolitan, but rural and adventure regions demand rugged, dust-resistant gear.', chips:['Safari Neutral Colors','Dust Resistant','Varied Climate'] }
 };
 
-// ── Packing database ──
+//  Packing database 
 var packingDB = {
     clothing: {
-        icon: '👕', title: 'Clothing Essentials',
+        icon: '', title: 'Clothing Essentials',
         subsections: {
             'Tops': {
-                minimal: ['T-Shirts (3×)','Dress Shirt (1×)'],
-                balanced: ['T-Shirts (4×)','Casual Shirt (2×)','Dress Shirt (1×)','Polo Shirt (1×)'],
-                full: ['T-Shirts (5×)','Casual Shirts (3×)','Dress Shirts (2×)','Polo Shirt (1×)','Tank Tops (2×)']
+                minimal: ['T-Shirts (3)','Dress Shirt (1)'],
+                balanced: ['T-Shirts (4)','Casual Shirt (2)','Dress Shirt (1)','Polo Shirt (1)'],
+                full: ['T-Shirts (5)','Casual Shirts (3)','Dress Shirts (2)','Polo Shirt (1)','Tank Tops (2)']
             },
             'Bottoms': {
-                minimal: ['Jeans (1×)','Shorts (1×)'],
-                balanced: ['Jeans (2×)','Shorts (2×)','Chinos (1×)'],
-                full: ['Jeans (2×)','Shorts (3×)','Chinos (1×)','Smart Trousers (1×)','Track Pants (1×)']
+                minimal: ['Jeans (1)','Shorts (1)'],
+                balanced: ['Jeans (2)','Shorts (2)','Chinos (1)'],
+                full: ['Jeans (2)','Shorts (3)','Chinos (1)','Smart Trousers (1)','Track Pants (1)']
             },
             'Innerwear': {
-                minimal: ['Underwear (4×)','Socks (4 pairs)'],
-                balanced: ['Underwear (6×)','Socks (6 pairs)','Sports Socks (2 pairs)'],
-                full: ['Underwear (7×)','Socks (7 pairs)','Sports Socks (3 pairs)','Compression Socks (1×)']
+                minimal: ['Underwear (4)','Socks (4 pairs)'],
+                balanced: ['Underwear (6)','Socks (6 pairs)','Sports Socks (2 pairs)'],
+                full: ['Underwear (7)','Socks (7 pairs)','Sports Socks (3 pairs)','Compression Socks (1)']
             },
             'Outerwear': {
-                minimal: ['Light Jacket (1×)'],
-                balanced: ['Light Jacket (1×)','Rain Jacket (1×)'],
-                full: ['Light Jacket (1×)','Rain Jacket (1×)','Hoodie (1×)','Fleece Layer (1×)']
+                minimal: ['Light Jacket (1)'],
+                balanced: ['Light Jacket (1)','Rain Jacket (1)'],
+                full: ['Light Jacket (1)','Rain Jacket (1)','Hoodie (1)','Fleece Layer (1)']
             },
             'Sleepwear': {
-                minimal: ['Sleepwear Set (1×)'],
-                balanced: ['Sleepwear Set (2×)'],
-                full: ['Sleepwear Set (2×)','Loungewear Pants (1×)']
+                minimal: ['Sleepwear Set (1)'],
+                balanced: ['Sleepwear Set (2)'],
+                full: ['Sleepwear Set (2)','Loungewear Pants (1)']
             }
         }
     },
     footwear: {
-        icon: '👟', title: 'Footwear',
+        icon: '', title: 'Footwear',
         subsections: {
             'Shoes': {
-                minimal: ['Sneakers (1×)','Sandals (1×)'],
-                balanced: ['Sneakers (1×)','Sandals (1×)','Dress Shoes (1×)'],
-                full: ['Sneakers (1×)','Sandals (1×)','Dress Shoes (1×)','Flip Flops (1×)','Waterproof Boots (1×)']
+                minimal: ['Sneakers (1)','Sandals (1)'],
+                balanced: ['Sneakers (1)','Sandals (1)','Dress Shoes (1)'],
+                full: ['Sneakers (1)','Sandals (1)','Dress Shoes (1)','Flip Flops (1)','Waterproof Boots (1)']
             },
             'Accessories': {
-                minimal: ['Shoe Bag (1×)'],
-                balanced: ['Shoe Bags (2×)','Extra Laces'],
-                full: ['Shoe Bags (3×)','Extra Laces','Insoles','Shoe Deodorizer']
+                minimal: ['Shoe Bag (1)'],
+                balanced: ['Shoe Bags (2)','Extra Laces'],
+                full: ['Shoe Bags (3)','Extra Laces','Insoles','Shoe Deodorizer']
             }
         }
     },
     toiletries: {
-        icon: '🧴', title: 'Toiletries & Skincare',
+        icon: '', title: 'Toiletries & Skincare',
         subsections: {
             'Core Toiletries': {
                 minimal: ['Toothbrush','Toothpaste','Deodorant','Shampoo (travel)','Body Wash (travel)'],
@@ -1344,7 +1344,7 @@ var packingDB = {
         }
     },
     documents: {
-        icon: '📄', title: 'Important Documents',
+        icon: '', title: 'Important Documents',
         subsections: {
             'Travel Documents': {
                 minimal: ['Passport','Visa Documents','Travel Insurance','Hotel Confirmations'],
@@ -1354,12 +1354,12 @@ var packingDB = {
             'Payment': {
                 minimal: ['Credit Card','Debit Card','Local Cash'],
                 balanced: ['Credit Card','Debit Card','Local Cash','Travel Card'],
-                full: ['Credit Card (2×)','Debit Card','Local Cash','Travel Card','US Dollars (backup)']
+                full: ['Credit Card (2)','Debit Card','Local Cash','Travel Card','US Dollars (backup)']
             }
         }
     },
     electronics: {
-        icon: '🔌', title: 'Electronics',
+        icon: '', title: 'Electronics',
         subsections: {
             'Devices': {
                 minimal: ['Phone','Charger','Power Bank'],
@@ -1369,12 +1369,12 @@ var packingDB = {
             'Adapters & Cables': {
                 minimal: ['Universal Adapter','USB Cable'],
                 balanced: ['Universal Adapter','USB-C Cable','Lightning Cable','Multi-Port Hub'],
-                full: ['Universal Adapter','USB-C Cable','Lightning Cable','Multi-Port Hub','HDMI Adapter','Memory Cards (2×)']
+                full: ['Universal Adapter','USB-C Cable','Lightning Cable','Multi-Port Hub','HDMI Adapter','Memory Cards (2)']
             }
         }
     },
     health: {
-        icon: '💊', title: 'Health & Safety',
+        icon: '', title: 'Health & Safety',
         subsections: {
             'First Aid': {
                 minimal: ['Paracetamol','Antidiarrheal','Band-Aids','Hand Sanitizer'],
@@ -1390,18 +1390,18 @@ var packingDB = {
     }
 };
 
-// ── Activity-specific additions ──
+//  Activity-specific additions 
 var activityGear = {
     'Hiking': {
-        icon: '🥾', title: 'Hiking Gear',
+        icon: '', title: 'Hiking Gear',
         items: {
             minimal: ['Hiking Boots','Trekking Poles','Water Bottle (1L)'],
-            balanced: ['Hiking Boots','Trekking Poles','Water Bottle (2L)','Trail Snacks','Hiking Socks (3×)','Headlamp'],
-            full: ['Hiking Boots','Trekking Poles','Water Bottle (2L)','Hydration Pack','Trail Snacks','Hiking Socks (4×)','Headlamp','Trail Map / GPS','Blister Kit','Emergency Whistle','Bear Spray (if needed)']
+            balanced: ['Hiking Boots','Trekking Poles','Water Bottle (2L)','Trail Snacks','Hiking Socks (3)','Headlamp'],
+            full: ['Hiking Boots','Trekking Poles','Water Bottle (2L)','Hydration Pack','Trail Snacks','Hiking Socks (4)','Headlamp','Trail Map / GPS','Blister Kit','Emergency Whistle','Bear Spray (if needed)']
         }
     },
     'Camping': {
-        icon: '⛺', title: 'Camping Essentials',
+        icon: '', title: 'Camping Essentials',
         items: {
             minimal: ['Sleeping Bag','Tent (1-person)','Camping Knife'],
             balanced: ['Sleeping Bag','Tent','Camping Knife','Camp Stove','Mess Kit','Fire Starter'],
@@ -1409,7 +1409,7 @@ var activityGear = {
         }
     },
     'Skydiving': {
-        icon: '🪂', title: 'Skydiving Essentials',
+        icon: '', title: 'Skydiving Essentials',
         items: {
             minimal: ['Release Form Copy','Comfortable Fit Clothing','Closed-Toe Shoes'],
             balanced: ['Release Form Copy','Comfortable Fit Clothing','Closed-Toe Shoes','Goggles (personal)','Altimeter Watch'],
@@ -1417,15 +1417,15 @@ var activityGear = {
         }
     },
     'Beach': {
-        icon: '🏖️', title: 'Beach Gear',
+        icon: '', title: 'Beach Gear',
         items: {
-            minimal: ['Swimwear (2×)','Sunscreen SPF 50','Flip Flops'],
-            balanced: ['Swimwear (3×)','Sunscreen SPF 50','Flip Flops','Beach Towel','Snorkel Set','UV Sunglasses'],
-            full: ['Swimwear (4×)','Sunscreen SPF 50','After-Sun Lotion','Flip Flops','Beach Towel (2×)','Snorkel Set','UV Sunglasses','Waterproof Phone Case','Dry Bag','Rash Guard','Beach Bag']
+            minimal: ['Swimwear (2)','Sunscreen SPF 50','Flip Flops'],
+            balanced: ['Swimwear (3)','Sunscreen SPF 50','Flip Flops','Beach Towel','Snorkel Set','UV Sunglasses'],
+            full: ['Swimwear (4)','Sunscreen SPF 50','After-Sun Lotion','Flip Flops','Beach Towel (2)','Snorkel Set','UV Sunglasses','Waterproof Phone Case','Dry Bag','Rash Guard','Beach Bag']
         }
     },
     'City Tour': {
-        icon: '🗺️', title: 'City Tour Essentials',
+        icon: '', title: 'City Tour Essentials',
         items: {
             minimal: ['Comfortable Walking Shoes','City Map / App','Daypack'],
             balanced: ['Comfortable Walking Shoes','City Map / App','Daypack','Portable Charger','Umbrella','Travel Locks'],
@@ -1434,46 +1434,46 @@ var activityGear = {
     }
 };
 
-// ── AI Tips engine ──
+//  AI Tips engine 
 function generateAITips(data) {
     var tips = [];
     var pref = (data.packingPreference || 'balanced').toLowerCase();
 
     if (pref === 'minimal') {
-        tips.push({ icon:'⚡', text:'Pack only multi-use items - a navy blazer works for dinners, day tours, and cool evenings.' });
-        tips.push({ icon:'🔄', text:'Plan to do laundry every 4–5 days to stay minimal while staying fresh.' });
+        tips.push({ icon:'', text:'Pack only multi-use items - a navy blazer works for dinners, day tours, and cool evenings.' });
+        tips.push({ icon:'', text:'Plan to do laundry every 45 days to stay minimal while staying fresh.' });
     } else if (pref === 'full') {
-        tips.push({ icon:'🎯', text:'With a full pack, use packing cubes to compress and organize by category.' });
+        tips.push({ icon:'', text:'With a full pack, use packing cubes to compress and organize by category.' });
     } else {
-        tips.push({ icon:'⚖️', text:'Balanced packing: choose 3 base colors that mix-and-match across all outfits.' });
+        tips.push({ icon:'', text:'Balanced packing: choose 3 base colors that mix-and-match across all outfits.' });
     }
 
     var dest = (data.destination || '').toLowerCase();
     if (dest.includes('asia') || dest.includes('south-asia')) {
-        tips.push({ icon:'🕌', text:'Many temples require covered shoulders and knees - keep a lightweight scarf handy at all times.' });
+        tips.push({ icon:'', text:'Many temples require covered shoulders and knees - keep a lightweight scarf handy at all times.' });
     }
     if (dest.includes('europe')) {
-        tips.push({ icon:'🚶', text:'European cities involve a lot of walking on cobblestones - prioritize comfort over style for footwear.' });
+        tips.push({ icon:'', text:'European cities involve a lot of walking on cobblestones - prioritize comfort over style for footwear.' });
     }
 
     var transport = (data.transport || '').toLowerCase();
     if (transport.includes('airplane')) {
-        tips.push({ icon:'✈️', text:'Roll clothes instead of folding - saves 30% bag space and reduces creases for airplane travel.' });
-        tips.push({ icon:'🛡️', text:'Pack a neck pillow, eye mask, and noise-cancelling earphones in your carry-on for the flight.' });
+        tips.push({ icon:'', text:'Roll clothes instead of folding - saves 30% bag space and reduces creases for airplane travel.' });
+        tips.push({ icon:'', text:'Pack a neck pillow, eye mask, and noise-cancelling earphones in your carry-on for the flight.' });
     }
 
     var days = parseInt(data.duration) || 7;
     if (days > 10) {
-        tips.push({ icon:'💧', text:'For trips over 10 days, bring travel-size laundry detergent for sink washing mid-trip.' });
+        tips.push({ icon:'', text:'For trips over 10 days, bring travel-size laundry detergent for sink washing mid-trip.' });
     }
 
-    tips.push({ icon:'📦', text:'Pack heavier items (shoes, tech) at the bottom near the wheels of your bag to balance load.' });
-    tips.push({ icon:'🔐', text:'Always keep travel documents, valuables, and a 24-hour clothing set in your carry-on bag.' });
+    tips.push({ icon:'', text:'Pack heavier items (shoes, tech) at the bottom near the wheels of your bag to balance load.' });
+    tips.push({ icon:'', text:'Always keep travel documents, valuables, and a 24-hour clothing set in your carry-on bag.' });
 
     return tips.slice(0, 6);
 }
 
-// ── Priority assignment ──
+//  Priority assignment 
 function assignPriority(item, section) {
     var mustItems = ['Passport','Visa','Insurance','Medications','Phone','Charger','Underwear','Toothbrush','Deodorant','Sunscreen'];
     var isMust = mustItems.some(function(k) { return item.indexOf(k) !== -1 });
@@ -1484,7 +1484,7 @@ function assignPriority(item, section) {
     return isOpt ? 'opt' : 'rec';
 }
 
-// ── Main generate function ──
+//  Main generate function 
 function generatePackingList(data) {
     var pref = (data.packingPreference || 'balanced').toLowerCase();
     if (pref !== 'minimal' && pref !== 'full') pref = 'balanced';
@@ -1525,7 +1525,7 @@ function generatePackingList(data) {
     return sections;
 }
 
-// ── Render UI ──
+//  Render UI 
 var totalItems = 0;
 var checkedItems = 0;
 
@@ -1571,7 +1571,7 @@ function renderSections(sections) {
                         '<div class="pack-section-count">' + sectionTotal + ' items</div>' +
                     '</div>' +
                 '</div>' +
-                '<div class="pack-section-chevron">▼</div>' +
+                '<div class="pack-section-chevron"></div>' +
             '</div>' +
             '<div class="pack-section-progress"><div class="pack-section-progress-fill" style="width:0%"></div></div>' +
             '<div class="pack-section-body">' + subsHTML + '</div>';
@@ -1598,7 +1598,7 @@ function toggleSection(header) {
 function toggleItem(itemEl) {
     itemEl.classList.toggle('checked');
     if (itemEl.classList.contains('checked')) {
-        itemEl.querySelector('.pack-item-check').textContent = '✓';
+        itemEl.querySelector('.pack-item-check').textContent = '';
         checkedItems++;
     } else {
         itemEl.querySelector('.pack-item-check').textContent = '';
@@ -1646,7 +1646,7 @@ function renderSummary(data) {
     }).join('');
 
     document.getElementById('summary-headline').textContent =
-        (data.destination || 'Your Trip') + ' · ' + (data.duration || '') + ' · ' + (data.tripType || '');
+        (data.destination || 'Your Trip') + '  ' + (data.duration || '') + '  ' + (data.tripType || '');
 }
 
 function renderWeather(data) {
@@ -1675,7 +1675,7 @@ function renderAITips(data) {
         }).join('');
 }
 
-// ── Loading animation ──
+//  Loading animation 
 function runLoadingAnimation(callback) {
     var steps = ['ls1','ls2','ls3','ls4'];
     var i = 0;
@@ -1698,7 +1698,7 @@ function runLoadingAnimation(callback) {
     next();
 }
 
-// ── Main init ──
+//  Main init 
 function initPackingPage() {
     var raw = sessionStorage.getItem('nexvoy_trip_data');
     var data = raw ? JSON.parse(raw) : {
@@ -1737,7 +1737,7 @@ function regeneratePacking() {
     document.getElementById('packing-content').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── Scroll reveal ──
+//  Scroll reveal 
 (function() {
     var observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(e) {

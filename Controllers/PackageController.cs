@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace TourwebsiteFYP.Controllers
     {
         private Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // ── 1. MAIN PACKAGES PAGE ──
+        //  1. MAIN PACKAGES PAGE 
         public ActionResult Index()
         {
             var packages = _context.Packages
@@ -23,7 +23,7 @@ namespace TourwebsiteFYP.Controllers
             return View(packages);
         }
 
-        // ── 2. HOMEPAGE FEATURED PACKAGES ──
+        //  2. HOMEPAGE FEATURED PACKAGES 
         public ActionResult Homepagepackage()
         {
             var packages = _context.Packages
@@ -35,7 +35,7 @@ namespace TourwebsiteFYP.Controllers
             return View(packages);
         }
 
-        // ── 3. PACKAGE DETAILS PAGE ──
+        //  3. PACKAGE DETAILS PAGE 
         public ActionResult Details(int id)
         {
             try
@@ -86,7 +86,7 @@ namespace TourwebsiteFYP.Controllers
             }
         }
 
-        // ── 4. PROCESS BOOKING ──
+        //  4. PROCESS BOOKING 
         // Bound to explicit fields matching the real [Booking] table:
         // BookingId, UserId, BookingDate, Status, TotalAmount, PackageId, Email,
         // DestinationId, SpecialRequest, CreatedDate.

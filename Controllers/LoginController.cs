@@ -46,6 +46,19 @@ namespace TourwebsiteFYP.Controllers
             Session["UserName"]   = user.FullName;
             Session["UserTypeId"] = user.UserTypeId;
 
+            // For vendors: also persist their VendorId so every controller
+            // can filter products without a fragile name-match lookup.
+            if (user.UserTypeId == 3)
+            {
+                var vendor = _context.Vendors
+                                 .FirstOrDefault(v => v.VendorName.Contains(user.FullName));
+                Session["VendorId"] = vendor?.VendorId; // null if no vendor record yet
+            }
+            else
+            {
+                Session["VendorId"] = null;
+            }
+
             if (RememberMe)
             {
                 Response.Cookies.Add(new System.Web.HttpCookie("RememberedEmail", user.Email)
