@@ -294,6 +294,7 @@
     <Compile Include="Areas\AdminArea\Controllers\ManageUserTypeController.cs" />
     <Compile Include="Areas\AdminArea\Controllers\ManagePageContentController.cs" />
     <Compile Include="Areas\AdminArea\Controllers\UserDashboardController.cs" />
+    <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\DestinationController.cs" />
@@ -392,7 +393,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CartItemHelper.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
+    <Compile Include="Helpers\SessionHelper.cs" />
+    <Compile Include="Helpers\UploadHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1207,6 +1211,9 @@
     <Content Include="Views\Home\Services.cshtml" />
     <Content Include="Views\Home\SearchResults.cshtml" />
     <Content Include="Views\Product\HomepageProducts.cshtml" />
+    <Content Include="Views\Cart\Checkout.cshtml" />
+    <Content Include="Views\Cart\Index.cshtml" />
+    <Content Include="Views\Cart\ThankYou.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

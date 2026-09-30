@@ -57,10 +57,7 @@
         <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Package" />
         <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Product" />
         <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_User" />
-        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Package" />
-        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Product" />
-        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_User" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>
