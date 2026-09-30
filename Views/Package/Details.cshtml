@@ -52,10 +52,6 @@
     var destinationName = Model.Destination != null ? Model.Destination.Name : "Unknown Destination";
     var nights = Model.DurationDays > 1 ? Model.DurationDays - 1 : 0;
 
-    var user = ViewBag.User as TourwebsiteFYP.DB_data_models.User;
-
-    var heroImgUrl = resolvedImageUrls.First();
-
     // Build a "What's Included" list dynamically from real data
     var accommodations = itinerary
         .Where(i => !string.IsNullOrWhiteSpace(i.Accommodation))
@@ -101,90 +97,6 @@
 
 @section HeadStyles {
     <style>
-        /*  DETAIL HERO  */
-        .pkg-detail-hero-wrapper {
-            position: relative;
-            width: 100%;
-            min-height: 50vh;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-top: 100px;
-            padding-bottom: 60px;
-        }
-
-            .pkg-detail-hero-wrapper::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.65) 100%);
-                pointer-events: none;
-            }
-
-        .pkg-detail-hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: #fff;
-            max-width: 750px;
-            padding: 0 1rem;
-        }
-
-        .pkg-detail-hero-breadcrumb {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.75);
-            margin-bottom: 1.2rem;
-        }
-
-            .pkg-detail-hero-breadcrumb a {
-                color: rgba(255, 255, 255, 0.75);
-            }
-
-                .pkg-detail-hero-breadcrumb a:hover {
-                    color: #fff;
-                }
-
-            .pkg-detail-hero-breadcrumb i {
-                font-size: 0.6rem;
-                margin: 0 0.5rem;
-                vertical-align: middle;
-            }
-
-        .pkg-detail-hero-badges {
-            display: flex;
-            justify-content: center;
-            gap: 0.6rem;
-            margin-bottom: 1rem;
-        }
-
-        .pkg-detail-hero-content h1 {
-            font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            margin-bottom: 0.8rem;
-        }
-
-        .pkg-detail-hero-content .pkg-hero-location {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        @@media (max-width: 768px) {
-            .pkg-detail-hero-wrapper {
-                min-height: 40vh;
-                padding-top: 90px;
-            }
-        }
-
         /*  GALLERY  */
         .pkg-gallery {
             display: grid;
@@ -248,37 +160,6 @@
             .pkg-gallery-viewall-btn span {
                 font-size: 0.85rem;
                 font-weight: 600;
-            }
-
-        /*  BADGES  */
-        .pkg-badge {
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.3rem 0.9rem;
-            border-radius: 50px;
-            border: 1px solid var(--border);
-            color: #4b5563;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-            .pkg-badge.dark {
-                background: #111;
-                color: #fff;
-                border-color: #111;
-            }
-
-        .pkg-detail-hero-badges .pkg-badge {
-            border-color: rgba(255,255,255,0.4);
-            color: #fff;
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(6px);
-        }
-
-            .pkg-detail-hero-badges .pkg-badge.dark {
-                background: #fff;
-                color: #111;
-                border-color: #fff;
             }
 
         /*  DESCRIPTION  */
@@ -551,6 +432,7 @@
             }
 
         .pkg-book-now-btn {
+            display: block;
             width: 100%;
             padding: 0.9rem;
             border-radius: 50px;
@@ -559,6 +441,8 @@
             color: #fff;
             font-weight: 600;
             font-size: 0.9rem;
+            text-align: center;
+            text-decoration: none;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -567,87 +451,9 @@
                 background: #333;
             }
 
-        /*  BOOKING MODAL  */
-        .booking-modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-            .booking-modal-overlay.active {
-                display: flex;
+            .pkg-book-now-btn i {
+                margin-left: 6px;
             }
-
-        .booking-modal {
-            background: #fff;
-            border-radius: 18px;
-            padding: 2rem;
-            max-width: 440px;
-            width: 100%;
-            position: relative;
-        }
-
-            .booking-modal h3 {
-                font-size: 1.3rem;
-                font-weight: 700;
-                margin-bottom: 1.2rem;
-            }
-
-        .booking-modal-close {
-            position: absolute;
-            top: 1.2rem;
-            right: 1.2rem;
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            cursor: pointer;
-            color: #6b7280;
-        }
-
-        .booking-field {
-            margin-bottom: 1rem;
-        }
-
-            .booking-field label {
-                display: block;
-                font-size: 0.78rem;
-                font-weight: 600;
-                margin-bottom: 0.35rem;
-                color: #374151;
-            }
-
-            .booking-field input,
-            .booking-field textarea {
-                width: 100%;
-                padding: 0.7rem 0.9rem;
-                border-radius: 10px;
-                border: 1px solid var(--border);
-                font-family: var(--font-main);
-                font-size: 0.9rem;
-                outline: none;
-            }
-
-                .booking-field input:focus,
-                .booking-field textarea:focus {
-                    border-color: #111;
-                }
-
-        .booking-submit-btn {
-            width: 100%;
-            padding: 0.9rem;
-            border-radius: 50px;
-            border: none;
-            background: #111;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
 
         /*  LIGHTBOX  */
         .lightbox-overlay {
@@ -892,26 +698,28 @@
     </style>
 }
 
-<!-- HERO SECTION -->
-<section class="pkg-detail-hero-wrapper" style="background-image: url('@heroImgUrl');">
-    <div class="pkg-detail-hero-content">
-        <div class="pkg-detail-hero-breadcrumb">
+<!-- HERO SECTION (same background image as the home landing hero) -->
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-breadcrumb">
             <a href="@Url.Action("Index", "Home")">Home</a>
             <i class="fas fa-chevron-right"></i>
             <a href="@Url.Action("Index", "Package")">Packages</a>
             <i class="fas fa-chevron-right"></i>
             <span>@Model.PackageName</span>
         </div>
-        <div class="pkg-detail-hero-badges">
-            <span class="pkg-badge dark">@packageTypeName</span>
-            @if (isPopular)
-            {
-                <span class="pkg-badge">&#9733; Popular</span>
-            }
+
+        <div class="hero-eyebrow">
+            <i class="fas fa-@(isPopular ? "star" : "tag")"></i>
+            @packageTypeName@(isPopular ? " - Top Seller" : "")
         </div>
+
         <h1>@Model.PackageName</h1>
-        <div class="pkg-hero-location">
-            <i class="fas fa-map-pin"></i> @destinationName
+
+        <div class="hero-meta">
+            <span><i class="fas fa-map-pin"></i>@destinationName</span>
+            <span><i class="fas fa-calendar-alt"></i>@Model.DurationDays Days</span>
+            <span><i class="fas fa-users"></i>Up to @Model.People Guest(s)</span>
         </div>
     </div>
 </section>
@@ -1126,44 +934,14 @@
                 </div>
             </div>
 
-            <button type="button" class="pkg-book-now-btn" onclick="openBookingModal()">Book Now</button>
+            @* Booking now goes through the checkout page so travellers can
+               review the total and pick a payment method. *@
+            <a class="pkg-book-now-btn"
+               href="@Url.Action("Checkout", "Booking", new { packageId = Model.PackageId })">
+                Book Now <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
 
-    </div>
-</div>
-
-<!-- BOOKING MODAL -->
-<div class="booking-modal-overlay" id="bookingModalOverlay">
-    <div class="booking-modal">
-        <button type="button" class="booking-modal-close" onclick="closeBookingModal()">
-            <i class="fas fa-times"></i>
-        </button>
-        <h3>Book "@Model.PackageName"</h3>
-
-        @using (Html.BeginForm("CreateBooking", "Package", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="PackageId" value="@Model.PackageId" />
-
-            <div class="booking-field">
-                <label>Travel Date</label>
-                <input type="date" name="BookingDate" required min="@DateTime.Today.ToString("yyyy-MM-dd")" />
-            </div>
-            <div class="booking-field">
-                <label>Number of Travelers</label>
-                <input type="number" name="NumberOfTravelers" min="1" max="@Model.People" value="1" required />
-            </div>
-            <div class="booking-field">
-                <label>Contact Email</label>
-                <input type="email" name="Email" required value="@(user != null ? user.Email : "")" />
-            </div>
-            <div class="booking-field">
-                <label>Special Request (optional)</label>
-                <textarea name="SpecialRequest" rows="3"></textarea>
-            </div>
-
-            <button type="submit" class="booking-submit-btn">Confirm Booking - $@Model.Price.ToString("N0")/person</button>
-        }
     </div>
 </div>
 
@@ -1247,18 +1025,7 @@
             document.body.style.overflow = '';
         }
 
-        function openBookingModal() {
-            document.getElementById('bookingModalOverlay').classList.add('active');
-        }
-
-        function closeBookingModal() {
-            document.getElementById('bookingModalOverlay').classList.remove('active');
-        }
-
         // Close modals when clicking outside their content
-        document.getElementById('bookingModalOverlay').addEventListener('click', function (e) {
-            if (e.target === this) closeBookingModal();
-        });
         document.getElementById('viewAllModalOverlay').addEventListener('click', function (e) {
             if (e.target === this) closeViewAllModal();
         });

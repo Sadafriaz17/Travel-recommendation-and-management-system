@@ -1,0 +1,555 @@
+@* CHECKOUT (PACKAGE BOOKING) - Views/Booking/Checkout.cshtml *@
+@model TourwebsiteFYP.DB_data_models.Package
+
+@{
+    ViewBag.Title = "Checkout";
+    ViewBag.ActivePage = "Packages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var user = ViewBag.User as TourwebsiteFYP.DB_data_models.User;
+
+    // Payment methods come live from the PaymentType table.
+    var paymentTypes = ViewBag.PaymentTypes as IEnumerable<TourwebsiteFYP.DB_data_models.PaymentType>
+                       ?? new List<TourwebsiteFYP.DB_data_models.PaymentType>();
+    var firstPaymentTypeId = paymentTypes.Any() ? paymentTypes.First().PaymentTypeId : 0;
+
+    var checkoutError = ViewBag.CheckoutError as string;
+
+    // Same image resolution used by the package pages.
+    Func<string, string> ResolveImg = (url) =>
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            return Url.Content("~/images/no-image.jpg");
+
+        url = url.Replace('\\', '/');
+
+        if (url.StartsWith("http://") || url.StartsWith("https://") || url.StartsWith("//"))
+            return url;
+
+        string path = url.StartsWith("~/") ? url : (url.StartsWith("/") ? "~" + url : "~/" + url);
+        return Url.Content(path).Replace(" ", "%20");
+    };
+
+    var firstImage = Model.PackageImages != null
+        ? Model.PackageImages.FirstOrDefault(i => !string.IsNullOrWhiteSpace(i.ImageUrl))
+        : null;
+    var packageImg = ResolveImg(firstImage != null ? firstImage.ImageUrl : null);
+
+    var destinationName = Model.Destination != null ? Model.Destination.Name : "Unknown destination";
+    var packageTypeName = Model.PackageType != null ? Model.PackageType.TypeName : "Tour";
+    var maxTravelers = 20;
+    var defaultDate = DateTime.Today.AddDays(7).ToString("yyyy-MM-dd");
+
+    // Invariant culture so the JS total is never broken by a comma decimal separator.
+    var priceJs = Model.Price.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}
+
+@section HeadStyles {
+    <style>
+        .checkout-page {
+            padding: 4rem 0 6rem;
+        }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        /* FORM */
+        .checkout-form-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 2rem;
+        }
+
+        .form-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #6b7280;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #1a1a1a;
+            font-family: var(--font-main);
+            transition: border-color 0.15s, box-shadow 0.15s;
+            outline: none;
+            background: #fafafa;
+            width: 100%;
+        }
+
+            .form-control:focus {
+                border-color: #1a1a1a;
+                box-shadow: 0 0 0 3px rgba(26,26,26,0.08);
+                background: #fff;
+            }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            font-size: 0.72rem;
+            color: #9ca3af;
+        }
+
+        .section-gap {
+            margin-top: 1.75rem;
+        }
+
+        /* ORDER SUMMARY */
+        .checkout-summary-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 1.75rem;
+            position: sticky;
+            top: 100px;
+        }
+
+        .checkout-summary-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .order-item-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .order-item-img {
+            width: 64px;
+            height: 58px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            flex-shrink: 0;
+        }
+
+        .order-item-info {
+            flex: 1;
+        }
+
+        .order-item-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.3;
+        }
+
+        .order-item-qty {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .order-item-price {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .order-summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            color: #6b7280;
+            margin-bottom: 0.6rem;
+        }
+
+        .order-summary-divider {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 1rem 0;
+        }
+
+        .order-summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1a1a1a;
+        }
+
+        .btn-place-order {
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 50px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-main);
+            transition: background 0.2s, transform 0.2s;
+        }
+
+            .btn-place-order:hover {
+                background: #333;
+                transform: translateY(-1px);
+            }
+
+        .secure-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 0.75rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .back-to-package {
+            display: block;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+            .back-to-package:hover {
+                color: #1a1a1a;
+            }
+
+        /* PAYMENT METHOD */
+        .checkout-alert {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+
+        .pay-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .pay-method {
+            position: relative;
+            margin: 0;
+            cursor: pointer;
+        }
+
+            .pay-method input {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+        .pay-method-body {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.85rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fafafa;
+            transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+        }
+
+        .pay-method:hover .pay-method-body {
+            border-color: #d1d5db;
+            background: #fff;
+        }
+
+        .pay-method input:checked + .pay-method-body {
+            border-color: #1a1a1a;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(26,26,26,0.08);
+        }
+
+        .pay-method-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 1.05rem;
+            color: #1a1a1a;
+        }
+
+        .pay-method-name {
+            flex: 1;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .pay-method-check {
+            color: #16a34a;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .pay-method input:checked + .pay-method-body .pay-method-check {
+            opacity: 1;
+        }
+
+        .pay-empty {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        @@media (max-width: 900px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-summary-card {
+                position: static;
+                order: -1;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-lock"></i> Secure Checkout</div>
+        <h1>Checkout</h1>
+        <p>@packageTypeName trip to @destinationName — confirm your details to book this package.</p>
+    </div>
+</section>
+
+<div class="container checkout-page">
+    <div class="checkout-layout">
+
+        <!-- TRAVELLER DETAILS FORM -->
+        <div>
+            @using (Html.BeginForm("PlaceOrder", "Booking", FormMethod.Post, new { id = "packageCheckoutForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="packageId" value="@Model.PackageId" />
+
+                <div class="checkout-form-card">
+                    @if (!string.IsNullOrEmpty(checkoutError))
+                    {
+                        <div class="checkout-alert">
+                            <i class="fas fa-circle-exclamation"></i> @checkoutError
+                        </div>
+                    }
+
+                    <div class="form-section-title">Trip Details</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="travelDate">Travel Date</label>
+                            <input type="date" id="travelDate" name="travelDate" class="form-control"
+                                   value="@defaultDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="travelers">Number of Travellers</label>
+                            <input type="number" id="travelers" name="travelers" class="form-control"
+                                   value="1" min="1" max="@maxTravelers" required />
+                            <span class="form-hint">Up to @maxTravelers travellers per booking. Price is per person.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-gap">
+                        <div class="form-section-title">Contact Details</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" class="form-control"
+                                       value="@(user != null ? user.FullName : "")"
+                                       placeholder="Your full name" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email Address</label>
+                                <input type="email" id="email" name="email" class="form-control"
+                                       value="@(user != null ? user.Email : "")"
+                                       placeholder="you@email.com" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" class="form-control"
+                                       value="@(user != null ? user.Phone : "")"
+                                       placeholder="+92 300 0000000" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="specialRequest">Special Requests (optional)</label>
+                            <textarea id="specialRequest" name="specialRequest" class="form-control"
+                                      placeholder="Dietary needs, room preferences, pickup details..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAYMENT METHOD -->
+                <div class="checkout-form-card" style="margin-top: 1.5rem;">
+                    <div class="form-section-title">Payment Method</div>
+
+                    @if (paymentTypes.Any())
+                    {
+                        <div class="pay-methods">
+                            @foreach (var pt in paymentTypes)
+                            {
+                                // Pick a sensible icon per method; unknown names fall
+                                // back to a generic wallet.
+                                var icon = "fas fa-wallet";
+                                var methodName = (pt.PaymentTypeName ?? "").ToLower();
+
+                                if (methodName.Contains("paypal"))
+                                {
+                                    icon = "fab fa-paypal";
+                                }
+                                else if (methodName.Contains("jazz") || methodName.Contains("easypaisa") ||
+                                         methodName.Contains("mobile") || methodName.Contains("wallet"))
+                                {
+                                    icon = "fas fa-mobile-screen-button";
+                                }
+                                else if (methodName.Contains("card"))
+                                {
+                                    icon = "far fa-credit-card";
+                                }
+                                else if (methodName.Contains("cash"))
+                                {
+                                    icon = "fas fa-money-bill-wave";
+                                }
+
+                                <label class="pay-method">
+                                    <input type="radio" name="paymentTypeId" value="@pt.PaymentTypeId"
+                                           checked="@(pt.PaymentTypeId == firstPaymentTypeId)" required />
+                                    <span class="pay-method-body">
+                                        <span class="pay-method-icon"><i class="@icon"></i></span>
+                                        <span class="pay-method-name">@pt.PaymentTypeName</span>
+                                        <span class="pay-method-check"><i class="fas fa-circle-check"></i></span>
+                                    </span>
+                                </label>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="pay-empty">No payment methods are configured yet. Please contact support.</p>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="checkout-summary-card">
+            <div class="checkout-summary-title">Booking Summary</div>
+
+            <div class="order-item-row">
+                <img class="order-item-img" src="@packageImg" alt="@Model.PackageName"
+                     onerror="this.onerror=null;this.src='@Url.Content("~/images/no-image.jpg")';" />
+                <div class="order-item-info">
+                    <div class="order-item-name">@Model.PackageName</div>
+                    <div class="order-item-qty">@destinationName &middot; @Model.DurationDays days</div>
+                </div>
+            </div>
+
+            <hr class="order-summary-divider" />
+
+            <div class="order-summary-row">
+                <span>Price per person</span>
+                <span>$@Model.Price.ToString("N2")</span>
+            </div>
+            <div class="order-summary-row">
+                <span>Travellers</span>
+                <span id="summaryTravelers">1</span>
+            </div>
+            <div class="order-summary-row">
+                <span>Trip code</span>
+                <span>PKG-@Model.PackageId</span>
+            </div>
+
+            <hr class="order-summary-divider" />
+
+            <div class="order-summary-total">
+                <span>Total</span>
+                <span id="summaryTotal">$@Model.Price.ToString("N2")</span>
+            </div>
+
+            <button type="submit" form="packageCheckoutForm" class="btn-place-order">
+                <i class="fas fa-check-circle"></i> Confirm Booking
+            </button>
+            <div class="secure-note">
+                <i class="fas fa-lock"></i> Secure &amp; encrypted checkout
+            </div>
+            <a class="back-to-package" href="@Url.Action("Details", "Package", new { id = Model.PackageId })">
+                &larr; Back to package details
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Live total: price per person x travellers. The same figure is
+        // recalculated on the server before the booking is saved.
+        var pricePerPerson = @priceJs;
+        var maxTravelers = @maxTravelers;
+
+        function recalcTotal() {
+            var input = document.getElementById('travelers');
+            var qty = parseInt(input.value, 10);
+
+            if (isNaN(qty) || qty < 1) qty = 1;
+            if (qty > maxTravelers) {
+                qty = maxTravelers;
+                input.value = qty;
+            }
+
+            var total = pricePerPerson * qty;
+            document.getElementById('summaryTravelers').textContent = qty;
+            document.getElementById('summaryTotal').textContent = '$' + total.toFixed(2);
+        }
+
+        document.getElementById('travelers').addEventListener('input', recalcTotal);
+        document.getElementById('travelers').addEventListener('change', recalcTotal);
+        document.getElementById('packageCheckoutForm').addEventListener('submit', recalcTotal);
+    </script>
+}

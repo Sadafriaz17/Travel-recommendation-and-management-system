@@ -9,72 +9,6 @@
 
 @section HeadStyles {
     <style>
-        /*  CONTACT HERO  */
-        .con-hero {
-            position: relative;
-            margin-top: 0;
-            padding: 160px 0 80px;
-            background: linear-gradient(rgba(20,20,20,0.55), rgba(20,20,20,0.65)), url('/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            color: #fff;
-            text-align: center;
-        }
-
-        .con-hero-badge {
-            display: inline-block;
-            padding: 0.4rem 1.1rem;
-            border-radius: 50px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            margin-bottom: 1.25rem;
-        }
-
-        .con-hero h1 {
-            font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            margin-bottom: 1rem;
-        }
-
-        .con-hero p {
-            max-width: 560px;
-            margin: 0 auto;
-            color: rgba(255,255,255,0.8);
-            font-size: 1.05rem;
-        }
-
-        .con-hero-actions {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-
-        .con-btn-outline {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.35);
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-            .con-btn-outline:hover {
-                background: #fff;
-                color: #1a1a1a;
-            }
-
         /*  MAIN LAYOUT  */
         .con-layout {
             display: grid;
@@ -532,16 +466,17 @@
 }
 
 <!-- HERO -->
-<section class="con-hero">
-    <div class="container">
-       
+<!-- HERO -->
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-headset"></i> Get In Touch</div>
         <h1>We'd Love to Hear From You</h1>
         <p>Questions, partnerships, or just curious about intelligent travel planning? Our team is ready to help you plan something extraordinary.</p>
-        <div class="con-hero-actions">
-            <a href="#conMain" class="btn-primary" onclick="document.getElementById('conMain').scrollIntoView({behavior:'smooth'});return false;">
+        <div class="hero-actions">
+            <a href="#conMain" class="hero-btn hero-btn-primary" onclick="document.getElementById('conMain').scrollIntoView({behavior:'smooth'});return false;">
                 Send a Message
             </a>
-            <a href="mailto:hello@pearlnex.com" class="con-btn-outline">
+            <a href="mailto:hello@pearlnex.com" class="hero-btn hero-btn-ghost">
                 <i class="fas fa-envelope"></i> Email Us
             </a>
         </div>

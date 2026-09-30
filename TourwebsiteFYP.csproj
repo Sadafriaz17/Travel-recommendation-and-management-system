@@ -316,6 +316,9 @@
     <Compile Include="DB data models\BookingDetail.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="DB data models\Cart.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="DB data models\Destination.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>

@@ -21,38 +21,6 @@
 
 @section HeadStyles {
     <style>
-        .products-hero {
-            background-image: url('/images/background.jpg');
-            min-height: 60vh;
-        }
-
-        .pd-hero-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            background: #fff;
-            padding: 0.7rem 1.4rem;
-            border-radius: 60px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #111;
-        }
-
-            .pd-hero-pill a {
-                color: #6b7280;
-                text-decoration: none;
-            }
-
-                .pd-hero-pill a:hover {
-                    color: #111;
-                }
-
-            .pd-hero-pill i {
-                font-size: 0.6rem;
-                color: #9ca3af;
-            }
-
         .pd-page {
             padding-top: 3rem;
             padding-bottom: 5rem;
@@ -239,6 +207,38 @@
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
 
+        .pd-add-cart-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            border: none;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            font-family: var(--font-main);
+        }
+
+            .pd-add-cart-btn:hover {
+                background: #333;
+                transform: translateY(-2px);
+            }
+
+            .pd-add-cart-btn.success {
+                background: #16a34a;
+            }
+
+        .pd-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         @@media (max-width: 768px) {
             .pd-page {
                 padding-top: 2rem;
@@ -256,19 +256,18 @@
     </style>
 }
 
-<section class="hero-wrapper products-hero">
+<section class="hero-wrapper hero-inner">
     <div class="hero-content">
-        <h1>Gear Up for<br />Your Adventure</h1>
-        <p>Premium travel accessories, gear, and essentials curated for the modern explorer.</p>
-
-        <div class="pd-hero-pill">
-            <a href="/Product/Index">Products</a>
+        <div class="hero-breadcrumb">
+            <a href="@Url.Action("Index", "Product")">Products</a>
             @if (Model.ProductType != null)
             {
                 <i class="fas fa-chevron-right"></i>
                 <span>@Model.ProductType.TypeName</span>
             }
         </div>
+        <h1>Gear Up for<br />Your Adventure</h1>
+        <p>Premium travel accessories, gear, and essentials curated for the modern explorer.</p>
     </div>
 </section>
 
@@ -367,7 +366,10 @@
                 </div>
             }
 
-            <div>
+            <div class="pd-actions">
+                <button id="addToCartBtn" class="pd-add-cart-btn" onclick="addProductToCart(@Model.ProductId)">
+                    <i class="fas fa-cart-plus"></i> Add to Cart
+                </button>
                 <a href="/Product/Index" class="pd-back-btn">
                     <i class="fas fa-arrow-left"></i>
                     Back to Products
@@ -385,5 +387,33 @@
             document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
             thumb.classList.add('active');
         }
+
+        function addProductToCart(productId) {
+            var btn = document.getElementById('addToCartBtn');
+            btn.disabled = true;
+            btn.classList.add('success');
+            btn.innerHTML = '<i class="fas fa-check"></i> Added to Cart!';
+
+            fetch('/Cart/AddToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'productId=' + productId + '&quantity=1'
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success && data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
+                if (data.success) {
+                    window.location.href = '/Cart/Index';
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.classList.remove('success');
+                btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+            });
+        }
     </script>
-}
+}

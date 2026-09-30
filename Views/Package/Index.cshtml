@@ -38,75 +38,6 @@
 
 @section HeadStyles {
     <style>
-        /*  PACKAGES HERO  */
-        .packages-hero-wrapper {
-            position: relative;
-            width: 100%;
-            min-height: 55vh;
-            background-image: url('/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-top: 100px;
-            padding-bottom: 70px;
-        }
-
-            .packages-hero-wrapper::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.6) 100%);
-                pointer-events: none;
-            }
-
-        .packages-hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: #fff;
-            max-width: 700px;
-            padding: 0 1rem;
-        }
-
-        .pkg-breadcrumb {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 1.2rem;
-        }
-
-            .pkg-breadcrumb a {
-                color: rgba(255, 255, 255, 0.7);
-            }
-
-                .pkg-breadcrumb a:hover {
-                    color: #fff;
-                }
-
-            .pkg-breadcrumb i {
-                font-size: 0.6rem;
-                margin: 0 0.5rem;
-                vertical-align: middle;
-            }
-
-        .packages-hero-content h1 {
-            font-size: clamp(2.8rem, 5vw, 4rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            margin-bottom: 1rem;
-        }
-
-        .packages-hero-content p {
-            font-size: 1.05rem;
-            color: rgba(255, 255, 255, 0.85);
-            max-width: 550px;
-            margin: 0 auto;
-        }
-
         /*  FILTERS  */
         .pkg-filters-wrapper {
             position: relative;
@@ -395,9 +326,9 @@
 }
 
 <!-- HERO SECTION -->
-<section class="packages-hero-wrapper">
-    <div class="packages-hero-content">
-        <div class="pkg-breadcrumb">
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-breadcrumb">
             <a href="@Url.Action("Index", "Home")">Home</a>
             <i class="fas fa-chevron-right"></i>
             <span>Packages</span>
@@ -504,7 +435,7 @@
                                     <span class="pkg-price-amount">$@p.Price.ToString("N0")</span>
                                     <span class="pkg-price-label">per person</span>
                                 </div>
-                                <span class="pkg-book-btn" onclick="event.stopPropagation(); window.location.href='@Url.Action("Index", "Booking")'">
+                                <span class="pkg-book-btn" onclick="event.stopPropagation(); window.location.href='@Url.Action("Checkout", "Booking", new { packageId = p.PackageId })'">
                                     Book Now <i class="fas fa-arrow-right"></i>
                                 </span>
                             </div>

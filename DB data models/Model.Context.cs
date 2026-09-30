@@ -46,5 +46,6 @@ namespace TourwebsiteFYP.DB_data_models
         public virtual DbSet<Hotel> Hotels { get; set; }
         public virtual DbSet<PackageItinerary> PackageItineraries { get; set; }
         public virtual DbSet<Vendor> Vendors { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
     }
 }

@@ -27,11 +27,6 @@
 
 @section HeadStyles {
     <style>
-        .products-hero {
-            background-image: url('/images/background.jpg');
-            min-height: 60vh;
-        }
-
         /* FILTER BAR */
         .prod-filter-glass {
             display: flex;
@@ -42,6 +37,7 @@
             border-radius: 60px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             max-width: 100%;
+            margin-top: 2.5rem;
         }
 
         .prod-filter-scroll {
@@ -283,6 +279,34 @@
                 border-color: #1a1a1a;
             }
 
+        .prod-cart-btn {
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: none;
+            background: #1a1a1a;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .prod-cart-btn:hover {
+                background: #333;
+                transform: translateY(-1px);
+            }
+
+            .prod-cart-btn.adding {
+                background: #16a34a;
+            }
+
+        .prod-card-footer {
+            gap: 8px;
+        }
+
         .prod-empty {
             text-align: center;
             padding: 4rem;
@@ -316,8 +340,9 @@
     </style>
 }
 
-<section class="hero-wrapper products-hero">
+<section class="hero-wrapper hero-inner">
     <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-shopping-bag"></i> Travel Store</div>
         <h1>Gear Up for<br />Your Adventure</h1>
         <p>Premium travel accessories, gear, and essentials curated for the modern explorer.</p>
 
@@ -411,7 +436,12 @@
                         <p class="prod-card-desc">${esc(p.desc)}</p>
                         <div class="prod-card-footer">
                             <span class="prod-price-val">$${p.price}</span>
-                            <a class="prod-details-btn" href="/Product/Details/${p.id}" onclick="event.stopPropagation()">View &rarr;</a>
+                            <div style="display:flex;gap:6px;">
+                                <a class="prod-details-btn" href="/Product/Details/${p.id}" onclick="event.stopPropagation()">View</a>
+                                <button class="prod-cart-btn" onclick="event.stopPropagation(); addToCart(this, ${p.id})">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -442,6 +472,32 @@
 
         function esc(s) {
             return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+        }
+
+        function addToCart(btn, productId) {
+            btn.disabled = true;
+            btn.classList.add('adding');
+            btn.innerHTML = '<i class="fas fa-check"></i> Added';
+            fetch('/Cart/AddToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'productId=' + productId + '&quantity=1'
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success && data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
+                if (data.success) {
+                    window.location.href = '/Cart/Index';
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.classList.remove('adding');
+                btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+            });
         }
 
         renderFiltered();

@@ -20,6 +20,7 @@ namespace TourwebsiteFYP.DB_data_models
             this.BookingDetails = new HashSet<BookingDetail>();
             this.Galleries = new HashSet<Gallery>();
             this.Reviews = new HashSet<Review>();
+            this.Carts = new HashSet<Cart>();
         }
     
         public int ProductId { get; set; }
@@ -45,5 +46,7 @@ namespace TourwebsiteFYP.DB_data_models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual Vendor Vendor { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Cart> Carts { get; set; }
     }
 }

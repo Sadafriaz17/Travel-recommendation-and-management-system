@@ -25,6 +25,7 @@ namespace TourwebsiteFYP.DB_data_models
             this.Flights = new HashSet<Flight>();
             this.Hotels = new HashSet<Hotel>();
             this.PackageItineraries = new HashSet<PackageItinerary>();
+            this.Carts = new HashSet<Cart>();
         }
     
         public int PackageId { get; set; }
@@ -57,5 +58,7 @@ namespace TourwebsiteFYP.DB_data_models
         public virtual ICollection<Hotel> Hotels { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PackageItinerary> PackageItineraries { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Cart> Carts { get; set; }
     }
 }

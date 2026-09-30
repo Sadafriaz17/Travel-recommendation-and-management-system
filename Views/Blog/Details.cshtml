@@ -12,66 +12,6 @@
 
 @section HeadStyles {
     <style>
-        /*  Hero (same proportions as layout hero-wrapper)  */
-        .blog-detail-hero {
-            position: relative;
-            width: 100%;
-            min-height: 85vh;
-            background-image: url('@img');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-top: 100px;
-            padding-bottom: 80px;
-        }
-
-        .blog-detail-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.72) 100%);
-            pointer-events: none;
-        }
-
-        .blog-detail-hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: #fff;
-            max-width: 860px;
-            padding: 0 1.5rem;
-        }
-
-        .blog-detail-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            backdrop-filter: blur(6px);
-            color: #fff;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            margin-bottom: 1.5rem;
-        }
-
-        .blog-detail-hero h1 {
-            font-size: clamp(2rem, 4.5vw, 3.5rem);
-            font-weight: 800;
-            line-height: 1.15;
-            letter-spacing: -0.02em;
-            margin-bottom: 2rem;
-            text-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        }
-
         .blog-detail-meta {
             display: inline-flex;
             align-items: center;
@@ -293,11 +233,9 @@
 }
 
 <!--  HERO  -->
-<section class="blog-detail-hero">
-    <div class="blog-detail-hero-content">
-        <div class="blog-detail-tag">
-            <i class="fas fa-feather-alt"></i> Travel Story
-        </div>
+<section class="hero-wrapper hero-inner" style="background-image: url('@img');">
+    <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-feather-alt"></i> Travel Story</div>
         <h1>@Model.Title</h1>
         <div class="blog-detail-meta">
             <div class="meta-avatar">@initial</div>

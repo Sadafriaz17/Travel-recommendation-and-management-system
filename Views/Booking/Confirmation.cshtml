@@ -1,0 +1,247 @@
+@* BOOKING CONFIRMATION - Views/Booking/Confirmation.cshtml *@
+@{
+    ViewBag.Title = "Booking Confirmed";
+    ViewBag.ActivePage = "Packages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var bookingId     = ViewBag.BookingId;
+    var packageName   = ViewBag.PackageName as string ?? "Your package";
+    var travelDate    = ViewBag.TravelDate as string ?? "-";
+    var travelers     = ViewBag.Travelers != null ? ViewBag.Travelers.ToString() : "1";
+    var totalAmount   = ViewBag.TotalAmount != null ? ((decimal)ViewBag.TotalAmount).ToString("N2") : "0.00";
+    var customerName  = ViewBag.CustomerName as string ?? "Valued Customer";
+    var paymentMethod = ViewBag.PaymentMethod as string ?? "Not specified";
+}
+
+@section HeadStyles {
+    <style>
+        .thankyou-page {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1rem;
+        }
+
+        .thankyou-card {
+            background: #fff;
+            border-radius: 24px;
+            border: 1px solid #e5e7eb;
+            padding: 4rem 3rem;
+            max-width: 620px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+        }
+
+        .thankyou-icon-wrap {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.75rem;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @@keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+
+        .thankyou-icon-wrap i {
+            font-size: 2.5rem;
+            color: #fff;
+        }
+
+        .thankyou-heading {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.02em;
+        }
+
+        .thankyou-sub {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .order-ref-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .order-ref-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #9ca3af;
+            margin-bottom: 0.4rem;
+        }
+
+        .order-ref-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            letter-spacing: -0.02em;
+        }
+
+        .order-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .order-meta-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .order-meta-item-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3af;
+            margin-bottom: 0.3rem;
+        }
+
+        .order-meta-item-value {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            word-break: break-word;
+        }
+
+        .thankyou-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-home,
+        .btn-products {
+            padding: 0.85rem 2rem;
+            border-radius: 50px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.15s;
+        }
+
+        .btn-home {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #1a1a1a;
+        }
+
+            .btn-home:hover {
+                background: #333;
+                color: #fff;
+                transform: translateY(-1px);
+            }
+
+        .btn-products {
+            border: 1px solid #e5e7eb;
+            background: transparent;
+            color: #1a1a1a;
+        }
+
+            .btn-products:hover {
+                border-color: #1a1a1a;
+                background: #f8f9fa;
+            }
+
+        .confetti-bar {
+            height: 4px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #16a34a, #22c55e, #4ade80);
+            margin-bottom: 2.5rem;
+        }
+
+        @@media (max-width: 480px) {
+            .thankyou-card {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .order-meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<div class="container thankyou-page">
+    <div class="thankyou-card">
+        <div class="confetti-bar"></div>
+
+        <div class="thankyou-icon-wrap">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <h1 class="thankyou-heading">Booking Confirmed!</h1>
+        <p class="thankyou-sub">
+            Thank you, <strong>@customerName</strong>!<br />
+            Your booking for <strong>@packageName</strong> has been placed successfully.
+            Our team will review it and email you a confirmation shortly.
+        </p>
+
+        <div class="order-ref-box">
+            <div class="order-ref-label">Booking Reference</div>
+            <div class="order-ref-number">#@bookingId</div>
+        </div>
+
+        <div class="order-meta-grid">
+            <div class="order-meta-item">
+                <div class="order-meta-item-label">Package</div>
+                <div class="order-meta-item-value">@packageName</div>
+            </div>
+            <div class="order-meta-item">
+                <div class="order-meta-item-label">Travel Date</div>
+                <div class="order-meta-item-value">@travelDate</div>
+            </div>
+            <div class="order-meta-item">
+                <div class="order-meta-item-label">Travellers</div>
+                <div class="order-meta-item-value">@travelers</div>
+            </div>
+            <div class="order-meta-item">
+                <div class="order-meta-item-label">Total</div>
+                <div class="order-meta-item-value">$@totalAmount</div>
+            </div>
+            <div class="order-meta-item">
+                <div class="order-meta-item-label">Status</div>
+                <div class="order-meta-item-value" style="color:#f59e0b;">
+                    <i class="fas fa-clock"></i> Pending Review
+                </div>
+            </div>
+            <div class="order-meta-item">
+                <div class="order-meta-item-label">Payment</div>
+                <div class="order-meta-item-value">@paymentMethod</div>
+            </div>
+        </div>
+
+        <div class="thankyou-actions">
+            <a href="@Url.Action("Index", "Booking")" class="btn-home">
+                <i class="fas fa-suitcase"></i> My Bookings
+            </a>
+            <a href="@Url.Action("Index", "Package")" class="btn-products">
+                <i class="fas fa-compass"></i> Browse More Packages
+            </a>
+        </div>
+    </div>
+</div>

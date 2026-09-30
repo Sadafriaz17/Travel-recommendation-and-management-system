@@ -34,55 +34,6 @@
 
 @section HeadStyles {
     <style>
-        /*  HERO SECTION  */
-        #dest-hero {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            background-image: url('/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-top: 80px;
-            padding-bottom: 60px;
-        }
-
-            #dest-hero::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
-                pointer-events: none;
-            }
-
-        .dest-hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: #fff;
-            max-width: 800px;
-            padding: 0 1rem;
-            margin-bottom: 3.5rem;
-        }
-
-            .dest-hero-content h1 {
-                font-size: clamp(2.8rem, 4vw, 4rem);
-                font-weight: 700;
-                line-height: 1.15;
-                margin-bottom: 1rem;
-                letter-spacing: -0.02em;
-            }
-
-            .dest-hero-content p {
-                font-size: 1.1rem;
-                color: rgba(255,255,255,0.85);
-                font-weight: 300;
-            }
-
         /*  FILTER BAR  */
         .dest-filter-wrapper {
             position: relative;
@@ -90,6 +41,7 @@
             width: 100%;
             max-width: 900px;
             padding: 0 1rem;
+            margin-top: 2.75rem;
         }
 
         .dest-filter-glass {
@@ -276,9 +228,10 @@
 }
 
 <!-- HERO -->
-<section id="dest-hero">
-    <div class="dest-hero-content">
-        <h1>Explore Our <br />Destinations</h1>
+<section id="dest-hero" class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-globe-americas"></i> Destinations</div>
+        <h1>Explore Our Destinations</h1>
         <p>Discover breathtaking landscapes and unforgettable experiences.</p>
     </div>
 

@@ -1,80 +1,281 @@
 @model IEnumerable<TourwebsiteFYP.DB_data_models.Product>
 @{
     Layout = null;
+
+    // Five solid stars, used for both rating layers.
+    const string Stars = "&#9733;&#9733;&#9733;&#9733;&#9733;";
 }
 
-<div class="pkg-grid">
+<style>
+    /* ── HOMEPAGE PRODUCTS ─────────────────────────────────────────── */
+    .hpr-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+
+    .hpr-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+        .hpr-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 34px rgba(0,0,0,0.1);
+            border-color: #d1d5db;
+        }
+
+    .hpr-media {
+        position: relative;
+        height: 190px;
+        overflow: hidden;
+        background: #f3f4f6;
+        flex-shrink: 0;
+    }
+
+        .hpr-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .hpr-card:hover .hpr-media img {
+            transform: scale(1.06);
+        }
+
+    .hpr-stock {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        z-index: 2;
+        border-radius: 50px;
+        padding: 0.25rem 0.7rem;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .hpr-stock-in  { background: rgba(230, 247, 237, 0.95); color: #1e8a4c; }
+    .hpr-stock-low { background: rgba(255, 244, 224, 0.95); color: #b8720c; }
+    .hpr-stock-out { background: rgba(253, 232, 232, 0.95); color: #c0392b; }
+
+    .hpr-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 1.15rem 1.2rem 1.25rem;
+    }
+
+    .hpr-type {
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #0d9488;
+        margin-bottom: 0.4rem;
+    }
+
+    .hpr-title {
+        font-size: 0.98rem;
+        font-weight: 700;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        color: #111;
+        margin-bottom: 0.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Partial-fill stars */
+    .hpr-rating {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 0.55rem;
+        font-size: 0.72rem;
+    }
+
+    .hpr-stars {
+        position: relative;
+        display: inline-flex;
+        font-size: 0.85rem;
+        line-height: 1;
+    }
+
+    .hpr-stars__bg {
+        color: #d1d5db;
+        letter-spacing: 1px;
+    }
+
+    .hpr-stars__fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        color: #f5a623;
+        letter-spacing: 1px;
+    }
+
+    .hpr-rating-num { font-weight: 700; color: #111; }
+    .hpr-reviews { color: #9ca3af; }
+
+    .hpr-desc {
+        font-size: 0.8rem;
+        line-height: 1.55;
+        color: #6b7280;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex-grow: 1;
+    }
+
+    .hpr-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding-top: 0.9rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .hpr-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #111;
+    }
+
+    .hpr-view {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f3f4f6;
+        color: #111;
+        border-radius: 50px;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .hpr-card:hover .hpr-view {
+        background: #1a1a1a;
+        color: #fff;
+    }
+
+    .hpr-empty {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────────────────── */
+    @@media (max-width: 1024px) {
+        .hpr-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @@media (max-width: 780px) {
+        .hpr-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @@media (max-width: 520px) {
+        .hpr-grid {
+            grid-template-columns: 1fr;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+    }
+</style>
+
+<div class="hpr-grid">
     @if (Model != null && Model.Any())
     {
         foreach (var item in Model)
         {
             var img = !string.IsNullOrEmpty(item.ImageUrl)
                         ? Url.Content(item.ImageUrl)
-                        : "/images/no-image.jpg";
+                        : Url.Content("~/images/background.jpg");
 
-            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="pkg-card">
-                <div class="img-wrap">
-                    <img src="@img" alt="@item.ProductName" loading="lazy" />
+            // Percentage of the gold star layer that should stay visible.
+            int pct = 0;
+            if (item.Rating > 0)
+            {
+                var raw = (double)item.Rating / 5.0 * 100.0;
+                pct = raw > 100 ? 100 : (int)Math.Round(raw);
+            }
+
+            var statusLower = (item.StockStatus ?? "").ToLower();
+            var stockClass = statusLower.Contains("out") ? "hpr-stock-out"
+                           : statusLower.Contains("low") ? "hpr-stock-low"
+                           : "hpr-stock-in";
+
+            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="hpr-card">
+                <div class="hpr-media">
+                    <img src="@img" alt="@item.ProductName" loading="lazy"
+                         onerror="this.src='/images/background.jpg'" />
                     @if (!string.IsNullOrEmpty(item.StockStatus))
                     {
-                        var statusLower = item.StockStatus.ToLower();
-                        var badgeClass  = statusLower.Contains("out") ? "prod-hp-badge-out"
-                                        : statusLower.Contains("low") ? "prod-hp-badge-low"
-                                        : "prod-hp-badge-in";
-                        <span class="prod-hp-badge @badgeClass">@item.StockStatus</span>
+                        <span class="hpr-stock @stockClass">@item.StockStatus</span>
                     }
                 </div>
-                <div class="pkg-body">
-                    @if (item.ProductType != null)
+
+                <div class="hpr-body">
+                    @if (item.ProductType != null && !string.IsNullOrEmpty(item.ProductType.TypeName))
                     {
-                        <span class="prod-hp-type">@item.ProductType.TypeName</span>
+                        <div class="hpr-type">@item.ProductType.TypeName</div>
                     }
-                    <h4>@item.ProductName</h4>
-                    <p>@item.Description</p>
-                    <div class="pkg-footer">$@item.Price.ToString("N2")</div>
+
+                    <div class="hpr-title">@item.ProductName</div>
+
+                    @if (item.Rating > 0)
+                    {
+                        <div class="hpr-rating">
+                            <span class="hpr-stars" aria-label="@item.Rating.ToString("0.0") out of 5 stars">
+                                <span class="hpr-stars__bg">@Html.Raw(Stars)</span>
+                                <span class="hpr-stars__fill" style="width:@(pct)%">@Html.Raw(Stars)</span>
+                            </span>
+                            <span class="hpr-rating-num">@item.Rating.ToString("0.0")</span>
+                            @if (item.ReviewCount > 0)
+                            {
+                                <span class="hpr-reviews">(@item.ReviewCount)</span>
+                            }
+                        </div>
+                    }
+
+                    <div class="hpr-desc">@item.Description</div>
+
+                    <div class="hpr-footer">
+                        <span class="hpr-price">$@item.Price.ToString("N2")</span>
+                        <span class="hpr-view">View <i class="fas fa-arrow-right"></i></span>
+                    </div>
                 </div>
             </a>
         }
     }
     else
     {
-        <div style="grid-column: span 3; text-align: center; padding: 3rem; color: #6b7280;">
-            <p>No products available at the moment.</p>
-        </div>
+        <p class="hpr-empty">No products available at the moment.</p>
     }
 </div>
 
-<style>
-    /* Stock badge overlaid on the product image */
-    .prod-hp-badge {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        padding: 0.25rem 0.7rem;
-        border-radius: 50px;
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
 
-    .prod-hp-badge-in  { background: #e6f7ed; color: #1e8a4c; }
-    .prod-hp-badge-low { background: #fff4e0; color: #b8720c; }
-    .prod-hp-badge-out { background: #fde8e8; color: #c0392b; }
-
-    /* Category label above the product name */
-    .prod-hp-type {
-        display: block;
-        font-size: 0.72rem;
-        font-weight: 600;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.3rem;
-    }
-
-    /* Ensure the image wrapper is positioned so the badge can be absolute */
-    .pkg-card .img-wrap {
-        position: relative;
-    }
-</style>

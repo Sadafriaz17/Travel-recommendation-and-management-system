@@ -1,97 +1,199 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Package>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Package>
 @{
     Layout = null;
 }
 
 <style>
-    .pkg-grid {
+    /* ── HOMEPAGE PACKAGES ─────────────────────────────────────────── */
+    .hpp-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
+        gap: 1.75rem;
     }
 
-    .pkg-card {
-        background: #fff;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-        transition: 0.3s;
-        text-decoration: none;
-        color: inherit;
+    .hpp-card {
         display: flex;
         flex-direction: column;
         height: 100%;
-        border: 1px solid #f3f4f6;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
-        .pkg-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        .hpp-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 34px rgba(0,0,0,0.1);
+            border-color: #d1d5db;
         }
 
-        .pkg-card .img-wrap {
-            position: relative;
-            height: 240px;
-            flex-shrink: 0;
-            overflow: hidden;
+    .hpp-media {
+        position: relative;
+        height: 210px;
+        overflow: hidden;
+        background: #f3f4f6;
+        flex-shrink: 0;
+    }
+
+        .hpp-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
         }
 
-            .pkg-card .img-wrap img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.4s;
-            }
-
-        .pkg-card:hover .img-wrap img {
+        .hpp-card:hover .hpp-media img {
             transform: scale(1.05);
         }
 
-        .pkg-card .pkg-body {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-            .pkg-card .pkg-body h4 {
-                font-weight: 600;
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .pkg-card .pkg-body p {
-                color: #6b7280;
-                font-size: 0.85rem;
-                line-height: 1.4;
-                flex-grow: 1;
-                margin-bottom: 1.5rem;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-            }
-
-        /* Price capsule at bottom center */
-        .pkg-card .pkg-footer {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 0.6rem 1.5rem;
-            border-radius: 40px;
-            display: inline-block;
-            align-self: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-    @@media (max-width: 1024px) {
-        .pkg-grid {
-            grid-template-columns: 1fr 1fr;
-        }
+    .hpp-tag {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 2;
+        background: rgba(255,255,255,0.94);
+        color: #111;
+        border-radius: 50px;
+        padding: 0.25rem 0.8rem;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
     }
 
-    @@media (max-width: 768px) {
-        .pkg-grid {
+    /* Destination caption across the bottom of the image */
+    .hpp-place {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 1.6rem 1.15rem 0.85rem;
+        background: linear-gradient(to top, rgba(9,18,15,0.78), rgba(9,18,15,0));
+        color: #fff;
+        font-size: 0.74rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+        .hpp-place i { font-size: 0.7rem; opacity: 0.9; }
+
+    .hpp-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 1.35rem 1.4rem 1.4rem;
+    }
+
+    .hpp-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.02em;
+        color: #111;
+        margin-bottom: 0.45rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .hpp-desc {
+        font-size: 0.85rem;
+        line-height: 1.55;
+        color: #6b7280;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex-grow: 1;
+    }
+
+    .hpp-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.1rem;
+        margin-bottom: 1.1rem;
+        font-size: 0.78rem;
+        color: #6b7280;
+    }
+
+        .hpp-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hpp-meta i { color: #0d9488; font-size: 0.75rem; }
+
+    .hpp-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .hpp-price {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+    }
+
+    .hpp-price-amount {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #111;
+    }
+
+    .hpp-price-unit { font-size: 0.72rem; color: #6b7280; }
+
+    .hpp-go {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        color: #111;
+        font-size: 0.78rem;
+        transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .hpp-card:hover .hpp-go {
+        background: #1a1a1a;
+        color: #fff;
+        transform: translateX(2px);
+    }
+
+    .hpp-empty {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────────────────── */
+    @@media (max-width: 1024px) {
+        .hpp-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @@media (max-width: 700px) {
+        .hpp-grid {
             grid-template-columns: 1fr;
             max-width: 400px;
             margin: 0 auto;
@@ -99,30 +201,69 @@
     }
 </style>
 
-<div class="pkg-grid">
-    @if (Model != null && Model.Count() > 0)
+<div class="hpp-grid">
+    @if (Model != null && Model.Any())
     {
         foreach (var item in Model)
         {
-            var images = item.PackageImages?.ToList() ?? new List<TourwebsiteFYP.DB_data_models.PackageImage>();
-            var mainImg = images.FirstOrDefault()?.ImageUrl ?? "~/images/no-image.jpg";
+            var images = item.PackageImages != null
+                            ? item.PackageImages.ToList()
+                            : new List<TourwebsiteFYP.DB_data_models.PackageImage>();
 
-            <a href="@Url.Action("Details", "Package", new { id = item.PackageId })" class="pkg-card">
-                <div class="img-wrap">
-                    <img src="@Url.Content(mainImg)" alt="@item.PackageName" loading="lazy" />
+            var firstImage = images.FirstOrDefault();
+            var mainImg = firstImage != null && !string.IsNullOrEmpty(firstImage.ImageUrl)
+                            ? firstImage.ImageUrl
+                            : "~/images/background.jpg";
+
+            <a href="@Url.Action("Details", "Package", new { id = item.PackageId })" class="hpp-card">
+                <div class="hpp-media">
+                    <img src="@Url.Content(mainImg)" alt="@item.PackageName" loading="lazy"
+                         onerror="this.src='/images/background.jpg'" />
+
+                    @if (item.PackageType != null && !string.IsNullOrEmpty(item.PackageType.TypeName))
+                    {
+                        <span class="hpp-tag">@item.PackageType.TypeName</span>
+                    }
+
+                    @if (item.Destination != null && !string.IsNullOrEmpty(item.Destination.Name))
+                    {
+                        <span class="hpp-place"><i class="fas fa-location-dot"></i> @item.Destination.Name</span>
+                    }
                 </div>
-                <div class="pkg-body">
-                    <h4>@item.PackageName</h4>
-                    <p>@item.Description</p>
-                    <div class="pkg-footer">$@item.Price.ToString("N0")</div>
+
+                <div class="hpp-body">
+                    <div class="hpp-title">@item.PackageName</div>
+                    <div class="hpp-desc">@item.Description</div>
+
+                    @if (item.DurationDays > 0 || item.People > 0)
+                    {
+                        <div class="hpp-meta">
+                            @if (item.DurationDays > 0)
+                            {
+                                <span><i class="fas fa-clock"></i> @item.DurationDays @(item.DurationDays == 1 ? "Day" : "Days")</span>
+                            }
+                            @if (item.People > 0)
+                            {
+                                <span><i class="fas fa-user-group"></i> @item.People @(item.People == 1 ? "Traveler" : "Travelers")</span>
+                            }
+                        </div>
+                    }
+
+                    <div class="hpp-footer">
+                        <span class="hpp-price">
+                            <span class="hpp-price-amount">$@item.Price.ToString("N0")</span>
+                            <span class="hpp-price-unit">/ person</span>
+                        </span>
+                        <span class="hpp-go"><i class="fas fa-arrow-right"></i></span>
+                    </div>
                 </div>
             </a>
         }
     }
     else
     {
-        <div class="text-center py-5" style="grid-column: span 3;">
-            <p style="color: #6b7280;">No packages available at the moment.</p>
-        </div>
+        <p class="hpp-empty">No packages available at the moment.</p>
     }
 </div>
+
+

@@ -37,59 +37,6 @@
             font-family: var(--font-body);
         }
 
-        /*  HERO SECTION (identical to package page)  */
-        #booking-hero {
-            padding-top: 72px;
-            min-height: 46vh;
-            display: flex;
-            align-items: flex-end;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .booking-hero-glow {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 60%, rgba(126,107,255,0.06), transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(77,238,234,0.04), transparent 55%);
-        }
-
-        .booking-hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 4rem 2.5rem 3rem;
-            width: 100%;
-        }
-
-        .booking-hero-label {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--accent);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-            .booking-hero-label::before {
-                content: '';
-                width: 28px;
-                height: 1px;
-                background: var(--accent);
-                box-shadow: 0 0 6px var(--accent);
-            }
-
-        .booking-hero-h1 {
-            font-family: var(--font-head);
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            line-height: 1;
-        }
-
         /*  PROCESS CARDS SECTION WITH BACKGROUND IMAGES IN CIRCLES  */
         .process-section {
             max-width: 1280px;
@@ -609,10 +556,6 @@
                 grid-template-columns: 1fr;
             }
 
-            .booking-hero-content {
-                padding: 3rem 1.5rem 2rem;
-            }
-
             .booking-main-section,
             .process-section,
             .history-section {
@@ -642,18 +585,20 @@
     </style>
 }
 
-<!-- HERO SECTION (matching package page) -->
-<section id="booking-hero">
-    <div class="booking-hero-glow"></div>
-    <div class="booking-hero-content">
-        <div class="booking-hero-label">Secure Your Journey</div>
-        <h1 class="booking-hero-h1">
-            <span class="text-gradient">Book</span> Your<br />
-            Dream Escape
-        </h1>
-        <p style="color: var(--sub); margin-top: 1rem; max-width: 460px; line-height: 1.65;">
-            Reserve your adventure in seconds. Flexible booking, secure payment, and instant confirmation.
-        </p>
+<!-- HERO SECTION -->
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-shield-halved"></i> Secure Your Journey</div>
+        <h1>Book Your<br />Dream Escape</h1>
+        <p>Reserve your adventure in seconds. Flexible booking, secure payment, and instant confirmation.</p>
+        <div class="hero-actions">
+            <a href="@Url.Action("Index", "Package")" class="hero-btn hero-btn-primary">
+                Browse Packages
+            </a>
+            <a href="#bookingForm" class="hero-btn hero-btn-ghost">
+                <i class="fas fa-paper-plane"></i> Book a Tour
+            </a>
+        </div>
     </div>
 </section>
 

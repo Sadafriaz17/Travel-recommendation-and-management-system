@@ -102,127 +102,6 @@
                     }
                 }
 
-                /*  HERO (EXACT HOMEPAGE MATCH)  */
-                #hero {
-                    position: relative;
-                    height: 100vh;
-                    min-height: 700px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    overflow: hidden;
-                    background: radial-gradient(ellipse at 50% 50%, #0f0f1e 0%, #06060c 50%, #020205 100%);
-                }
-
-                #hero-3d-canvas {
-                    position: absolute;
-                    inset: 0;
-                    width: 100%;
-                    height: 100%;
-                    display: block;
-                    z-index: 0;
-                }
-
-                .hero-glow {
-                    position: absolute;
-                    inset: 0;
-                    z-index: 1;
-                    pointer-events: none;
-                    background: radial-gradient(ellipse 50% 50% at 50% 40%, rgba(77,238,234,0.08) 0%, transparent 50%), radial-gradient(ellipse 40% 40% at 70% 60%, rgba(168,85,247,0.06) 0%, transparent 50%), radial-gradient(ellipse 35% 35% at 30% 70%, rgba(77,238,234,0.04) 0%, transparent 40%);
-                }
-
-                .hero-content {
-                    position: relative;
-                    z-index: 3;
-                    text-align: center;
-                    padding: 0 1.5rem;
-                    max-width: 960px;
-                }
-
-                .hero-eyebrow {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 12px;
-                    font-family: var(--font-mono);
-                    font-size: 0.72rem;
-                    color: var(--accent);
-                    letter-spacing: 0.18em;
-                    text-transform: uppercase;
-                    margin-bottom: 1.75rem;
-                    opacity: 0;
-                    animation: fadeUp 0.8s ease 0.3s forwards;
-                }
-
-                .hero-eyebrow-line {
-                    width: 32px;
-                    height: 1px;
-                    background: var(--accent);
-                    box-shadow: 0 0 8px var(--accent);
-                }
-
-                .hero-h1 {
-                    font-family: var(--font-head);
-                    font-size: clamp(2.8rem, 6vw, 5.5rem);
-                    font-weight: 800;
-                    line-height: 0.95;
-                    letter-spacing: -0.04em;
-                    margin-bottom: 1.75rem;
-                    opacity: 0;
-                    animation: fadeUp 0.9s ease 0.5s forwards;
-                }
-
-                .hero-sub {
-                    font-size: clamp(1rem, 2vw, 1.15rem);
-                    color: var(--sub);
-                    max-width: 580px;
-                    margin: 0 auto 2rem;
-                    line-height: 1.65;
-                    font-weight: 300;
-                    opacity: 0;
-                    animation: fadeUp 0.9s ease 0.7s forwards;
-                }
-
-                .hero-stats {
-                    display: flex;
-                    justify-content: center;
-                    gap: 2.5rem;
-                    margin-bottom: 2.5rem;
-                    opacity: 0;
-                    animation: fadeUp 0.9s ease 0.85s forwards;
-                    flex-wrap: wrap;
-                }
-
-                .hero-stat {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 4px;
-                }
-
-                .hero-stat-val {
-                    font-family: var(--font-head);
-                    font-size: 1.4rem;
-                    font-weight: 800;
-                    letter-spacing: -0.03em;
-                }
-
-                .hero-stat-label {
-                    font-family: var(--font-mono);
-                    font-size: 0.62rem;
-                    color: var(--sub);
-                    letter-spacing: 0.12em;
-                    text-transform: uppercase;
-                }
-
-                .hero-ctas {
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    gap: 1rem;
-                    opacity: 0;
-                    animation: fadeUp 0.9s ease 1s forwards;
-                }
-
                 .btn-hero-primary {
                     display: inline-flex;
                     align-items: center;
@@ -269,59 +148,6 @@
                         background: rgba(77,238,234,0.1);
                         transform: translateY(-2px);
                     }
-
-                .hero-scroll-hint {
-                    position: absolute;
-                    bottom: 2.5rem;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 10px;
-                    z-index: 3;
-                    opacity: 0;
-                    animation: fadeUp 1s ease 1.3s forwards;
-                    cursor: pointer;
-                }
-
-                    .hero-scroll-hint span {
-                        font-family: var(--font-mono);
-                        font-size: 0.65rem;
-                        color: var(--sub);
-                        letter-spacing: 0.2em;
-                        text-transform: uppercase;
-                    }
-
-                .hero-scroll-icon {
-                    width: 24px;
-                    height: 40px;
-                    border: 2px solid rgba(255,255,255,0.2);
-                    border-radius: 12px;
-                    display: flex;
-                    justify-content: center;
-                    padding-top: 6px;
-                }
-
-                .hero-scroll-dot {
-                    width: 4px;
-                    height: 8px;
-                    background: var(--accent);
-                    border-radius: 2px;
-                    animation: scrollDot 2s ease-in-out infinite;
-                }
-
-                @@keyframes scrollDot {
-                    0%, 100% {
-                        transform: translateY(0);
-                        opacity: 1
-                    }
-
-                    50% {
-                        transform: translateY(12px);
-                        opacity: 0.3
-                    }
-                }
 
                 /*  MAIN CONTENT AREA  */
                 #packing-content {
@@ -999,10 +825,6 @@
                     .pack-items-grid {
                         grid-template-columns: 1fr
                     }
-
-                    .hero-stats {
-                        gap: 1.5rem
-                    }
                 }
 
                 @@media(max-width:480px) {
@@ -1030,54 +852,36 @@
 </div>
 
 <!--  HERO  -->
-<section id="hero">
-    <canvas id="hero-3d-canvas"></canvas>
-    <div class="hero-glow"></div>
-
+<section class="hero-wrapper hero-inner">
     <div class="hero-content">
-        @*<div class="hero-eyebrow">
-            <span class="hero-eyebrow-line"></span>
-            AI Powered Travel Assistant
-            <span class="hero-eyebrow-line"></span>
-        </div>*@
-        <h1 class="hero-h1">
-            AI Smart<br /><span class="text-gradient">Packing List</span><br />Generator
-        </h1>
-        <p class="hero-sub">
+        <div class="hero-eyebrow"><i class="fas fa-wand-magic-sparkles"></i> AI Powered Travel Assistant</div>
+        <h1>AI Smart Packing<br />List Generator</h1>
+        <p>
             AI-powered travel intelligence using destination, weather, and activity analysis to build your perfect packing list.
         </p>
         <div class="hero-stats">
             <div class="hero-stat">
-                <div class="hero-stat-val text-gradient">95%</div>
+                <div class="hero-stat-val">95%</div>
                 <div class="hero-stat-label">Packing Accuracy</div>
             </div>
             <div class="hero-stat">
-                <div class="hero-stat-val text-gradient"></div>
+                <div class="hero-stat-val">Live</div>
                 <div class="hero-stat-label">Weather Optimized</div>
             </div>
             <div class="hero-stat">
-                <div class="hero-stat-val text-gradient">AI</div>
+                <div class="hero-stat-val">AI</div>
                 <div class="hero-stat-label">Smart Travel Ready</div>
             </div>
         </div>
-        <div class="hero-ctas">
-            <button class="btn-hero-primary" onclick="regeneratePacking()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6" /><path d="M1 20v-6h6" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>
-                Generate Again
+        <div class="hero-actions">
+            <button type="button" class="hero-btn hero-btn-primary" onclick="regeneratePacking()">
+                <i class="fas fa-rotate"></i> Generate Again
             </button>
-            <a href="~/PackingListGenerator/Index" class="btn-hero-secondary">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
-                Full Checklist View
+            <a href="@Url.Action("Index", "PackingListGenerator")" class="hero-btn hero-btn-ghost">
+                <i class="fas fa-list-check"></i> Full Checklist View
             </a>
         </div>
     </div>
-
-    @*<div class="hero-scroll-hint" onclick="document.getElementById('packing-content').scrollIntoView({behavior:'smooth'})">
-        <span>View your list</span>
-        <div class="hero-scroll-icon">
-            <div class="hero-scroll-dot"></div>
-        </div>
-    </div>*@
 </section>
 
 <!--  PACKING CONTENT  -->

@@ -42,6 +42,18 @@
           <Property Name="Quantity" Type="int" />
           <Property Name="Price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
         </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="CartId" />
+          </Key>
+          <Property Name="CartId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="ProductId" Type="int" />
+          <Property Name="PackageId" Type="int" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="AddedDate" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="Destination">
           <Key>
             <PropertyRef Name="DestinationId" />
@@ -480,6 +492,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Cart_Package">
+          <End Role="Package" Type="Self.Package" Multiplicity="0..1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Package">
+              <PropertyRef Name="PackageId" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="PackageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Product">
+          <End Role="Product" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Destinations_PackageType">
           <End Role="PackageType" Type="Self.PackageType" Multiplicity="0..1" />
           <End Role="Destination" Type="Self.Destination" Multiplicity="*" />
@@ -584,6 +632,7 @@
           <EntitySet Name="Blog" EntityType="Self.Blog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Booking" EntityType="Self.Booking" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookingDetail" EntityType="Self.BookingDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Destination" EntityType="Self.Destination" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Flights" EntityType="Self.Flights" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Gallery" EntityType="Self.Gallery" Schema="dbo" store:Type="Tables" />
@@ -677,6 +726,18 @@
           <AssociationSet Name="FK__User__UserTypeId__6E01572D" Association="Self.FK__User__UserTypeId__6E01572D">
             <End Role="UserType" EntitySet="UserType" />
             <End Role="User" EntitySet="User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Package" Association="Self.FK_Cart_Package">
+            <End Role="Package" EntitySet="Package" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Product" Association="Self.FK_Cart_Product">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_User" Association="Self.FK_Cart_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Cart" EntitySet="Cart" />
           </AssociationSet>
           <AssociationSet Name="FK_Destinations_PackageType" Association="Self.FK_Destinations_PackageType">
             <End Role="PackageType" EntitySet="PackageType" />
@@ -845,6 +906,19 @@
             <End Role="Vendor" EntitySet="Vendors" />
             <End Role="Product" EntitySet="Products" />
           </AssociationSet>
+          <EntitySet Name="Carts" EntityType="FYP_DatabaseModel.Cart" />
+          <AssociationSet Name="FK_Cart_Package" Association="FYP_DatabaseModel.FK_Cart_Package">
+            <End Role="Package" EntitySet="Packages" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Product" Association="FYP_DatabaseModel.FK_Cart_Product">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_User" Association="FYP_DatabaseModel.FK_Cart_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Blog">
           <Key>
@@ -928,6 +1002,7 @@
           <NavigationProperty Name="Flights" Relationship="FYP_DatabaseModel.FK__Flights__Package__160F4887" FromRole="Package" ToRole="Flight" />
           <NavigationProperty Name="Hotels" Relationship="FYP_DatabaseModel.FK_Hotels_Package" FromRole="Package" ToRole="Hotel" />
           <NavigationProperty Name="PackageItineraries" Relationship="FYP_DatabaseModel.FK__PackageIt__Packa__1CBC4616" FromRole="Package" ToRole="PackageItinerary" />
+          <NavigationProperty Name="Carts" Relationship="FYP_DatabaseModel.FK_Cart_Package" FromRole="Package" ToRole="Cart" />
         </EntityType>
         <EntityType Name="PackageImage">
           <Key>
@@ -1005,6 +1080,7 @@
           <Property Name="ReviewCount" Type="Int32" Nullable="false" />
           <Property Name="StockStatus" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Vendor" Relationship="FYP_DatabaseModel.FK_Product_Vendor" FromRole="Product" ToRole="Vendor" />
+          <NavigationProperty Name="Carts" Relationship="FYP_DatabaseModel.FK_Cart_Product" FromRole="Product" ToRole="Cart" />
         </EntityType>
         <EntityType Name="ProductType">
           <Key>
@@ -1046,6 +1122,7 @@
           <NavigationProperty Name="Reviews" Relationship="FYP_DatabaseModel.FK__Review__UserId__6D0D32F4" FromRole="User" ToRole="Review" />
           <NavigationProperty Name="UserType" Relationship="FYP_DatabaseModel.FK__User__UserTypeId__6E01572D" FromRole="User" ToRole="UserType" />
           <NavigationProperty Name="Bookings" Relationship="FYP_DatabaseModel.FK__Booking__UserId__619B8048" FromRole="User" ToRole="Booking" />
+          <NavigationProperty Name="Carts" Relationship="FYP_DatabaseModel.FK_Cart_User" FromRole="User" ToRole="Cart" />
         </EntityType>
         <EntityType Name="UserType">
           <Key>
@@ -1475,6 +1552,57 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="CartId" />
+          </Key>
+          <Property Name="CartId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="ProductId" Type="Int32" />
+          <Property Name="PackageId" Type="Int32" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="AddedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Package" Relationship="FYP_DatabaseModel.FK_Cart_Package" FromRole="Cart" ToRole="Package" />
+          <NavigationProperty Name="Product" Relationship="FYP_DatabaseModel.FK_Cart_Product" FromRole="Cart" ToRole="Product" />
+          <NavigationProperty Name="User" Relationship="FYP_DatabaseModel.FK_Cart_User" FromRole="Cart" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Cart_Package">
+          <End Type="FYP_DatabaseModel.Package" Role="Package" Multiplicity="0..1" />
+          <End Type="FYP_DatabaseModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Package">
+              <PropertyRef Name="PackageId" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="PackageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Product">
+          <End Type="FYP_DatabaseModel.Product" Role="Product" Multiplicity="0..1" />
+          <End Type="FYP_DatabaseModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_User">
+          <End Type="FYP_DatabaseModel.User" Role="User" Multiplicity="1" />
+          <End Type="FYP_DatabaseModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1742,6 +1870,19 @@
                 <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="VendorName" ColumnName="VendorName" />
                 <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="FYP_DatabaseModel.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="AddedDate" ColumnName="AddedDate" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="PackageId" ColumnName="PackageId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="CartId" ColumnName="CartId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

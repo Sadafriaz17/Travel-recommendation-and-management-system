@@ -48,65 +48,13 @@
 
 @section HeadStyles {
     <style>
-        /*  MARKETPLACE HERO (matches Home/Services/Contact treatment)  */
-        .mkt-hero {
-            position: relative;
-            margin-top: 0;
-            width: 100%;
-            min-height: 62vh;
-            background-image: linear-gradient(rgba(10,10,10,0.55), rgba(10,10,10,0.72)), url('/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-top: 100px;
-            padding-bottom: 70px;
-            text-align: center;
-        }
-
-        .mkt-hero-badge {
-            display: inline-block;
-            padding: 0.4rem 1.1rem;
-            border-radius: 50px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: #fff;
-            margin-bottom: 1.25rem;
-        }
-
-        .mkt-hero-content {
-            color: #fff;
-            max-width: 720px;
-            padding: 0 1rem;
-            margin-bottom: 2.5rem;
-        }
-
-            .mkt-hero-content h1 {
-                font-size: clamp(2.5rem, 4.5vw, 3.8rem);
-                font-weight: 700;
-                letter-spacing: -0.02em;
-                line-height: 1.15;
-                margin-bottom: 1rem;
-            }
-
-            .mkt-hero-content p {
-                font-size: 1.05rem;
-                color: rgba(255,255,255,0.8);
-            }
-
         .mkt-search-wrap {
             position: relative;
             z-index: 3;
             width: 100%;
             max-width: 700px;
             padding: 0 1rem;
+            margin-top: 2.5rem;
         }
 
         .mkt-search-glass {
@@ -697,9 +645,9 @@
 }
 
 <!-- HERO -->
-<section class="mkt-hero">
-   
-    <div class="mkt-hero-content">
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-store"></i> Vendor Marketplace</div>
         <h1>The NEXVOY Marketplace</h1>
         <p>Travel gear, local finds, and trusted vendors - all in one place.</p>
     </div>

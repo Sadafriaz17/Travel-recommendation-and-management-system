@@ -9,58 +9,6 @@
 
 @section HeadStyles {
     <style>
-        .dest-detail-hero {
-            background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6)), url('@img');
-            background-size: cover;
-            background-position: center;
-            min-height: 50vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .dest-detail-hero-content {
-            position: relative;
-            z-index: 2;
-            margin-top: 3rem;
-        }
-
-        .dest-detail-meta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(8px);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1.5rem;
-        }
-
-        .dest-detail-hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .dest-detail-desc {
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 1.15rem;
-            line-height: 1.6;
-            color: rgba(255,255,255,0.9);
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
         .pkg-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -69,22 +17,30 @@
         
         @@media (max-width: 900px) {
             .pkg-grid { grid-template-columns: repeat(2, 1fr); }
-            .dest-detail-hero h1 { font-size: 2.8rem; }
         }
         @@media (max-width: 600px) {
             .pkg-grid { grid-template-columns: 1fr; }
-            .dest-detail-hero h1 { font-size: 2.2rem; }
         }
     </style>
 }
 
-<section class="dest-detail-hero">
-    <div class="dest-detail-hero-content">
-        <div class="dest-detail-meta">
-            <i class="fas fa-map-marker-alt"></i> @Model.Location
+<section class="hero-wrapper hero-inner" style="background-image: url('@img');">
+    <div class="hero-content">
+        <div class="hero-breadcrumb">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="@Url.Action("Index", "Destination")">Destinations</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>@Model.Name</span>
         </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Location))
+        {
+            <div class="hero-eyebrow"><i class="fas fa-map-marker-alt"></i> @Model.Location</div>
+        }
+
         <h1>@Model.Name</h1>
-        <p class="dest-detail-desc">@Model.Description</p>
+        <p>@Model.Description</p>
     </div>
 </section>
 

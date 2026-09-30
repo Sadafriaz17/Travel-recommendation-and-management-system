@@ -9,72 +9,6 @@
 
 @section HeadStyles {
     <style>
-        /*  HERO  */
-        .svc-hero {
-            position: relative;
-            margin-top: 0;
-            padding: 160px 0 90px;
-            background: linear-gradient(rgba(20,20,20,0.55), rgba(20,20,20,0.65)), url('/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            color: #fff;
-            text-align: center;
-        }
-
-        .svc-hero-badge {
-            display: inline-block;
-            padding: 0.4rem 1.1rem;
-            border-radius: 50px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            margin-bottom: 1.25rem;
-        }
-
-        .svc-hero h1 {
-            font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            margin-bottom: 1rem;
-        }
-
-        .svc-hero p {
-            max-width: 600px;
-            margin: 0 auto;
-            color: rgba(255,255,255,0.8);
-            font-size: 1.05rem;
-        }
-
-        .svc-hero-actions {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-
-        .svc-btn-outline {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.35);
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-            .svc-btn-outline:hover {
-                background: #fff;
-                color: #1a1a1a;
-            }
-
         /* Quick stats strip under hero */
         .svc-stats-strip {
             display: grid;
@@ -563,16 +497,16 @@
 }
 
 <!-- HERO -->
-<section class="svc-hero">
-    <div class="container">
-       
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-eyebrow"><i class="fas fa-wand-magic-sparkles"></i> Our Services</div>
         <h1>Services Built Around<br />Smarter Travel</h1>
         <p>From AI-generated itineraries to a full vendor marketplace, NEXVOY brings together everything you need to plan, book, and enjoy your next trip.</p>
-        <div class="svc-hero-actions">
-            <a href="#svcOfferings" class="btn-primary" onclick="document.getElementById('svcOfferings').scrollIntoView({behavior:'smooth'});return false;">
+        <div class="hero-actions">
+            <a href="#svcOfferings" class="hero-btn hero-btn-primary" onclick="document.getElementById('svcOfferings').scrollIntoView({behavior:'smooth'});return false;">
                 Explore Services
             </a>
-            <a href="@Url.Action("Index", "Services")" class="svc-btn-outline">
+            <a href="@Url.Action("Contact", "Home")" class="hero-btn hero-btn-ghost">
                 <i class="fas fa-comment-dots"></i> Talk to Us
             </a>
         </div>

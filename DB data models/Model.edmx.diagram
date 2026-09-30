@@ -53,6 +53,13 @@
         <AssociationConnector Association="FYP_DatabaseModel.FK__PackageIt__Packa__1CBC4616" />
         <EntityTypeShape EntityType="FYP_DatabaseModel.Vendor" Width="1.5" PointX="3.75" PointY="0.875" />
         <AssociationConnector Association="FYP_DatabaseModel.FK_Product_Vendor" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.Cart" Width="1.5" PointX="12.25" PointY="9.625" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Package" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Product" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_User" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Package" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Product" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

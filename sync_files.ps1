@@ -9,7 +9,9 @@ $proj.Project.AppendChild($itemGroup)
 
 $compileFiles = @(
     "Areas\AdminArea\Controllers\ManageReviewsController.cs",
-    "Controllers\BlogController.cs"
+    "Controllers\BlogController.cs",
+    "Controllers\CartController.cs",
+    "DB data models\Cart.cs"
 )
 
 $contentFiles = @(
@@ -21,7 +23,10 @@ $contentFiles = @(
     "Views\Blog\HomepageBlogs.cshtml",
     "Views\Blog\Details.cshtml",
     "Views\Product\Index.cshtml",
-    "Views\Product\Details.cshtml"
+    "Views\Product\Details.cshtml",
+    "Views\Cart\Index.cshtml",
+    "Views\Cart\Checkout.cshtml",
+    "Views\Cart\ThankYou.cshtml"
 )
 
 foreach ($f in $compileFiles) {
