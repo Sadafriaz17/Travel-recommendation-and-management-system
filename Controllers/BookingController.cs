@@ -1,15 +1,65 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using System.Data.Entity;
 using TourwebsiteFYP.DB_data_models;
 using TourwebsiteFYP.Filter;
+using TourwebsiteFYP.Helpers;
 
 namespace TourwebsiteFYP.Controllers
 {
     public class BookingController : Controller
     {
         Demo_DevDBEntities _context = new Demo_DevDBEntities();
+
+        // ─── PACKAGE CHECKOUT ENTRY POINT ───────────────────────────────────────
+        // Linked from Package/Index and Package/Details "Book Now" buttons.
+        // Instead of rendering a duplicate checkout form, this action adds the
+        // package to the user's cart (if not already there) and then forwards to
+        // the shared Cart/Checkout view so both products and packages go through
+        // exactly the same checkout and thank-you flow.
+        [SessionAuthFilter]
+        public ActionResult Checkout(int packageId)
+        {
+            int userId = SessionHelper.GetUserId();
+
+            if (userId == 0)
+                return RedirectToAction("Index", "Login");
+
+            var package = _context.Packages
+                .FirstOrDefault(p => p.PackageId == packageId);
+
+            if (package == null)
+                return HttpNotFound();
+
+            // Add to cart if not already present, otherwise just refresh the price
+            var existing = _context.Carts
+                .FirstOrDefault(c =>
+                    c.UserId == userId &&
+                    c.PackageId == packageId);
+
+            if (existing != null)
+            {
+                existing.Price = package.Price;
+            }
+            else
+            {
+                _context.Carts.Add(new Cart
+                {
+                    UserId    = userId,
+                    PackageId = packageId,
+                    ProductId = null,
+                    Quantity  = 1,
+                    Price     = package.Price,
+                    AddedDate = DateTime.Now
+                });
+            }
+
+            _context.SaveChanges();
+
+            // Hand off to the shared Cart checkout
+            return RedirectToAction("Checkout", "Cart");
+        }
 
         // SHOW BOOKING FORM
         [SessionAuthFilter]
@@ -85,4 +135,4 @@ namespace TourwebsiteFYP.Controllers
             return View(bookings);
         }
     }
-}
+}
