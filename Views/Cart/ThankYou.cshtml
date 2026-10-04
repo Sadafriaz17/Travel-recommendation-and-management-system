@@ -1,13 +1,39 @@
-@* THANK YOU - Views/Cart/ThankYou.cshtml *@
+@* THANK YOU - Views/Cart/ThankYou.cshtml
+   Shared confirmation page for product orders, package bookings, and mixed carts.
+   Messaging and meta fields adapt based on ViewBag.OrderType ('products' / 'packages' / 'mixed'). *@
 @{
     ViewBag.Title = "Order Confirmed";
     ViewBag.ActivePage = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var bookingId    = ViewBag.BookingId;
-    var totalAmount  = ViewBag.TotalAmount != null ? ((decimal)ViewBag.TotalAmount).ToString("N2") : "0.00";
-    var customerName = ViewBag.CustomerName as string ?? "Valued Customer";
+    var bookingId     = ViewBag.BookingId;
+    var totalAmount   = ViewBag.TotalAmount != null ? ((decimal)ViewBag.TotalAmount).ToString("N2") : "0.00";
+    var customerName  = ViewBag.CustomerName as string ?? "Valued Customer";
     var paymentMethod = ViewBag.PaymentMethod as string ?? "Not specified";
+
+    // OrderType set by CartController.PlaceOrder
+    var orderType  = ViewBag.OrderType as string ?? "products";
+    bool isPackage = orderType == "packages";
+    bool isMixed   = orderType == "mixed";
+    bool isProduct = orderType == "products";
+
+    // Package-specific summary fields (null when order has no packages)
+    var travelDate = ViewBag.TravelDate as string;
+    var travelers  = ViewBag.Travelers;
+
+    // Derive the display heading and subtitle from order type
+    string heading  = isMixed   ? "Order & Booking Confirmed!"
+                    : isPackage ? "Booking Confirmed!"
+                    :             "Order Confirmed!";
+
+    string subtitle = isMixed
+        ? "Your order and package booking have been placed successfully. We'll be in touch shortly."
+        : isPackage
+            ? "Your package booking has been confirmed. Our team will review it and email you shortly."
+            : "Your order has been placed successfully. We'll be in touch shortly.";
+
+    // Reference box label
+    string refLabel = isProduct ? "Order Reference" : "Booking Reference";
 }
 
 @section HeadStyles {
@@ -25,7 +51,7 @@
             border-radius: 24px;
             border: 1px solid #e5e7eb;
             padding: 4rem 3rem;
-            max-width: 600px;
+            max-width: 620px;
             width: 100%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.06);
@@ -119,6 +145,7 @@
             font-size: 0.92rem;
             font-weight: 600;
             color: #1a1a1a;
+            word-break: break-word;
         }
 
         .thankyou-actions {
@@ -128,18 +155,23 @@
             flex-wrap: wrap;
         }
 
-        .btn-home {
+        .btn-home,
+        .btn-products {
             padding: 0.85rem 2rem;
             border-radius: 50px;
-            background: #1a1a1a;
-            color: #fff;
             font-size: 0.88rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: background 0.2s, transform 0.2s;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            transition: 0.15s;
+            text-decoration: none;
+        }
+
+        .btn-home {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #1a1a1a;
         }
 
             .btn-home:hover {
@@ -149,23 +181,15 @@
             }
 
         .btn-products {
-            padding: 0.85rem 2rem;
-            border-radius: 50px;
             border: 1px solid #e5e7eb;
             background: transparent;
             color: #1a1a1a;
-            font-size: 0.88rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
 
             .btn-products:hover {
                 border-color: #1a1a1a;
                 background: #f8f9fa;
+                color: #1a1a1a;
             }
 
         .confetti-bar {
@@ -202,20 +226,20 @@
             <i class="fas fa-check"></i>
         </div>
 
-        <h1 class="thankyou-heading">Order Confirmed!</h1>
+        <h1 class="thankyou-heading">@heading</h1>
         <p class="thankyou-sub">
             Thank you, <strong>@customerName</strong>!<br />
-            Your order has been placed successfully. We'll be in touch shortly.
+            @subtitle
         </p>
 
         <div class="order-ref-box">
-            <div class="order-ref-label">Order Reference</div>
+            <div class="order-ref-label">@refLabel</div>
             <div class="order-ref-number">#@bookingId</div>
         </div>
 
         <div class="order-meta-grid">
             <div class="order-meta-item">
-                <div class="order-meta-item-label">Order Total</div>
+                <div class="order-meta-item-label">Total</div>
                 <div class="order-meta-item-value">$@totalAmount</div>
             </div>
             <div class="order-meta-item">
@@ -228,19 +252,60 @@
                 <div class="order-meta-item-label">Payment</div>
                 <div class="order-meta-item-value">@paymentMethod</div>
             </div>
-            <div class="order-meta-item">
-                <div class="order-meta-item-label">Date</div>
-                <div class="order-meta-item-value">@DateTime.Now.ToString("dd MMM yyyy")</div>
-            </div>
+
+            @* Package-specific meta: show travel date and travellers when available *@
+            @if (!isProduct && !string.IsNullOrWhiteSpace(travelDate))
+            {
+                <div class="order-meta-item">
+                    <div class="order-meta-item-label">Travel Date</div>
+                    <div class="order-meta-item-value">@travelDate</div>
+                </div>
+            }
+            @if (!isProduct && travelers != null)
+            {
+                <div class="order-meta-item">
+                    <div class="order-meta-item-label">Travellers</div>
+                    <div class="order-meta-item-value">@travelers</div>
+                </div>
+            }
+            @if (isProduct || string.IsNullOrWhiteSpace(travelDate))
+            {
+                <div class="order-meta-item">
+                    <div class="order-meta-item-label">Date</div>
+                    <div class="order-meta-item-value">@DateTime.Now.ToString("dd MMM yyyy")</div>
+                </div>
+            }
         </div>
 
         <div class="thankyou-actions">
-            <a href="@Url.Action("Index", "Home")" class="btn-home">
-                <i class="fas fa-home"></i> Back to Home
-            </a>
-            <a href="@Url.Action("Index", "Product")" class="btn-products">
-                <i class="fas fa-shopping-bag"></i> Continue Shopping
-            </a>
+            @if (isProduct)
+            {
+                <a href="@Url.Action("Index", "Home")" class="btn-home">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="@Url.Action("Index", "Product")" class="btn-products">
+                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                </a>
+            }
+            else if (isPackage)
+            {
+                <a href="@Url.Action("Index", "Booking")" class="btn-home">
+                    <i class="fas fa-suitcase"></i> My Bookings
+                </a>
+                <a href="@Url.Action("Index", "Package")" class="btn-products">
+                    <i class="fas fa-compass"></i> Browse More Packages
+                </a>
+            }
+            else @* mixed *@
+            {
+                <a href="@Url.Action("Index", "Booking")" class="btn-home">
+                    <i class="fas fa-suitcase"></i> My Bookings
+                </a>
+                <a href="@Url.Action("Index", "Product")" class="btn-products">
+                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                </a>
+            }
         </div>
     </div>
 </div>
+

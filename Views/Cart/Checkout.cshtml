@@ -1,4 +1,7 @@
-@* CHECKOUT - Views/Cart/Checkout.cshtml *@
+﻿@* CHECKOUT - Views/Cart/Checkout.cshtml
+   Handles product orders, package bookings, and mixed carts through one shared view.
+   The form always posts to Cart/PlaceOrder.  Package-specific fields (travel date /
+   travellers) are shown conditionally when ViewBag.HasPackages is true. *@
 @model IEnumerable<TourwebsiteFYP.DB_data_models.Cart>
 @using TourwebsiteFYP.Helpers
 
@@ -7,17 +10,43 @@
     ViewBag.ActivePage = "Cart";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var items = Model != null ? Model.ToList() : new List<TourwebsiteFYP.DB_data_models.Cart>();
+    var items       = Model != null ? Model.ToList() : new List<TourwebsiteFYP.DB_data_models.Cart>();
     decimal subtotal = items.Sum(c => c.Price * c.Quantity);
 
     var user = ViewBag.User as TourwebsiteFYP.DB_data_models.User;
 
-    // Payment methods come live from the PaymentType table.
-    var paymentTypes = ViewBag.PaymentTypes as IEnumerable<TourwebsiteFYP.DB_data_models.PaymentType>
-                       ?? new List<TourwebsiteFYP.DB_data_models.PaymentType>();
+    var paymentTypes       = ViewBag.PaymentTypes as IEnumerable<TourwebsiteFYP.DB_data_models.PaymentType>
+                             ?? new List<TourwebsiteFYP.DB_data_models.PaymentType>();
     var firstPaymentTypeId = paymentTypes.Any() ? paymentTypes.First().PaymentTypeId : 0;
 
     var checkoutError = TempData["CheckoutError"] as string;
+
+    // Flags set by CartController.Checkout()
+    bool hasPackages = ViewBag.HasPackages == true;
+    bool hasProducts = ViewBag.HasProducts == true;
+
+    // Pick a sensible default travel date (7 days from today)
+    var defaultDate    = DateTime.Today.AddDays(7).ToString("yyyy-MM-dd");
+    var todayStr       = DateTime.Today.ToString("yyyy-MM-dd");
+
+    // Summary card title reflects what's in the cart
+    string summaryTitle = (hasPackages && hasProducts) ? "Order & Booking Summary"
+                        : hasPackages                  ? "Booking Summary"
+                        :                               "Order Summary";
+
+    // Live price-per-person for the JS recalculation (packages only)
+    string packagePricesJs = "{}";
+    if (hasPackages)
+    {
+        var pkgPrices = items
+            .Where(c => c.PackageId.HasValue && c.Package != null)
+            .ToDictionary(
+                c => c.PackageId.Value.ToString(),
+                c => c.Price.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture));
+
+        packagePricesJs = "{" + string.Join(",",
+            pkgPrices.Select(kv => "\"" + kv.Key + "\":" + kv.Value)) + "}";
+    }
 }
 
 @section HeadStyles {
@@ -73,6 +102,11 @@
             font-size: 0.8rem;
             font-weight: 600;
             color: #374151;
+        }
+
+        .form-hint {
+            font-size: 0.72rem;
+            color: #9ca3af;
         }
 
         .form-control {
@@ -148,6 +182,27 @@
             justify-content: center;
             color: #9ca3af;
             flex-shrink: 0;
+        }
+
+        .order-item-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+        }
+
+        .badge-package {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .badge-product {
+            background: #dcfce7;
+            color: #16a34a;
         }
 
         .order-item-info {
@@ -338,14 +393,25 @@
     <div class="hero-content">
         <div class="hero-eyebrow"><i class="fas fa-lock"></i> Secure Checkout</div>
         <h1>Checkout</h1>
-        <p>Fill in your details to complete your order.</p>
+        @if (hasPackages && hasProducts)
+        {
+            <p>Complete your order and package booking in one step.</p>
+        }
+        else if (hasPackages)
+        {
+            <p>Confirm your travel details to complete your package booking.</p>
+        }
+        else
+        {
+            <p>Fill in your details to complete your order.</p>
+        }
     </div>
 </section>
 
 <div class="container checkout-page">
     <div class="checkout-layout">
 
-        <!-- CONTACT & DELIVERY FORM -->
+        <!-- FORM -->
         <div>
             @using (Html.BeginForm("PlaceOrder", "Cart", FormMethod.Post, new { id = "checkoutForm" }))
             {
@@ -359,6 +425,33 @@
                         </div>
                     }
 
+                    @* ── PACKAGE-SPECIFIC: TRIP DETAILS ──────────────────────── *@
+                    @if (hasPackages)
+                    {
+                        <div class="form-section-title">
+                            <i class="fas fa-plane" style="margin-right:6px;color:#7c3aed;"></i>Trip Details
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="travelDate">Travel Date</label>
+                                <input type="date" id="travelDate" name="travelDate" class="form-control"
+                                       value="@defaultDate"
+                                       min="@todayStr"
+                                       @(hasPackages ? "required" : "") />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="travelers">Number of Travellers</label>
+                                <input type="number" id="travelers" name="travelers" class="form-control"
+                                       value="1" min="1" max="20"
+                                       @(hasPackages ? "required" : "") />
+                                <span class="form-hint">Price is per person. Up to 20 travellers per booking.</span>
+                            </div>
+                        </div>
+
+                        <div class="section-gap"></div>
+                    }
+
+                    @* ── CONTACT DETAILS ─────────────────────────────────────── *@
                     <div class="form-section-title">Contact Details</div>
                     <div class="form-row">
                         <div class="form-group">
@@ -381,21 +474,46 @@
                         </div>
                     </div>
 
+                    @* ── DELIVERY / ADDITIONAL DETAILS ───────────────────────── *@
                     <div class="section-gap">
-                        <div class="form-section-title">Delivery / Booking Details</div>
-                        <div class="form-group">
-                            <label class="form-label" for="address">Delivery Address</label>
-                            <input type="text" id="address" name="address" class="form-control"
-                                   value="@(user != null ? user.Address : "")"
-                                   placeholder="Street, City, Country" />
+                        <div class="form-section-title">
+                            @if (hasProducts)
+                            {
+                                <text>Delivery Details</text>
+                            }
+                            else
+                            {
+                                <text>Additional Details</text>
+                            }
                         </div>
+
+                        @if (hasProducts)
+                        {
+                            <div class="form-group">
+                                <label class="form-label" for="address">Delivery Address</label>
+                                <input type="text" id="address" name="address" class="form-control"
+                                       value="@(user != null ? user.Address : "")"
+                                       placeholder="Street, City, Country" />
+                            </div>
+                        }
+
                         <div class="form-group">
-                            <label class="form-label" for="notes">Special Requests / Notes</label>
+                            <label class="form-label" for="notes">
+                                @if (hasPackages)
+                                {
+                                    <text>Special Requests (optional)</text>
+                                }
+                                else
+                                {
+                                    <text>Notes / Special Instructions</text>
+                                }
+                            </label>
                             <textarea id="notes" name="notes" class="form-control"
-                                      placeholder="Any special instructions or requests?"></textarea>
+                                      placeholder="@(hasPackages ? "Dietary needs, room preferences, pickup details..." : "Any special instructions or requests?")"></textarea>
                         </div>
                     </div>
 
+                    @* ── PAYMENT METHOD ──────────────────────────────────────── *@
                     <div class="section-gap">
                         <div class="form-section-title">Payment Method</div>
 
@@ -404,9 +522,7 @@
                             <div class="pay-methods">
                                 @foreach (var pt in paymentTypes)
                                 {
-                                    // Pick a sensible icon per method; unknown names
-                                    // fall back to a generic wallet.
-                                    var icon = "fas fa-wallet";
+                                    var icon       = "fas fa-wallet";
                                     var methodName = (pt.PaymentTypeName ?? "").ToLower();
 
                                     if (methodName.Contains("paypal"))
@@ -445,25 +561,18 @@
                         }
                     </div>
                 </div>
-
-                <!-- SUBMIT ON MOBILE (below form) -->
-                <div class="d-md-none" style="margin-top:1.5rem; display:none;">
-                    <button type="submit" class="btn-place-order">
-                        <i class="fas fa-check-circle"></i> Place Order — $@subtotal.ToString("N2")
-                    </button>
-                </div>
             }
         </div>
 
-        <!-- ORDER SUMMARY -->
+        <!-- ORDER / BOOKING SUMMARY -->
         <div class="checkout-summary-card">
-            <div class="checkout-summary-title">Order Summary</div>
+            <div class="checkout-summary-title">@summaryTitle</div>
 
             @foreach (var item in items)
             {
-                // A cart row can hold a product or a package.
-                var name = CartItemHelper.GetItemName(item);
+                var name  = CartItemHelper.GetItemName(item);
                 var image = CartItemHelper.GetItemImage(item);
+                bool isPkg = item.PackageId.HasValue;
 
                 <div class="order-item-row">
                     @if (!string.IsNullOrEmpty(image))
@@ -475,10 +584,41 @@
                         <div class="order-item-img-placeholder"><i class="fas fa-image"></i></div>
                     }
                     <div class="order-item-info">
+                        @if (hasPackages && hasProducts)
+                        {
+                            if (isPkg)
+                            {
+                                <span class="order-item-badge badge-package">Package</span>
+                            }
+                            else
+                            {
+                                <span class="order-item-badge badge-product">Product</span>
+                            }
+                        }
                         <div class="order-item-name">@name</div>
-                        <div class="order-item-qty">Qty: @item.Quantity</div>
+                        @if (isPkg && item.Package != null)
+                        {
+                            var dest = item.Package.Destination != null ? item.Package.Destination.Name : "";
+                            var days = item.Package.DurationDays;
+                            <div class="order-item-qty" id="pkg-qty-@item.PackageId">
+                                @(string.IsNullOrEmpty(dest) ? "" : dest + " · ")@days days · <span class="pkg-qty-label">1</span> traveller(s)
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="order-item-qty">Qty: @item.Quantity</div>
+                        }
                     </div>
-                    <div class="order-item-price">$@((item.Price * item.Quantity).ToString("N2"))</div>
+                    @if (isPkg)
+                    {
+                        <div class="order-item-price" id="pkg-price-@item.PackageId">
+                            $@((item.Price * item.Quantity).ToString("N2"))
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="order-item-price">$@((item.Price * item.Quantity).ToString("N2"))</div>
+                    }
                 </div>
             }
 
@@ -486,26 +626,89 @@
 
             <div class="order-summary-row">
                 <span>Subtotal</span>
-                <span>$@subtotal.ToString("N2")</span>
+                <span id="checkoutSubtotal">$@subtotal.ToString("N2")</span>
             </div>
-            <div class="order-summary-row">
-                <span>Shipping</span>
-                <span style="color:#16a34a; font-weight:600;">Free</span>
-            </div>
+            @if (hasProducts)
+            {
+                <div class="order-summary-row">
+                    <span>Shipping</span>
+                    <span style="color:#16a34a; font-weight:600;">Free</span>
+                </div>
+            }
 
             <hr class="order-summary-divider" />
 
             <div class="order-summary-total">
                 <span>Total</span>
-                <span>$@subtotal.ToString("N2")</span>
+                <span id="checkoutTotal">$@subtotal.ToString("N2")</span>
             </div>
 
             <button type="submit" form="checkoutForm" class="btn-place-order">
-                <i class="fas fa-check-circle"></i> Place Order
+                <i class="fas fa-check-circle"></i>
+                @if (hasPackages && !hasProducts)
+                {
+                    <text>Confirm Booking</text>
+                }
+                else
+                {
+                    <text>Place Order</text>
+                }
             </button>
             <div class="secure-note">
-                <i class="fas fa-lock"></i> Secure & encrypted checkout
+                <i class="fas fa-lock"></i> Secure &amp; encrypted checkout
             </div>
         </div>
     </div>
 </div>
+
+@if (hasPackages)
+{
+    @section Scripts {
+        <script>
+            // Package prices indexed by packageId (server-rendered)
+            var pkgPrices = @Html.Raw(packagePricesJs);
+
+            // Collect all package cart rows so we can update their line totals
+            var pkgRows = @Html.Raw("[" + string.Join(",",
+                items.Where(c => c.PackageId.HasValue)
+                     .Select(c => c.PackageId.Value.ToString())) + "]");
+
+            // Product subtotal is fixed (not affected by traveller count)
+            var productSubtotal = @((items.Where(c => c.ProductId.HasValue).Sum(c => c.Price * c.Quantity)).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture));
+
+            function recalcTotals() {
+                var input = document.getElementById('travelers');
+                var qty = parseInt(input ? input.value : '1', 10);
+                if (isNaN(qty) || qty < 1) qty = 1;
+                if (qty > 20) { qty = 20; if (input) input.value = qty; }
+
+                var pkgSubtotal = 0;
+
+                pkgRows.forEach(function (pkgId) {
+                    var price = pkgPrices[pkgId] || 0;
+                    var lineTotal = price * qty;
+                    pkgSubtotal += lineTotal;
+
+                    var priceEl = document.getElementById('pkg-price-' + pkgId);
+                    if (priceEl) priceEl.textContent = '$' + lineTotal.toFixed(2);
+
+                    var qtyEl = document.querySelector('#pkg-qty-' + pkgId + ' .pkg-qty-label');
+                    if (qtyEl) qtyEl.textContent = qty;
+                });
+
+                var grand = productSubtotal + pkgSubtotal;
+                var sub   = document.getElementById('checkoutSubtotal');
+                var tot   = document.getElementById('checkoutTotal');
+                if (sub) sub.textContent = '$' + grand.toFixed(2);
+                if (tot) tot.textContent = '$' + grand.toFixed(2);
+            }
+
+            var travelersInput = document.getElementById('travelers');
+            if (travelersInput) {
+                travelersInput.addEventListener('input',  recalcTotals);
+                travelersInput.addEventListener('change', recalcTotals);
+                recalcTotals(); // initial pass
+            }
+        </script>
+    }
+}
