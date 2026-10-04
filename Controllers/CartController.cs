@@ -77,7 +77,7 @@ namespace TourwebsiteFYP.Controllers
         }
 
 
-        // Add product to cart
+        // ─── ADD PRODUCT TO CART ────────────────────────────────────────────────
         [HttpPost]
         public ActionResult AddToCart(int productId, int quantity = 1)
         {
@@ -149,7 +149,81 @@ namespace TourwebsiteFYP.Controllers
         }
 
 
-        // Show cart
+        // ─── ADD PACKAGE TO CART ────────────────────────────────────────────────
+        // Called via AJAX from package listing / details buttons and also invoked
+        // internally by BookingController.Checkout before the redirect.
+        [HttpPost]
+        public ActionResult AddPackageToCart(int packageId, int quantity = 1)
+        {
+            int userId = SessionHelper.GetUserId();
+
+            if (userId == 0)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Please log in.",
+                    redirect = "/Login/Index"
+                });
+            }
+
+            if (quantity < 1)
+                quantity = 1;
+
+            var package = _db.Packages
+                .FirstOrDefault(p => p.PackageId == packageId);
+
+            if (package == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Package not found."
+                });
+            }
+
+            // Check if the package is already in the cart
+            var existing = _db.Carts
+                .FirstOrDefault(c =>
+                    c.UserId == userId &&
+                    c.PackageId == packageId);
+
+            if (existing != null)
+            {
+                // Already present — just refresh the price in case it changed
+                existing.Price = package.Price;
+            }
+            else
+            {
+                var cartItem = new Cart
+                {
+                    UserId = userId,
+                    PackageId = packageId,
+                    ProductId = null,
+                    Quantity = quantity,
+                    Price = package.Price,
+                    AddedDate = DateTime.Now
+                };
+
+                _db.Carts.Add(cartItem);
+            }
+
+            _db.SaveChanges();
+
+            int cartCount = _db.Carts
+                .Where(c => c.UserId == userId)
+                .Sum(c => (int?)c.Quantity) ?? 0;
+
+            return Json(new
+            {
+                success = true,
+                message = "Package added to cart!",
+                cartCount = cartCount
+            });
+        }
+
+
+        // ─── SHOW CART ──────────────────────────────────────────────────────────
         [SessionAuthFilter]
         public ActionResult Index()
         {
@@ -161,7 +235,7 @@ namespace TourwebsiteFYP.Controllers
         }
 
 
-        // Update cart quantity
+        // ─── UPDATE QUANTITY ────────────────────────────────────────────────────
         [HttpPost]
         [SessionAuthFilter]
         public ActionResult UpdateQuantity(int cartId, int quantity)
@@ -210,7 +284,7 @@ namespace TourwebsiteFYP.Controllers
         }
 
 
-        // Remove item from cart
+        // ─── REMOVE ITEM FROM CART ──────────────────────────────────────────────
         [HttpPost]
         [SessionAuthFilter]
         public ActionResult Remove(int cartId)
@@ -246,7 +320,10 @@ namespace TourwebsiteFYP.Controllers
         }
 
 
-        // Checkout page
+        // ─── CHECKOUT PAGE ──────────────────────────────────────────────────────
+        // Shared for product orders, package bookings, and mixed carts.
+        // ViewBag.HasPackages / ViewBag.HasProducts tell the view which
+        // conditional fields to render.
         [SessionAuthFilter]
         public ActionResult Checkout()
         {
@@ -266,11 +343,18 @@ namespace TourwebsiteFYP.Controllers
                 .OrderBy(p => p.PaymentTypeId)
                 .ToList();
 
+            // Flags used in Checkout.cshtml to show / hide package-specific fields
+            ViewBag.HasPackages = items.Any(c => c.PackageId.HasValue);
+            ViewBag.HasProducts = items.Any(c => c.ProductId.HasValue);
+
             return View(items);
         }
 
 
-        // Place order
+        // ─── PLACE ORDER ────────────────────────────────────────────────────────
+        // Handles product orders, package bookings, and mixed carts through a
+        // single action.  travelDate and travelers are only submitted when the
+        // cart contains at least one package.
         [HttpPost]
         [SessionAuthFilter]
         [ValidateAntiForgeryToken]
@@ -280,6 +364,8 @@ namespace TourwebsiteFYP.Controllers
             string phone,
             string address,
             string notes,
+            string travelDate,
+            int? travelers,
             int? paymentTypeId = null)
         {
             int userId = SessionHelper.GetUserId();
@@ -298,7 +384,7 @@ namespace TourwebsiteFYP.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Get selected payment method
+            // Validate payment method
             var paymentType = paymentTypeId.HasValue
                 ? _db.PaymentTypes.FirstOrDefault(
                     p => p.PaymentTypeId == paymentTypeId.Value)
@@ -312,35 +398,50 @@ namespace TourwebsiteFYP.Controllers
                 return RedirectToAction("Checkout");
             }
 
+            bool hasPackages = cartItems.Any(c => c.PackageId.HasValue);
+            bool hasProducts = cartItems.Any(c => c.ProductId.HasValue);
+
             decimal total = cartItems
                 .Sum(c => c.Price * c.Quantity);
 
-            // Store delivery information in SpecialRequest
+            // Build SpecialRequest from all submitted fields
             var requestParts = new List<string>();
 
             if (!string.IsNullOrWhiteSpace(address))
-            {
-                requestParts.Add(
-                    "Delivery address: " + address.Trim());
-            }
+                requestParts.Add("Delivery address: " + address.Trim());
 
             if (!string.IsNullOrWhiteSpace(phone))
+                requestParts.Add("Phone: " + phone.Trim());
+
+            // Package-specific fields stored alongside the rest
+            if (hasPackages)
             {
-                requestParts.Add(
-                    "Phone: " + phone.Trim());
+                if (!string.IsNullOrWhiteSpace(travelDate))
+                    requestParts.Add("Travel date: " + travelDate.Trim());
+
+                if (travelers.HasValue && travelers.Value > 0)
+                    requestParts.Add("Travellers: " + travelers.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(notes))
+                requestParts.Add("Notes: " + notes.Trim());
+
+            // Resolve BookingDate: use the chosen travel date for package bookings;
+            // fall back to now for pure product orders.
+            DateTime bookingDate = DateTime.Now;
+            if (hasPackages &&
+                !string.IsNullOrWhiteSpace(travelDate) &&
+                DateTime.TryParse(travelDate, out DateTime parsedDate) &&
+                parsedDate.Date >= DateTime.Today)
             {
-                requestParts.Add(
-                    "Notes: " + notes.Trim());
+                bookingDate = parsedDate;
             }
 
-            // Create booking
+            // Create booking record (one per checkout, regardless of item types)
             var booking = new Booking
             {
                 UserId = userId,
-                BookingDate = DateTime.Now,
+                BookingDate = bookingDate,
                 Status = "Pending",
                 TotalAmount = total,
                 Email = email,
@@ -354,7 +455,9 @@ namespace TourwebsiteFYP.Controllers
             _db.SaveChanges();
 
 
-            // Create booking details
+            // Create booking details — one row per cart item.
+            // BookingDetail already has nullable ProductId and PackageId columns,
+            // so no schema change is required.
             foreach (var item in cartItems)
             {
                 var bookingDetail = new BookingDetail
@@ -387,28 +490,39 @@ namespace TourwebsiteFYP.Controllers
             _db.SaveChanges();
 
 
-            // Empty the cart after successful order
+            // Clear the cart
             _db.Carts.RemoveRange(cartItems);
             _db.SaveChanges();
 
 
-            // Store information for Thank You page
-            TempData["BookingId"] = booking.BookingId;
-            TempData["TotalAmount"] = total;
+            // Pass data to the shared Thank You page
+            TempData["BookingId"]     = booking.BookingId;
+            TempData["TotalAmount"]   = total;
+            TempData["CustomerName"]  = string.IsNullOrWhiteSpace(fullName)
+                                            ? "Valued Customer"
+                                            : fullName.Trim();
+            TempData["PaymentMethod"] = paymentType.PaymentTypeName;
 
-            TempData["CustomerName"] =
-                string.IsNullOrWhiteSpace(fullName)
-                    ? "Valued Customer"
-                    : fullName.Trim();
+            // OrderType drives the messaging on the Thank You page
+            if (hasPackages && hasProducts)
+                TempData["OrderType"] = "mixed";
+            else if (hasPackages)
+                TempData["OrderType"] = "packages";
+            else
+                TempData["OrderType"] = "products";
 
-            TempData["PaymentMethod"] =
-                paymentType.PaymentTypeName;
+            // Package-specific summary data for the Thank You page
+            if (hasPackages)
+            {
+                TempData["TravelDate"] = travelDate;
+                TempData["Travelers"]  = travelers.HasValue ? travelers.Value : 1;
+            }
 
             return RedirectToAction("ThankYou");
         }
 
 
-        // Get cart data as JSON
+        // ─── GET CART DATA (JSON) ───────────────────────────────────────────────
         [HttpGet]
         public ActionResult GetCartData()
         {
@@ -429,7 +543,6 @@ namespace TourwebsiteFYP.Controllers
                 ProductId = c.ProductId,
                 PackageId = c.PackageId,
 
-                // Get item name
                 ProductName =
                     c.Product != null
                         ? c.Product.ProductName
@@ -439,16 +552,11 @@ namespace TourwebsiteFYP.Controllers
 
                 Quantity = c.Quantity,
                 Price = c.Price,
-
-                // Calculate item total
                 LineTotal = c.Price * c.Quantity
             }).ToList();
 
-            decimal subtotal = items
-                .Sum(c => c.Price * c.Quantity);
-
-            int cartCount = items
-                .Sum(c => c.Quantity);
+            decimal subtotal = items.Sum(c => c.Price * c.Quantity);
+            int cartCount    = items.Sum(c => c.Quantity);
 
             return Json(
                 new
@@ -462,7 +570,8 @@ namespace TourwebsiteFYP.Controllers
         }
 
 
-        // Thank You page
+        // ─── THANK YOU PAGE ─────────────────────────────────────────────────────
+        // Shared for all order types: products, packages, or mixed.
         public ActionResult ThankYou()
         {
             if (TempData["BookingId"] == null)
@@ -470,17 +579,19 @@ namespace TourwebsiteFYP.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ViewBag.BookingId = TempData["BookingId"];
-            ViewBag.TotalAmount = TempData["TotalAmount"];
-            ViewBag.CustomerName = TempData["CustomerName"];
-            ViewBag.PaymentMethod =
-                TempData["PaymentMethod"] ?? "Not specified";
+            ViewBag.BookingId     = TempData["BookingId"];
+            ViewBag.TotalAmount   = TempData["TotalAmount"];
+            ViewBag.CustomerName  = TempData["CustomerName"];
+            ViewBag.PaymentMethod = TempData["PaymentMethod"] ?? "Not specified";
+            ViewBag.OrderType     = TempData["OrderType"]     ?? "products";
+            ViewBag.TravelDate    = TempData["TravelDate"] as string;
+            ViewBag.Travelers     = TempData["Travelers"];
 
             return View();
         }
 
 
-        // Dispose database connection
+        // ─── DISPOSE ────────────────────────────────────────────────────────────
         protected override void Dispose(bool disposing)
         {
             if (disposing)
