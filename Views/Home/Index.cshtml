@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Home";
     ViewBag.ActivePage = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -694,11 +694,11 @@
                 <h2>Plan your perfect trip</h2>
                 <p>Set a region, a climate, a style and a budget. We'll draft a day-by-day plan you can still change your mind about.</p>
             </div>
-            <form action="@Url.Action("Index", "AI")" method="GET">
+            <form id="homeTripForm" novalidate>
                 <div class="ai-form-grid">
                     <div class="ai-form-group">
-                        <label>Destination</label>
-                        <select name="destination">
+                        <label for="htDest">Destination</label>
+                        <select id="htDest" name="destination">
                             <option value="">Select region</option>
                             <option value="Europe">Europe</option>
                             <option value="Asia">Asia</option>
@@ -706,16 +706,17 @@
                             <option value="Africa">Africa</option>
                             <option value="Oceania">Oceania</option>
                         </select>
+                        <span id="htDestError" style="display:none;font-size:.76rem;color:#f87171;margin-top:.2rem;">Please select a destination.</span>
                     </div>
 
                     <div class="ai-form-group">
-                        <label>Temperature</label>
-                        <input type="text" name="temperature" placeholder="e.g. warm, tropical, 20C" />
+                        <label for="htTemp">Temperature</label>
+                        <input type="text" id="htTemp" name="temperature" placeholder="e.g. warm, tropical, 20C" />
                     </div>
 
                     <div class="ai-form-group">
-                        <label>Duration</label>
-                        <select name="duration">
+                        <label for="htDur">Duration</label>
+                        <select id="htDur" name="duration">
                             <option value="3">3 days</option>
                             <option value="5" selected>5 days</option>
                             <option value="7">7 days</option>
@@ -725,8 +726,8 @@
                     </div>
 
                     <div class="ai-form-group">
-                        <label>Travel style</label>
-                        <select name="style">
+                        <label for="htStyle">Travel style</label>
+                        <select id="htStyle" name="style">
                             <option value="Luxury">Luxury</option>
                             <option value="Budget">Budget</option>
                             <option value="Adventure">Adventure</option>
@@ -736,11 +737,11 @@
                     </div>
 
                     <div class="ai-form-group" style="grid-column: span 2;">
-                        <label>Budget range</label>
-                        <select name="budget">
+                        <label for="htBudget">Budget range</label>
+                        <select id="htBudget" name="budget">
                             <option value="1000">Under $1,000</option>
-                            <option value="3000">$1,000  $3,000</option>
-                            <option value="5000">$3,000  $5,000</option>
+                            <option value="3000">$1,000 &ndash; $3,000</option>
+                            <option value="5000">$3,000 &ndash; $5,000</option>
                             <option value="10000">$5,000+</option>
                         </select>
                     </div>
@@ -779,3 +780,46 @@
     </div>
 </section>
 
+@section Scripts {
+<script>
+(function () {
+    'use strict';
+    var form = document.getElementById('homeTripForm');
+    if (!form) return;
+
+    var tourPlannerUrl = '@Url.Action("Index", "TourPlanner")';
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var dest  = document.getElementById('htDest').value;
+        var errEl = document.getElementById('htDestError');
+
+        if (!dest) {
+            errEl.style.display = 'block';
+            document.getElementById('htDest').focus();
+            return;
+        }
+        errEl.style.display = 'none';
+
+        var temp   = document.getElementById('htTemp').value.trim();
+        var dur    = document.getElementById('htDur').value;
+        var style  = document.getElementById('htStyle').value;
+        var budget = document.getElementById('htBudget').value;
+
+        var params = new URLSearchParams();
+        params.set('dest',   dest);
+        params.set('dur',    dur);
+        params.set('style',  style);
+        params.set('budget', budget);
+        if (temp) params.set('temp', temp);
+
+        window.location.href = tourPlannerUrl + '?' + params.toString();
+    });
+
+    document.getElementById('htDest').addEventListener('change', function () {
+        document.getElementById('htDestError').style.display = 'none';
+    });
+}());
+</script>
+}
