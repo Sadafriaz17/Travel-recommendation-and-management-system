@@ -114,17 +114,23 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 2.5rem;
+            gap: 1.85rem;
         }
 
             .nav-links a {
                 color: rgba(255, 255, 255, 0.7);
                 font-size: 0.9rem;
                 font-weight: 500;
+                white-space: nowrap;
             }
 
-                .nav-links a:hover {
+                .nav-links a:hover,
+                .nav-links a.nav-active {
                     color: #fff;
+                }
+
+                .nav-links a.nav-active {
+                    font-weight: 600;
                 }
 
         /*  NAV DROPDOWN (More menu)  */
@@ -144,11 +150,17 @@
             font-family: var(--font-main);
             cursor: pointer;
             padding: 0;
+            white-space: nowrap;
         }
 
             .nav-dropdown-toggle:hover,
-            .nav-dropdown.open .nav-dropdown-toggle {
+            .nav-dropdown.open .nav-dropdown-toggle,
+            .nav-dropdown-toggle.nav-active {
                 color: #fff;
+            }
+
+            .nav-dropdown-toggle.nav-active {
+                font-weight: 600;
             }
 
             .nav-dropdown-toggle i {
@@ -156,16 +168,17 @@
                 transition: transform 0.2s ease;
             }
 
-        .nav-dropdown.open .nav-dropdown-toggle i {
+        .nav-dropdown.open .nav-dropdown-toggle i.fa-chevron-down {
             transform: rotate(180deg);
         }
 
         .nav-dropdown-menu {
             position: absolute;
             top: calc(100% + 18px);
-            left: 50%;
-            transform: translateX(-50%) translateY(8px);
-            min-width: 230px;
+            right: 0;
+            left: auto;
+            transform: translateY(8px);
+            min-width: 220px;
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 12px 35px rgba(0,0,0,0.15);
@@ -176,10 +189,25 @@
             z-index: 1100;
         }
 
+        #aiDropdown .nav-dropdown-menu {
+            left: 0;
+            right: auto;
+        }
+
         .nav-dropdown.open .nav-dropdown-menu {
             opacity: 1;
             visibility: visible;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
+        }
+
+        .nav-dropdown:hover .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .nav-dropdown:hover .nav-dropdown-toggle i.fa-chevron-down {
+            transform: rotate(180deg);
         }
 
         .nav-dropdown-menu a {
@@ -202,6 +230,16 @@
             .nav-dropdown-menu a:hover {
                 background: #f3f4f6;
                 color: #111;
+            }
+
+            .nav-dropdown-menu a.nav-active {
+                background: #f3f4f6;
+                color: #111;
+                font-weight: 600;
+            }
+
+            .nav-dropdown-menu a.nav-active i {
+                color: #1a1a1a;
             }
 
         .nav-actions {
@@ -994,28 +1032,46 @@
             <i class="fas fa-compass"></i> NEXVOY
         </a>
         <ul class="nav-links">
-            <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-            <li><a href="@Url.Action("Index", "Destination")">Destinations</a></li>
-            <li><a href="@Url.Action("Index", "Package")">Packages</a></li>
-            <li><a href="@Url.Action("About", "Home")">About</a></li>
-            <li><a href="@Url.Action("Services", "Home")">Services</a></li>
-            <li><a href="@Url.Action("Contact", "Home")">Contact</a></li>
+            <li><a href="@Url.Action("Index", "Home")" class="@(activePage == "Home" ? "nav-active" : "")">Home</a></li>
+            <li><a href="@Url.Action("Index", "Destination")" class="@(activePage == "Destinations" ? "nav-active" : "")">Destinations</a></li>
+            <li><a href="@Url.Action("Index", "Package")" class="@(activePage == "Packages" ? "nav-active" : "")">Packages</a></li>
+            <li><a href="@Url.Action("Index", "Product")" class="@(activePage == "Products" ? "nav-active" : "")">Travel Store</a></li>
+            @{
+                var aiActive = (activePage == "TourPlanner" || activePage == "PackingAssistant");
+                var moreActive = (activePage == "Marketplace" || activePage == "TripAdvisor" || activePage == "About" || activePage == "Services" || activePage == "Contact");
+            }
+            <li class="nav-dropdown" id="aiDropdown">
+                <button type="button" class="nav-dropdown-toggle @(aiActive ? "nav-active" : "")" onclick="toggleNavDropdown(event, 'aiDropdown')">
+                    AI Tools <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a href="@Url.Action("Index", "TourPlanner")" class="@(activePage == "TourPlanner" ? "nav-active" : "")">
+                        <i class="fas fa-route"></i> Tour Planner
+                    </a>
+                    <a href="@Url.Action("Index", "PackingAssistant")" class="@(activePage == "PackingAssistant" ? "nav-active" : "")">
+                        <i class="fas fa-suitcase-rolling"></i> Packing Assistant
+                    </a>
+                </div>
+            </li>
             <li class="nav-dropdown" id="moreDropdown">
-                <button type="button" class="nav-dropdown-toggle" onclick="toggleNavDropdown(event)">
+                <button type="button" class="nav-dropdown-toggle @(moreActive ? "nav-active" : "")" onclick="toggleNavDropdown(event, 'moreDropdown')">
                     More <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="nav-dropdown-menu">
-                    <a href="@Url.Action("Index", "VendorMarketPlace")">
+                    <a href="@Url.Action("Index", "VendorMarketPlace")" class="@(activePage == "Marketplace" ? "nav-active" : "")">
                         <i class="fas fa-store"></i> Travel Marketplace
                     </a>
-                    <a href="@Url.Action("Index", "Product")">
-                        <i class="fas fa-shopping-bag"></i> Travel Store
-                    </a>
-                    <a href="@Url.Action("Index", "TripAdvisor")">
+                    <a href="@Url.Action("Index", "TripAdvisor")" class="@(activePage == "TripAdvisor" ? "nav-active" : "")">
                         <i class="fas fa-comment-dots"></i> Trip Advisor
                     </a>
-                    <a href="@Url.Action("Index", "PackingAssistant")">
-                        <i class="fas fa-suitcase-rolling"></i> Packing Assistance
+                    <a href="@Url.Action("About", "Home")" class="@(activePage == "About" ? "nav-active" : "")">
+                        <i class="fas fa-circle-info"></i> About
+                    </a>
+                    <a href="@Url.Action("Services", "Home")" class="@(activePage == "Services" ? "nav-active" : "")">
+                        <i class="fas fa-concierge-bell"></i> Services
+                    </a>
+                    <a href="@Url.Action("Contact", "Home")" class="@(activePage == "Contact" ? "nav-active" : "")">
+                        <i class="fas fa-envelope"></i> Contact
                     </a>
                 </div>
             </li>
@@ -1133,9 +1189,14 @@
                 .catch(e => console.log(e));
         });
 
-        function toggleNavDropdown(e) {
+        function toggleNavDropdown(e, id) {
             e.stopPropagation();
-            document.getElementById('moreDropdown').classList.toggle('open');
+            var targetId = id || 'moreDropdown';
+            var target = document.getElementById(targetId);
+            document.querySelectorAll('.nav-dropdown').forEach(function(d) {
+                if (d.id !== targetId) d.classList.remove('open');
+            });
+            if (target) target.classList.toggle('open');
         }
 
         function toggleUserDropdown(e) {
@@ -1144,10 +1205,11 @@
         }
 
         document.addEventListener('click', function (e) {
-            var moreDropdown = document.getElementById('moreDropdown');
-            if (moreDropdown && !moreDropdown.contains(e.target)) {
-                moreDropdown.classList.remove('open');
-            }
+            document.querySelectorAll('.nav-dropdown').forEach(function (d) {
+                if (!d.contains(e.target)) {
+                    d.classList.remove('open');
+                }
+            });
 
             var userMenu = document.getElementById('userMenu');
             var userDropdown = document.getElementById('userDropdown');

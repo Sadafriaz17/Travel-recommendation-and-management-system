@@ -1,4 +1,5 @@
 Web.config
+Web.secrets.config
 .vs/
 bin/
 obj/

@@ -1,0 +1,190 @@
+@* =====================================================
+   AI PACKING ASSISTANT  —  Views/PackingAssistant/Index.cshtml
+   ===================================================== *@
+@{
+    ViewBag.Title = "AI Packing Assistant";
+    ViewBag.ActivePage = "PackingAssistant";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool isReady = ViewBag.IsReady == true;
+}
+
+@section HeadStyles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/frontend/ai-tools.css")" />
+    <style>
+        @@media print {
+            #site-header, #site-footer, #packingFormSection, #aiLoader, #errorBanner, .ai-result-btns { display: none !important; }
+            #aiResults { display: block !important; }
+        }
+    </style>
+}
+
+@* HERO *@
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-breadcrumb">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>AI Packing Assistant</span>
+        </div>
+        <div class="hero-eyebrow"><i class="fas fa-sparkles"></i> Powered by AI</div>
+        <h1>Smart Packing Assistant</h1>
+        <p>Tell us about your trip and get a personalised packing checklist &mdash; grouped, prioritised, and ready to use.</p>
+    </div>
+</section>
+
+@* FORM CARD *@
+<section id="packingFormSection">
+    <div class="container">
+        <div class="ai-form-card">
+
+            @* NOT-CONNECTED NOTICE  —  inside card, always visible when API is unconfigured *@
+            @if (!isReady)
+            {
+                <div class="ai-banner ai-banner-warn active ai-banner-card-top">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <div>
+                        <p><strong>AI is not connected yet.</strong> Please add the API details in config. The form and checklist will work fully once the API key and URL are added.</p>
+                    </div>
+                </div>
+            }
+
+            @* ERROR NOTICE  —  inside card, shown by JS on failure *@
+            <div class="ai-banner ai-banner-error ai-banner-card-top" id="errorBanner" style="display:none;">
+                <i class="fas fa-circle-exclamation"></i>
+                <div>
+                    <p class="error-msg"></p>
+                    <button class="btn-retry" id="retryBtn" type="button"><i class="fas fa-redo"></i> Try Again</button>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-suitcase-rolling"></i> Trip Details</h3>
+
+            @using (Html.BeginForm("Generate", "PackingAssistant", FormMethod.Post, new { id = "packingForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="ai-grid-2">
+                    <div class="ai-field">
+                        <label for="Destination">Destination *</label>
+                        <input type="text" id="Destination" name="Destination" placeholder="e.g. Bali, Indonesia" maxlength="200" required />
+                    </div>
+                    <div class="ai-field">
+                        <label for="TripType">Trip Type *</label>
+                        <select id="TripType" name="TripType" required>
+                            <option value="">Select trip type</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="family">Family</option>
+                            <option value="business">Business</option>
+                            <option value="honeymoon">Honeymoon</option>
+                            <option value="religious">Religious</option>
+                            <option value="budget">Budget</option>
+                        </select>
+                    </div>
+                    <div class="ai-field">
+                        <label for="Days">Number of Days *</label>
+                        <input type="number" id="Days" name="Days" min="1" max="365" placeholder="7" value="7" />
+                    </div>
+                    <div class="ai-field">
+                        <label for="Weather">Weather / Season</label>
+                        <input type="text" id="Weather" name="Weather" placeholder="e.g. Tropical, cold, monsoon" maxlength="200" />
+                    </div>
+                    <div class="ai-field">
+                        <label for="StartDate">Start Date <span style="color:#9ca3af;">(optional)</span></label>
+                        <input type="date" id="StartDate" name="StartDate" />
+                    </div>
+                    <div class="ai-field">
+                        <label for="EndDate">End Date <span style="color:#9ca3af;">(optional)</span></label>
+                        <input type="date" id="EndDate" name="EndDate" />
+                    </div>
+                </div>
+
+                @* Travelers *@
+                <div style="margin-top:1.5rem;">
+                    <label style="font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;">Travelers</label>
+                    <div style="border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-top:.6rem;background:#f9fafb;">
+                        <div class="traveler-row">
+                            <div class="traveler-label">Adults <small>18+ years</small></div>
+                            <div class="counter-wrap">
+                                <button type="button" class="counter-btn" data-target="Adults" data-dir="down">&#8722;</button>
+                                <input type="number" id="Adults" name="Adults" value="1" min="0" max="20" data-min="0" data-max="20"
+                                       style="width:36px;text-align:center;border:none;background:transparent;font-weight:700;font-size:.95rem;" />
+                                <button type="button" class="counter-btn" data-target="Adults" data-dir="up">+</button>
+                            </div>
+                        </div>
+                        <div class="traveler-row">
+                            <div class="traveler-label">Children <small>2&#8211;17 years</small></div>
+                            <div class="counter-wrap">
+                                <button type="button" class="counter-btn" data-target="Children" data-dir="down">&#8722;</button>
+                                <input type="number" id="Children" name="Children" value="0" min="0" max="20" data-min="0" data-max="20"
+                                       style="width:36px;text-align:center;border:none;background:transparent;font-weight:700;font-size:.95rem;" />
+                                <button type="button" class="counter-btn" data-target="Children" data-dir="up">+</button>
+                            </div>
+                        </div>
+                        <div class="traveler-row">
+                            <div class="traveler-label">Seniors <small>60+ years</small></div>
+                            <div class="counter-wrap">
+                                <button type="button" class="counter-btn" data-target="Seniors" data-dir="down">&#8722;</button>
+                                <input type="number" id="Seniors" name="Seniors" value="0" min="0" max="20" data-min="0" data-max="20"
+                                       style="width:36px;text-align:center;border:none;background:transparent;font-weight:700;font-size:.95rem;" />
+                                <button type="button" class="counter-btn" data-target="Seniors" data-dir="up">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-grid-2" style="margin-top:1.25rem;">
+                    <div class="ai-field ai-col-full">
+                        <label for="SpecialNeeds">Special Needs / Notes <span style="color:#9ca3af;">(optional)</span></label>
+                        <textarea id="SpecialNeeds" name="SpecialNeeds"
+                                  placeholder="e.g. one traveler uses a wheelchair, dietary restrictions, diabetic supplies needed..."
+                                  maxlength="500"></textarea>
+                    </div>
+                </div>
+
+                <div class="ai-actions">
+                    <button type="submit" id="submitBtn" class="btn-ai-primary">
+                        <i class="fas fa-magic"></i> Generate Packing List
+                    </button>
+                    <button type="button" class="btn-ai-ghost" onclick="packingRegenerate()">
+                        <i class="fas fa-redo"></i> Regenerate
+                    </button>
+                    <button type="button" class="btn-ai-ghost" onclick="packingReset()">
+                        <i class="fas fa-check-square"></i> Reset Ticks
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@* LOADER *@
+<div class="container">
+    <div class="ai-loader" id="aiLoader">
+        <div class="ai-spinner"></div>
+        <p>Generating your personalised packing list&#8230; this may take a moment.</p>
+    </div>
+</div>
+
+@* RESULTS *@
+<div class="ai-results container" id="aiResults">
+    <div class="ai-results-header">
+        <h2><i class="fas fa-list-check" style="margin-right:.4rem;"></i> Your Packing List</h2>
+        <div class="ai-result-btns">
+            <button class="btn-ai-ghost" onclick="packingPrint()" id="printBtn">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <button class="btn-ai-ghost" onclick="packingCopy()" id="copyBtn">
+                <i class="fas fa-copy"></i> Copy as Text
+            </button>
+            <button class="btn-ai-primary" onclick="packingRegenerate()" style="font-size:.82rem;padding:.65rem 1.4rem;">
+                <i class="fas fa-magic"></i> Regenerate
+            </button>
+        </div>
+    </div>
+    <div id="resultsSection"></div>
+</div>
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/ai-packing.js")"></script>
+}

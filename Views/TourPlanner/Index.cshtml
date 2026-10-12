@@ -1,0 +1,225 @@
+@* =====================================================
+   AI TOUR PLANNER  —  Views/TourPlanner/Index.cshtml
+   ===================================================== *@
+@{
+    ViewBag.Title = "AI Tour Planner";
+    ViewBag.ActivePage = "TourPlanner";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool isReady = ViewBag.IsReady == true;
+}
+
+@section HeadStyles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/frontend/ai-tools.css")" />
+    <style>
+        @@media print {
+            #site-header, #site-footer, #tourFormSection, #aiLoader, #errorBanner, .ai-result-btns { display: none !important; }
+            #aiResults { display: block !important; }
+            .day-card { display: block !important; }
+        }
+    </style>
+}
+
+@* HERO *@
+<section class="hero-wrapper hero-inner">
+    <div class="hero-content">
+        <div class="hero-breadcrumb">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>AI Tour Planner</span>
+        </div>
+        <div class="hero-eyebrow"><i class="fas fa-sparkles"></i> Powered by AI</div>
+        <h1>AI Tour Planner</h1>
+        <p>Share your travel style, dates, and budget. Get a day-by-day itinerary you can edit, save, and print.</p>
+    </div>
+</section>
+
+@* FORM CARD *@
+<section id="tourFormSection">
+    <div class="container">
+        <div class="ai-form-card">
+
+            @* NOT-CONNECTED NOTICE  —  inside card, always visible when API is unconfigured *@
+            @if (!isReady)
+            {
+                <div class="ai-banner ai-banner-warn active ai-banner-card-top">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <div>
+                        <p><strong>AI is not connected yet.</strong> Please add the API details in config. The form will work fully once the API key and URL are added.</p>
+                    </div>
+                </div>
+            }
+
+            @* ERROR NOTICE  —  inside card, shown by JS on failure *@
+            <div class="ai-banner ai-banner-error ai-banner-card-top" id="errorBanner" style="display:none;">
+                <i class="fas fa-circle-exclamation"></i>
+                <div>
+                    <p class="error-msg"></p>
+                    <button class="btn-retry" id="retryBtn" type="button"><i class="fas fa-redo"></i> Try Again</button>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-route"></i> Plan Your Trip</h3>
+
+            @using (Html.BeginForm("Generate", "TourPlanner", FormMethod.Post, new { id = "tourForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @* Row 1: From / To *@
+                <div class="ai-grid-2">
+                    <div class="ai-field">
+                        <label for="FromCity">Starting City *</label>
+                        <input type="text" id="FromCity" name="FromCity" placeholder="e.g. Karachi" maxlength="200" required />
+                    </div>
+                    <div class="ai-field">
+                        <label for="Destination">Destination *</label>
+                        <input type="text" id="Destination" name="Destination" placeholder="e.g. Istanbul, Turkey" maxlength="200" required />
+                    </div>
+                </div>
+
+                @* Row 2: Duration (matches home page) OR custom dates *@
+                <div class="ai-grid-2" style="margin-top:1.25rem;">
+                    <div class="ai-field">
+                        <label for="Duration">Duration</label>
+                        <select id="Duration" name="Duration">
+                            <option value="0">Use custom dates below</option>
+                            <option value="3">3 days</option>
+                            <option value="5" selected>5 days</option>
+                            <option value="7">7 days</option>
+                            <option value="10">10 days</option>
+                            <option value="14">14 days</option>
+                        </select>
+                    </div>
+                    <div class="ai-field">
+                        <label for="Travelers">Travelers *</label>
+                        <input type="number" id="Travelers" name="Travelers" min="1" max="50" value="2" />
+                    </div>
+                </div>
+
+                @* Row 3: Custom dates — shown only when Duration = "Use custom dates" *@
+                <div class="ai-grid-2" style="margin-top:1.25rem;" id="datesGroup">
+                    <div class="ai-field">
+                        <label for="StartDate">Start Date <span style="color:#9ca3af;">(optional if duration set)</span></label>
+                        <input type="date" id="StartDate" name="StartDate" />
+                    </div>
+                    <div class="ai-field">
+                        <label for="EndDate">End Date <span style="color:#9ca3af;">(optional if duration set)</span></label>
+                        <input type="date" id="EndDate" name="EndDate" />
+                    </div>
+                </div>
+
+                @* Row 4: Budget range (matches home page) + Trip style *@
+                <div class="ai-grid-2" style="margin-top:1.25rem;">
+                    <div class="ai-field">
+                        <label for="BudgetRange">Budget Range</label>
+                        <select id="BudgetRange" name="BudgetRange">
+                            <option value="">Any budget</option>
+                            <option value="1000">Under $1,000</option>
+                            <option value="3000">$1,000 &ndash; $3,000</option>
+                            <option value="5000">$3,000 &ndash; $5,000</option>
+                            <option value="10000">$5,000+</option>
+                        </select>
+                        @* Hidden fields receive min/max computed from the select *@
+                        <input type="hidden" id="BudgetMin" name="BudgetMin" value="0" />
+                        <input type="hidden" id="BudgetMax" name="BudgetMax" value="99999" />
+                    </div>
+                    <div class="ai-field">
+                        <label for="TripStyle">Travel Style</label>
+                        <select id="TripStyle" name="TripStyle">
+                            <option value="">Any style</option>
+                            <option value="Luxury">Luxury</option>
+                            <option value="Budget">Budget</option>
+                            <option value="Adventure">Adventure</option>
+                            <option value="Family">Family</option>
+                            <option value="Romantic">Romantic</option>
+                        </select>
+                    </div>
+                </div>
+
+                @* Row 5: Travel pace + Temperature *@
+                <div class="ai-grid-2" style="margin-top:1.25rem;">
+                    <div class="ai-field">
+                        <label for="TravelStyle">Itinerary Pace</label>
+                        <select id="TravelStyle" name="TravelStyle">
+                            <option value="relaxed">Relaxed (2 activities/day)</option>
+                            <option value="balanced" selected>Balanced (3&#8211;4 activities/day)</option>
+                            <option value="packed">Packed (5+ activities/day)</option>
+                        </select>
+                    </div>
+                    <div class="ai-field">
+                        <label for="Temperature">Temperature / Climate <span style="color:#9ca3af;">(optional)</span></label>
+                        <input type="text" id="Temperature" name="Temperature"
+                               placeholder="e.g. warm, tropical, cold, 20&deg;C" maxlength="200" />
+                    </div>
+                </div>
+
+                @* Row 6: Health notes *@
+                <div style="margin-top:1.25rem;">
+                    <div class="ai-field">
+                        <label for="HealthNotes">Health Conditions / Limits <span style="color:#9ca3af;">(optional)</span></label>
+                        <input type="text" id="HealthNotes" name="HealthNotes"
+                               placeholder="e.g. knee injury, avoid long walks" maxlength="500" />
+                    </div>
+                </div>
+
+                @* Interests *@
+                <div style="margin-top:1.5rem;">
+                    <label style="font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;">Interests</label>
+                    <input type="hidden" id="Interests" name="Interests" />
+                    <div class="ai-chips" style="margin-top:.6rem;" id="interestChips">
+                        <span class="ai-chip" data-value="nature">&#127807; Nature</span>
+                        <span class="ai-chip" data-value="culture">&#127914; Culture</span>
+                        <span class="ai-chip" data-value="food">&#127829; Food</span>
+                        <span class="ai-chip" data-value="adventure">&#129336; Adventure</span>
+                        <span class="ai-chip" data-value="shopping">&#128717; Shopping</span>
+                        <span class="ai-chip" data-value="history">&#127963; History</span>
+                        <span class="ai-chip" data-value="relaxation">&#127958; Relaxation</span>
+                    </div>
+                </div>
+
+                <div class="ai-actions">
+                    <button type="submit" id="submitBtn" class="btn-ai-primary">
+                        <i class="fas fa-magic"></i> Generate Itinerary
+                    </button>
+                    <button type="button" class="btn-ai-ghost" onclick="tourPlannerRegenerate()">
+                        <i class="fas fa-redo"></i> Regenerate
+                    </button>
+                    <button type="button" class="btn-ai-ghost" onclick="tourPlannerSave()" id="saveBtn">
+                        <i class="fas fa-bookmark"></i> Save Plan
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@* LOADER *@
+<div class="container">
+    <div class="ai-loader" id="aiLoader">
+        <div class="ai-spinner"></div>
+        <p>Building your day-by-day itinerary&#8230; this may take a moment.</p>
+    </div>
+</div>
+
+@* RESULTS *@
+<div class="ai-results container" id="aiResults">
+    <div class="ai-results-header">
+        <h2><i class="fas fa-map-marked-alt" style="margin-right:.4rem;"></i> Your Itinerary</h2>
+        <div class="ai-result-btns">
+            <button class="btn-ai-ghost" onclick="tourPlannerPrint()" id="printBtn">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <button class="btn-ai-ghost" onclick="tourPlannerSave()" id="saveBtn2">
+                <i class="fas fa-bookmark"></i> Save Plan
+            </button>
+            <button class="btn-ai-primary" onclick="tourPlannerRegenerate()" style="font-size:.82rem;padding:.65rem 1.4rem;">
+                <i class="fas fa-magic"></i> Regenerate
+            </button>
+        </div>
+    </div>
+    <div id="resultsSection"></div>
+</div>
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/ai-tourplanner.js")"></script>
+}
