@@ -1,4 +1,4 @@
-@* PRODUCTS INDEX - Views/Product/Index.cshtml *@
+@* Views/Product/Index.cshtml *@
 @model IEnumerable<TourwebsiteFYP.DB_data_models.Product>
 
 @{
@@ -7,9 +7,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var productTypes = ViewBag.ProductTypes as IEnumerable<TourwebsiteFYP.DB_data_models.ProductType>;
-    var productList = Model != null ? Model.ToList() : new List<TourwebsiteFYP.DB_data_models.Product>();
+    var products = Model != null ? Model.ToList() : new List<TourwebsiteFYP.DB_data_models.Product>();
 
-    var productsJson = Newtonsoft.Json.JsonConvert.SerializeObject(productList.Select(p => new
+    var productsJson = Newtonsoft.Json.JsonConvert.SerializeObject(products.Select(p => new
     {
         id = p.ProductId,
         name = p.ProductName,
@@ -27,7 +27,6 @@
 
 @section HeadStyles {
     <style>
-        /* FILTER BAR */
         .prod-filter-glass {
             display: flex;
             align-items: center;
@@ -101,7 +100,6 @@
                 font-weight: 700;
             }
 
-        /* CARDS */
         .prod-cards-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -199,6 +197,14 @@
             color: var(--text-dark);
         }
 
+        .prod-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 1.2rem;
+            flex: 1;
+        }
+
         .prod-rating-row {
             display: flex;
             align-items: center;
@@ -207,7 +213,6 @@
             margin-bottom: 0.6rem;
         }
 
-        /* PARTIAL-FILL STARS */
         .star-rating {
             display: inline-flex;
             position: relative;
@@ -239,18 +244,11 @@
             color: var(--text-muted);
         }
 
-        .prod-card-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.55;
-            margin-bottom: 1.2rem;
-            flex: 1;
-        }
-
         .prod-card-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 8px;
             padding-top: 1rem;
             border-top: 1px solid var(--border);
         }
@@ -303,15 +301,11 @@
                 background: #16a34a;
             }
 
-        .prod-card-footer {
-            gap: 8px;
-        }
-
         .prod-empty {
             text-align: center;
             padding: 4rem;
             color: var(--text-muted);
-            grid-column: 1/-1;
+            grid-column: 1 / -1;
         }
 
         @@media (max-width: 1024px) {
@@ -348,12 +342,12 @@
 
         <div class="prod-filter-glass">
             <div class="prod-filter-scroll" id="filterPills">
-                <button class="prod-filter-btn active" onclick="filterByType(this,0)">All Products</button>
+                <button class="prod-filter-btn active" onclick="filterByType(this, 0)">All Products</button>
                 @if (productTypes != null)
                 {
-                    foreach (var pt in productTypes)
+                    foreach (var type in productTypes)
                     {
-                        <button class="prod-filter-btn" onclick="filterByType(this,@pt.ProductTypeId)">@pt.TypeName</button>
+                        <button class="prod-filter-btn" onclick="filterByType(this, @type.ProductTypeId)">@type.TypeName</button>
                     }
                 }
             </div>
@@ -383,123 +377,177 @@
 
 @section Scripts {
     <script>
-        const productsData = @Html.Raw(productsJson);
-        const STARS = '\u2605\u2605\u2605\u2605\u2605';
+        var allProducts = @Html.Raw(productsJson);
 
-        let currentTypeId = 0;
-        let currentSort = 'default';
+        var selectedType = 0;
+        var selectedSort = 'default';
 
-        function filterByType(btn, typeId) {
-            currentTypeId = typeId;
-            document.querySelectorAll('.prod-filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderFiltered();
+        function filterByType(button, typeId) {
+            selectedType = typeId;
+
+            var buttons = document.querySelectorAll('.prod-filter-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            button.classList.add('active');
+
+            showProducts();
         }
 
-        function sortProducts(val) {
-            currentSort = val;
-            renderFiltered();
+        function sortProducts(value) {
+            selectedSort = value;
+            showProducts();
         }
 
-        function renderFiltered() {
-            const list = currentTypeId === 0
-                ? [...productsData]
-                : productsData.filter(p => p.typeId === currentTypeId);
+        function showProducts() {
+            var list = [];
 
-            if (currentSort === 'price-asc')   list.sort((a, b) => a.price - b.price);
-            if (currentSort === 'price-desc')  list.sort((a, b) => b.price - a.price);
-            if (currentSort === 'rating-desc') list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-            if (currentSort === 'name')        list.sort((a, b) => a.name.localeCompare(b.name));
+            for (var i = 0; i < allProducts.length; i++) {
+                if (selectedType === 0 || allProducts[i].typeId === selectedType) {
+                    list.push(allProducts[i]);
+                }
+            }
+
+            if (selectedSort === 'price-asc') {
+                list.sort(function (a, b) { return a.price - b.price; });
+            }
+            if (selectedSort === 'price-desc') {
+                list.sort(function (a, b) { return b.price - a.price; });
+            }
+            if (selectedSort === 'rating-desc') {
+                list.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); });
+            }
+            if (selectedSort === 'name') {
+                list.sort(function (a, b) { return a.name.localeCompare(b.name); });
+            }
 
             document.getElementById('prodCount').textContent = list.length;
-            renderProducts(list);
-        }
 
-        function renderProducts(list) {
-            const grid = document.getElementById('prodGrid');
-            if (!list.length) {
+            var grid = document.getElementById('prodGrid');
+
+            if (list.length === 0) {
                 grid.innerHTML = '<div class="prod-empty">No products found.</div>';
                 return;
             }
 
-            grid.innerHTML = list.map(p => `
-                <div class="nex-prod-card" onclick="window.location.href='/Product/Details/${p.id}'">
-                    <div class="prod-card-media">
-                        <img src="${p.img}" alt="${esc(p.name)}" loading="lazy" />
-                        <span class="prod-type-tag">${esc(p.typeName)}</span>
-                        ${stockBadge(p.stockStatus)}
-                    </div>
-                    <div class="prod-card-body">
-                        <div class="prod-card-type">${esc(p.typeName)}${p.vendorName ? ' &middot; ' + esc(p.vendorName) : ''}</div>
-                        <h3 class="prod-card-title">${esc(p.name)}</h3>
-                        ${ratingRow(p.rating, p.reviewCount)}
-                        <p class="prod-card-desc">${esc(p.desc)}</p>
-                        <div class="prod-card-footer">
-                            <span class="prod-price-val">$${p.price}</span>
-                            <div style="display:flex;gap:6px;">
-                                <a class="prod-details-btn" href="/Product/Details/${p.id}" onclick="event.stopPropagation()">View</a>
-                                <button class="prod-cart-btn" onclick="event.stopPropagation(); addToCart(this, ${p.id})">
-                                    <i class="fas fa-cart-plus"></i> Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            var html = '';
+            for (var j = 0; j < list.length; j++) {
+                html += makeCard(list[j]);
+            }
+            grid.innerHTML = html;
         }
 
-        // Two stacked star layers: grey base + gold layer clipped to the rating %
-        function ratingRow(rating, reviewCount) {
-            if (!rating) return '';
-            const pct = Math.min(100, Math.max(0, (rating / 5) * 100)).toFixed(2);
-            const r = Number(rating).toFixed(1);
-            return `<div class="prod-rating-row">
-                <span class="star-rating" aria-label="${r} out of 5 stars">
-                    <span class="star-rating__bg">${STARS}</span>
-                    <span class="star-rating__fill" style="width:${pct}%">${STARS}</span>
-                </span>
-                <span class="prod-rating-num">${r}</span>
-                ${reviewCount ? `<span class="prod-review-count">(${reviewCount})</span>` : ''}
-            </div>`;
+        function makeCard(p) {
+            var vendor = '';
+            if (p.vendorName) {
+                vendor = ' &middot; ' + clean(p.vendorName);
+            }
+
+            return '' +
+                '<div class="nex-prod-card" onclick="window.location.href=\'/Product/Details/' + p.id + '\'">' +
+                    '<div class="prod-card-media">' +
+                        '<img src="' + p.img + '" alt="' + clean(p.name) + '" loading="lazy" />' +
+                        '<span class="prod-type-tag">' + clean(p.typeName) + '</span>' +
+                        makeStockBadge(p.stockStatus) +
+                    '</div>' +
+                    '<div class="prod-card-body">' +
+                        '<div class="prod-card-type">' + clean(p.typeName) + vendor + '</div>' +
+                        '<h3 class="prod-card-title">' + clean(p.name) + '</h3>' +
+                        makeStars(p.rating, p.reviewCount) +
+                        '<p class="prod-card-desc">' + clean(p.desc) + '</p>' +
+                        '<div class="prod-card-footer">' +
+                            '<span class="prod-price-val">$' + p.price + '</span>' +
+                            '<div style="display:flex;gap:6px;">' +
+                                '<a class="prod-details-btn" href="/Product/Details/' + p.id + '" onclick="event.stopPropagation()">View</a>' +
+                                '<button class="prod-cart-btn" onclick="event.stopPropagation(); addToCart(this, ' + p.id + ')">' +
+                                    '<i class="fas fa-cart-plus"></i> Add to Cart' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
         }
 
-        function stockBadge(status) {
-            if (!status) return '';
-            const s = status.toLowerCase();
-            const cls = s.includes('out') ? 'stock-out' : s.includes('low') ? 'stock-low' : 'stock-in';
-            return `<span class="prod-stock-badge ${cls}">${esc(status)}</span>`;
+        function makeStars(rating, reviewCount) {
+            if (!rating) {
+                return '';
+            }
+
+            var stars = '\u2605\u2605\u2605\u2605\u2605';
+            var percent = (rating / 5) * 100;
+            if (percent > 100) percent = 100;
+            if (percent < 0) percent = 0;
+
+            var ratingText = Number(rating).toFixed(1);
+
+            var count = '';
+            if (reviewCount) {
+                count = '<span class="prod-review-count">(' + reviewCount + ')</span>';
+            }
+
+            return '' +
+                '<div class="prod-rating-row">' +
+                    '<span class="star-rating" aria-label="' + ratingText + ' out of 5 stars">' +
+                        '<span class="star-rating__bg">' + stars + '</span>' +
+                        '<span class="star-rating__fill" style="width:' + percent.toFixed(2) + '%">' + stars + '</span>' +
+                    '</span>' +
+                    '<span class="prod-rating-num">' + ratingText + '</span>' +
+                    count +
+                '</div>';
         }
 
-        function esc(s) {
-            return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+        function makeStockBadge(status) {
+            if (!status) {
+                return '';
+            }
+
+            var text = status.toLowerCase();
+            var cssClass = 'stock-in';
+
+            if (text.includes('out')) {
+                cssClass = 'stock-out';
+            } else if (text.includes('low')) {
+                cssClass = 'stock-low';
+            }
+
+            return '<span class="prod-stock-badge ' + cssClass + '">' + clean(status) + '</span>';
         }
 
-        function addToCart(btn, productId) {
-            btn.disabled = true;
-            btn.classList.add('adding');
-            btn.innerHTML = '<i class="fas fa-check"></i> Added';
+        // Replaces special characters so they cannot break the page
+        function clean(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function addToCart(button, productId) {
+            button.disabled = true;
+            button.classList.add('adding');
+            button.innerHTML = '<i class="fas fa-check"></i> Added';
+
             fetch('/Cart/AddToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'productId=' + productId + '&quantity=1'
             })
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success && data.redirect) {
-                    window.location.href = data.redirect;
-                    return;
-                }
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
                 if (data.success) {
                     window.location.href = '/Cart/Index';
+                } else if (data.redirect) {
+                    window.location.href = data.redirect;
                 }
             })
-            .catch(() => {
-                btn.disabled = false;
-                btn.classList.remove('adding');
-                btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+            .catch(function () {
+                button.disabled = false;
+                button.classList.remove('adding');
+                button.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
             });
         }
 
-        renderFiltered();
+        showProducts();
     </script>
 }
