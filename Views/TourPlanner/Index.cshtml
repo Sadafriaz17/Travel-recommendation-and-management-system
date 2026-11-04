@@ -1,21 +1,99 @@
 @* =====================================================
-   AI TOUR PLANNER  —  Views/TourPlanner/Index.cshtml
-   ===================================================== *@
+    NEXVOY DESTINATION RECOMMENDER  -  Views/TourPlanner/Index.cshtml
+    ===================================================== *@
 @{
-    ViewBag.Title = "AI Tour Planner";
+    ViewBag.Title = "Destination Recommender";
     ViewBag.ActivePage = "TourPlanner";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     bool isReady = ViewBag.IsReady == true;
+
+    var prefs = new[]
+    {
+        new { Key = "Culture",   Hint = "history, museums, art" },
+        new { Key = "Adventure", Hint = "hiking, sports, thrills" },
+        new { Key = "Nature",    Hint = "parks, wildlife, scenery" },
+        new { Key = "Beaches",   Hint = "sea, sand, water activities" },
+        new { Key = "Nightlife", Hint = "bars, clubs, entertainment" },
+        new { Key = "Cuisine",   Hint = "local food, restaurants" },
+        new { Key = "Wellness",  Hint = "spas, yoga, relaxation" },
+        new { Key = "Urban",     Hint = "city life, shopping, buzz" },
+        new { Key = "Seclusion", Hint = "peaceful, off the beaten path" }
+    };
 }
 
 @section HeadStyles {
     <link rel="stylesheet" href="@Url.Content("~/Content/frontend/ai-tools.css")" />
     <style>
+        .nv-rating input[type=range] {
+            width: 100%;
+        }
+
+        .nv-rating small {
+            color: #9ca3af;
+            display: block;
+            margin-top: .15rem;
+        }
+
+        .nv-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+            .nv-card h3 {
+                margin: 0 0 .2rem;
+                color: #1a1a1a;
+            }
+
+        .nv-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nv-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem 1.4rem;
+            margin: .6rem 0;
+            font-size: .9rem;
+            color: #1a1a1a;
+        }
+
+        .nv-score {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: right;
+        }
+
+        .nv-sub {
+            color: #6b7280;
+            font-size: .8rem;
+        }
+
+        .nv-info {
+            background: #f0f9ff;
+            color: #075985;
+            padding: .75rem 1rem;
+            border-radius: 12px;
+            margin-bottom: .75rem;
+            font-size: .88rem;
+        }
+
         @@media print {
-            #site-header, #site-footer, #tourFormSection, #aiLoader, #errorBanner, .ai-result-btns { display: none !important; }
-            #aiResults { display: block !important; }
-            .day-card { display: block !important; }
+            #site-header, #site-footer, #nvFormSection, #aiLoader, #errorBanner, .ai-result-btns {
+                display: none !important;
+            }
+
+            #aiResults {
+                display: block !important;
+            }
         }
     </style>
 }
@@ -26,31 +104,29 @@
         <div class="hero-breadcrumb">
             <a href="@Url.Action("Index", "Home")">Home</a>
             <i class="fas fa-chevron-right"></i>
-            <span>AI Tour Planner</span>
+            <span>Destination Recommender</span>
         </div>
         <div class="hero-eyebrow"><i class="fas fa-sparkles"></i> Powered by AI</div>
-        <h1>AI Tour Planner</h1>
-        <p>Share your travel style, dates, and budget. Get a day-by-day itinerary you can edit, save, and print.</p>
+        <h1>Find Your Destination</h1>
+        <p>Tell us the weather you like, your budget and what you enjoy. We rank real destinations by how well they match.</p>
     </div>
 </section>
 
 @* FORM CARD *@
-<section id="tourFormSection">
+<section id="nvFormSection">
     <div class="container">
         <div class="ai-form-card">
 
-            @* NOT-CONNECTED NOTICE  —  inside card, always visible when API is unconfigured *@
             @if (!isReady)
             {
                 <div class="ai-banner ai-banner-warn active ai-banner-card-top">
                     <i class="fas fa-triangle-exclamation"></i>
                     <div>
-                        <p><strong>AI is not connected yet.</strong> Please add the API details in config. The form will work fully once the API key and URL are added.</p>
+                        <p><strong>AI is not connected yet.</strong> Please add the NexVoy API details in Web.secrets.config. The form will work fully once the API key and URL are added.</p>
                     </div>
                 </div>
             }
 
-            @* ERROR NOTICE  —  inside card, shown by JS on failure *@
             <div class="ai-banner ai-banner-error ai-banner-card-top" id="errorBanner" style="display:none;">
                 <i class="fas fa-circle-exclamation"></i>
                 <div>
@@ -59,133 +135,62 @@
                 </div>
             </div>
 
-            <h3><i class="fas fa-route"></i> Plan Your Trip</h3>
+            <h3><i class="fas fa-compass"></i> Your Preferences</h3>
 
-            @using (Html.BeginForm("Generate", "TourPlanner", FormMethod.Post, new { id = "tourForm" }))
+            @using (Html.BeginForm("Recommend", "TourPlanner", FormMethod.Post, new { id = "nvForm" }))
             {
                 @Html.AntiForgeryToken()
 
-                @* Row 1: From / To *@
                 <div class="ai-grid-2">
                     <div class="ai-field">
-                        <label for="FromCity">Starting City *</label>
-                        <input type="text" id="FromCity" name="FromCity" placeholder="e.g. Karachi" maxlength="200" required />
+                        <label for="Temperature">Preferred average temperature (&deg;C) *</label>
+                        <input type="number" id="Temperature" name="Temperature" min="-50" max="50" step="0.5" value="22" required />
                     </div>
                     <div class="ai-field">
-                        <label for="Destination">Destination *</label>
-                        <input type="text" id="Destination" name="Destination" placeholder="e.g. Istanbul, Turkey" maxlength="200" required />
+                        <label for="Budget">Budget per night *</label>
+                        <select id="Budget" name="Budget">
+                            <option value="Budget">Budget (under $75)</option>
+                            <option value="Mid-range" selected>Mid-range ($75&ndash;$220)</option>
+                            <option value="Luxury">Luxury ($220+)</option>
+                        </select>
                     </div>
                 </div>
 
-                @* Row 2: Duration (matches home page) OR custom dates *@
                 <div class="ai-grid-2" style="margin-top:1.25rem;">
                     <div class="ai-field">
-                        <label for="Duration">Duration</label>
-                        <select id="Duration" name="Duration">
-                            <option value="0">Use custom dates below</option>
-                            <option value="3">3 days</option>
-                            <option value="5" selected>5 days</option>
-                            <option value="7">7 days</option>
-                            <option value="10">10 days</option>
-                            <option value="14">14 days</option>
-                        </select>
-                    </div>
-                    <div class="ai-field">
-                        <label for="Travelers">Travelers *</label>
-                        <input type="number" id="Travelers" name="Travelers" min="1" max="50" value="2" />
-                    </div>
-                </div>
-
-                @* Row 3: Custom dates — shown only when Duration = "Use custom dates" *@
-                <div class="ai-grid-2" style="margin-top:1.25rem;" id="datesGroup">
-                    <div class="ai-field">
-                        <label for="StartDate">Start Date <span style="color:#9ca3af;">(optional if duration set)</span></label>
-                        <input type="date" id="StartDate" name="StartDate" />
-                    </div>
-                    <div class="ai-field">
-                        <label for="EndDate">End Date <span style="color:#9ca3af;">(optional if duration set)</span></label>
-                        <input type="date" id="EndDate" name="EndDate" />
-                    </div>
-                </div>
-
-                @* Row 4: Budget range (matches home page) + Trip style *@
-                <div class="ai-grid-2" style="margin-top:1.25rem;">
-                    <div class="ai-field">
-                        <label for="BudgetRange">Budget Range</label>
-                        <select id="BudgetRange" name="BudgetRange">
-                            <option value="">Any budget</option>
-                            <option value="1000">Under $1,000</option>
-                            <option value="3000">$1,000 &ndash; $3,000</option>
-                            <option value="5000">$3,000 &ndash; $5,000</option>
-                            <option value="10000">$5,000+</option>
-                        </select>
-                        @* Hidden fields receive min/max computed from the select *@
-                        <input type="hidden" id="BudgetMin" name="BudgetMin" value="0" />
-                        <input type="hidden" id="BudgetMax" name="BudgetMax" value="99999" />
-                    </div>
-                    <div class="ai-field">
-                        <label for="TripStyle">Travel Style</label>
-                        <select id="TripStyle" name="TripStyle">
-                            <option value="">Any style</option>
-                            <option value="Luxury">Luxury</option>
-                            <option value="Budget">Budget</option>
-                            <option value="Adventure">Adventure</option>
-                            <option value="Family">Family</option>
-                            <option value="Romantic">Romantic</option>
+                        <label for="Region">Preferred region <span style="color:#9ca3af;">(optional)</span></label>
+                        <select id="Region" name="Region">
+                            <option value="">Anywhere</option>
+                            <option value="africa">Africa</option>
+                            <option value="asia">Asia</option>
+                            <option value="europe">Europe</option>
+                            <option value="middle_east">Middle East</option>
+                            <option value="north_america">North America</option>
+                            <option value="oceania">Oceania</option>
+                            <option value="south_america">South America</option>
                         </select>
                     </div>
                 </div>
 
-                @* Row 5: Travel pace + Temperature *@
-                <div class="ai-grid-2" style="margin-top:1.25rem;">
-                    <div class="ai-field">
-                        <label for="TravelStyle">Itinerary Pace</label>
-                        <select id="TravelStyle" name="TravelStyle">
-                            <option value="relaxed">Relaxed (2 activities/day)</option>
-                            <option value="balanced" selected>Balanced (3&#8211;4 activities/day)</option>
-                            <option value="packed">Packed (5+ activities/day)</option>
-                        </select>
-                    </div>
-                    <div class="ai-field">
-                        <label for="Temperature">Temperature / Climate <span style="color:#9ca3af;">(optional)</span></label>
-                        <input type="text" id="Temperature" name="Temperature"
-                               placeholder="e.g. warm, tropical, cold, 20&deg;C" maxlength="200" />
-                    </div>
-                </div>
-
-                @* Row 6: Health notes *@
-                <div style="margin-top:1.25rem;">
-                    <div class="ai-field">
-                        <label for="HealthNotes">Health Conditions / Limits <span style="color:#9ca3af;">(optional)</span></label>
-                        <input type="text" id="HealthNotes" name="HealthNotes"
-                               placeholder="e.g. knee injury, avoid long walks" maxlength="500" />
-                    </div>
-                </div>
-
-                @* Interests *@
                 <div style="margin-top:1.5rem;">
-                    <label style="font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;">Interests</label>
-                    <input type="hidden" id="Interests" name="Interests" />
-                    <div class="ai-chips" style="margin-top:.6rem;" id="interestChips">
-                        <span class="ai-chip" data-value="nature">&#127807; Nature</span>
-                        <span class="ai-chip" data-value="culture">&#127914; Culture</span>
-                        <span class="ai-chip" data-value="food">&#127829; Food</span>
-                        <span class="ai-chip" data-value="adventure">&#129336; Adventure</span>
-                        <span class="ai-chip" data-value="shopping">&#128717; Shopping</span>
-                        <span class="ai-chip" data-value="history">&#127963; History</span>
-                        <span class="ai-chip" data-value="relaxation">&#127958; Relaxation</span>
-                    </div>
+                    <label style="font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;">
+                        How much do you enjoy each of these? (1 = low, 5 = high)
+                    </label>
+                </div>
+                <div class="ai-grid-2" style="margin-top:.75rem;">
+                    @foreach (var p in prefs)
+                    {
+                        <div class="ai-field nv-rating">
+                            <label for="@p.Key">@p.Key: <strong id="@(p.Key)Val">3</strong> / 5</label>
+                            <input type="range" id="@p.Key" name="@p.Key" min="1" max="5" step="1" value="3" data-out="@(p.Key)Val" />
+                            <small>@p.Hint</small>
+                        </div>
+                    }
                 </div>
 
                 <div class="ai-actions">
                     <button type="submit" id="submitBtn" class="btn-ai-primary">
-                        <i class="fas fa-magic"></i> Generate Itinerary
-                    </button>
-                    <button type="button" class="btn-ai-ghost" onclick="tourPlannerRegenerate()">
-                        <i class="fas fa-redo"></i> Regenerate
-                    </button>
-                    <button type="button" class="btn-ai-ghost" onclick="tourPlannerSave()" id="saveBtn">
-                        <i class="fas fa-bookmark"></i> Save Plan
+                        <i class="fas fa-magic"></i> Show My Top 5
                     </button>
                 </div>
             }
@@ -195,31 +200,125 @@
 
 @* LOADER *@
 <div class="container">
-    <div class="ai-loader" id="aiLoader">
+    <div class="ai-loader" id="aiLoader" style="display:none;">
         <div class="ai-spinner"></div>
-        <p>Building your day-by-day itinerary&#8230; this may take a moment.</p>
+        <p>Finding your best matches&#8230; the first request can take up to a minute.</p>
     </div>
 </div>
 
 @* RESULTS *@
-<div class="ai-results container" id="aiResults">
+<div class="ai-results container" id="aiResults" style="display:none;">
     <div class="ai-results-header">
-        <h2><i class="fas fa-map-marked-alt" style="margin-right:.4rem;"></i> Your Itinerary</h2>
+        <h2><i class="fas fa-map-marked-alt" style="margin-right:.4rem;"></i> Your Top Destinations</h2>
         <div class="ai-result-btns">
-            <button class="btn-ai-ghost" onclick="tourPlannerPrint()" id="printBtn">
+            <button class="btn-ai-ghost" type="button" onclick="window.print()">
                 <i class="fas fa-print"></i> Print
-            </button>
-            <button class="btn-ai-ghost" onclick="tourPlannerSave()" id="saveBtn2">
-                <i class="fas fa-bookmark"></i> Save Plan
-            </button>
-            <button class="btn-ai-primary" onclick="tourPlannerRegenerate()" style="font-size:.82rem;padding:.65rem 1.4rem;">
-                <i class="fas fa-magic"></i> Regenerate
             </button>
         </div>
     </div>
-    <div id="resultsSection"></div>
+    <div id="nvSummary"></div>
+    <div id="nvList"></div>
 </div>
 
 @section Scripts {
-    <script src="@Url.Content("~/Scripts/ai-tourplanner.js")"></script>
+    <script>
+        (function () {
+            var form = document.getElementById('nvForm');
+            var errBox = document.getElementById('errorBanner');
+            var loader = document.getElementById('aiLoader');
+            var results = document.getElementById('aiResults');
+            var submitBtn = document.getElementById('submitBtn');
+
+            // Live number next to each slider
+            var sliders = form.querySelectorAll('input[type=range]');
+            for (var i = 0; i < sliders.length; i++) {
+                (function (r) {
+                    r.addEventListener('input', function () {
+                        document.getElementById(r.getAttribute('data-out')).textContent = r.value;
+                    });
+                })(sliders[i]);
+            }
+
+            function esc(v) {
+                return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                });
+            }
+
+            // URL-encoded body, so [ValidateAntiForgeryToken] works exactly like the other AI pages
+            function serialize(f) {
+                var parts = [];
+                for (var i = 0; i < f.elements.length; i++) {
+                    var el = f.elements[i];
+                    if (!el.name || el.disabled) continue;
+                    parts.push(encodeURIComponent(el.name) + '=' + encodeURIComponent(el.value));
+                }
+                return parts.join('&');
+            }
+
+            function showError(message) {
+                errBox.querySelector('.error-msg').textContent = message;
+                errBox.style.display = 'flex';
+            }
+
+            function render(data) {
+                var summary = '';
+                var notes = data.notes || [];
+                for (var n = 0; n < notes.length; n++) summary += '<div class="nv-info">' + esc(notes[n]) + '</div>';
+                summary += '<p class="nv-sub">Model estimate for your taste: <strong>' + esc(data.predicted_budget) +
+                    '</strong> (' + esc(data.model) + '). You chose <strong>' + esc(data.selected_budget) + '</strong>.</p>';
+                document.getElementById('nvSummary').innerHTML = summary;
+
+                var html = '';
+                var items = data.results || [];
+                for (var k = 0; k < items.length; k++) {
+                    var r = items[k];
+                    var hotel = (r.avg_hotel_usd != null) ? ' &middot; about $' + esc(r.avg_hotel_usd) + ' per night' : '';
+                    html += '<div class="nv-card">' +
+                        '<div class="nv-top">' +
+                        '<div><h3>#' + esc(r.rank) + ' ' + esc(r.city) + ', ' + esc(r.country) + '</h3>' +
+                        '<div class="nv-sub">' + esc(r.region) + '</div></div>' +
+                        '<div><div class="nv-score">' + Number(r.match_score).toFixed(1) + '%</div>' +
+                        '<div class="nv-sub">ratings ' + Number(r.preference_match).toFixed(1) +
+                        '% &middot; temperature ' + Number(r.temperature_match).toFixed(1) + '%</div></div>' +
+                        '</div>' +
+                        '<div class="nv-meta">' +
+                        '<span><strong>Budget:</strong> ' + esc(r.budget_level) + hotel + '</span>' +
+                        '<span><strong>Average temperature:</strong> ' + Number(r.avg_temp).toFixed(1) + '&deg;C</span>' +
+                        '<span><strong>Ideal trip:</strong> ' + esc(r.ideal_trip_days) + ' (' + esc(r.ideal_trip_labels) + ')</span>' +
+                        '</div>' +
+                        (r.description ? '<p>' + esc(r.description) + '</p>' : '') +
+                        '</div>';
+                }
+                if (!html) html = '<p>No destinations matched. Try another budget or region.</p>';
+                document.getElementById('nvList').innerHTML = html;
+                results.style.display = 'block';
+                results.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function generate() {
+                errBox.style.display = 'none';
+                results.style.display = 'none';
+                loader.style.display = 'block';
+                submitBtn.disabled = true;
+
+                fetch(form.action, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                    body: serialize(form)
+                })
+                    .then(function (resp) { return resp.json(); })
+                    .then(function (json) {
+                        if (json.success) render(json.data);
+                        else showError(json.error || 'Something went wrong.');
+                    })
+                    .catch(function () { showError('Could not get recommendations. Please try again.'); })
+                    .then(function () { loader.style.display = 'none'; submitBtn.disabled = false; });
+            }
+
+            form.addEventListener('submit', function (e) { e.preventDefault(); generate(); });
+            document.getElementById('retryBtn').addEventListener('click', generate);
+        })();
+    </script>
 }

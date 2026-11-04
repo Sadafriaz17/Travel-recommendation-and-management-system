@@ -1,125 +1,103 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using TourwebsiteFYP.Services;
 
 namespace TourwebsiteFYP.Controllers
 {
     public class TourPlannerController : Controller
     {
-        private readonly TourPlannerService _service = new TourPlannerService();
+        private static readonly string[] Budgets = { "Budget", "Mid-range", "Luxury" };
+        private static readonly string[] Regions =
+            { "africa", "asia", "europe", "middle_east", "north_america", "oceania", "south_america" };
+
+        private readonly NexVoyService _service = new NexVoyService();
 
         // GET: /TourPlanner
         public ActionResult Index()
         {
-            ViewBag.IsReady = AiSettings.IsTourReady;
+            ViewBag.IsReady = AiSettings.IsNexVoyReady;
             return View();
         }
 
-        // POST: /TourPlanner/Generate  (called via AJAX)
+        // POST: /TourPlanner/Recommend  (called via AJAX)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Generate(TourPlannerFormModel form)
+        public async Task<ActionResult> Recommend(NexVoyFormModel form)
         {
             // --- Server-side validation ---
-            if (string.IsNullOrWhiteSpace(form.FromCity))
-                return Json(new { success = false, error = "Starting city is required." });
+            if (form == null || form.Temperature == null)
+                return Reply(false, "Preferred temperature is required.");
 
-            if (string.IsNullOrWhiteSpace(form.Destination))
-                return Json(new { success = false, error = "Destination is required." });
+            if (form.Temperature < -50 || form.Temperature > 50)
+                return Reply(false, "Temperature must be between -50 and 50 °C.");
 
-            // Resolve dates: if explicit dates are given, use them.
-            // Otherwise, synthesise them from Duration (default = 5 days).
-            string resolvedStart = form.StartDate;
-            string resolvedEnd   = form.EndDate;
+            string budget = (form.Budget ?? "").Trim();
+            if (!Budgets.Contains(budget))
+                return Reply(false, "Please choose a budget: Budget, Mid-range or Luxury.");
 
-            bool hasDates = !string.IsNullOrWhiteSpace(form.StartDate)
-                         && !string.IsNullOrWhiteSpace(form.EndDate);
+            string region = string.IsNullOrWhiteSpace(form.Region) ? null : form.Region.Trim().ToLower();
+            if (region != null && !Regions.Contains(region))
+                return Reply(false, "Unknown region.");
 
-            if (!hasDates)
+            int[] ratings = { form.Culture, form.Adventure, form.Nature, form.Beaches, form.Nightlife,
+                              form.Cuisine, form.Wellness, form.Urban, form.Seclusion };
+            if (ratings.Any(r => r < 1 || r > 5))
+                return Reply(false, "Every rating must be between 1 and 5.");
+
+            var req = new NexVoyRequest
             {
-                int dur = (form.Duration > 0 && form.Duration <= 30) ? form.Duration : 5;
-                var today = DateTime.Today;
-                resolvedStart = today.ToString("yyyy-MM-dd");
-                resolvedEnd   = today.AddDays(dur).ToString("yyyy-MM-dd");
-            }
-
-            if (!DateTime.TryParse(resolvedStart, out var sd) || !DateTime.TryParse(resolvedEnd, out var ed))
-                return Json(new { success = false, error = "Invalid date format." });
-
-            if (ed <= sd)
-                return Json(new { success = false, error = "End date must be after start date." });
-
-            if ((ed - sd).Days > 30)
-                return Json(new { success = false, error = "Trip length cannot exceed 30 days." });
-
-            if (form.Travelers < 1 || form.Travelers > 50)
-                form.Travelers = 1;
-
-            // Parse interests (comma-separated string from browser)
-            var interests = new List<string>();
-            if (!string.IsNullOrWhiteSpace(form.Interests))
-                foreach (var i in form.Interests.Split(','))
+                Temperature = form.Temperature.Value,
+                Budget = budget,
+                Region = region,
+                TopN = 5,
+                Preferences = new NexVoyPreferences
                 {
-                    var t = i.Trim().ToLower();
-                    if (!string.IsNullOrEmpty(t)) interests.Add(t);
+                    Culture = form.Culture,
+                    Adventure = form.Adventure,
+                    Nature = form.Nature,
+                    Beaches = form.Beaches,
+                    Nightlife = form.Nightlife,
+                    Cuisine = form.Cuisine,
+                    Wellness = form.Wellness,
+                    Urban = form.Urban,
+                    Seclusion = form.Seclusion
                 }
-
-            // Add TripStyle into interests if provided
-            if (!string.IsNullOrWhiteSpace(form.TripStyle))
-            {
-                var ts = form.TripStyle.Trim().ToLower();
-                if (!interests.Contains(ts)) interests.Add(ts);
-            }
-
-            // Include climate/temperature preference in notes if provided
-            string healthNotes = form.HealthNotes;
-            if (!string.IsNullOrWhiteSpace(form.Temperature))
-            {
-                var climate = "Preferred climate: " + form.Temperature.Trim();
-                healthNotes = string.IsNullOrWhiteSpace(healthNotes) ? climate : healthNotes + ". " + climate;
-            }
-
-            var req = new TourPlannerRequest
-            {
-                FromCity     = form.FromCity,
-                Destination  = form.Destination,
-                StartDate    = resolvedStart,
-                EndDate      = resolvedEnd,
-                BudgetMin    = form.BudgetMin,
-                BudgetMax    = form.BudgetMax,
-                Currency     = "USD",
-                Travelers    = form.Travelers,
-                Interests    = interests,
-                TravelStyle  = form.TravelStyle,
-                HealthNotes  = healthNotes
             };
 
-            var result = await _service.GenerateAsync(req);
+            var result = await _service.RecommendAsync(req);
 
             if (!result.Success)
-                return Json(new { success = false, error = result.Error });
+                return Reply(false, result.Error);
 
-            return Json(new { success = true, data = result.Data });
+            return Reply(true, null, result.Data);
+        }
+
+        // Newtonsoft keeps the API's field names (match_score, avg_temp, ...) that the page script reads.
+        // The API key is never part of this response.
+        private ContentResult Reply(bool success, string error, NexVoyResponse data = null)
+        {
+            return Content(JsonConvert.SerializeObject(new { success = success, error = error, data = data }),
+                           "application/json");
         }
     }
 
-    // Form model — only used in this controller
-    public class TourPlannerFormModel
+    // Form model - only used in this controller
+    public class NexVoyFormModel
     {
-        public string  FromCity     { get; set; }
-        public string  Destination  { get; set; }
-        public string  StartDate    { get; set; }
-        public string  EndDate      { get; set; }
-        public int     Duration     { get; set; }   // days, used when no explicit dates
-        public decimal BudgetMin    { get; set; }
-        public decimal BudgetMax    { get; set; }
-        public int     Travelers    { get; set; }
-        public string  Interests    { get; set; }   // comma-separated
-        public string  TravelStyle  { get; set; }   // itinerary pace: relaxed|balanced|packed
-        public string  TripStyle    { get; set; }   // travel style: Luxury|Budget|Adventure|Family|Romantic
-        public string  Temperature  { get; set; }   // free-text climate hint
-        public string  HealthNotes  { get; set; }
+        public double? Temperature { get; set; }   // preferred average temperature, °C
+        public string Budget { get; set; }   // Budget | Mid-range | Luxury
+        public string Region { get; set; }   // optional, e.g. "europe"
+        public int Culture { get; set; }          // ratings 1-5
+        public int Adventure { get; set; }
+        public int Nature { get; set; }
+        public int Beaches { get; set; }
+        public int Nightlife { get; set; }
+        public int Cuisine { get; set; }
+        public int Wellness { get; set; }
+        public int Urban { get; set; }
+        public int Seclusion { get; set; }
     }
 }
