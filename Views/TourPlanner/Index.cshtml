@@ -25,6 +25,7 @@
 @section HeadStyles {
     <link rel="stylesheet" href="@Url.Content("~/Content/frontend/ai-tools.css")" />
     <style>
+        /* ---------- Form (unchanged) ---------- */
         .nv-rating input[type=range] {
             width: 100%;
         }
@@ -35,55 +36,359 @@
             margin-top: .15rem;
         }
 
-        .nv-card {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            padding: 1.2rem 1.4rem;
-            margin-bottom: 1rem;
+        /* ---------- Date hint ---------- */
+        .nv-datehint {
+            display: flex;
+            gap: .6rem;
+            align-items: flex-start;
+            margin-top: .75rem;
+            padding: .7rem .95rem;
+            border-radius: 12px;
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: .86rem;
+            line-height: 1.45;
         }
 
-            .nv-card h3 {
-                margin: 0 0 .2rem;
+            .nv-datehint i {
+                margin-top: .15rem;
+            }
+
+            .nv-datehint.ok {
+                background: #ecfdf5;
+                color: #065f46;
+            }
+
+            .nv-datehint.far {
+                background: #fffbeb;
+                color: #92400e;
+            }
+
+            .nv-datehint.bad {
+                background: #fef2f2;
+                color: #991b1b;
+            }
+
+        /* ---------- Results header ---------- */
+        .nv-results-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 2.5rem 0 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+            .nv-results-head h2 {
+                margin: 0;
+                font-size: 1.75rem;
+                font-weight: 700;
+                letter-spacing: -.01em;
                 color: #1a1a1a;
             }
 
-        .nv-top {
+            .nv-results-head p {
+                margin: .25rem 0 0;
+                font-size: .95rem;
+                color: #6b7280;
+            }
+
+        /* ---------- Summary + notes ---------- */
+        .nv-summary-strip {
             display: flex;
-            justify-content: space-between;
-            gap: 1rem;
             flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 1.25rem;
         }
 
-        .nv-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: .35rem 1.4rem;
-            margin: .6rem 0;
+        .nv-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem 1rem;
+            border-radius: 50px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
             font-size: .9rem;
-            color: #1a1a1a;
+            color: #4b5563;
         }
 
-        .nv-score {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            text-align: right;
-        }
+            .nv-pill i {
+                color: #6b7280;
+            }
 
-        .nv-sub {
-            color: #6b7280;
-            font-size: .8rem;
-        }
+            .nv-pill strong {
+                color: #1a1a1a;
+                font-weight: 600;
+            }
 
         .nv-info {
+            display: flex;
+            gap: .75rem;
+            align-items: flex-start;
             background: #f0f9ff;
             color: #075985;
-            padding: .75rem 1rem;
-            border-radius: 12px;
+            padding: .9rem 1.1rem;
+            border-radius: 14px;
             margin-bottom: .75rem;
-            font-size: .88rem;
+            font-size: .95rem;
+            line-height: 1.5;
+        }
+
+            .nv-info i {
+                margin-top: .2rem;
+            }
+
+        /* ---------- Destination cards ---------- */
+        .nv-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.1rem;
+            transition: transform .2s, box-shadow .2s;
+            animation: nvFade .4s ease both;
+        }
+
+            .nv-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(0,0,0,0.09);
+            }
+
+            .nv-card.top {
+                border-color: #1a1a1a;
+                box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+            }
+
+        @@keyframes nvFade {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .nv-head {
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+        }
+
+        .nv-rank {
+            flex: 0 0 52px;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: #f3f4f6;
+            color: #1a1a1a;
+            font-size: 1.35rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nv-card.top .nv-rank {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .nv-title {
+            flex: 1;
+            min-width: 0;
+        }
+
+            .nv-title h3 {
+                margin: 0;
+                font-size: 1.35rem;
+                font-weight: 700;
+                letter-spacing: -.01em;
+                line-height: 1.25;
+                color: #1a1a1a;
+            }
+
+        .nv-region {
+            margin-top: .25rem;
+            font-size: .92rem;
+            color: #6b7280;
+        }
+
+            .nv-region i {
+                margin-right: .3rem;
+                font-size: .8rem;
+            }
+
+        .nv-best {
+            display: inline-block;
+            margin-left: .6rem;
+            padding: .2rem .7rem;
+            border-radius: 50px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: .7rem;
+            font-weight: 600;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .nv-ring {
+            flex: 0 0 76px;
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: conic-gradient(#1a1a1a calc(var(--p) * 1%), #e5e7eb 0);
+        }
+
+            .nv-ring span {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 1.05rem;
+                line-height: 1;
+                color: #1a1a1a;
+            }
+
+                .nv-ring span small {
+                    margin-top: .2rem;
+                    font-size: .55rem;
+                    font-weight: 500;
+                    letter-spacing: .06em;
+                    text-transform: uppercase;
+                    color: #9ca3af;
+                }
+
+        .nv-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin: 1.1rem 0 .9rem;
+        }
+
+        .nv-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            padding: .4rem .85rem;
+            border-radius: 50px;
+            background: #f3f4f6;
+            color: #374151;
+            font-size: .9rem;
+        }
+
+            .nv-chip i {
+                color: #6b7280;
+                font-size: .8rem;
+            }
+
+        .nv-desc {
+            margin: 0;
+            color: #4b5563;
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+
+        .nv-meters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: 1.25rem;
+            padding-top: 1.1rem;
+            border-top: 1px solid #f0f1f3;
+        }
+
+        .nv-meter .lbl {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: .4rem;
+            font-size: .85rem;
+            color: #6b7280;
+        }
+
+            .nv-meter .lbl strong {
+                color: #1a1a1a;
+                font-weight: 600;
+            }
+
+        .nv-meter .bar {
+            height: 7px;
+            border-radius: 7px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+
+            .nv-meter .bar i {
+                display: block;
+                height: 100%;
+                border-radius: 7px;
+                background: #1a1a1a;
+            }
+
+        .nv-empty {
+            padding: 2.5rem 1rem;
+            text-align: center;
+            color: #6b7280;
+            font-size: 1rem;
+            background: #fff;
+            border: 1px dashed #d1d5db;
+            border-radius: 16px;
+        }
+
+        .nv-bottom-space {
+            height: 4rem;
+        }
+
+        /* ---------- Responsive ---------- */
+        @@media (max-width: 640px) {
+            .nv-results-head h2 {
+                font-size: 1.4rem;
+            }
+
+            .nv-card {
+                padding: 1.15rem;
+                border-radius: 16px;
+            }
+
+            .nv-head {
+                flex-wrap: wrap;
+            }
+
+            .nv-title {
+                flex: 1 1 calc(100% - 72px);
+            }
+
+            .nv-ring {
+                order: 3;
+                margin-left: 70px;
+            }
+
+            .nv-title h3 {
+                font-size: 1.15rem;
+            }
+
+            .nv-meters {
+                grid-template-columns: 1fr;
+                gap: .9rem;
+            }
+
+            .nv-best {
+                margin: .35rem 0 0;
+                display: table;
+            }
         }
 
         @@media print {
@@ -93,6 +398,12 @@
 
             #aiResults {
                 display: block !important;
+            }
+
+            .nv-card {
+                box-shadow: none;
+                break-inside: avoid;
+                animation: none;
             }
         }
     </style>
@@ -172,6 +483,21 @@
                     </div>
                 </div>
 
+                <div class="ai-grid-2" style="margin-top:1.25rem;">
+                    <div class="ai-field">
+                        <label for="TravelStartDate">Trip from <span style="color:#9ca3af;">(optional)</span></label>
+                        <input type="date" id="TravelStartDate" name="TravelStartDate" />
+                    </div>
+                    <div class="ai-field">
+                        <label for="TravelEndDate">Trip to <span style="color:#9ca3af;">(optional)</span></label>
+                        <input type="date" id="TravelEndDate" name="TravelEndDate" />
+                    </div>
+                </div>
+                <div class="nv-datehint" id="dateHint">
+                    <i class="fas fa-cloud-sun"></i>
+                    <span>Choose both dates to use a live weather forecast when your trip is within the next 16 days. Otherwise typical monthly climate is used. Leave both empty to skip.</span>
+                </div>
+
                 <div style="margin-top:1.5rem;">
                     <label style="font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;">
                         How much do you enjoy each of these? (1 = low, 5 = high)
@@ -208,8 +534,11 @@
 
 @* RESULTS *@
 <div class="ai-results container" id="aiResults" style="display:none;">
-    <div class="ai-results-header">
-        <h2><i class="fas fa-map-marked-alt" style="margin-right:.4rem;"></i> Your Top Destinations</h2>
+    <div class="nv-results-head">
+        <div>
+            <h2><i class="fas fa-map-marked-alt" style="margin-right:.55rem;color:#6b7280;"></i>Your Top Destinations</h2>
+            <p>Ranked by how well each place matches your ratings, weather and budget.</p>
+        </div>
         <div class="ai-result-btns">
             <button class="btn-ai-ghost" type="button" onclick="window.print()">
                 <i class="fas fa-print"></i> Print
@@ -218,6 +547,7 @@
     </div>
     <div id="nvSummary"></div>
     <div id="nvList"></div>
+    <div class="nv-bottom-space"></div>
 </div>
 
 @section Scripts {
@@ -228,6 +558,48 @@
             var loader = document.getElementById('aiLoader');
             var results = document.getElementById('aiResults');
             var submitBtn = document.getElementById('submitBtn');
+            var startInput = document.getElementById('TravelStartDate');
+            var endInput = document.getElementById('TravelEndDate');
+            var dateHint = document.getElementById('dateHint');
+
+            // ---- Trip dates: end date can't be before start, plus a friendly hint ----
+            function iso(d) {
+                var m = d.getMonth() + 1, day = d.getDate();
+                return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+            }
+            function setHint(kind, icon, text) {
+                dateHint.className = 'nv-datehint' + (kind ? ' ' + kind : '');
+                dateHint.innerHTML = '<i class="fas ' + icon + '"></i><span>' + text + '</span>';
+            }
+            function updateDateHint() {
+                var s = startInput.value, e = endInput.value;
+                endInput.min = s || '';
+                if (!s && !e) {
+                    setHint('', 'fa-cloud-sun', 'Choose both dates to use a live weather forecast when your trip is within the next 16 days. Otherwise typical monthly climate is used. Leave both empty to skip.');
+                } else if (!s || !e) {
+                    setHint('far', 'fa-circle-info', 'Please choose both a start and an end date, or clear them.');
+                } else if (s > e) {
+                    setHint('bad', 'fa-circle-exclamation', 'The start date is after the end date. Please fix the dates.');
+                } else {
+                    var limit = new Date(); limit.setDate(limit.getDate() + 15);
+                    if (e <= iso(limit)) setHint('ok', 'fa-cloud-sun-rain', 'Your trip is inside the 16-day window, so a live weather forecast will be used.');
+                    else setHint('far', 'fa-calendar-days', 'Your trip is beyond the 16-day forecast window, so typical monthly climate will be used instead.');
+                }
+            }
+            startInput.addEventListener('change', function () {
+                if (startInput.value && endInput.value && endInput.value < startInput.value) endInput.value = '';
+                updateDateHint();
+            });
+            endInput.addEventListener('change', updateDateHint);
+
+            // Returns an error message, or '' when the dates are fine (both empty is fine)
+            function checkDates() {
+                var s = startInput.value, e = endInput.value;
+                if (!s && !e) return '';
+                if (!s || !e) return 'Please provide both trip dates, or leave both empty.';
+                if (s > e) return 'Trip start date cannot be after the end date.';
+                return '';
+            }
 
             // Live number next to each slider
             var sliders = form.querySelectorAll('input[type=range]');
@@ -261,36 +633,111 @@
                 errBox.style.display = 'flex';
             }
 
+            function pct(v) {
+                var n = Number(v);
+                if (isNaN(n)) n = 0;
+                return Math.max(0, Math.min(100, n));
+            }
+
+            function meter(label, value) {
+                return '<div class="nv-meter"><div class="lbl"><span>' + label + '</span><strong>' + pct(value).toFixed(1) + '%</strong></div>' +
+                    '<div class="bar"><i style="width:' + pct(value) + '%"></i></div></div>';
+            }
+
+            // ---- Weather source + temperature helpers ----
+            // The temperature shown must come from the same weather data the API used for temperature_match:
+            //   weather_source = "open_meteo_forecast" -> forecast_avg_temp (live forecast for the trip dates)
+            //   anything else (monthly_climate)        -> avg_temp (typical monthly climate)
+            var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var tripDates = { start: '', end: '' };   // snapshot of the dates that were actually sent
+
+            function parseIso(s) {
+                var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+                return p ? { y: +p[1], m: +p[2], d: +p[3] } : null;
+            }
+
+            function formatTrip(start, end) {
+                var a = parseIso(start), b = parseIso(end);
+                if (!a || !b) return '';
+                if (a.y === b.y && a.m === b.m && a.d === b.d) return MON[a.m - 1] + ' ' + a.d + ', ' + a.y;
+                if (a.y === b.y && a.m === b.m) return MON[a.m - 1] + ' ' + a.d + '–' + b.d + ', ' + a.y;
+                if (a.y === b.y) return MON[a.m - 1] + ' ' + a.d + ' – ' + MON[b.m - 1] + ' ' + b.d + ', ' + a.y;
+                return MON[a.m - 1] + ' ' + a.d + ', ' + a.y + ' – ' + MON[b.m - 1] + ' ' + b.d + ', ' + b.y;
+            }
+
+            // Null-safe number: null / '' / NaN all become null (Number(null) would wrongly be 0)
+            function numOrNull(v) {
+                if (v == null || v === '') return null;
+                var n = Number(v);
+                return isNaN(n) ? null : n;
+            }
+
+            function isForecast(data) {
+                return !!data && data.weather_source === 'open_meteo_forecast';
+            }
+
+            function weatherPill(data) {
+                if (!data || !data.weather_source) return '';   // older API response: show nothing rather than guess
+                if (isForecast(data)) {
+                    var trip = formatTrip(tripDates.start, tripDates.end);
+                    return '<span class="nv-pill"><i class="fas fa-cloud-sun-rain"></i> <strong>Live forecast</strong>' + (trip ? ' &middot; ' + esc(trip) : '') + '</span>';
+                }
+                var a = parseIso(tripDates.start);
+                return '<span class="nv-pill"><i class="fas fa-calendar-days"></i> <strong>Typical monthly climate</strong>' + (a ? ' &middot; ' + MONTHS[a.m - 1] : '') + '</span>';
+            }
+
+            function tempChip(r, data) {
+                var forecast = numOrNull(r.forecast_avg_temp);
+                var typical = numOrNull(r.avg_temp);
+                if (isForecast(data) && forecast != null) {
+                    return '<span class="nv-chip"><i class="fas fa-cloud-sun"></i> ' + forecast.toFixed(1) + '&deg;C forecast average</span>';
+                }
+                if (typical != null) {
+                    var tag = isForecast(data) ? 'typical (no forecast for this city)' : 'average';
+                    return '<span class="nv-chip"><i class="fas fa-temperature-half"></i> ' + typical.toFixed(1) + '&deg;C ' + tag + '</span>';
+                }
+                return '';
+            }
+
             function render(data) {
                 var summary = '';
                 var notes = data.notes || [];
-                for (var n = 0; n < notes.length; n++) summary += '<div class="nv-info">' + esc(notes[n]) + '</div>';
-                summary += '<p class="nv-sub">Model estimate for your taste: <strong>' + esc(data.predicted_budget) +
-                    '</strong> (' + esc(data.model) + '). You chose <strong>' + esc(data.selected_budget) + '</strong>.</p>';
+                for (var n = 0; n < notes.length; n++) {
+                    summary += '<div class="nv-info"><i class="fas fa-circle-info"></i><span>' + esc(notes[n]) + '</span></div>';
+                }
+                summary += '<div class="nv-summary-strip">' +
+                    '<span class="nv-pill"><i class="fas fa-brain"></i> Model estimate for your taste: <strong>' + esc(data.predicted_budget) + '</strong> (' + esc(data.model) + ')</span>' +
+                    '<span class="nv-pill"><i class="fas fa-wallet"></i> You chose: <strong>' + esc(data.selected_budget) + '</strong></span>' +
+                    weatherPill(data) +
+                    '</div>';
                 document.getElementById('nvSummary').innerHTML = summary;
 
                 var html = '';
                 var items = data.results || [];
                 for (var k = 0; k < items.length; k++) {
                     var r = items[k];
-                    var hotel = (r.avg_hotel_usd != null) ? ' &middot; about $' + esc(r.avg_hotel_usd) + ' per night' : '';
-                    html += '<div class="nv-card">' +
-                        '<div class="nv-top">' +
-                        '<div><h3>#' + esc(r.rank) + ' ' + esc(r.city) + ', ' + esc(r.country) + '</h3>' +
-                        '<div class="nv-sub">' + esc(r.region) + '</div></div>' +
-                        '<div><div class="nv-score">' + Number(r.match_score).toFixed(1) + '%</div>' +
-                        '<div class="nv-sub">ratings ' + Number(r.preference_match).toFixed(1) +
-                        '% &middot; temperature ' + Number(r.temperature_match).toFixed(1) + '%</div></div>' +
+                    var hotel = (r.avg_hotel_usd != null)
+                        ? '<span class="nv-chip"><i class="fas fa-bed"></i> about $' + esc(r.avg_hotel_usd) + ' per night</span>' : '';
+                    html += '<div class="nv-card' + (k === 0 ? ' top' : '') + '" style="animation-delay:' + (k * 70) + 'ms">' +
+                        '<div class="nv-head">' +
+                        '<div class="nv-rank">' + esc(r.rank) + '</div>' +
+                        '<div class="nv-title">' +
+                        '<h3>' + esc(r.city) + ', ' + esc(r.country) + (k === 0 ? '<span class="nv-best">Best match</span>' : '') + '</h3>' +
+                        '<div class="nv-region"><i class="fas fa-location-dot"></i>' + esc(r.region) + '</div>' +
                         '</div>' +
-                        '<div class="nv-meta">' +
-                        '<span><strong>Budget:</strong> ' + esc(r.budget_level) + hotel + '</span>' +
-                        '<span><strong>Average temperature:</strong> ' + Number(r.avg_temp).toFixed(1) + '&deg;C</span>' +
-                        '<span><strong>Ideal trip:</strong> ' + esc(r.ideal_trip_days) + ' (' + esc(r.ideal_trip_labels) + ')</span>' +
+                        '<div class="nv-ring" style="--p:' + pct(r.match_score) + '"><span>' + Number(r.match_score).toFixed(0) + '%<small>match</small></span></div>' +
                         '</div>' +
-                        (r.description ? '<p>' + esc(r.description) + '</p>' : '') +
+                        '<div class="nv-chips">' +
+                        '<span class="nv-chip"><i class="fas fa-tag"></i> ' + esc(r.budget_level) + '</span>' + hotel +
+                        tempChip(r, data) +
+                        '<span class="nv-chip"><i class="fas fa-calendar-check"></i> Ideal trip: ' + esc(r.ideal_trip_days) + ' (' + esc(r.ideal_trip_labels) + ')</span>' +
+                        '</div>' +
+                        (r.description ? '<p class="nv-desc">' + esc(r.description) + '</p>' : '') +
+                        '<div class="nv-meters">' + meter('Matches your ratings', r.preference_match) + meter('Matches your temperature', r.temperature_match) + '</div>' +
                         '</div>';
                 }
-                if (!html) html = '<p>No destinations matched. Try another budget or region.</p>';
+                if (!html) html = '<div class="nv-empty"><i class="fas fa-compass" style="font-size:1.6rem;margin-bottom:.6rem;"></i><br>No destinations matched. Try another budget or region.</div>';
                 document.getElementById('nvList').innerHTML = html;
                 results.style.display = 'block';
                 results.scrollIntoView({ behavior: 'smooth' });
@@ -298,9 +745,18 @@
 
             function generate() {
                 errBox.style.display = 'none';
+                var dateError = checkDates();
+                if (dateError) {
+                    results.style.display = 'none';
+                    showError(dateError);
+                    return;
+                }
+
+                errBox.style.display = 'none';
                 results.style.display = 'none';
                 loader.style.display = 'block';
                 submitBtn.disabled = true;
+                tripDates = { start: startInput.value, end: endInput.value };   // remember exactly what is being sent
 
                 fetch(form.action, {
                     method: 'POST',

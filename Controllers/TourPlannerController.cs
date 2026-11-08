@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -9,6 +10,8 @@ namespace TourwebsiteFYP.Controllers
 {
     public class TourPlannerController : Controller
     {
+        private const string DateFormat = "yyyy-MM-dd";
+
         private static readonly string[] Budgets = { "Budget", "Mid-range", "Luxury" };
         private static readonly string[] Regions =
             { "africa", "asia", "europe", "middle_east", "north_america", "oceania", "south_america" };
@@ -47,6 +50,26 @@ namespace TourwebsiteFYP.Controllers
             if (ratings.Any(r => r < 1 || r > 5))
                 return Reply(false, "Every rating must be between 1 and 5.");
 
+            // --- Optional travel dates: both or neither, and start must not be after end ---
+            string startRaw = (form.TravelStartDate ?? "").Trim();
+            string endRaw = (form.TravelEndDate ?? "").Trim();
+            bool hasStart = startRaw.Length > 0;
+            bool hasEnd = endRaw.Length > 0;
+
+            if (hasStart != hasEnd)
+                return Reply(false, "Please provide both travel dates, or leave both empty.");
+
+            DateTime startDate = default(DateTime), endDate = default(DateTime);
+            if (hasStart)
+            {
+                if (!DateTime.TryParseExact(startRaw, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate) ||
+                    !DateTime.TryParseExact(endRaw, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
+                    return Reply(false, "Travel dates must be valid dates.");
+
+                if (startDate > endDate)
+                    return Reply(false, "Travel start date cannot be after the end date.");
+            }
+
             var req = new NexVoyRequest
             {
                 Temperature = form.Temperature.Value,
@@ -66,6 +89,15 @@ namespace TourwebsiteFYP.Controllers
                     Seclusion = form.Seclusion
                 }
             };
+
+            // Only when dates were given: add them (plus the month of the start date).
+            // Without dates these stay null and are left out of the JSON, exactly as before.
+            if (hasStart)
+            {
+                req.TravelStartDate = startDate.ToString(DateFormat, CultureInfo.InvariantCulture);
+                req.TravelEndDate = endDate.ToString(DateFormat, CultureInfo.InvariantCulture);
+                req.TravelMonth = startDate.Month;
+            }
 
             var result = await _service.RecommendAsync(req);
 
@@ -99,5 +131,8 @@ namespace TourwebsiteFYP.Controllers
         public int Wellness { get; set; }
         public int Urban { get; set; }
         public int Seclusion { get; set; }
+
+        public string TravelStartDate { get; set; }   // optional, yyyy-MM-dd (must come with TravelEndDate)
+        public string TravelEndDate { get; set; }     // optional, yyyy-MM-dd
     }
 }
