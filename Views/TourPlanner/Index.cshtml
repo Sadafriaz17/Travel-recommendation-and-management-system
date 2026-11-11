@@ -1,4 +1,4 @@
-@* =====================================================
+ï»¿@* =====================================================
     NEXVOY DESTINATION RECOMMENDER - Views/TourPlanner/Index.cshtml
     ===================================================== *@
 @{
@@ -492,14 +492,14 @@
 
                 <div class="ai-grid-2">
                     <div class="ai-field">
-                        <label for="Temperature">Preferred average temperature (°C) *</label>
+                        <label for="Temperature">Preferred average temperature (Â°C) *</label>
                         <input type="number" id="Temperature" name="Temperature" min="-50" max="50" step="0.5" value="22" required />
                     </div>
                     <div class="ai-field">
                         <label for="Budget">Budget per night *</label>
                         <select id="Budget" name="Budget">
                             <option value="Budget">Budget (under $75)</option>
-                            <option value="Mid-range" selected>Mid-range ($75–$220)</option>
+                            <option value="Mid-range" selected>Mid-range ($75â€“$220)</option>
                             <option value="Luxury">Luxury ($220+)</option>
                         </select>
                     </div>
@@ -568,7 +568,7 @@
 <div class="container">
     <div class="ai-loader" id="aiLoader" style="display:none;">
         <div class="ai-spinner"></div>
-        <p>Finding your best matches… the first request can take up to a minute.</p>
+        <p>Finding your best matchesâ€¦ the first request can take up to a minute.</p>
     </div>
 </div>
 
@@ -734,9 +734,9 @@
                 var a = parseIso(s), b = parseIso(e);
                 if (!a || !b) return '';
                 if (a.y === b.y && a.m === b.m && a.d === b.d) return MON[a.m - 1] + ' ' + a.d + ', ' + a.y;
-                if (a.y === b.y && a.m === b.m) return MON[a.m - 1] + ' ' + a.d + '–' + b.d + ', ' + a.y;
-                if (a.y === b.y) return MON[a.m - 1] + ' ' + a.d + ' – ' + MON[b.m - 1] + ' ' + b.d + ', ' + a.y;
-                return MON[a.m - 1] + ' ' + a.d + ', ' + a.y + ' – ' + MON[b.m - 1] + ' ' + b.d + ', ' + b.y;
+                if (a.y === b.y && a.m === b.m) return MON[a.m - 1] + ' ' + a.d + 'â€“' + b.d + ', ' + a.y;
+                if (a.y === b.y) return MON[a.m - 1] + ' ' + a.d + ' â€“ ' + MON[b.m - 1] + ' ' + b.d + ', ' + a.y;
+                return MON[a.m - 1] + ' ' + a.d + ', ' + a.y + ' â€“ ' + MON[b.m - 1] + ' ' + b.d + ', ' + b.y;
             }
             function numOrNull(v) { if (v == null || v === '') return null; var n = Number(v); return isNaN(n) ? null : n; }
             function isForecast(d) { return !!d && d.weather_source === 'open_meteo_forecast'; }
@@ -747,12 +747,12 @@
                     var t = formatTrip(tripDates.start, tripDates.end);
                     return '<span class="nv-pill">' +
                         '<i class="fas fa-cloud-sun-rain"></i> <strong>Live forecast</strong>' +
-                        (t ? ' · ' + esc(t) : '') + '</span>';
+                        (t ? ' Â· ' + esc(t) : '') + '</span>';
                 }
                 var s = parseIso(tripDates.start);
                 return '<span class="nv-pill">' +
                     '<i class="fas fa-calendar-days"></i> <strong>Typical monthly climate</strong>' +
-                    (s ? ' · ' + MONTHS[s.m - 1] : '') + '</span>';
+                    (s ? ' Â· ' + MONTHS[s.m - 1] : '') + '</span>';
             }
 
             function tempChip(dest, data) {
@@ -760,12 +760,12 @@
                 var t = numOrNull(dest.avg_temp);
                 if (isForecast(data) && f != null) {
                     return '<span class="nv-chip"><i class="fas fa-cloud-sun"></i> ' +
-                        f.toFixed(1) + '°C forecast average</span>';
+                        f.toFixed(1) + 'Â°C forecast average</span>';
                 }
                 if (t != null) {
                     var tag = isForecast(data) ? 'typical (no forecast for this city)' : 'average';
                     return '<span class="nv-chip"><i class="fas fa-temperature-half"></i> ' +
-                        t.toFixed(1) + '°C ' + tag + '</span>';
+                        t.toFixed(1) + 'Â°C ' + tag + '</span>';
                 }
                 return '';
             }
@@ -832,7 +832,7 @@
                 };
 
                 button.disabled = true;
-                setPackMessage(outBox, 'Generating packing list…', 'info');
+                setPackMessage(outBox, 'Generating packing listâ€¦', 'info');
 
                 fetch(endpoint, {
                     method: 'POST',

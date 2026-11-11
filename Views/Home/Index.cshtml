@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Home";
     ViewBag.ActivePage = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -787,7 +787,7 @@
     var form = document.getElementById('homeTripForm');
     if (!form) return;
 
-    // Existing Tour Planner page � same controller, same action, same route.
+    // Existing Tour Planner page Ã¢â‚¬â€ same controller, same action, same route.
     var tourPlannerUrl = '@Url.Action("Index", "TourPlanner")';
 
     form.addEventListener('submit', function (e) {
@@ -801,7 +801,7 @@
     });
 
     // Keep the existing inline hint hidden when the user changes the
-    // destination dropdown � visual behaviour only, no navigation impact.
+    // destination dropdown Ã¢â‚¬â€ visual behaviour only, no navigation impact.
     var destEl = document.getElementById('htDest');
     var errEl  = document.getElementById('htDestError');
     if (destEl && errEl) {

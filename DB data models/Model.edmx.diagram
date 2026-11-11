@@ -57,6 +57,9 @@
         <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Package" />
         <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_Product" />
         <AssociationConnector Association="FYP_DatabaseModel.FK_Cart_User" />
+        <EntityTypeShape EntityType="FYP_DatabaseModel.SafepayPaymentAttempt" Width="1.5" PointX="12" PointY="4.875" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_SafepayAttempt_Booking" />
+        <AssociationConnector Association="FYP_DatabaseModel.FK_SafepayAttempt_Payment" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

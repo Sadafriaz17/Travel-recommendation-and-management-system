@@ -180,6 +180,7 @@
           <Property Name="PaymentMethod" Type="nvarchar" MaxLength="50" />
           <Property Name="Status" Type="nvarchar" MaxLength="50" />
           <Property Name="PaymentTypeId" Type="int" />
+          <Property Name="SafepayTracker" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="PaymentType">
           <Key>
@@ -227,6 +228,22 @@
           <Property Name="Rating" Type="int" />
           <Property Name="Comment" Type="nvarchar(max)" />
           <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="SafepayPaymentAttempt">
+          <Key>
+            <PropertyRef Name="SafepayAttemptId" />
+          </Key>
+          <Property Name="SafepayAttemptId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PaymentId" Type="int" Nullable="false" />
+          <Property Name="BookingId" Type="int" Nullable="false" />
+          <Property Name="TrackerToken" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Currency" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="CompletedAt" Type="datetime" />
+          <Property Name="WebhookReceivedAt" Type="datetime" />
+          <Property Name="RawWebhookPayload" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -628,6 +645,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SafepayAttempt_Booking">
+          <End Role="Booking" Type="Self.Booking" Multiplicity="1" />
+          <End Role="SafepayPaymentAttempt" Type="Self.SafepayPaymentAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Booking">
+              <PropertyRef Name="BookingId" />
+            </Principal>
+            <Dependent Role="SafepayPaymentAttempt">
+              <PropertyRef Name="BookingId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SafepayAttempt_Payment">
+          <End Role="Payment" Type="Self.Payment" Multiplicity="1" />
+          <End Role="SafepayPaymentAttempt" Type="Self.SafepayPaymentAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="PaymentId" />
+            </Principal>
+            <Dependent Role="SafepayPaymentAttempt">
+              <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="FYP_DatabaseModelStoreContainer">
           <EntitySet Name="Blog" EntityType="Self.Blog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Booking" EntityType="Self.Booking" Schema="dbo" store:Type="Tables" />
@@ -648,6 +689,7 @@
           <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductType" EntityType="Self.ProductType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Review" EntityType="Self.Review" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SafepayPaymentAttempt" EntityType="Self.SafepayPaymentAttempt" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserType" EntityType="Self.UserType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
@@ -770,6 +812,14 @@
           <AssociationSet Name="FK_Product_Vendor" Association="Self.FK_Product_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
             <End Role="Product" EntitySet="Product" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SafepayAttempt_Booking" Association="Self.FK_SafepayAttempt_Booking">
+            <End Role="Booking" EntitySet="Booking" />
+            <End Role="SafepayPaymentAttempt" EntitySet="SafepayPaymentAttempt" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SafepayAttempt_Payment" Association="Self.FK_SafepayAttempt_Payment">
+            <End Role="Payment" EntitySet="Payment" />
+            <End Role="SafepayPaymentAttempt" EntitySet="SafepayPaymentAttempt" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -919,6 +969,15 @@
             <End Role="User" EntitySet="Users" />
             <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
+          <EntitySet Name="SafepayPaymentAttempts" EntityType="FYP_DatabaseModel.SafepayPaymentAttempt" />
+          <AssociationSet Name="FK_SafepayAttempt_Booking" Association="FYP_DatabaseModel.FK_SafepayAttempt_Booking">
+            <End Role="Booking" EntitySet="Bookings" />
+            <End Role="SafepayPaymentAttempt" EntitySet="SafepayPaymentAttempts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SafepayAttempt_Payment" Association="FYP_DatabaseModel.FK_SafepayAttempt_Payment">
+            <End Role="Payment" EntitySet="Payments" />
+            <End Role="SafepayPaymentAttempt" EntitySet="SafepayPaymentAttempts" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Blog">
           <Key>
@@ -1047,6 +1106,8 @@
           <Property Name="PaymentTypeId" Type="Int32" />
           <NavigationProperty Name="PaymentType" Relationship="FYP_DatabaseModel.FK_Payment_PaymentType" FromRole="Payment" ToRole="PaymentType" />
           <NavigationProperty Name="Booking" Relationship="FYP_DatabaseModel.FK__Payment__Booking__68487DD7" FromRole="Payment" ToRole="Booking" />
+          <Property Name="SafepayTracker" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SafepayPaymentAttempts" Relationship="FYP_DatabaseModel.FK_SafepayAttempt_Payment" FromRole="Payment" ToRole="SafepayPaymentAttempt" />
         </EntityType>
         <EntityType Name="PaymentType">
           <Key>
@@ -1345,6 +1406,7 @@
           <NavigationProperty Name="User" Relationship="FYP_DatabaseModel.FK__Booking__UserId__619B8048" FromRole="Booking" ToRole="User" />
           <NavigationProperty Name="BookingDetails" Relationship="FYP_DatabaseModel.FK__BookingDe__Booki__628FA481" FromRole="Booking" ToRole="BookingDetail" />
           <NavigationProperty Name="Payments" Relationship="FYP_DatabaseModel.FK__Payment__Booking__68487DD7" FromRole="Booking" ToRole="Payment" />
+          <NavigationProperty Name="SafepayPaymentAttempts" Relationship="FYP_DatabaseModel.FK_SafepayAttempt_Booking" FromRole="Booking" ToRole="SafepayPaymentAttempt" />
         </EntityType>
         <Association Name="FK__Booking__Destina__06CD04F7">
           <End Type="FYP_DatabaseModel.Destination" Role="Destination" Multiplicity="0..1" />
@@ -1603,6 +1665,48 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="SafepayPaymentAttempt">
+          <Key>
+            <PropertyRef Name="SafepayAttemptId" />
+          </Key>
+          <Property Name="SafepayAttemptId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentId" Type="Int32" Nullable="false" />
+          <Property Name="BookingId" Type="Int32" Nullable="false" />
+          <Property Name="TrackerToken" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Currency" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CompletedAt" Type="DateTime" Precision="3" />
+          <Property Name="WebhookReceivedAt" Type="DateTime" Precision="3" />
+          <Property Name="RawWebhookPayload" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Booking" Relationship="FYP_DatabaseModel.FK_SafepayAttempt_Booking" FromRole="SafepayPaymentAttempt" ToRole="Booking" />
+          <NavigationProperty Name="Payment" Relationship="FYP_DatabaseModel.FK_SafepayAttempt_Payment" FromRole="SafepayPaymentAttempt" ToRole="Payment" />
+        </EntityType>
+        <Association Name="FK_SafepayAttempt_Booking">
+          <End Type="FYP_DatabaseModel.Booking" Role="Booking" Multiplicity="1" />
+          <End Type="FYP_DatabaseModel.SafepayPaymentAttempt" Role="SafepayPaymentAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Booking">
+              <PropertyRef Name="BookingId" />
+            </Principal>
+            <Dependent Role="SafepayPaymentAttempt">
+              <PropertyRef Name="BookingId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SafepayAttempt_Payment">
+          <End Type="FYP_DatabaseModel.Payment" Role="Payment" Multiplicity="1" />
+          <End Type="FYP_DatabaseModel.SafepayPaymentAttempt" Role="SafepayPaymentAttempt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="PaymentId" />
+            </Principal>
+            <Dependent Role="SafepayPaymentAttempt">
+              <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1709,6 +1813,7 @@
           <EntitySetMapping Name="Payments">
             <EntityTypeMapping TypeName="FYP_DatabaseModel.Payment">
               <MappingFragment StoreEntitySet="Payment">
+                <ScalarProperty Name="SafepayTracker" ColumnName="SafepayTracker" />
                 <ScalarProperty Name="PaymentTypeId" ColumnName="PaymentTypeId" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
@@ -1883,6 +1988,23 @@
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="CartId" ColumnName="CartId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SafepayPaymentAttempts">
+            <EntityTypeMapping TypeName="FYP_DatabaseModel.SafepayPaymentAttempt">
+              <MappingFragment StoreEntitySet="SafepayPaymentAttempt">
+                <ScalarProperty Name="RawWebhookPayload" ColumnName="RawWebhookPayload" />
+                <ScalarProperty Name="WebhookReceivedAt" ColumnName="WebhookReceivedAt" />
+                <ScalarProperty Name="CompletedAt" ColumnName="CompletedAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="TrackerToken" ColumnName="TrackerToken" />
+                <ScalarProperty Name="BookingId" ColumnName="BookingId" />
+                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+                <ScalarProperty Name="SafepayAttemptId" ColumnName="SafepayAttemptId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

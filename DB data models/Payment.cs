@@ -14,6 +14,12 @@ namespace TourwebsiteFYP.DB_data_models
     
     public partial class Payment
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Payment()
+        {
+            this.SafepayPaymentAttempts = new HashSet<SafepayPaymentAttempt>();
+        }
+    
         public int PaymentId { get; set; }
         public int BookingId { get; set; }
         public Nullable<System.DateTime> PaymentDate { get; set; }
@@ -21,8 +27,11 @@ namespace TourwebsiteFYP.DB_data_models
         public string PaymentMethod { get; set; }
         public string Status { get; set; }
         public Nullable<int> PaymentTypeId { get; set; }
+        public string SafepayTracker { get; set; }
     
         public virtual PaymentType PaymentType { get; set; }
         public virtual Booking Booking { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SafepayPaymentAttempt> SafepayPaymentAttempts { get; set; }
     }
 }

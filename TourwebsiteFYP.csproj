@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -295,6 +295,7 @@
     <Compile Include="Areas\AdminArea\Controllers\ManagePageContentController.cs" />
     <Compile Include="Areas\AdminArea\Controllers\UserDashboardController.cs" />
     <Compile Include="Controllers\CartController.cs" />
+    <Compile Include="Controllers\SafepayController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\DestinationController.cs" />
@@ -380,6 +381,9 @@
     <Compile Include="DB data models\Review.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Compile Include="DB data models\SafepayPaymentAttempt.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
     <Compile Include="DB data models\User.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
@@ -390,6 +394,7 @@
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Filter\SessionAuthFilter.cs" />
+    <Compile Include="Models\SafepayAttemptDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -400,6 +405,8 @@
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AiSettings.cs" />
+    <Compile Include="Services\SafepayDbHelper.cs" />
+    <Compile Include="Services\SafepayService.cs" />
     <Compile Include="Services\PackingAssistantService.cs" />
     <Compile Include="Services\TourPlannerService.cs" />
   </ItemGroup>

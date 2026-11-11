@@ -489,8 +489,15 @@ namespace TourwebsiteFYP.Controllers
             _db.Payments.Add(payment);
             _db.SaveChanges();
 
+            // For card payments: redirect to Safepay without clearing cart
+            bool isCardPayment = IsCardPaymentType(paymentType.PaymentTypeName);
+            if (isCardPayment)
+            {
+                return RedirectToAction("InitiatePayment", "Safepay",
+                    new { paymentId = payment.PaymentId });
+            }
 
-            // Clear the cart
+            // Clear the cart (non-card payments only)
             _db.Carts.RemoveRange(cartItems);
             _db.SaveChanges();
 
@@ -588,6 +595,16 @@ namespace TourwebsiteFYP.Controllers
             ViewBag.Travelers     = TempData["Travelers"];
 
             return View();
+        }
+
+
+        private static bool IsCardPaymentType(string paymentTypeName)
+        {
+            if (string.IsNullOrWhiteSpace(paymentTypeName)) return false;
+            var lower = paymentTypeName.ToLowerInvariant();
+            return lower.Contains("card") || lower.Contains("credit") ||
+                   lower.Contains("debit") || lower.Contains("visa") ||
+                   lower.Contains("mastercard") || lower.Contains("safepay");
         }
 
 

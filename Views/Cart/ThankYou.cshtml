@@ -1,6 +1,6 @@
-@* THANK YOU - Views/Cart/ThankYou.cshtml
+@* THANK YOU
    Shared confirmation page for product orders, package bookings, and mixed carts.
-   Messaging and meta fields adapt based on ViewBag.OrderType ('products' / 'packages' / 'mixed'). *@
+   Messaging and meta fields adapt based on ViewBag.OrderType (products, packages, mixed). *@
 @{
     ViewBag.Title = "Order Confirmed";
     ViewBag.ActivePage = "";
@@ -11,7 +11,7 @@
     var customerName  = ViewBag.CustomerName as string ?? "Valued Customer";
     var paymentMethod = ViewBag.PaymentMethod as string ?? "Not specified";
 
-    // OrderType set by CartController.PlaceOrder
+    // OrderType set by CartController.PlaceOrder and SafepayController
     var orderType  = ViewBag.OrderType as string ?? "products";
     bool isPackage = orderType == "packages";
     bool isMixed   = orderType == "mixed";
@@ -240,7 +240,7 @@
         <div class="order-meta-grid">
             <div class="order-meta-item">
                 <div class="order-meta-item-label">Total</div>
-                <div class="order-meta-item-value">$@totalAmount</div>
+                <div class="order-meta-item-value">PKR @totalAmount</div>
             </div>
             <div class="order-meta-item">
                 <div class="order-meta-item-label">Status</div>
@@ -296,8 +296,9 @@
                     <i class="fas fa-compass"></i> Browse More Packages
                 </a>
             }
-            else @* mixed *@
+            else
             {
+                @* mixed order *@
                 <a href="@Url.Action("Index", "Booking")" class="btn-home">
                     <i class="fas fa-suitcase"></i> My Bookings
                 </a>
@@ -308,4 +309,3 @@
         </div>
     </div>
 </div>
-

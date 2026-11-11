@@ -19,6 +19,7 @@ namespace TourwebsiteFYP.DB_data_models
         {
             this.BookingDetails = new HashSet<BookingDetail>();
             this.Payments = new HashSet<Payment>();
+            this.SafepayPaymentAttempts = new HashSet<SafepayPaymentAttempt>();
         }
     
         public int BookingId { get; set; }
@@ -39,5 +40,7 @@ namespace TourwebsiteFYP.DB_data_models
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Payment> Payments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SafepayPaymentAttempt> SafepayPaymentAttempts { get; set; }
     }
 }
