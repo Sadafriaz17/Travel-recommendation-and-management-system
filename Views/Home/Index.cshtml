@@ -5,7 +5,7 @@
 }
 
 <style>
-    /* 
+    /*
        DESIGN TOKENS - original teal palette, kept exactly as before.
        Layout below is restructured; colors are not.
       */
@@ -779,47 +779,36 @@
         @Html.Action("HomepageBlogs", "Blog")
     </div>
 </section>
-
 @section Scripts {
-<script>
+    <script>
 (function () {
     'use strict';
+
     var form = document.getElementById('homeTripForm');
     if (!form) return;
 
+    // Existing Tour Planner page — same controller, same action, same route.
     var tourPlannerUrl = '@Url.Action("Index", "TourPlanner")';
 
     form.addEventListener('submit', function (e) {
+        // Prevent the default form post; navigate to the Tour Planner page.
         e.preventDefault();
 
-        var dest  = document.getElementById('htDest').value;
-        var errEl = document.getElementById('htDestError');
-
-        if (!dest) {
-            errEl.style.display = 'block';
-            document.getElementById('htDest').focus();
-            return;
-        }
-        errEl.style.display = 'none';
-
-        var temp   = document.getElementById('htTemp').value.trim();
-        var dur    = document.getElementById('htDur').value;
-        var style  = document.getElementById('htStyle').value;
-        var budget = document.getElementById('htBudget').value;
-
-        var params = new URLSearchParams();
-        params.set('dest',   dest);
-        params.set('dur',    dur);
-        params.set('style',  style);
-        params.set('budget', budget);
-        if (temp) params.set('temp', temp);
-
-        window.location.href = tourPlannerUrl + '?' + params.toString();
+        // Navigate directly, regardless of whether the destination field
+        // on the Home Page is filled. The Tour Planner page collects the
+        // real preferences itself, so no query parameters are passed.
+        window.location.href = tourPlannerUrl;
     });
 
-    document.getElementById('htDest').addEventListener('change', function () {
-        document.getElementById('htDestError').style.display = 'none';
-    });
+    // Keep the existing inline hint hidden when the user changes the
+    // destination dropdown — visual behaviour only, no navigation impact.
+    var destEl = document.getElementById('htDest');
+    var errEl  = document.getElementById('htDestError');
+    if (destEl && errEl) {
+        destEl.addEventListener('change', function () {
+            errEl.style.display = 'none';
+        });
+    }
 }());
-</script>
+    </script>
 }

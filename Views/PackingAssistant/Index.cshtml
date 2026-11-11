@@ -1,25 +1,263 @@
 @* =====================================================
-   AI PACKING ASSISTANT  —  Views/PackingAssistant/Index.cshtml
-   ===================================================== *@
+    AI PACKING ASSISTANT
+    Views/PackingAssistant/Index.cshtml
+    ===================================================== *@
+
 @{
     ViewBag.Title = "AI Packing Assistant";
     ViewBag.ActivePage = "PackingAssistant";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     bool isReady = ViewBag.IsReady == true;
+
+    string fromRecommender = ViewBag.FromRecommender as string;
+    bool isFromRecommender = !string.IsNullOrEmpty(fromRecommender);
+
+    string prefillCity = ViewBag.PrefillCity as string ?? "";
+    string prefillCountry = ViewBag.PrefillCountry as string ?? "";
+    string prefillStart = ViewBag.PrefillStart as string ?? "";
+    string prefillEnd = ViewBag.PrefillEnd as string ?? "";
+    int prefillDays = ViewBag.PrefillDays is int d ? d : 0;
+    string prefillBudget = ViewBag.PrefillBudget as string ?? "";
+    string prefillRegion = ViewBag.PrefillRegion as string ?? "";
+    object prefillTempObj = ViewBag.PrefillTemperature;
+    double? prefillTemp = prefillTempObj as double?;
+    var prefillPrefs = ViewBag.PrefillPrefs as System.Collections.Generic.Dictionary<string, int>
+                        ?? new System.Collections.Generic.Dictionary<string, int>();
+
+    int PrefVal(string key)
+    {
+        int v;
+        return prefillPrefs.TryGetValue(key, out v) ? v : 3;
+    }
+
+    string temperatureValue = prefillTemp.HasValue
+        ? prefillTemp.Value.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)
+        : "22";
+
+    var countries = new[]
+    {
+        "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina",
+        "Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados",
+        "Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina",
+        "Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia",
+        "Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros",
+        "Congo (Brazzaville)","Congo (Kinshasa)","Costa Rica","Croatia","Cuba","Cyprus",
+        "Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt",
+        "El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji",
+        "Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada",
+        "Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland",
+        "India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Ivory Coast","Jamaica",
+        "Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan","Laos",
+        "Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg",
+        "Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania",
+        "Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco",
+        "Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua",
+        "Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau",
+        "Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland",
+        "Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia",
+        "Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe",
+        "Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia",
+        "Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain",
+        "Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan",
+        "Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia",
+        "Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom",
+        "United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam",
+        "Yemen","Zambia","Zimbabwe"
+    };
+
+    var countrySet = new System.Collections.Generic.HashSet<string>(
+        countries, System.StringComparer.OrdinalIgnoreCase);
+
+    bool prefillCountryKnown = !string.IsNullOrWhiteSpace(prefillCountry)
+                               && countrySet.Contains(prefillCountry);
+
+    var tripTypeOptions = new[]
+    {
+        "Adventure","Backpacking","Beach Vacation","Business",
+        "Business Conference","Couple","Cultural","Educational",
+        "Family","Festival Trip","Hiking Trip","Honeymoon",
+        "Leisure","Religious","Road Trip","Ski Trip","Solo",
+        "Sports Trip","Volunteer Trip","Wellness"
+    };
+
+    var ageGroupOptions = new[] { "Child", "Teen", "Young Adult", "Adult", "Senior" };
+    var packingPrefOptions = new[] { "Balanced", "Budget", "Comprehensive", "Eco-Friendly", "Luxury", "Minimalist" };
+    var transportOptions = new[] { "airplane", "bus", "car", "cruise", "train" };
+    var accomOptions = new[] { "airbnb", "camping", "guesthouse", "homestay", "hostel", "hotel", "resort" };
+    var activityOptions = new[]
+    {
+        "Adventure Sports","Backpacking","Beach","Business Meetings",
+        "Camping","Cultural Events","Cycling","Desert Safari","Dining",
+        "Family Visit","Festivals","Fitness","Hiking","Museum Visits",
+        "Nightlife","Photography","Religious Visits","Remote Work",
+        "Road Trip","Safari","Shopping","Sightseeing","Skiing",
+        "Snowboarding","Sports Event","Swimming","Trekking",
+        "Volunteering","Water Sports","Wellness"
+    };
+    var climateOptions = new[]
+    {
+        "arid","continental","desert","highland","mediterranean",
+        "oceanic","semi_arid","subarctic","subtropical","temperate",
+        "tropical","tropical_monsoon"
+    };
+
+    var ratingKeys = new[]
+    {
+        new { Key = "Culture",   Label = "Culture",   Hint = "history, museums, art" },
+        new { Key = "Adventure", Label = "Adventure", Hint = "hiking, sports, thrills" },
+        new { Key = "Nature",    Label = "Nature",    Hint = "parks, wildlife, scenery" },
+        new { Key = "Beaches",   Label = "Beaches",   Hint = "sea, sand, water" },
+        new { Key = "Nightlife", Label = "Nightlife", Hint = "bars, clubs" },
+        new { Key = "Cuisine",   Label = "Cuisine",   Hint = "local food" },
+        new { Key = "Wellness",  Label = "Wellness",  Hint = "spas, yoga" },
+        new { Key = "Urban",     Label = "Urban",     Hint = "city life, shopping" },
+        new { Key = "Seclusion", Label = "Seclusion", Hint = "peaceful, quiet" }
+    };
 }
 
 @section HeadStyles {
     <link rel="stylesheet" href="@Url.Content("~/Content/frontend/ai-tools.css")" />
+
     <style>
         @@media print {
-            #site-header, #site-footer, #packingFormSection, #aiLoader, #errorBanner, .ai-result-btns { display: none !important; }
-            #aiResults { display: block !important; }
+            #site-header, #site-footer, #packingFormSection,
+            #aiLoader, #errorBanner, .ai-result-btns {
+                display: none !important;
+            }
+
+            #aiResults {
+                display: block !important;
+            }
         }
+
+        .ai-prefill-banner {
+            display: flex;
+            gap: .75rem;
+            align-items: flex-start;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            border-radius: 12px;
+            padding: .9rem 1.1rem;
+            margin-bottom: 1.25rem;
+            font-size: .9rem;
+            line-height: 1.45;
+        }
+
+            .ai-prefill-banner i {
+                margin-top: .15rem;
+            }
+
+        .ai-section-title {
+            margin: 1.75rem 0 .75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #f0f1f3;
+            font-size: .75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+            .ai-section-title:first-of-type {
+                margin-top: 0;
+                padding-top: 0;
+                border-top: none;
+            }
+
+        .ai-chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin-top: .5rem;
+        }
+
+        .ai-chip-opt {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .45rem .9rem;
+            border-radius: 50px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            font-size: .86rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background .15s, border-color .15s;
+        }
+
+            .ai-chip-opt:hover {
+                background: #f9fafb;
+            }
+
+            .ai-chip-opt input {
+                display: none;
+            }
+
+            .ai-chip-opt.selected {
+                background: #1a1a1a;
+                border-color: #1a1a1a;
+                color: #fff;
+            }
+
+        .ai-radio-row {
+            display: flex;
+            gap: .6rem;
+            margin-top: .4rem;
+        }
+
+        .ai-radio-opt {
+            display: inline-flex;
+            align-items: center;
+            padding: .45rem 1rem;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            cursor: pointer;
+            font-size: .9rem;
+        }
+
+            .ai-radio-opt input {
+                margin-right: .4rem;
+            }
+
+            .ai-radio-opt.selected {
+                background: #1a1a1a;
+                border-color: #1a1a1a;
+                color: #fff;
+            }
+
+        .ai-advanced-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: .85rem;
+            cursor: pointer;
+            padding: .5rem 0;
+            margin-top: .75rem;
+        }
+
+            .ai-advanced-toggle:hover {
+                color: #1a1a1a;
+            }
+
+        .ai-advanced-body {
+            display: none;
+            margin-top: .6rem;
+        }
+
+            .ai-advanced-body.open {
+                display: block;
+            }
     </style>
 }
 
-@* HERO *@
 <section class="hero-wrapper hero-inner">
     <div class="hero-content">
         <div class="hero-breadcrumb">
@@ -29,127 +267,411 @@
         </div>
         <div class="hero-eyebrow"><i class="fas fa-sparkles"></i> Powered by AI</div>
         <h1>Smart Packing Assistant</h1>
-        <p>Tell us about your trip and get a personalised packing checklist &mdash; grouped, prioritised, and ready to use.</p>
+        <p>
+            Tell us about your trip and get a personalised packing checklist
+            &mdash; grouped, prioritised, and ready to use.
+        </p>
     </div>
 </section>
 
-@* FORM CARD *@
 <section id="packingFormSection">
     <div class="container">
         <div class="ai-form-card">
 
-            @* NOT-CONNECTED NOTICE  —  inside card, always visible when API is unconfigured *@
             @if (!isReady)
             {
                 <div class="ai-banner ai-banner-warn active ai-banner-card-top">
                     <i class="fas fa-triangle-exclamation"></i>
                     <div>
-                        <p><strong>AI is not connected yet.</strong> Please add the API details in config. The form and checklist will work fully once the API key and URL are added.</p>
+                        <p><strong>AI is not connected yet.</strong> Please add the Packing Assistant API URL and API key in the server configuration.</p>
                     </div>
                 </div>
             }
 
-            @* ERROR NOTICE  —  inside card, shown by JS on failure *@
-            <div class="ai-banner ai-banner-error ai-banner-card-top" id="errorBanner" style="display:none;">
+            @if (isFromRecommender)
+            {
+                <div class="ai-prefill-banner">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    <div>
+                        <strong>Destination pre-filled from your recommendation.</strong>
+                        Adjust any field, then click <em>Generate Packing List</em>.
+                    </div>
+                </div>
+            }
+
+            <div class="ai-banner ai-banner-error ai-banner-card-top"
+                 id="errorBanner" style="display:none;">
                 <i class="fas fa-circle-exclamation"></i>
                 <div>
                     <p class="error-msg"></p>
-                    <button class="btn-retry" id="retryBtn" type="button"><i class="fas fa-redo"></i> Try Again</button>
+                    <button class="btn-retry" id="retryBtn" type="button">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
                 </div>
             </div>
 
-            <h3><i class="fas fa-suitcase-rolling"></i> Trip Details</h3>
+            <h3>
+                <i class="fas fa-suitcase-rolling"></i>
+                Trip Details
+            </h3>
 
-            @using (Html.BeginForm("Generate", "PackingAssistant", FormMethod.Post, new { id = "packingForm" }))
+            @using (Html.BeginForm("Generate", "PackingAssistant", FormMethod.Post,
+                new { id = "packingForm" }))
             {
                 @Html.AntiForgeryToken()
 
+                @* Hidden: keeps old Destination field for compatibility. *@
+                <input type="hidden" id="Destination" name="Destination" value="" />
+                <input type="hidden" id="FromRecommender" name="FromRecommender"
+                       value="@(isFromRecommender ? "1" : "")" />
+                <input type="hidden" id="Activities" name="Activities" value="" />
+
+                @* ---------- DESTINATION & TRIP ---------- *@
+
+                <div class="ai-section-title">Destination & Trip</div>
+
                 <div class="ai-grid-2">
                     <div class="ai-field">
-                        <label for="Destination">Destination *</label>
-                        <input type="text" id="Destination" name="Destination" placeholder="e.g. Bali, Indonesia" maxlength="200" required />
+                        <label for="City">City / Destination *</label>
+                        <input type="text"
+                               id="City"
+                               name="City"
+                               placeholder="e.g. Podgorica"
+                               maxlength="100"
+                               value="@prefillCity"
+                               required />
                     </div>
+
+                    <div class="ai-field">
+                        <label for="Country">Country *</label>
+                        <select id="Country" name="Country" required>
+                            <option value="">Select country</option>
+
+                            @if (prefillCountryKnown)
+                            {
+                                <option value="@prefillCountry" selected>@prefillCountry</option>
+                            }
+                            else if (!string.IsNullOrWhiteSpace(prefillCountry))
+                            {
+                                <option value="@prefillCountry" selected>@prefillCountry (not in list)</option>
+                            }
+
+                            @foreach (var c in countries)
+                            {
+                                if (!string.Equals(c, prefillCountry, System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <option value="@c">@c</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
                     <div class="ai-field">
                         <label for="TripType">Trip Type *</label>
                         <select id="TripType" name="TripType" required>
                             <option value="">Select trip type</option>
-                            <option value="adventure">Adventure</option>
-                            <option value="family">Family</option>
-                            <option value="business">Business</option>
-                            <option value="honeymoon">Honeymoon</option>
-                            <option value="religious">Religious</option>
-                            <option value="budget">Budget</option>
+                            @foreach (var t in tripTypeOptions)
+                            {
+                                <option value="@t">@t</option>
+                            }
                         </select>
                     </div>
+
                     <div class="ai-field">
-                        <label for="Days">Number of Days *</label>
-                        <input type="number" id="Days" name="Days" min="1" max="365" placeholder="7" value="7" />
+                        <label for="StartDate">Start Date *</label>
+                        <input type="date" id="StartDate" name="StartDate"
+                               value="@prefillStart" required />
                     </div>
+
                     <div class="ai-field">
-                        <label for="Weather">Weather / Season</label>
-                        <input type="text" id="Weather" name="Weather" placeholder="e.g. Tropical, cold, monsoon" maxlength="200" />
+                        <label for="EndDate">End Date *</label>
+                        <input type="date" id="EndDate" name="EndDate"
+                               value="@prefillEnd" required />
                     </div>
+
                     <div class="ai-field">
-                        <label for="StartDate">Start Date <span style="color:#9ca3af;">(optional)</span></label>
-                        <input type="date" id="StartDate" name="StartDate" />
-                    </div>
-                    <div class="ai-field">
-                        <label for="EndDate">End Date <span style="color:#9ca3af;">(optional)</span></label>
-                        <input type="date" id="EndDate" name="EndDate" />
+                        <label for="Days">
+                            Number of Days <span style="color:#9ca3af;">(auto from dates)</span>
+                        </label>
+                        <input type="number" id="Days" name="Days"
+                               min="1" max="60"
+                               value="@(prefillDays > 0 ? prefillDays : 7)"
+                               readonly
+                               style="background:#f9fafb;cursor:not-allowed;" />
                     </div>
                 </div>
 
-                @* Travelers *@
-                <div style="margin-top:1.5rem;">
-                    <label style="font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;">Travelers</label>
-                    <div style="border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-top:.6rem;background:#f9fafb;">
-                        <div class="traveler-row">
-                            <div class="traveler-label">Adults <small>18+ years</small></div>
-                            <div class="counter-wrap">
-                                <button type="button" class="counter-btn" data-target="Adults" data-dir="down">&#8722;</button>
-                                <input type="number" id="Adults" name="Adults" value="1" min="0" max="20" data-min="0" data-max="20"
-                                       style="width:36px;text-align:center;border:none;background:transparent;font-weight:700;font-size:.95rem;" />
-                                <button type="button" class="counter-btn" data-target="Adults" data-dir="up">+</button>
-                            </div>
+                @* ---------- TRAVELERS ---------- *@
+
+                <div class="ai-section-title">Travelers</div>
+
+                <div style="border:1px solid #e5e7eb;border-radius:12px;
+                            padding:1rem;background:#f9fafb;">
+
+                    <div class="traveler-row">
+                        <div class="traveler-label">Adults <small>18+ years</small></div>
+                        <div class="counter-wrap">
+                            <button type="button" class="counter-btn"
+                                    data-target="Adults" data-dir="down">
+                                &#8722;
+                            </button>
+                            <input type="number" id="Adults" name="Adults" value="1"
+                                   min="0" max="20" data-min="0" data-max="20"
+                                   style="width:36px;text-align:center;border:none;
+                                          background:transparent;font-weight:700;font-size:.95rem;" />
+                            <button type="button" class="counter-btn"
+                                    data-target="Adults" data-dir="up">
+                                +
+                            </button>
                         </div>
-                        <div class="traveler-row">
-                            <div class="traveler-label">Children <small>2&#8211;17 years</small></div>
-                            <div class="counter-wrap">
-                                <button type="button" class="counter-btn" data-target="Children" data-dir="down">&#8722;</button>
-                                <input type="number" id="Children" name="Children" value="0" min="0" max="20" data-min="0" data-max="20"
-                                       style="width:36px;text-align:center;border:none;background:transparent;font-weight:700;font-size:.95rem;" />
-                                <button type="button" class="counter-btn" data-target="Children" data-dir="up">+</button>
-                            </div>
+                    </div>
+
+                    <div class="traveler-row">
+                        <div class="traveler-label">Children <small>2&#8211;17</small></div>
+                        <div class="counter-wrap">
+                            <button type="button" class="counter-btn"
+                                    data-target="Children" data-dir="down">
+                                &#8722;
+                            </button>
+                            <input type="number" id="Children" name="Children" value="0"
+                                   min="0" max="20" data-min="0" data-max="20"
+                                   style="width:36px;text-align:center;border:none;
+                                          background:transparent;font-weight:700;font-size:.95rem;" />
+                            <button type="button" class="counter-btn"
+                                    data-target="Children" data-dir="up">
+                                +
+                            </button>
                         </div>
-                        <div class="traveler-row">
-                            <div class="traveler-label">Seniors <small>60+ years</small></div>
-                            <div class="counter-wrap">
-                                <button type="button" class="counter-btn" data-target="Seniors" data-dir="down">&#8722;</button>
-                                <input type="number" id="Seniors" name="Seniors" value="0" min="0" max="20" data-min="0" data-max="20"
-                                       style="width:36px;text-align:center;border:none;background:transparent;font-weight:700;font-size:.95rem;" />
-                                <button type="button" class="counter-btn" data-target="Seniors" data-dir="up">+</button>
-                            </div>
+                    </div>
+
+                    <div class="traveler-row">
+                        <div class="traveler-label">Seniors <small>60+</small></div>
+                        <div class="counter-wrap">
+                            <button type="button" class="counter-btn"
+                                    data-target="Seniors" data-dir="down">
+                                &#8722;
+                            </button>
+                            <input type="number" id="Seniors" name="Seniors" value="0"
+                                   min="0" max="20" data-min="0" data-max="20"
+                                   style="width:36px;text-align:center;border:none;
+                                          background:transparent;font-weight:700;font-size:.95rem;" />
+                            <button type="button" class="counter-btn"
+                                    data-target="Seniors" data-dir="up">
+                                +
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="ai-grid-2" style="margin-top:1rem;">
+                    <div class="ai-field">
+                        <label for="AgeGroup">
+                            Age Group <span style="color:#9ca3af;">(optional)</span>
+                        </label>
+                        <select id="AgeGroup" name="AgeGroup">
+                            <option value="">Let the AI decide</option>
+                            @foreach (var a in ageGroupOptions)
+                            {
+                                <option value="@a">@a</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                @* ---------- PACKING PREFERENCES ---------- *@
+
+                <div class="ai-section-title">Packing Preferences</div>
+
+                <div class="ai-grid-2">
+                    <div class="ai-field">
+                        <label for="PackingPreference">
+                            Packing Preference <span style="color:#9ca3af;">(optional)</span>
+                        </label>
+                        <select id="PackingPreference" name="PackingPreference">
+                            <option value="">Let the AI decide</option>
+                            @foreach (var p in packingPrefOptions)
+                            {
+                                <option value="@p">@p</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="ai-field">
+                        <label>Laundry Available? <span style="color:#9ca3af;">(optional)</span></label>
+                        <div class="ai-radio-row">
+                            <label class="ai-radio-opt" data-radio="laundry" data-value="true">
+                                <input type="radio" name="LaundryAvailable" value="true" /> Yes
+                            </label>
+                            <label class="ai-radio-opt" data-radio="laundry" data-value="false">
+                                <input type="radio" name="LaundryAvailable" value="false" /> No
+                            </label>
                         </div>
                     </div>
                 </div>
 
-                <div class="ai-grid-2" style="margin-top:1.25rem;">
-                    <div class="ai-field ai-col-full">
-                        <label for="SpecialNeeds">Special Needs / Notes <span style="color:#9ca3af;">(optional)</span></label>
-                        <textarea id="SpecialNeeds" name="SpecialNeeds"
-                                  placeholder="e.g. one traveler uses a wheelchair, dietary restrictions, diabetic supplies needed..."
-                                  maxlength="500"></textarea>
+                @* ---------- TRANSPORTATION & ACCOMMODATION ---------- *@
+
+                <div class="ai-section-title">Transportation & Accommodation</div>
+
+                <div class="ai-grid-2">
+                    <div class="ai-field">
+                        <label for="Transportation">
+                            Transportation <span style="color:#9ca3af;">(optional)</span>
+                        </label>
+                        <select id="Transportation" name="Transportation">
+                            <option value="">Not specified</option>
+                            @foreach (var t in transportOptions)
+                            {
+                                <option value="@t">@t</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="ai-field">
+                        <label for="Accommodation">
+                            Accommodation <span style="color:#9ca3af;">(optional)</span>
+                        </label>
+                        <select id="Accommodation" name="Accommodation">
+                            <option value="">Not specified</option>
+                            @foreach (var a in accomOptions)
+                            {
+                                <option value="@a">@a</option>
+                            }
+                        </select>
                     </div>
                 </div>
+
+                @* ---------- ACTIVITIES ---------- *@
+
+                <div class="ai-section-title">Activities & Interests</div>
+
+                <div class="ai-field">
+                    <label>
+                        Select any activities you plan to do
+                        <span style="color:#9ca3af;">(optional — tap to select)</span>
+                    </label>
+
+                    <div class="ai-chip-group" id="activityChips">
+                        @foreach (var act in activityOptions)
+                        {
+                            <label class="ai-chip-opt" data-activity="@act">
+                                <input type="checkbox" value="@act" /> @act
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                @* ---------- SPECIAL NEEDS ---------- *@
+
+                <div class="ai-section-title">Special Needs / Notes</div>
+
+                <div class="ai-field ai-col-full">
+                    <textarea id="SpecialNeeds"
+                              name="SpecialNeeds"
+                              placeholder="e.g. wheelchair access, dietary restrictions, medication needs..."
+                              maxlength="500"></textarea>
+                </div>
+
+                @* ---------- ADVANCED ---------- *@
+
+                <button type="button" class="ai-advanced-toggle" id="advToggle">
+                    <i class="fas fa-sliders-h"></i>
+                    Advanced Settings
+                    <i class="fas fa-chevron-down" id="advChevron"></i>
+                </button>
+
+                <div class="ai-advanced-body" id="advBody">
+
+                    <div class="ai-section-title" style="border-top:none;margin-top:.5rem;">
+                        Climate Override
+                    </div>
+
+                    <div class="ai-field">
+                        <label for="ClimateZone">
+                            Climate Zone <span style="color:#9ca3af;">(optional — leave blank to auto-detect from weather)</span>
+                        </label>
+                        <select id="ClimateZone" name="ClimateZone">
+                            <option value="">Auto-detect</option>
+                            @foreach (var c in climateOptions)
+                            {
+                                <option value="@c">@c</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="ai-section-title">Planner Preferences</div>
+
+                    <div class="ai-grid-2">
+                        <div class="ai-field">
+                            <label for="Temperature">Preferred temperature (°C)</label>
+                            <input type="number"
+                                   id="Temperature"
+                                   name="Temperature"
+                                   min="-50" max="50" step="0.5"
+                                   value="@temperatureValue" />
+                        </div>
+
+                        <div class="ai-field">
+                            <label for="Budget">Budget</label>
+                            <select id="Budget" name="Budget">
+                                <option value="">Not specified</option>
+                                <option value="Budget" @(prefillBudget == "Budget" ? "selected" : "")>Budget</option>
+                                <option value="Mid-range" @(prefillBudget == "Mid-range" ? "selected" : "")>Mid-range</option>
+                                <option value="Luxury" @(prefillBudget == "Luxury" ? "selected" : "")>Luxury</option>
+                            </select>
+                        </div>
+
+                        <div class="ai-field">
+                            <label for="Region">Region</label>
+                            <select id="Region" name="Region">
+                                <option value="">Anywhere</option>
+                                <option value="africa" @(prefillRegion == "africa" ? "selected" : "")>Africa</option>
+                                <option value="asia" @(prefillRegion == "asia" ? "selected" : "")>Asia</option>
+                                <option value="europe" @(prefillRegion == "europe" ? "selected" : "")>Europe</option>
+                                <option value="middle_east" @(prefillRegion == "middle_east" ? "selected" : "")>Middle East</option>
+                                <option value="north_america" @(prefillRegion == "north_america" ? "selected" : "")>North America</option>
+                                <option value="oceania" @(prefillRegion == "oceania" ? "selected" : "")>Oceania</option>
+                                <option value="south_america" @(prefillRegion == "south_america" ? "selected" : "")>South America</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="ai-section-title">Interest Ratings (1 = low, 5 = high)</div>
+
+                    <div class="ai-grid-2">
+                        @foreach (var r in ratingKeys)
+                        {
+                            var v = PrefVal(r.Key);
+                            <div class="ai-field">
+                                <label for="@r.Key">
+                                    @r.Label:
+                                    <strong id="@(r.Key)Val">@v</strong> / 5
+                                </label>
+                                <input type="range"
+                                       id="@r.Key"
+                                       name="@r.Key"
+                                       min="1" max="5" step="1"
+                                       value="@v"
+                                       data-out="@(r.Key)Val" />
+                                <small style="color:#9ca3af;">@r.Hint</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @* ---------- ACTIONS ---------- *@
 
                 <div class="ai-actions">
                     <button type="submit" id="submitBtn" class="btn-ai-primary">
                         <i class="fas fa-magic"></i> Generate Packing List
                     </button>
-                    <button type="button" class="btn-ai-ghost" onclick="packingRegenerate()">
+                    <button type="button" class="btn-ai-ghost"
+                            onclick="packingRegenerate()">
                         <i class="fas fa-redo"></i> Regenerate
                     </button>
-                    <button type="button" class="btn-ai-ghost" onclick="packingReset()">
+                    <button type="button" class="btn-ai-ghost"
+                            onclick="packingReset()">
                         <i class="fas fa-check-square"></i> Reset Ticks
                     </button>
                 </div>
@@ -158,7 +680,6 @@
     </div>
 </section>
 
-@* LOADER *@
 <div class="container">
     <div class="ai-loader" id="aiLoader">
         <div class="ai-spinner"></div>
@@ -166,10 +687,12 @@
     </div>
 </div>
 
-@* RESULTS *@
 <div class="ai-results container" id="aiResults">
     <div class="ai-results-header">
-        <h2><i class="fas fa-list-check" style="margin-right:.4rem;"></i> Your Packing List</h2>
+        <h2>
+            <i class="fas fa-list-check" style="margin-right:.4rem;"></i>
+            Your Packing List
+        </h2>
         <div class="ai-result-btns">
             <button class="btn-ai-ghost" onclick="packingPrint()" id="printBtn">
                 <i class="fas fa-print"></i> Print
@@ -177,7 +700,8 @@
             <button class="btn-ai-ghost" onclick="packingCopy()" id="copyBtn">
                 <i class="fas fa-copy"></i> Copy as Text
             </button>
-            <button class="btn-ai-primary" onclick="packingRegenerate()" style="font-size:.82rem;padding:.65rem 1.4rem;">
+            <button class="btn-ai-primary" onclick="packingRegenerate()"
+                    style="font-size:.82rem;padding:.65rem 1.4rem;">
                 <i class="fas fa-magic"></i> Regenerate
             </button>
         </div>

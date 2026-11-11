@@ -1,5 +1,5 @@
 @* =====================================================
-    NEXVOY DESTINATION RECOMMENDER  -  Views/TourPlanner/Index.cshtml
+    NEXVOY DESTINATION RECOMMENDER - Views/TourPlanner/Index.cshtml
     ===================================================== *@
 @{
     ViewBag.Title = "Destination Recommender";
@@ -24,8 +24,8 @@
 
 @section HeadStyles {
     <link rel="stylesheet" href="@Url.Content("~/Content/frontend/ai-tools.css")" />
+
     <style>
-        /* ---------- Form (unchanged) ---------- */
         .nv-rating input[type=range] {
             width: 100%;
         }
@@ -36,7 +36,6 @@
             margin-top: .15rem;
         }
 
-        /* ---------- Date hint ---------- */
         .nv-datehint {
             display: flex;
             gap: .6rem;
@@ -69,7 +68,6 @@
                 color: #991b1b;
             }
 
-        /* ---------- Results header ---------- */
         .nv-results-head {
             display: flex;
             align-items: center;
@@ -94,7 +92,6 @@
                 color: #6b7280;
             }
 
-        /* ---------- Summary + notes ---------- */
         .nv-summary-strip {
             display: flex;
             flex-wrap: wrap;
@@ -140,7 +137,6 @@
                 margin-top: .2rem;
             }
 
-        /* ---------- Destination cards ---------- */
         .nv-card {
             background: #fff;
             border: 1px solid #e5e7eb;
@@ -352,7 +348,45 @@
             height: 4rem;
         }
 
-        /* ---------- Responsive ---------- */
+        .nv-pack {
+            margin-top: 1.1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f1f3;
+        }
+
+        .nv-pack-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+        }
+
+            .nv-pack-btn-row .btn-ai-ghost,
+            .nv-pack-btn-row .btn-ai-primary {
+                font-size: .82rem;
+                padding: .55rem 1.15rem;
+            }
+
+        .nv-pack-out {
+            margin-top: .9rem;
+        }
+
+        .nv-pack-msg {
+            padding: .75rem 1rem;
+            border-radius: 12px;
+            font-size: .9rem;
+            line-height: 1.45;
+        }
+
+            .nv-pack-msg.info {
+                background: #f0f9ff;
+                color: #075985;
+            }
+
+            .nv-pack-msg.error {
+                background: #fef2f2;
+                color: #991b1b;
+            }
+
         @@media (max-width: 640px) {
             .nv-results-head h2 {
                 font-size: 1.4rem;
@@ -392,7 +426,9 @@
         }
 
         @@media print {
-            #site-header, #site-footer, #nvFormSection, #aiLoader, #errorBanner, .ai-result-btns {
+            #site-header, #site-footer, #nvFormSection,
+            #aiLoader, #errorBanner, .ai-result-btns,
+            .nv-pack, .nvp-bar {
                 display: none !important;
             }
 
@@ -442,7 +478,9 @@
                 <i class="fas fa-circle-exclamation"></i>
                 <div>
                     <p class="error-msg"></p>
-                    <button class="btn-retry" id="retryBtn" type="button"><i class="fas fa-redo"></i> Try Again</button>
+                    <button class="btn-retry" id="retryBtn" type="button">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
                 </div>
             </div>
 
@@ -454,14 +492,14 @@
 
                 <div class="ai-grid-2">
                     <div class="ai-field">
-                        <label for="Temperature">Preferred average temperature (&deg;C) *</label>
+                        <label for="Temperature">Preferred average temperature (°C) *</label>
                         <input type="number" id="Temperature" name="Temperature" min="-50" max="50" step="0.5" value="22" required />
                     </div>
                     <div class="ai-field">
                         <label for="Budget">Budget per night *</label>
                         <select id="Budget" name="Budget">
                             <option value="Budget">Budget (under $75)</option>
-                            <option value="Mid-range" selected>Mid-range ($75&ndash;$220)</option>
+                            <option value="Mid-range" selected>Mid-range ($75–$220)</option>
                             <option value="Luxury">Luxury ($220+)</option>
                         </select>
                     </div>
@@ -485,14 +523,15 @@
 
                 <div class="ai-grid-2" style="margin-top:1.25rem;">
                     <div class="ai-field">
-                        <label for="TravelStartDate">Trip from <span style="color:#9ca3af;">(optional)</span></label>
+                        <label for="TravelStartDate">Trip from <span style="color:#9ca3af;">(optional, needed for packing lists)</span></label>
                         <input type="date" id="TravelStartDate" name="TravelStartDate" />
                     </div>
                     <div class="ai-field">
-                        <label for="TravelEndDate">Trip to <span style="color:#9ca3af;">(optional)</span></label>
+                        <label for="TravelEndDate">Trip to <span style="color:#9ca3af;">(optional, needed for packing lists)</span></label>
                         <input type="date" id="TravelEndDate" name="TravelEndDate" />
                     </div>
                 </div>
+
                 <div class="nv-datehint" id="dateHint">
                     <i class="fas fa-cloud-sun"></i>
                     <span>Choose both dates to use a live weather forecast when your trip is within the next 16 days. Otherwise typical monthly climate is used. Leave both empty to skip.</span>
@@ -503,6 +542,7 @@
                         How much do you enjoy each of these? (1 = low, 5 = high)
                     </label>
                 </div>
+
                 <div class="ai-grid-2" style="margin-top:.75rem;">
                     @foreach (var p in prefs)
                     {
@@ -528,7 +568,7 @@
 <div class="container">
     <div class="ai-loader" id="aiLoader" style="display:none;">
         <div class="ai-spinner"></div>
-        <p>Finding your best matches&#8230; the first request can take up to a minute.</p>
+        <p>Finding your best matches… the first request can take up to a minute.</p>
     </div>
 </div>
 
@@ -553,6 +593,8 @@
 @section Scripts {
     <script>
         (function () {
+            'use strict';
+
             var form = document.getElementById('nvForm');
             var errBox = document.getElementById('errorBanner');
             var loader = document.getElementById('aiLoader');
@@ -561,38 +603,68 @@
             var startInput = document.getElementById('TravelStartDate');
             var endInput = document.getElementById('TravelEndDate');
             var dateHint = document.getElementById('dateHint');
+            var retryBtn = document.getElementById('retryBtn');
 
-            // ---- Trip dates: end date can't be before start, plus a friendly hint ----
+            if (!form || !errBox || !loader || !results || !submitBtn) return;
+
+            var requestNumber = 0;
+            var isSubmitting = false;
+            var lastSubmittedSnapshot = null;
+
+            function antiForgeryToken() {
+                var t = form.querySelector('input[name="__RequestVerificationToken"]');
+                return t ? t.value : '';
+            }
+
             function iso(d) {
-                var m = d.getMonth() + 1, day = d.getDate();
-                return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+                var m = d.getMonth() + 1;
+                var day = d.getDate();
+                return d.getFullYear() + '-' +
+                    (m < 10 ? '0' : '') + m + '-' +
+                    (day < 10 ? '0' : '') + day;
             }
-            function setHint(kind, icon, text) {
+
+            function setHint(kind, icon, message) {
                 dateHint.className = 'nv-datehint' + (kind ? ' ' + kind : '');
-                dateHint.innerHTML = '<i class="fas ' + icon + '"></i><span>' + text + '</span>';
+                dateHint.innerHTML =
+                    '<i class="fas ' + icon + '"></i><span>' + message + '</span>';
             }
+
             function updateDateHint() {
-                var s = startInput.value, e = endInput.value;
+                var s = startInput.value;
+                var e = endInput.value;
                 endInput.min = s || '';
+
                 if (!s && !e) {
-                    setHint('', 'fa-cloud-sun', 'Choose both dates to use a live weather forecast when your trip is within the next 16 days. Otherwise typical monthly climate is used. Leave both empty to skip.');
+                    setHint('', 'fa-cloud-sun',
+                        'Choose both dates to use a live weather forecast when your trip is within the next 16 days. Otherwise typical monthly climate is used. Leave both empty to skip.');
                 } else if (!s || !e) {
-                    setHint('far', 'fa-circle-info', 'Please choose both a start and an end date, or clear them.');
+                    setHint('far', 'fa-circle-info',
+                        'Please choose both a start and an end date, or clear them.');
                 } else if (s > e) {
-                    setHint('bad', 'fa-circle-exclamation', 'The start date is after the end date. Please fix the dates.');
+                    setHint('bad', 'fa-circle-exclamation',
+                        'The start date is after the end date. Please fix the dates.');
                 } else {
-                    var limit = new Date(); limit.setDate(limit.getDate() + 15);
-                    if (e <= iso(limit)) setHint('ok', 'fa-cloud-sun-rain', 'Your trip is inside the 16-day window, so a live weather forecast will be used.');
-                    else setHint('far', 'fa-calendar-days', 'Your trip is beyond the 16-day forecast window, so typical monthly climate will be used instead.');
+                    var limit = new Date();
+                    limit.setDate(limit.getDate() + 15);
+                    if (e <= iso(limit)) {
+                        setHint('ok', 'fa-cloud-sun-rain',
+                            'Your trip is inside the 16-day window, so a live weather forecast will be used.');
+                    } else {
+                        setHint('far', 'fa-calendar-days',
+                            'Your trip is beyond the 16-day forecast window, so typical monthly climate will be used instead.');
+                    }
                 }
             }
+
             startInput.addEventListener('change', function () {
-                if (startInput.value && endInput.value && endInput.value < startInput.value) endInput.value = '';
+                if (startInput.value && endInput.value && endInput.value < startInput.value) {
+                    endInput.value = '';
+                }
                 updateDateHint();
             });
             endInput.addEventListener('change', updateDateHint);
 
-            // Returns an error message, or '' when the dates are fine (both empty is fine)
             function checkDates() {
                 var s = startInput.value, e = endInput.value;
                 if (!s && !e) return '';
@@ -601,12 +673,12 @@
                 return '';
             }
 
-            // Live number next to each slider
             var sliders = form.querySelectorAll('input[type=range]');
             for (var i = 0; i < sliders.length; i++) {
-                (function (r) {
-                    r.addEventListener('input', function () {
-                        document.getElementById(r.getAttribute('data-out')).textContent = r.value;
+                (function (range) {
+                    range.addEventListener('input', function () {
+                        var out = document.getElementById(range.getAttribute('data-out'));
+                        if (out) out.textContent = range.value;
                     });
                 })(sliders[i]);
             }
@@ -617,164 +689,485 @@
                 });
             }
 
-            // URL-encoded body, so [ValidateAntiForgeryToken] works exactly like the other AI pages
-            function serialize(f) {
+            function serialize(formElement) {
                 var parts = [];
-                for (var i = 0; i < f.elements.length; i++) {
-                    var el = f.elements[i];
+                for (var i = 0; i < formElement.elements.length; i++) {
+                    var el = formElement.elements[i];
                     if (!el.name || el.disabled) continue;
+                    if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) continue;
                     parts.push(encodeURIComponent(el.name) + '=' + encodeURIComponent(el.value));
                 }
                 return parts.join('&');
             }
 
-            function showError(message) {
-                errBox.querySelector('.error-msg').textContent = message;
+            function showError(msg) {
+                errBox.querySelector('.error-msg').textContent =
+                    msg || 'Something went wrong. Please try again.';
                 errBox.style.display = 'flex';
             }
+            function hideError() { errBox.style.display = 'none'; }
 
             function pct(v) {
                 var n = Number(v);
-                if (isNaN(n)) n = 0;
+                if (!isFinite(n)) n = 0;
                 return Math.max(0, Math.min(100, n));
             }
 
             function meter(label, value) {
-                return '<div class="nv-meter"><div class="lbl"><span>' + label + '</span><strong>' + pct(value).toFixed(1) + '%</strong></div>' +
-                    '<div class="bar"><i style="width:' + pct(value) + '%"></i></div></div>';
+                var p = pct(value);
+                return '<div class="nv-meter">' +
+                    '<div class="lbl"><span>' + label +
+                    '</span><strong>' + p.toFixed(1) + '%</strong></div>' +
+                    '<div class="bar"><i style="width:' + p + '%"></i></div>' +
+                    '</div>';
             }
 
-            // ---- Weather source + temperature helpers ----
-            // The temperature shown must come from the same weather data the API used for temperature_match:
-            //   weather_source = "open_meteo_forecast" -> forecast_avg_temp (live forecast for the trip dates)
-            //   anything else (monthly_climate)        -> avg_temp (typical monthly climate)
             var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            var tripDates = { start: '', end: '' };   // snapshot of the dates that were actually sent
+            var tripDates = { start: '', end: '' };
 
-            function parseIso(s) {
-                var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+            function parseIso(v) {
+                var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || '');
                 return p ? { y: +p[1], m: +p[2], d: +p[3] } : null;
             }
-
-            function formatTrip(start, end) {
-                var a = parseIso(start), b = parseIso(end);
+            function formatTrip(s, e) {
+                var a = parseIso(s), b = parseIso(e);
                 if (!a || !b) return '';
                 if (a.y === b.y && a.m === b.m && a.d === b.d) return MON[a.m - 1] + ' ' + a.d + ', ' + a.y;
                 if (a.y === b.y && a.m === b.m) return MON[a.m - 1] + ' ' + a.d + '–' + b.d + ', ' + a.y;
                 if (a.y === b.y) return MON[a.m - 1] + ' ' + a.d + ' – ' + MON[b.m - 1] + ' ' + b.d + ', ' + a.y;
                 return MON[a.m - 1] + ' ' + a.d + ', ' + a.y + ' – ' + MON[b.m - 1] + ' ' + b.d + ', ' + b.y;
             }
+            function numOrNull(v) { if (v == null || v === '') return null; var n = Number(v); return isNaN(n) ? null : n; }
+            function isForecast(d) { return !!d && d.weather_source === 'open_meteo_forecast'; }
 
-            // Null-safe number: null / '' / NaN all become null (Number(null) would wrongly be 0)
-            function numOrNull(v) {
-                if (v == null || v === '') return null;
-                var n = Number(v);
-                return isNaN(n) ? null : n;
-            }
-
-            function isForecast(data) {
-                return !!data && data.weather_source === 'open_meteo_forecast';
-            }
-
-            function weatherPill(data) {
-                if (!data || !data.weather_source) return '';   // older API response: show nothing rather than guess
-                if (isForecast(data)) {
-                    var trip = formatTrip(tripDates.start, tripDates.end);
-                    return '<span class="nv-pill"><i class="fas fa-cloud-sun-rain"></i> <strong>Live forecast</strong>' + (trip ? ' &middot; ' + esc(trip) : '') + '</span>';
+            function weatherPill(d) {
+                if (!d || !d.weather_source) return '';
+                if (isForecast(d)) {
+                    var t = formatTrip(tripDates.start, tripDates.end);
+                    return '<span class="nv-pill">' +
+                        '<i class="fas fa-cloud-sun-rain"></i> <strong>Live forecast</strong>' +
+                        (t ? ' · ' + esc(t) : '') + '</span>';
                 }
-                var a = parseIso(tripDates.start);
-                return '<span class="nv-pill"><i class="fas fa-calendar-days"></i> <strong>Typical monthly climate</strong>' + (a ? ' &middot; ' + MONTHS[a.m - 1] : '') + '</span>';
+                var s = parseIso(tripDates.start);
+                return '<span class="nv-pill">' +
+                    '<i class="fas fa-calendar-days"></i> <strong>Typical monthly climate</strong>' +
+                    (s ? ' · ' + MONTHS[s.m - 1] : '') + '</span>';
             }
 
-            function tempChip(r, data) {
-                var forecast = numOrNull(r.forecast_avg_temp);
-                var typical = numOrNull(r.avg_temp);
-                if (isForecast(data) && forecast != null) {
-                    return '<span class="nv-chip"><i class="fas fa-cloud-sun"></i> ' + forecast.toFixed(1) + '&deg;C forecast average</span>';
+            function tempChip(dest, data) {
+                var f = numOrNull(dest.forecast_avg_temp);
+                var t = numOrNull(dest.avg_temp);
+                if (isForecast(data) && f != null) {
+                    return '<span class="nv-chip"><i class="fas fa-cloud-sun"></i> ' +
+                        f.toFixed(1) + '°C forecast average</span>';
                 }
-                if (typical != null) {
+                if (t != null) {
                     var tag = isForecast(data) ? 'typical (no forecast for this city)' : 'average';
-                    return '<span class="nv-chip"><i class="fas fa-temperature-half"></i> ' + typical.toFixed(1) + '&deg;C ' + tag + '</span>';
+                    return '<span class="nv-chip"><i class="fas fa-temperature-half"></i> ' +
+                        t.toFixed(1) + '°C ' + tag + '</span>';
                 }
                 return '';
             }
 
-            function render(data) {
-                var summary = '';
-                var notes = data.notes || [];
-                for (var n = 0; n < notes.length; n++) {
-                    summary += '<div class="nv-info"><i class="fas fa-circle-info"></i><span>' + esc(notes[n]) + '</span></div>';
+            function snapshot() {
+                var names = ['Culture', 'Adventure', 'Nature', 'Beaches', 'Nightlife', 'Cuisine', 'Wellness', 'Urban', 'Seclusion'];
+                var ctx = {
+                    start: startInput.value,
+                    end: endInput.value,
+                    temperature: document.getElementById('Temperature').value,
+                    budget: document.getElementById('Budget').value,
+                    region: document.getElementById('Region').value,
+                    prefs: {}
+                };
+                for (var i = 0; i < names.length; i++) {
+                    ctx.prefs[names[i]] = document.getElementById(names[i]).value;
                 }
-                summary += '<div class="nv-summary-strip">' +
-                    '<span class="nv-pill"><i class="fas fa-brain"></i> Model estimate for your taste: <strong>' + esc(data.predicted_budget) + '</strong> (' + esc(data.model) + ')</span>' +
-                    '<span class="nv-pill"><i class="fas fa-wallet"></i> You chose: <strong>' + esc(data.selected_budget) + '</strong></span>' +
-                    weatherPill(data) +
-                    '</div>';
+                return ctx;
+            }
+
+            function setPackMessage(box, text, kind) {
+                box.innerHTML = '<div class="nv-pack-msg ' + (kind || 'info') + '">' + esc(text) + '</div>';
+            }
+
+            function inlineGeneratePacking(idx, outBox, button) {
+                if (!window.NV_RESULTS || !window.NV_RESULTS.results) {
+                    setPackMessage(outBox, 'Please run the recommendation first.', 'error');
+                    return;
+                }
+                var dest = window.NV_RESULTS.results[idx];
+                if (!dest) {
+                    setPackMessage(outBox, 'Could not find this destination. Please run the recommendation again.', 'error');
+                    return;
+                }
+                var ctx = window.NV_CTX || {};
+                if (!ctx.start || !ctx.end) {
+                    setPackMessage(outBox, 'A packing list needs trip dates. Please choose your trip dates above and run the recommendation again.', 'error');
+                    return;
+                }
+
+                var endpoint = window.NV_PACK_URL || '/TourPlanner/Packing';
+                var body = {
+                    __RequestVerificationToken: antiForgeryToken(),
+                    City: dest.city || '',
+                    Country: dest.country || '',
+                    DestRegion: dest.region || '',
+                    TypicalAvgTemp: dest.avg_temp != null ? String(dest.avg_temp) : '',
+                    ForecastAvgTemp: dest.forecast_avg_temp != null ? String(dest.forecast_avg_temp) : '',
+                    IdealTripDays: dest.ideal_trip_days != null ? String(dest.ideal_trip_days) : '',
+                    StartDate: ctx.start || '',
+                    EndDate: ctx.end || '',
+                    Temperature: ctx.temperature != null ? String(ctx.temperature) : '',
+                    Budget: ctx.budget || '',
+                    Region: ctx.region || '',
+                    Culture: (ctx.prefs && ctx.prefs.Culture) || '3',
+                    Adventure: (ctx.prefs && ctx.prefs.Adventure) || '3',
+                    Nature: (ctx.prefs && ctx.prefs.Nature) || '3',
+                    Beaches: (ctx.prefs && ctx.prefs.Beaches) || '3',
+                    Nightlife: (ctx.prefs && ctx.prefs.Nightlife) || '3',
+                    Cuisine: (ctx.prefs && ctx.prefs.Cuisine) || '3',
+                    Wellness: (ctx.prefs && ctx.prefs.Wellness) || '3',
+                    Urban: (ctx.prefs && ctx.prefs.Urban) || '3',
+                    Seclusion: (ctx.prefs && ctx.prefs.Seclusion) || '3'
+                };
+
+                button.disabled = true;
+                setPackMessage(outBox, 'Generating packing list…', 'info');
+
+                fetch(endpoint, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: encodeObject(body)
+                })
+                    .then(function (r) {
+                        return r.text().then(function (t) {
+                            var json;
+                            try { json = JSON.parse(t); }
+                            catch (e) { throw new Error('The server returned an invalid response.'); }
+                            return { ok: r.ok, json: json };
+                        });
+                    })
+                    .then(function (res) {
+                        button.disabled = false;
+                        if (!res.ok || !res.json || !res.json.success) {
+                            throw new Error((res.json && res.json.error) || 'Could not generate the packing list.');
+                        }
+                        outBox.innerHTML = '';
+                        renderInlinePacking(outBox, res.json.data);
+                    })
+                    .catch(function (err) {
+                        button.disabled = false;
+                        setPackMessage(outBox, err && err.message ? err.message : 'Could not generate the packing list.', 'error');
+                    });
+            }
+
+            function renderInlinePacking(outBox, data) {
+                if (!data || typeof data !== 'object') {
+                    setPackMessage(outBox, 'The API returned no packing items.', 'error');
+                    return;
+                }
+
+                var itemsByGroup = {};
+                var raw = [];
+                ['ml_items', 'essentials', 'extra_weather_suggestions'].forEach(function (k) {
+                    if (Array.isArray(data[k])) raw = raw.concat(data[k]);
+                });
+
+                raw.forEach(function (it) {
+                    if (!it) return;
+                    var name = it.name || it.item || it.item_name || it.label;
+                    if (!name) return;
+                    var g = it.display_group || it.category || it.group || 'Other';
+                    if (!itemsByGroup[g]) itemsByGroup[g] = [];
+                    itemsByGroup[g].push(it);
+                });
+
+                var order = [];
+                if (Array.isArray(data.groups)) {
+                    data.groups.forEach(function (g) {
+                        if (typeof g === 'string' && itemsByGroup[g] && order.indexOf(g) === -1) order.push(g);
+                    });
+                }
+                Object.keys(itemsByGroup).forEach(function (g) {
+                    if (order.indexOf(g) === -1) order.push(g);
+                });
+
+                if (!order.length) {
+                    setPackMessage(outBox, 'The API returned no usable packing items.', 'error');
+                    return;
+                }
+
+                var html = '';
+
+                if (data.weather && (data.weather.summary || data.weather.attribution)) {
+                    html += '<div class="nv-pack-msg info" style="margin-bottom:.7rem;">';
+                    if (data.weather.summary) html += '<strong>Weather:</strong> ' + esc(data.weather.summary);
+                    if (data.weather.attribution) {
+                        html += '<div style="font-size:.78rem;color:#6b7280;margin-top:.3rem;">' +
+                            esc(data.weather.attribution) + '</div>';
+                    }
+                    html += '</div>';
+                }
+
+                order.forEach(function (g) {
+                    html += '<div style="margin-top:.9rem;">' +
+                        '<strong style="display:block;font-size:.9rem;color:#1a1a1a;margin-bottom:.4rem;">' +
+                        esc(g) + '</strong>' +
+                        '<ul style="margin:0;padding-left:1.15rem;color:#4b5563;font-size:.9rem;line-height:1.7;">';
+                    itemsByGroup[g].forEach(function (it) {
+                        var qty = it.quantity || it.qty || it.amount || '';
+                        html += '<li>' + esc(it.name || it.item || it.item_name || '') +
+                            (qty ? ' <span style="color:#9ca3af;">(x' + esc(qty) + ')</span>' : '') +
+                            '</li>';
+                    });
+                    html += '</ul></div>';
+                });
+
+                outBox.innerHTML = html;
+            }
+
+            function openPackingAssistant(idx, button) {
+                if (!window.NV_RESULTS || !window.NV_RESULTS.results) {
+                    showError('Please run the recommendation first.');
+                    return;
+                }
+                var dest = window.NV_RESULTS.results[idx];
+                if (!dest) {
+                    showError('Could not find this destination. Please run the recommendation again.');
+                    return;
+                }
+                var ctx = window.NV_CTX || {};
+
+                var f = document.createElement('form');
+                f.method = 'POST';
+                f.action = '/TourPlanner/OpenPackingAssistant';
+                f.style.display = 'none';
+
+                function add(name, value) {
+                    var i = document.createElement('input');
+                    i.type = 'hidden';
+                    i.name = name;
+                    i.value = value == null ? '' : String(value);
+                    f.appendChild(i);
+                }
+
+                add('__RequestVerificationToken', antiForgeryToken());
+                add('City', dest.city || '');
+                add('Country', dest.country || '');
+                add('StartDate', ctx.start || '');
+                add('EndDate', ctx.end || '');
+                add('Temperature', ctx.temperature || '');
+                add('Budget', ctx.budget || '');
+                add('Region', ctx.region || '');
+
+                var names = ['Culture', 'Adventure', 'Nature', 'Beaches', 'Nightlife', 'Cuisine', 'Wellness', 'Urban', 'Seclusion'];
+                for (var i = 0; i < names.length; i++) {
+                    add(names[i], (ctx.prefs && ctx.prefs[names[i]]) || '3');
+                }
+
+                document.body.appendChild(f);
+                if (button) button.disabled = true;
+                f.submit();
+            }
+
+            function encodeObject(obj) {
+                return Object.keys(obj).map(function (k) {
+                    return encodeURIComponent(k) + '=' +
+                        encodeURIComponent(obj[k] == null ? '' : obj[k]);
+                }).join('&');
+            }
+
+            function render(data) {
+                if (!data || !Array.isArray(data.results)) {
+                    showError('The recommendation API returned an unexpected response format.');
+                    return;
+                }
+
+                window.NV_RESULTS = data;
+
+                var summary = '';
+                var notes = Array.isArray(data.notes) ? data.notes : [];
+                for (var n = 0; n < notes.length; n++) {
+                    summary += '<div class="nv-info"><i class="fas fa-circle-info"></i>' +
+                        '<span>' + esc(notes[n]) + '</span></div>';
+                }
+
+                summary +=
+                    '<div class="nv-summary-strip">' +
+                    '<span class="nv-pill"><i class="fas fa-brain"></i> Model estimate for your taste: <strong>' +
+                    esc(data.predicted_budget) + '</strong> (' + esc(data.model) + ')</span>' +
+                    '<span class="nv-pill"><i class="fas fa-wallet"></i> You chose: <strong>' +
+                    esc(data.selected_budget) + '</strong></span>' +
+                    weatherPill(data) + '</div>';
+
                 document.getElementById('nvSummary').innerHTML = summary;
 
                 var html = '';
-                var items = data.results || [];
+                var items = data.results;
+
                 for (var k = 0; k < items.length; k++) {
-                    var r = items[k];
-                    var hotel = (r.avg_hotel_usd != null)
-                        ? '<span class="nv-chip"><i class="fas fa-bed"></i> about $' + esc(r.avg_hotel_usd) + ' per night</span>' : '';
-                    html += '<div class="nv-card' + (k === 0 ? ' top' : '') + '" style="animation-delay:' + (k * 70) + 'ms">' +
+                    var d = items[k] || {};
+                    var hotel = d.avg_hotel_usd != null
+                        ? '<span class="nv-chip"><i class="fas fa-bed"></i> about $' +
+                        esc(d.avg_hotel_usd) + ' per night</span>'
+                        : '';
+                    var score = pct(d.match_score);
+
+                    html +=
+                        '<div class="nv-card' + (k === 0 ? ' top' : '') +
+                        '" style="animation-delay:' + (k * 70) + 'ms">' +
+
                         '<div class="nv-head">' +
-                        '<div class="nv-rank">' + esc(r.rank) + '</div>' +
+                        '<div class="nv-rank">' + esc(d.rank || (k + 1)) + '</div>' +
                         '<div class="nv-title">' +
-                        '<h3>' + esc(r.city) + ', ' + esc(r.country) + (k === 0 ? '<span class="nv-best">Best match</span>' : '') + '</h3>' +
-                        '<div class="nv-region"><i class="fas fa-location-dot"></i>' + esc(r.region) + '</div>' +
+                        '<h3>' + esc(d.city) + ', ' + esc(d.country) +
+                        (k === 0 ? '<span class="nv-best">Best match</span>' : '') +
+                        '</h3>' +
+                        '<div class="nv-region"><i class="fas fa-location-dot"></i>' +
+                        esc(d.region) + '</div></div>' +
+                        '<div class="nv-ring" style="--p:' + score + '">' +
+                        '<span>' + score.toFixed(0) + '%<small>match</small></span></div>' +
                         '</div>' +
-                        '<div class="nv-ring" style="--p:' + pct(r.match_score) + '"><span>' + Number(r.match_score).toFixed(0) + '%<small>match</small></span></div>' +
-                        '</div>' +
+
                         '<div class="nv-chips">' +
-                        '<span class="nv-chip"><i class="fas fa-tag"></i> ' + esc(r.budget_level) + '</span>' + hotel +
-                        tempChip(r, data) +
-                        '<span class="nv-chip"><i class="fas fa-calendar-check"></i> Ideal trip: ' + esc(r.ideal_trip_days) + ' (' + esc(r.ideal_trip_labels) + ')</span>' +
+                        '<span class="nv-chip"><i class="fas fa-tag"></i> ' +
+                        esc(d.budget_level) + '</span>' +
+                        hotel + tempChip(d, data) +
+                        '<span class="nv-chip"><i class="fas fa-calendar-check"></i> Ideal trip: ' +
+                        esc(d.ideal_trip_days) + ' (' + esc(d.ideal_trip_labels) + ')</span>' +
                         '</div>' +
-                        (r.description ? '<p class="nv-desc">' + esc(r.description) + '</p>' : '') +
-                        '<div class="nv-meters">' + meter('Matches your ratings', r.preference_match) + meter('Matches your temperature', r.temperature_match) + '</div>' +
+
+                        (d.description ? '<p class="nv-desc">' + esc(d.description) + '</p>' : '') +
+
+                        '<div class="nv-meters">' +
+                        meter('Matches your ratings', d.preference_match) +
+                        meter('Matches your temperature', d.temperature_match) +
+                        '</div>' +
+
+                        '<div class="nv-pack" data-idx="' + k + '">' +
+                        '<div class="nv-pack-btn-row">' +
+                        '<button type="button" class="btn-ai-ghost nv-pack-btn">' +
+                        '<i class="fas fa-suitcase-rolling"></i> Generate Packing List</button>' +
+                        '<button type="button" class="btn-ai-primary nv-pack-open-btn">' +
+                        '<i class="fas fa-arrow-up-right-from-square"></i> Open in Packing Assistant</button>' +
+                        '</div>' +
+                        '<div class="nv-pack-out"></div>' +
+                        '</div>' +
+
                         '</div>';
                 }
-                if (!html) html = '<div class="nv-empty"><i class="fas fa-compass" style="font-size:1.6rem;margin-bottom:.6rem;"></i><br>No destinations matched. Try another budget or region.</div>';
+
+                if (!html) {
+                    html = '<div class="nv-empty">' +
+                        '<i class="fas fa-compass" style="font-size:1.6rem;margin-bottom:.6rem;"></i>' +
+                        '<br>No destinations matched. Try another budget or region.</div>';
+                }
+
                 document.getElementById('nvList').innerHTML = html;
+
+                var cards = document.querySelectorAll('#nvList .nv-pack');
+                for (var c = 0; c < cards.length; c++) {
+                    (function (card) {
+                        var idx = parseInt(card.getAttribute('data-idx'), 10);
+                        var inlineBtn = card.querySelector('.nv-pack-btn');
+                        var openBtn = card.querySelector('.nv-pack-open-btn');
+                        var outBox = card.querySelector('.nv-pack-out');
+
+                        if (inlineBtn) {
+                            inlineBtn.addEventListener('click', function () {
+                                inlineGeneratePacking(idx, outBox, inlineBtn);
+                            });
+                        }
+                        if (openBtn) {
+                            openBtn.addEventListener('click', function () {
+                                openPackingAssistant(idx, openBtn);
+                            });
+                        }
+                    })(cards[c]);
+                }
+
                 results.style.display = 'block';
                 results.scrollIntoView({ behavior: 'smooth' });
             }
 
-            function generate() {
-                errBox.style.display = 'none';
-                var dateError = checkDates();
-                if (dateError) {
-                    results.style.display = 'none';
-                    showError(dateError);
-                    return;
-                }
+            function setSubmitting(v) {
+                isSubmitting = v;
+                submitBtn.disabled = v;
+                submitBtn.innerHTML = v
+                    ? '<i class="fas fa-spinner fa-spin"></i> Finding destinations...'
+                    : '<i class="fas fa-magic"></i> Show My Top 5';
+            }
 
-                errBox.style.display = 'none';
+            async function generate() {
+                if (isSubmitting) return;
+                hideError();
+
+                var dErr = checkDates();
+                if (dErr) { results.style.display = 'none'; showError(dErr); return; }
+
+                var cur = ++requestNumber;
+
+                tripDates = { start: startInput.value, end: endInput.value };
+                lastSubmittedSnapshot = snapshot();
+                window.NV_CTX = lastSubmittedSnapshot;
+                window.NV_RESULTS = null;
+
                 results.style.display = 'none';
                 loader.style.display = 'block';
-                submitBtn.disabled = true;
-                tripDates = { start: startInput.value, end: endInput.value };   // remember exactly what is being sent
+                setSubmitting(true);
 
-                fetch(form.action, {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-                    body: serialize(form)
-                })
-                    .then(function (resp) { return resp.json(); })
-                    .then(function (json) {
-                        if (json.success) render(json.data);
-                        else showError(json.error || 'Something went wrong.');
-                    })
-                    .catch(function () { showError('Could not get recommendations. Please try again.'); })
-                    .then(function () { loader.style.display = 'none'; submitBtn.disabled = false; });
+                try {
+                    var response = await fetch(form.action, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: serialize(form)
+                    });
+
+                    var json;
+                    try { json = await response.json(); }
+                    catch (e) { throw new Error('The server returned an invalid response.'); }
+
+                    if (cur !== requestNumber) return;
+
+                    if (!response.ok || !json || json.success !== true) {
+                        throw new Error(json && json.error ? json.error : 'Could not retrieve destination recommendations.');
+                    }
+                    if (!json.data || !Array.isArray(json.data.results) || json.data.results.length === 0) {
+                        throw new Error('No destinations were returned. Please try different preferences.');
+                    }
+
+                    window.NV_CTX = lastSubmittedSnapshot;
+                    render(json.data);
+                } catch (error) {
+                    if (cur === requestNumber) {
+                        showError(error && error.message ? error.message : 'Could not get recommendations.');
+                    }
+                } finally {
+                    if (cur === requestNumber) {
+                        loader.style.display = 'none';
+                        setSubmitting(false);
+                    }
+                }
             }
 
             form.addEventListener('submit', function (e) { e.preventDefault(); generate(); });
-            document.getElementById('retryBtn').addEventListener('click', generate);
+            retryBtn.addEventListener('click', function () { generate(); });
+
+            updateDateHint();
+            window.NV_CTX = null;
+            window.NV_RESULTS = null;
         })();
+    </script>
+
+    <script>
+        window.NV_PACK_URL = '@Url.Action("Packing", "TourPlanner")';
     </script>
 }
