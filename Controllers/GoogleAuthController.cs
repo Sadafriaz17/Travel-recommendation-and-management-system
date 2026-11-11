@@ -1,83 +1,85 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
 using TourwebsiteFYP.DB_data_models;
 
 namespace TourwebsiteFYP.Controllers
 {
     /// <summary>
-    /// Handles Google OAuth sign-in / sign-up for the user-facing site.
-    /// Works with the existing custom session auth (Session["UserId"] etc.)
-    /// and does NOT use ASP.NET Identity as the primary auth store.
+    /// Google sign-in and sign-up for the user-facing site.
+    /// Uses the same Session keys as LoginController (UserId, UserName, UserTypeId, VendorId).
     /// </summary>
     public class GoogleAuthController : Controller
     {
+        private const string GoogleProvider = "Google";
+
         private readonly Demo_DevDBEntities _context = new Demo_DevDBEntities();
 
-        // ------------------------------------------------------------------
-        // Helper: safely read a single claim value from a ClaimsIdentity.
-        // Uses LINQ instead of the .FindFirstValue() extension method so
-        // we don't need an extra using / assembly reference.
-        // ------------------------------------------------------------------
         private static string GetClaim(ClaimsIdentity identity, string claimType)
         {
-            return identity?.Claims
-                            .FirstOrDefault(c => c.Type == claimType)
-                           ?.Value;
+            return identity?.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
         }
 
-        // ------------------------------------------------------------------
-        // STEP 1: Issue the OAuth challenge  redirects browser to Google
-        // ------------------------------------------------------------------
-        [AllowAnonymous]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
+        private IAuthenticationManager AuthManager
         {
-            var redirectUri = Url.Action("ExternalLoginCallback", "GoogleAuth",
-                                         new { ReturnUrl = returnUrl },
-                                         protocol: Request.Url.Scheme);
+            get { return HttpContext.GetOwinContext().Authentication; }
+        }
 
-            HttpContext.GetOwinContext()
-                       .Authentication
-                       .Challenge(new AuthenticationProperties { RedirectUri = redirectUri },
-                                  provider);
+        private ActionResult Fail(string message)
+        {
+            TempData["LoginError"] = message;
+            AuthManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+            return RedirectToAction("Index", "Login");
+        }
 
-            // HttpUnauthorizedResult (401) triggers OWIN to intercept and
-            // redirect the browser to the Google consent page.
+        // STEP 1: send the browser to Google.
+        // The provider value from the URL is ignored. Only Google is allowed.
+        [AllowAnonymous]
+        public ActionResult ExternalLogin(string provider)
+        {
+            if (!Startup.GoogleConfigured)
+            {
+                return Fail("Google sign-in is not set up yet. Please use your email and password.");
+            }
+
+            Startup.LastOwinProblem = null;
+
+            string redirectUri = Url.Action("ExternalLoginCallback", "GoogleAuth", null, Request.Url.Scheme);
+
+            AuthManager.Challenge(new AuthenticationProperties { RedirectUri = redirectUri }, GoogleProvider);
+
+            // A 401 result lets OWIN take over and redirect to Google.
             return new HttpUnauthorizedResult();
         }
 
-        // ------------------------------------------------------------------
-        // STEP 2: Google redirects back here after the user consents
-        // ------------------------------------------------------------------
+        // STEP 2: Google sends the user back here.
         [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
+        public async Task<ActionResult> ExternalLoginCallback()
         {
-            // Retrieve the external login identity Google put into the
-            // external cookie.
-            var loginInfo = await HttpContext.GetOwinContext()
-                                             .Authentication
-                                             .GetExternalLoginInfoAsync();
+            ExternalLoginInfo loginInfo = await AuthManager.GetExternalLoginInfoAsync();
 
-            if (loginInfo == null)
+            if (loginInfo == null || loginInfo.Login.LoginProvider != GoogleProvider)
             {
-                // OWIN could not read the external cookie - user may have
-                // cancelled, or the external cookie expired.
-                TempData["LoginError"] = "Google sign-in was cancelled or failed. Please try again.";
-                return RedirectToAction("Index", "Login");
+                string message = "Google sign-in was cancelled or failed. Please try again.";
+
+                // Extra detail only while the site runs in debug mode.
+                if (HttpContext.IsDebuggingEnabled)
+                {
+                    bool cookieFound = Request.Cookies[".AspNet.ExternalCookie"] != null;
+                    message += " [Details: " + (Startup.LastOwinProblem ?? "no OWIN error was logged")
+                               + " | external cookie " + (cookieFound ? "found" : "missing") + "]";
+                }
+
+                return Fail(message);
             }
 
-            // ----------------------------------------------------------
-            // Robust claim retrieval - loginInfo.Email can be null
-            // depending on the OWIN Google provider version.
-            // Fall back to reading the email claim explicitly.
-            // ----------------------------------------------------------
-            string email = loginInfo.Email
-                           ?? GetClaim(loginInfo.ExternalIdentity, ClaimTypes.Email);
+            string email = loginInfo.Email ?? GetClaim(loginInfo.ExternalIdentity, ClaimTypes.Email);
 
             string name = GetClaim(loginInfo.ExternalIdentity, ClaimTypes.Name)
                           ?? GetClaim(loginInfo.ExternalIdentity, ClaimTypes.GivenName)
@@ -85,64 +87,74 @@ namespace TourwebsiteFYP.Controllers
 
             if (string.IsNullOrWhiteSpace(email))
             {
-                TempData["LoginError"] = "Could not retrieve your email from Google - " +
-                                         "please try again or use the email/password login.";
-                return RedirectToAction("Index", "Login");
+                return Fail("Could not get your email from Google. Please try again or use email and password.");
             }
 
-            // Normalise the email the same way the rest of the app does.
+            // Only trust emails that Google has verified.
+            if (GetClaim(loginInfo.ExternalIdentity, Startup.VerifiedEmailClaim) != "true")
+            {
+                return Fail("Google could not confirm that your email is verified, so we cannot sign you in with it.");
+            }
+
             email = email.Trim().ToLower();
 
-            // ----------------------------------------------------------
-            // Find existing user by email, OR create a new one.
-            //
-            // If a row already exists with a PasswordHash (password-signup
-            // account), we link the Google login to that account by email
-            // and sign them in. No duplicate row is created.
-            // ----------------------------------------------------------
-            var user = _context.Users
-                               .FirstOrDefault(u => u.Email.ToLower() == email);
-
-            if (user == null)
+            User user;
+            try
             {
-                // New user - auto-register as Customer (TypeId 2).
-                var customerType = _context.UserTypes
-                                           .FirstOrDefault(t => t.TypeName == "Customer")
-                                   ?? _context.UserTypes.FirstOrDefault();
+                user = _context.Users.FirstOrDefault(u => u.Email.ToLower() == email);
 
-                if (customerType == null)
+                if (user == null)
                 {
-                    TempData["LoginError"] = "Registration is temporarily unavailable - " +
-                                             "no user type is configured. Please contact support.";
-                    return RedirectToAction("Index", "Login");
+                    var customerType = _context.UserTypes.FirstOrDefault(t => t.TypeName == "Customer")
+                                       ?? _context.UserTypes.FirstOrDefault();
+
+                    if (customerType == null)
+                    {
+                        return Fail("Sign-up is temporarily unavailable. Please contact support.");
+                    }
+
+                    user = new User
+                    {
+                        FullName = name.Trim(),
+                        Email = email,
+                        PasswordHash = "",   // Google-only account, no password
+                        UserTypeId = customerType.UserTypeId,
+                        CreatedAt = DateTime.Now
+                    };
+
+                    _context.Users.Add(user);
+                    _context.SaveChanges();
                 }
-
-                user = new User
-                {
-                    FullName     = name.Trim(),
-                    Email        = email,
-                    PasswordHash = "",           // Google-only account - no password
-                    UserTypeId   = customerType.UserTypeId,
-                    CreatedAt    = DateTime.Now
-                };
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return Fail("We could not finish signing you in. Please try again in a moment.");
             }
 
-            // ----------------------------------------------------------
-            // Establish the session exactly as LoginController does.
-            // ----------------------------------------------------------
-            Session["UserId"]     = user.UserId;
-            Session["UserName"]   = user.FullName;
+            // Same session keys as LoginController.
+            Session["UserId"] = user.UserId;
+            Session["UserName"] = user.FullName;
             Session["UserTypeId"] = user.UserTypeId;
 
-            // Sign out of the transient external cookie.
-            HttpContext.GetOwinContext().Authentication
-                       .SignOut(DefaultAuthenticationTypes.ExternalCookie);
+            if (user.UserTypeId == 3)
+            {
+                var vendor = _context.Vendors.FirstOrDefault(v => v.VendorName.Contains(user.FullName));
+                Session["VendorId"] = vendor?.VendorId;
+            }
+            else
+            {
+                Session["VendorId"] = null;
+            }
 
-            // Route to the role-specific dashboard (same as LoginController).
+            AuthManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+
             return RedirectToAction("Index", "DashboardRouter", new { area = "AdminArea" });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) _context.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
