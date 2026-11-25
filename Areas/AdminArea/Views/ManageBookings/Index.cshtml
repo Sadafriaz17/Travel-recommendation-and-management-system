@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
 @{
     ViewBag.Title = "Manage Bookings";
     ViewBag.ActiveMenu = "Bookings";
@@ -21,7 +21,7 @@
         {
             <div class="admin-table-wrap">
                 <table class="admin-table">
-                    <thead><tr><th>#ID</th><th>Customer</th><th>Package/Dest</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>#ID</th><th>Customer</th><th>Package or Product</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
@@ -33,9 +33,51 @@
                                 <td style="font-weight:600;color:var(--text-muted);font-size:12px">#@item.BookingId</td>
                                 <td style="font-weight:700">@(item.User?.FullName ?? item.Email ?? "-")</td>
                                 <td>
-                                    @if(item.Package != null) { <span><i class="bi bi-gift"></i> @item.Package.PackageName</span> }
-                                    else if(item.Destination != null) { <span><i class="bi bi-geo-alt"></i> @item.Destination.Name</span> }
-                                    else { <span>-</span> }
+                                    @{
+                                        var iDetails = item.BookingDetails != null
+                                            ? item.BookingDetails.ToList()
+                                            : new System.Collections.Generic.List<TourwebsiteFYP.DB_data_models.BookingDetail>();
+
+                                        if (iDetails.Count > 0)
+                                        {
+                                            // Cart-based booking: derive names from BookingDetails
+                                            var iNames = iDetails.Select(d => {
+                                                string icon = d.PackageId.HasValue
+                                                    ? "<i class=\"bi bi-gift\"></i> "
+                                                    : "<i class=\"bi bi-box-seam\"></i> ";
+                                                string name = d.Package != null ? d.Package.PackageName
+                                                            : d.Product  != null ? d.Product.ProductName
+                                                            : "Item no longer available";
+                                                string label = (d.Quantity ?? 1) > 1
+                                                    ? name + " x" + (d.Quantity ?? 1) : name;
+                                                return new { Icon = icon, Label = label };
+                                            }).ToList();
+
+                                            if (iNames.Count == 1)
+                                            {
+                                                <span>@Html.Raw(iNames[0].Icon)@iNames[0].Label</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Html.Raw(iNames[0].Icon)@iNames[0].Label
+                                                    <span style="color:var(--text-muted);font-size:12px">+@(iNames.Count - 1) more</span>
+                                                </span>
+                                            }
+                                        }
+                                        else if (item.Package != null)
+                                        {
+                                            // Legacy direct-booking: package stored on Booking row
+                                            <span><i class="bi bi-gift"></i> @item.Package.PackageName</span>
+                                        }
+                                        else if (item.Destination != null)
+                                        {
+                                            <span><i class="bi bi-geo-alt"></i> @item.Destination.Name</span>
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    }
                                 </td>
                                 <td style="color:var(--text-muted)">@(item.BookingDate?.ToString("MMM d, yyyy") ?? "-")</td>
                                 <td style="font-weight:600">$@item.TotalAmount.ToString("N2")</td>
