@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
 
 @{
     ViewBag.Title = "Booking";
@@ -769,7 +769,27 @@
                     </div>
                     <div class="history-content">
                         <div class="history-title">
-                            @(booking.Package != null ? booking.Package.PackageName : "Package #" + booking.PackageId)
+                            @{
+                                var hDetails = booking.BookingDetails != null ? booking.BookingDetails.ToList() : new System.Collections.Generic.List<TourwebsiteFYP.DB_data_models.BookingDetail>();
+                                var hNames = hDetails.Select(d => {
+                                    string hName = d.Package != null ? d.Package.PackageName
+                                                 : d.Product  != null ? d.Product.ProductName
+                                                 : "Item no longer available";
+                                    return (d.Quantity ?? 1) > 1 ? hName + " x" + (d.Quantity ?? 1) : hName;
+                                }).ToList();
+                                if (hNames.Count == 0)
+                                {
+                                    <text>Item no longer available</text>
+                                }
+                                else if (hNames.Count == 1)
+                                {
+                                    <text>@hNames[0]</text>
+                                }
+                                else
+                                {
+                                    <text>@hNames[0] +@(hNames.Count - 1) more</text>
+                                }
+                            }
                         </div>
                         <div class="history-meta">
                             <span><i class="fa fa-calendar-alt"></i> @(booking.BookingDate.HasValue ? booking.BookingDate.Value.ToString("dd MMM yyyy") : "TBD")</span>

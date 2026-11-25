@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -18,10 +19,11 @@ namespace TourwebsiteFYP.Controllers
             var products = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")
+                .AsNoTracking()
                 .OrderByDescending(p => p.ProductId)
                 .ToList();
 
-            ViewBag.ProductTypes = _context.ProductTypes.ToList();
+            ViewBag.ProductTypes = _context.ProductTypes.AsNoTracking().ToList();
 
             return View(products);
         }
@@ -32,6 +34,7 @@ namespace TourwebsiteFYP.Controllers
             var products = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")
+                .AsNoTracking()
                 .OrderByDescending(p => p.ProductId)
                 .Take(4)
                 .ToList();
@@ -45,6 +48,7 @@ namespace TourwebsiteFYP.Controllers
             var product = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")
+                .AsNoTracking()
                 .FirstOrDefault(p => p.ProductId == id);
 
             if (product == null)
@@ -57,11 +61,11 @@ namespace TourwebsiteFYP.Controllers
             if (Session["UserId"] != null)
             {
                 int userId = Convert.ToInt32(Session["UserId"]);
-                user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+                user = _context.Users.AsNoTracking().FirstOrDefault(u => u.UserId == userId);
             }
 
             ViewBag.User = user;
-            ViewBag.ProductTypes = _context.ProductTypes.ToList();
+            ViewBag.ProductTypes = _context.ProductTypes.AsNoTracking().ToList();
 
             return View(product);
         }
@@ -72,6 +76,7 @@ namespace TourwebsiteFYP.Controllers
             var products = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")
+                .AsNoTracking()
                 .Where(p => p.ProductTypeId == productTypeId &&
                             p.ProductId != productId)
                 .OrderByDescending(p => p.ProductId)
@@ -84,7 +89,7 @@ namespace TourwebsiteFYP.Controllers
         // Product Categories
         public ActionResult Categories()
         {
-            var categories = _context.ProductTypes.ToList();
+            var categories = _context.ProductTypes.AsNoTracking().ToList();
             return View(categories);
         }
 
@@ -94,6 +99,7 @@ namespace TourwebsiteFYP.Controllers
             var products = _context.Products
                 .Include("ProductType")
                 .Include("Vendor")
+                .AsNoTracking()
                 .Where(p => p.ProductTypeId == id)
                 .ToList();
 

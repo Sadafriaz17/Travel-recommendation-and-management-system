@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using System.Data.Entity;
 using TourwebsiteFYP.DB_data_models;
 
 namespace TourwebsiteFYP.Controllers
@@ -11,7 +12,9 @@ namespace TourwebsiteFYP.Controllers
 
         public ActionResult Index()
         {
-            var destination = _context.Destinations.ToList();
+            var destination = _context.Destinations
+                .AsNoTracking()
+                .ToList();
 
             return View(destination);
         }
@@ -19,6 +22,7 @@ namespace TourwebsiteFYP.Controllers
         public ActionResult HomepageDestination()
         {
             var destinations = _context.Destinations
+                .AsNoTracking()
                 .OrderByDescending(d => d.DestinationId)
                 .Take(6)
                 .ToList();
@@ -28,13 +32,21 @@ namespace TourwebsiteFYP.Controllers
 
         public ActionResult Details(int id)
         {
-            var destination = _context.Destinations.FirstOrDefault(d => d.DestinationId == id);
+            var destination = _context.Destinations
+                .AsNoTracking()
+                .FirstOrDefault(d => d.DestinationId == id);
+
             if (destination == null)
             {
                 return RedirectToAction("Index", "Home");
             }
 
+            // Load packages with all relations the view needs in a single query,
+            // avoiding N×2 lazy-load roundtrips for PackageImages and PackageType.
             var packages = _context.Packages
+                .AsNoTracking()
+                .Include(p => p.PackageImages)
+                .Include(p => p.PackageType)
                 .Where(p => p.DestinationId == id)
                 .OrderByDescending(p => p.CreatedDate)
                 .ToList();

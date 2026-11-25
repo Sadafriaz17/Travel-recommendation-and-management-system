@@ -19,6 +19,8 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
                 .Include(b => b.User)
                 .Include(b => b.Package)
                 .Include(b => b.Destination)
+                .Include(b => b.BookingDetails.Select(d => d.Package))
+                .Include(b => b.BookingDetails.Select(d => d.Product))
                 .ToList();
             return View(bookings);
         }

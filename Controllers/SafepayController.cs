@@ -130,9 +130,8 @@ namespace TourwebsiteFYP.Controllers
                 var trackerResult = SafepayService.CreateTracker(amount, "NEXVOY-" + paymentId);
                 if (!trackerResult.Success)
                 {
-                    // DIAGNOSTIC: surface actual error — REMOVE before production
                     TempData["CheckoutError"] =
-                        "Could not initiate card payment. [DIAG: " + trackerResult.ErrorMessage + "]";
+                        "Could not initiate card payment. Please try again or choose another payment method.";
                     return RedirectToAction("Checkout", "Cart");
                 }
 
@@ -148,7 +147,7 @@ namespace TourwebsiteFYP.Controllers
                 }
 
                 // ── Step 3: Persist attempt record and stamp tracker on Payment ──
-                SafepayDbHelper.InsertAttempt(paymentId, bookingId, trackerToken, amount);
+                SafepayDbHelper.InsertAttempt(paymentId, bookingId, trackerToken, amount, SafepayService.CurrencyCode);
                 SafepayDbHelper.UpdatePaymentSafepayTracker(paymentId, trackerToken);
 
                 // ── Step 4: Build callback URLs ─────────────────────────────────
@@ -284,7 +283,7 @@ namespace TourwebsiteFYP.Controllers
                     }
 
                     if (!string.IsNullOrWhiteSpace(verifyResult.Currency)
-                        && !string.Equals(verifyResult.Currency, "PKR", StringComparison.OrdinalIgnoreCase))
+                        && !string.Equals(verifyResult.Currency, SafepayService.CurrencyCode, StringComparison.OrdinalIgnoreCase))
                     {
                         TempData["CheckoutError"] =
                             "Payment currency mismatch. Please contact support with your booking reference.";
@@ -484,7 +483,7 @@ namespace TourwebsiteFYP.Controllers
 
                     bool amountOk   = webhookAmount == 0 || webhookAmount == expectedPaisas;
                     bool currencyOk = string.IsNullOrWhiteSpace(webhookCurrency)
-                                   || string.Equals(webhookCurrency, "PKR", StringComparison.OrdinalIgnoreCase);
+                                   || string.Equals(webhookCurrency, SafepayService.CurrencyCode, StringComparison.OrdinalIgnoreCase);
 
                     if (amountOk && currencyOk)
                     {

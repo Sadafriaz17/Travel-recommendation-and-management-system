@@ -287,6 +287,7 @@
                             <img class="pd-thumb @(i == 0 ? "active" : "")"
                                  src="@galleryImages[i]"
                                  alt="@Model.ProductName view @(i + 1)"
+                                 loading="lazy"
                                  onclick="swapImage(this)" />
                         }
                     </div>

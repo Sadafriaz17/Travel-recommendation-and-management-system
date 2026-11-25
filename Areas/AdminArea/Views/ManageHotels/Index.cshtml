@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Hotel>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Hotel>
 @{
     ViewBag.Title = "Manage Hotels";
     ViewBag.ActiveMenu = "Hotels";
@@ -33,7 +33,7 @@
                                 <td>
                                     @if (item.Rating.HasValue)
                                     {
-                                        <span class="badge-pill badge-warning"><i class="bi bi-star-fill"></i> @item.Rating?.ToString("F1")</span>
+                                        <span class="badge-pill badge-warning"><i class="bi bi-star-fill"></i> @(item.Rating?.ToString("F1"))</span>
                                     }
                                     else { <span style="color:var(--text-faint)">-</span> }
                                 </td>

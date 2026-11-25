@@ -48,7 +48,7 @@ namespace TourwebsiteFYP.Services
             int     bookingId,
             string  trackerToken,
             decimal amount,
-            string  currency = "PKR")
+            string  currency = "USD")
         {
             if (string.IsNullOrWhiteSpace(trackerToken))
                 throw new ArgumentNullException("trackerToken");
@@ -71,7 +71,7 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
                 amtParam.Precision = 18;
                 amtParam.Scale     = 2;
                 cmd.Parameters.Add("@Currency", SqlDbType.NVarChar, 10).Value =
-                    string.IsNullOrWhiteSpace(currency) ? "PKR" : currency;
+                    string.IsNullOrWhiteSpace(currency) ? "USD" : currency;
 
                 conn.Open();
                 var result = cmd.ExecuteScalar();

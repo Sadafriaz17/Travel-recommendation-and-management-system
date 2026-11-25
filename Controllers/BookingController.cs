@@ -123,7 +123,8 @@ namespace TourwebsiteFYP.Controllers
             int userId = Convert.ToInt32(Session["UserId"]);
 
             var bookings = _context.Bookings
-                .Include("Package")
+                .Include(b => b.BookingDetails.Select(d => d.Package))
+                .Include(b => b.BookingDetails.Select(d => d.Product))
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.CreatedDate)
                 .ToList();

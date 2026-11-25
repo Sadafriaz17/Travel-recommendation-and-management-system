@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
+@model IEnumerable<TourwebsiteFYP.DB_data_models.Booking>
 @{
     ViewBag.Title      = "My Dashboard";
     ViewBag.ActiveMenu = "CustomerDashboard";
@@ -109,7 +109,7 @@
                         <thead>
                             <tr>
                                 <th>#ID</th>
-                                <th>Package / Trip</th>
+                                <th>Package or Product</th>
                                 <th>Amount</th>
                                 <th>Status</th>
                                 <th>Date</th>
@@ -125,13 +125,26 @@
                                 <tr>
                                     <td style="font-weight:600;color:var(--text-muted);font-size:12px">#@b.BookingId</td>
                                     <td>
-                                        @if (b.Package != null)
-                                        {
-                                            <span>@b.Package.PackageName</span>
-                                        }
-                                        else
-                                        {
-                                            <span style="color:var(--text-faint)"></span>
+                                        @{
+                                            var bDetails = b.BookingDetails != null ? b.BookingDetails.ToList() : new System.Collections.Generic.List<TourwebsiteFYP.DB_data_models.BookingDetail>();
+                                            var bNames = bDetails.Select(d => {
+                                                string name = d.Package != null ? d.Package.PackageName
+                                                            : d.Product  != null ? d.Product.ProductName
+                                                            : "Item no longer available";
+                                                return (d.Quantity ?? 1) > 1 ? name + " x" + (d.Quantity ?? 1) : name;
+                                            }).ToList();
+                                            if (bNames.Count == 0)
+                                            {
+                                                <span style="color:var(--text-faint)">Item no longer available</span>
+                                            }
+                                            else if (bNames.Count == 1)
+                                            {
+                                                <span>@bNames[0]</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@bNames[0] <span style="color:var(--text-muted);font-size:12px">+@(bNames.Count - 1) more</span></span>
+                                            }
                                         }
                                     </td>
                                     <td style="font-weight:600">$@b.TotalAmount.ToString("N2")</td>

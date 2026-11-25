@@ -1,4 +1,4 @@
-﻿@model TourwebsiteFYP.DB_data_models.Booking
+@model TourwebsiteFYP.DB_data_models.Booking
 
 @{
     ViewBag.Title = "Booking Details";
@@ -25,7 +25,7 @@
             <dd class="col-sm-9">@Model.BookingDate</dd>
 
             <dt class="col-sm-3">Total Amount</dt>
-            <dd class="col-sm-9">Rs. @Model.TotalAmount</dd>
+            <dd class="col-sm-9">$@Model.TotalAmount</dd>
 
             <dt class="col-sm-3">Payment Status</dt>
             <dd class="col-sm-9">@Model.Status</dd>
@@ -33,23 +33,26 @@
     </div>
 
     <div class="card-body border-top">
-        <h5 class="mb-3">Package Details</h5>
+        <h5 class="mb-3">Items Booked</h5>
         @if (Model.BookingDetails != null && Model.BookingDetails.Any())
         {
             <table class="table table-bordered table-striped">
                 <thead class="table-secondary">
                     <tr>
-                        <th>Package</th>
+                        <th>Package or Product</th>
                         <th>Quantity</th>
-                        <th>Price (Rs.)</th>
-                        <th>Subtotal (Rs.)</th>
+                        <th>Price ($)</th>
+                        <th>Subtotal ($)</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var detail in Model.BookingDetails)
                     {
+                        string dName = detail.Package != null ? detail.Package.PackageName
+                                     : detail.Product  != null ? detail.Product.ProductName
+                                     : "Item no longer available";
                         <tr>
-                            <td>@detail.Package.PackageName</td>
+                            <td>@dName</td>
                             <td>@detail.Quantity</td>
                             <td>@detail.Price</td>
                             <td>@(detail.Quantity * detail.Price)</td>
@@ -59,14 +62,14 @@
                 <tfoot>
                     <tr class="table-info">
                         <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                        <td><strong>Rs. @Model.TotalAmount</strong></td>
+                        <td><strong>$@Model.TotalAmount</strong></td>
                     </tr>
                 </tfoot>
             </table>
         }
         else
         {
-            <p>No package details available for this booking.</p>
+            <p>No item details available for this booking.</p>
         }
     </div>
 </div>

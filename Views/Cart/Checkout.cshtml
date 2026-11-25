@@ -617,12 +617,12 @@
                     @if (isPkg)
                     {
                         <div class="order-item-price" id="pkg-price-@item.PackageId">
-                            PKR @((item.Price * item.Quantity).ToString("N2"))
+                            $@((item.Price * item.Quantity).ToString("N2"))
                         </div>
                     }
                     else
                     {
-                        <div class="order-item-price">PKR @((item.Price * item.Quantity).ToString("N2"))</div>
+                        <div class="order-item-price">$@((item.Price * item.Quantity).ToString("N2"))</div>
                     }
                 </div>
             }
@@ -631,7 +631,7 @@
 
             <div class="order-summary-row">
                 <span>Subtotal</span>
-                <span id="checkoutSubtotal">PKR @subtotal.ToString("N2")</span>
+                <span id="checkoutSubtotal">$@subtotal.ToString("N2")</span>
             </div>
             @if (hasProducts)
             {
@@ -645,7 +645,7 @@
 
             <div class="order-summary-total">
                 <span>Total</span>
-                <span id="checkoutTotal">PKR @subtotal.ToString("N2")</span>
+                <span id="checkoutTotal">$@subtotal.ToString("N2")</span>
             </div>
 
             <button type="submit" form="checkoutForm" class="btn-place-order">
@@ -696,7 +696,7 @@
                     pkgSubtotal += lineTotal;
 
                     var priceEl = document.getElementById('pkg-price-' + pkgId);
-                    if (priceEl) priceEl.textContent = 'PKR ' + lineTotal.toFixed(2);
+                    if (priceEl) priceEl.textContent = '$' + lineTotal.toFixed(2);
 
                     var qtyEl = document.querySelector('#pkg-qty-' + pkgId + ' .pkg-qty-label');
                     if (qtyEl) qtyEl.textContent = qty;
@@ -705,8 +705,8 @@
                 var grand = productSubtotal + pkgSubtotal;
                 var sub   = document.getElementById('checkoutSubtotal');
                 var tot   = document.getElementById('checkoutTotal');
-                if (sub) sub.textContent = 'PKR ' + grand.toFixed(2);
-                if (tot) tot.textContent = 'PKR ' + grand.toFixed(2);
+                if (sub) sub.textContent = '$' + grand.toFixed(2);
+                if (tot) tot.textContent = '$' + grand.toFixed(2);
             }
 
             var travelersInput = document.getElementById('travelers');

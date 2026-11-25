@@ -9,17 +9,169 @@
 
 @section HeadStyles {
     <style>
+        /* ── DESTINATION DETAILS – package grid & cards ── */
+
+        /* Section header typography */
+        .dest-section-header {
+            margin-bottom: 2.5rem;
+        }
+        .dest-section-header .sub-label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        .dest-section-header h2 {
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #111;
+            margin: 0;
+        }
+
+        /* Grid: left-aligned so single cards don't stretch */
         .pkg-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
+            grid-template-columns: repeat(3, minmax(0, 380px));
+            gap: 1.5rem;
+            justify-content: start;
         }
-        
-        @@media (max-width: 900px) {
-            .pkg-grid { grid-template-columns: repeat(2, 1fr); }
+
+        /* Card shell */
+        .dest-pkg-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            overflow: hidden;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            max-width: 380px;
+        }
+        .dest-pkg-card:hover,
+        .dest-pkg-card:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 36px rgba(0,0,0,0.11);
+            border-color: #d1d5db;
+        }
+        .dest-pkg-card:focus-visible {
+            outline: 3px solid #111;
+            outline-offset: 3px;
+        }
+
+        /* Image wrapper – 4:3 fixed ratio */
+        .dest-pkg-media {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background: #f3f4f6;
+        }
+        .dest-pkg-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.45s ease;
+        }
+        .dest-pkg-card:hover .dest-pkg-media img {
+            transform: scale(1.06);
+        }
+
+        /* Category pill on image */
+        .dest-pkg-badge {
+            position: absolute;
+            top: 0.9rem;
+            left: 0.9rem;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e5e7eb;
+            border-radius: 50px;
+            padding: 0.25rem 0.8rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #111;
+            pointer-events: none;
+        }
+
+        /* Card body */
+        .dest-pkg-body {
+            padding: 1.25rem 1.4rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Package name */
+        .dest-pkg-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.35;
+            letter-spacing: -0.02em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        /* Duration row */
+        .dest-pkg-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        .dest-pkg-meta i {
+            font-size: 0.75rem;
+        }
+
+        /* Price footer */
+        .dest-pkg-footer {
+            margin-top: 0.75rem;
+            padding-top: 0.9rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            align-items: baseline;
+            gap: 0.35rem;
+        }
+        .dest-pkg-price {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #111;
+        }
+        .dest-pkg-price-label {
+            font-size: 0.65rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        /* Responsive breakpoints */
+        @@media (max-width: 1024px) {
+            .pkg-grid {
+                grid-template-columns: repeat(2, minmax(0, 380px));
+                gap: 1.25rem;
+            }
         }
         @@media (max-width: 600px) {
-            .pkg-grid { grid-template-columns: 1fr; }
+            .pkg-grid {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 1rem;
+            }
+            .dest-pkg-card {
+                max-width: 100%;
+            }
         }
     </style>
 }
@@ -45,11 +197,9 @@
 </section>
 
 <div class="container section-padding">
-    <div class="section-header" style="margin-bottom: 3rem;">
-        <div class="section-header-left">
-            <span class="sub-label">EXPLORE PACKAGES</span>
-            <h2>Tours in @Model.Name</h2>
-        </div>
+    <div class="dest-section-header">
+        <span class="sub-label">EXPLORE PACKAGES</span>
+        <h2>Tours in @Model.Name</h2>
     </div>
 
     @if (packages != null && packages.Any())
@@ -58,17 +208,20 @@
             @foreach (var pkg in packages)
             {
                 var pkgImg = pkg.PackageImages.FirstOrDefault()?.ImageUrl ?? "/images/no-image.jpg";
-                <a href="@Url.Action("Details", "Package", new { id = pkg.PackageId })" class="pkg-card">
-                    <div class="img-wrap">
+                <a href="@Url.Action("Details", "Package", new { id = pkg.PackageId })" class="dest-pkg-card">
+                    <div class="dest-pkg-media">
                         <img src="@Url.Content(pkgImg)" alt="@pkg.PackageName" loading="lazy" onerror="this.src='/images/no-image.jpg'" />
-                        <span class="pkg-badge">@(pkg.PackageType?.TypeName ?? "Tour")</span>
+                        <span class="dest-pkg-badge">@(pkg.PackageType?.TypeName ?? "Tour")</span>
                     </div>
-                    <div class="pkg-body">
-                        <h4>@pkg.PackageName</h4>
-                        <div class="pkg-meta">
-                            <span><i class="fas fa-clock"></i> @pkg.DurationDays Days</span>
+                    <div class="dest-pkg-body">
+                        <h4 class="dest-pkg-name">@pkg.PackageName</h4>
+                        <div class="dest-pkg-meta">
+                            <i class="fas fa-clock"></i> @pkg.DurationDays Days
                         </div>
-                        <div class="pkg-footer">$@pkg.Price.ToString("N0")</div>
+                        <div class="dest-pkg-footer">
+                            <span class="dest-pkg-price">$@pkg.Price.ToString("N0")</span>
+                            <span class="dest-pkg-price-label">per person</span>
+                        </div>
                     </div>
                 </a>
             }

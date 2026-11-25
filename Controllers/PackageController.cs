@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -46,6 +46,7 @@ namespace TourwebsiteFYP.Controllers
                     .Include(p => p.PackageImages)
                     .Include(p => p.PackageItineraries)
                     .Include(p => p.Reviews)
+                    .Include(p => p.Hotels)
                     .FirstOrDefault(p => p.PackageId == id);
 
                 if (package == null)

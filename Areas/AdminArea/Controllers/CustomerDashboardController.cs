@@ -31,9 +31,12 @@ namespace TourwebsiteFYP.Areas.AdminArea.Controllers
             ViewBag.SessionUserName = user?.FullName ?? Session["UserName"]?.ToString() ?? "Customer";
             ViewBag.ProfileUser     = user;
 
-            // Bookings that belong to this customer.
+            // Bookings that belong to this customer — load BookingDetails with Package and Product
+            // so the view can display item names. The old Include(Package) only worked for the
+            // legacy direct-booking flow; cart-based bookings store items in BookingDetails.
             var myBookings = _context.Bookings
-                .Include(b => b.Package)
+                .Include(b => b.BookingDetails.Select(d => d.Package))
+                .Include(b => b.BookingDetails.Select(d => d.Product))
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.BookingDate)
                 .ToList();
