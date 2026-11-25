@@ -43,13 +43,13 @@ namespace TourwebsiteFYP.Services
         public string State        { get; set; }
 
         /// <summary>
-        /// Verified payment amount in smallest currency unit (paisas for PKR).
+        /// Verified payment amount in smallest currency unit (cents for USD).
         /// From data.tracker.purchase_totals.quote_amount.amount
         /// </summary>
         public long   Amount       { get; set; }
 
         /// <summary>
-        /// Verified payment currency (e.g. "PKR").
+        /// Verified payment currency (e.g. "USD").
         /// From data.tracker.purchase_totals.quote_amount.currency
         /// </summary>
         public string Currency     { get; set; }
@@ -91,6 +91,13 @@ namespace TourwebsiteFYP.Services
         private const string CfgPublicKey     = "Safepay:PublicKey";
         private const string CfgWebhookSecret = "Safepay:WebhookSecret";
         private const string CfgEnvironment   = "Safepay:Environment";
+
+        // ── Payment currency ──────────────────────────────────────────────────
+        /// <summary>
+        /// ISO 4217 currency code sent to Safepay and stored in SafepayPaymentAttempt.
+        /// Change here to switch currency site-wide. Amount x100 (smallest unit) stays the same.
+        /// </summary>
+        public const string CurrencyCode = "USD";
 
         // ── API base URLs ─────────────────────────────────────────────────────
         // Source: official Safepay developer documentation
@@ -159,26 +166,26 @@ namespace TourwebsiteFYP.Services
         ///               "merchant_api_key": "&lt;public key&gt;",
         ///               "intent":           "CYBERSOURCE",
         ///               "mode":             "payment",
-        ///               "currency":         "PKR",
-        ///               "amount":           &lt;paisas&gt;
+        ///               "currency":         CurrencyCode,
+        ///               "amount":           &lt;cents / smallest unit&gt;
         ///            }
         ///   Returns: { "data": { "tracker": { "token": "track_...", "state": "TRACKER_STARTED" } } }
         ///
-        /// Amount is in smallest currency unit: 1 PKR = 100 paisas.
+        /// Amount is in smallest currency unit (x100): uses CurrencyCode throughout.
         /// </summary>
-        public static SafepayTrackerResult CreateTracker(decimal amountInPkr, string orderId)
+        public static SafepayTrackerResult CreateTracker(decimal amount, string orderId)
         {
             try
             {
-                long amountInPaisas = (long)Math.Round(amountInPkr * 100m, MidpointRounding.AwayFromZero);
+                long amountSmallestUnit = (long)Math.Round(amount * 100m, MidpointRounding.AwayFromZero);
 
                 var payload = new
                 {
                     merchant_api_key = PublicKey,
                     intent           = "CYBERSOURCE",
                     mode             = "payment",
-                    currency         = "PKR",
-                    amount           = amountInPaisas
+                    currency         = CurrencyCode,
+                    amount           = amountSmallestUnit
                 };
 
                 string json = JsonConvert.SerializeObject(payload);
@@ -343,13 +350,13 @@ namespace TourwebsiteFYP.Services
         ///         "token": "track_...",
         ///         "state": "TRACKER_ENDED",
         ///         "purchase_totals": {
-        ///           "quote_amount": { "currency": "PKR", "amount": 290000 }
+        ///           "quote_amount": { "currency": "USD", "amount": 29000 }
         ///         }
         ///       }
         ///     }
         ///   }
         ///
-        /// Amount is in paisas (smallest unit): 290000 = PKR 2,900.00
+        /// Amount is in smallest currency unit (x100): 29000 = USD 290.00
         /// </summary>
         public static SafepayTrackerStateResult VerifyTracker(string trackerToken)
         {
