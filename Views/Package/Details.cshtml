@@ -1,4 +1,4 @@
-﻿@* =========================================
+@* =========================================
     PACKAGE DETAILS - Views/Package/Details.cshtml
     ========================================= *@
 @model TourwebsiteFYP.DB_data_models.Package
@@ -230,6 +230,44 @@
                 font-size: 0.95rem;
                 margin-bottom: 0.8rem;
             }
+
+        /*  HOTELS  */
+        .hotel-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .hotel-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .hotel-card-icon {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: #f0fdf4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #16a34a;
+        }
+        .hotel-card-body { flex: 1; min-width: 0; }
+        .hotel-card-name { font-weight: 700; font-size: 0.95rem; color: #1a1a1a; margin-bottom: 2px; }
+        .hotel-card-loc  { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px; }
+        .hotel-card-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .hotel-rating    { font-size: 0.82rem; color: #d97706; font-weight: 600; }
+        .hotel-price     { font-size: 0.85rem; color: #1a1a1a; font-weight: 600; }
+        .hotel-price span { font-weight: 400; color: var(--text-muted); font-size: 0.78rem; }
+        @@media (max-width: 600px) {
+            .hotel-card { flex-direction: column; align-items: flex-start; }
+        }
 
         /*  INCLUDED LIST  */
         .included-grid {
@@ -852,6 +890,45 @@
                             </div>
                         </details>
                     }
+                </div>
+            }
+
+            @{
+                var pkgHotels = Model.Hotels != null
+                    ? Model.Hotels.OrderBy(h => h.HotelName).ToList()
+                    : new System.Collections.Generic.List<TourwebsiteFYP.DB_data_models.Hotel>();
+            }
+            @if (pkgHotels.Any())
+            {
+                <div class="pkg-detail-section">
+                    <h2>Hotels</h2>
+                    <div class="hotel-grid">
+                        @foreach (var hotel in pkgHotels)
+                        {
+                            <div class="hotel-card">
+                                <div class="hotel-card-icon">
+                                    <i class="fas fa-hotel"></i>
+                                </div>
+                                <div class="hotel-card-body">
+                                    <div class="hotel-card-name">@(hotel.HotelName ?? "Hotel")</div>
+                                    @if (!string.IsNullOrWhiteSpace(hotel.Location))
+                                    {
+                                        <div class="hotel-card-loc"><i class="fas fa-map-marker-alt"></i> @hotel.Location</div>
+                                    }
+                                    <div class="hotel-card-meta">
+                                        @if (hotel.Rating.HasValue)
+                                        {
+                                            <span class="hotel-rating"><i class="fas fa-star"></i> @(hotel.Rating?.ToString("F1"))</span>
+                                        }
+                                        @if (hotel.PricePerNight.HasValue)
+                                        {
+                                            <span class="hotel-price">$@(hotel.PricePerNight?.ToString("N2")) <span>per night</span></span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
 
